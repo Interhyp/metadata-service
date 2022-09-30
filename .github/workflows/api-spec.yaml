@@ -6,8 +6,6 @@ on:
   push:
     branches:
       - main
-    paths:
-      - 'docs/openapi-v3-spec.json'
 
 jobs:
   publish:
