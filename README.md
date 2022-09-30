@@ -242,27 +242,15 @@ The api docs URL is /v3/api-docs (in case the swagger ui does not automatically 
 `go mod graph > deps.txt`
 
 [15-factor]: https://domenicoluciani.com/2021/10/30/15-factor-app.html
-
 [gitops]: https://about.gitlab.com/topics/gitops/
-
 [swagger]: https://interhyp.github.io/metadata-service/
-
 [template]: https://github.com/Interhyp/metadata-service-template/
-
 [use-template]: https://github.com/Interhyp/metadata-service-template/generate
-
 [release]: ../../releases/latest
-
 [docker]: Dockerfile
-
 [config]: docs/local-config.template.yaml
-
 [vault]: https://www.vaultproject.io/
-
 [vault-k8-auth]: https://www.vaultproject.io/docs/auth/kubernetes
-
 [vault-token-auth]: https://www.vaultproject.io/docs/auth/token
-
 [ecs]: https://www.elastic.co/guide/en/ecs/current/index.html
-
 [openid]: https://github.com/dexidp/dex
