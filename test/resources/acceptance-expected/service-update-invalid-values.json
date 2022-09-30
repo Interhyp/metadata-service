@@ -1,0 +1,5 @@
+{
+  "details": "validation error: field owner is mandatory, field alertTarget is mandatory, field timeStamp is mandatory for updates",
+  "message": "service.invalid.values",
+  "timestamp": "2022-11-06T18:14:10Z"
+}

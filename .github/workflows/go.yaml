@@ -1,0 +1,79 @@
+name: Go
+
+on:
+  push:
+    paths-ignore:
+      - '**.md'
+
+jobs:
+  build:
+    name: 📦 Build & Test
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: 1.19
+
+    - name: Set up pact-foundation/pact-ruby-standalone
+      run: >
+        curl -L https://raw.githubusercontent.com/pact-foundation/pact-ruby-standalone/master/install.sh -o ./install-pact.sh &&
+        cat ./install-pact.sh &&
+        chmod u+x ./install-pact.sh &&
+        ./install-pact.sh &&
+        rm ./install-pact.sh &&
+        echo "$(pwd)/pact/bin" >> $GITHUB_PATH
+      shell: bash
+
+    - name: Print pact CLI versions
+      run: |-
+        echo "PATH=$PATH
+        pact-broker: $(pact-broker version)
+        pact-message: $(pact-message version)
+        pact-mock-service: $(pact-mock-service version)
+        pact-provider-verifier: $(pact-provider-verifier version)
+        pact-stub-service: $(pact-stub-service version)"
+      shell: bash
+
+    - name: Build
+      run: go build -v ./...
+
+    - name: Test
+      run: go test -coverpkg='./internal/...,./web/...' -v './...'
+
+    - name: Run coverage
+      run: go test -race -coverprofile=coverage.out -covermode=atomic ./...
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3
+
+  release:
+    name: 🚀 Release
+    if: github.ref == 'refs/heads/releases' # change to main to enable when we've stabilized the rest of the build
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v3
+        with:
+          go-version: 1.19
+      - run: go build -v ./...
+      - uses: go-semantic-release/action@v1
+        with:
+          hooks: goreleaser
+          prerelease: false
+          allow-initial-development-versions: true # remove to trigger an initial 1.0.0 release
+          changelog-generator-opt: "emojis=true"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#      - name: Login to Docker Hub
+#        uses: docker/login-action@v2
+#        with:
+#          username: ${{ secrets.DOCKERHUB_USERNAME }}
+#          password: ${{ secrets.DOCKERHUB_TOKEN }}
+#      - name: Docker Hub Description
+#        uses: peter-evans/dockerhub-description@v3
+#        with:
+#          username: ${{ secrets.DOCKERHUB_USERNAME }}
+#          password: ${{ secrets.DOCKERHUB_PASSWORD }}

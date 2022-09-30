@@ -1,0 +1,22 @@
+{
+  "alertTarget": "squad_nothing@some-organisation.com",
+  "commitHash": "6c8ac2c35791edf9979623c717a2430000000000",
+  "developmentOnly": false,
+  "jiraIssue": "ISSUE-2345",
+  "owner": "deleteme",
+  "quicklinks": [
+    {
+      "title": "Swagger UI",
+      "url": "/swagger-ui/index.html"
+    }
+  ],
+  "repositories": [
+    "some-service-backend.helm-deployment",
+    "some-service-backend.implementation"
+  ],
+  "requiredScans": [
+    "SAST",
+    "SCA"
+  ],
+  "timeStamp": "2022-11-06T18:14:10Z"
+}

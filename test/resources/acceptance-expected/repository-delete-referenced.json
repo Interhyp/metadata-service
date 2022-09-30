@@ -1,0 +1,5 @@
+{
+  "details": "this repository is still being referenced by a service and cannot be deleted",
+  "message": "repository.conflict.referenced",
+  "timestamp": "2022-11-06T18:14:10Z"
+}

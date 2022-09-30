@@ -1,0 +1,19 @@
+APPLICATION_NAME: 'rm -rf something'
+SERVER_ADDRESS: 'Total Nonsense'
+SERVER_PORT: '122834'
+METRICS_PORT: '-12387192873invalid'
+ENVIRONMENT: mars
+PLATFORM: spaceship
+# have to set this valid or test can't run
+LOGSTYLE: plain
+VAULT_SERVER: https://something
+VAULT_SECRET_PATH: some-service/secrets
+LOCAL_VAULT_TOKEN: 'not a real token'
+
+UPDATE_JOB_INTERVAL_MINUTES: 26
+UPDATE_JOB_TIMEOUT_SECONDS: true
+KAFKA_USER: 'WeirdÄÄÄÄ'
+KAFKA_TOPIC: 'CRAZY/äöü'
+KAFKA_SEED_BROKERS: 'external.url:443'
+KAFKA_GROUP_ID_OVERRIDE: 'no banana, no spaces'
+VAULT_KAFKA_SECRET_PATH: ../../other/path

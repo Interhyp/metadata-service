@@ -1,0 +1,31 @@
+APPLICATION_NAME: metadata
+# hostname or IP to listen on, can be left blank for localhost
+SERVER_ADDRESS: ''
+SERVER_PORT: '8080'
+METRICS_PORT: '9090'
+ENVIRONMENT: dev
+# switch off ECS json logging in favor of readable localhost logs
+LOGSTYLE: plain
+VAULT_SERVER: <url-to-vault-server>
+VAULT_SECRETS_BASE_PATH: <base-path-to-secrets>
+VAULT_SECRET_PATH: <path-to-service-secrets>
+# setting this implicitly switches from kubernetes authentication to token mode, only use this on localhost
+LOCAL_VAULT_TOKEN: 'YOU MUST ADD YOUR TOKEN HERE - SEE README'
+
+BB_USER: <bitbucket-user-name>
+# you must configure this, probably best would be to use your own Last, First name
+GIT_COMMITTER_NAME: ''
+# you must configure this, probably best would be to use your own committer email address
+GIT_COMMITTER_EMAIL: ''
+KAFKA_USER: ''
+KAFKA_TOPIC: ''
+KAFKA_SEED_BROKERS: 'first-kafka-broker.domain.com:9092,second-kafka-broker.domain.com:9092'
+KAFKA_GROUP_ID_OVERRIDE: ''
+KEY_SET_URL: http://keyset
+METADATA_REPO_URL: 'https://github.com/Interhyp/service-metadata-example'
+OWNER_REGEX: '.*'
+UPDATE_JOB_INTERVAL_MINUTES: 15
+UPDATE_JOB_TIMEOUT_SECONDS: 30
+VAULT_KAFKA_SECRET_PATH: <path-to-kafka-secrets>
+ALERT_TARGET_PREFIX: https://domain.com/
+ALERT_TARGET_SUFFIX: '@domain.com'

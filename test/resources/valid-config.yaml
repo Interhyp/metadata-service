@@ -1,0 +1,15 @@
+APPLICATION_NAME: metadata
+SERVER_ADDRESS: ''
+SERVER_PORT: '8080'
+METRICS_PORT: '9090'
+ENVIRONMENT: dev
+PLATFORM: example
+LOGSTYLE: plain
+VAULT_SERVER: localhost
+VAULT_SECRET_PATH: app-some-service-bff/secrets
+LOCAL_VAULT_TOKEN: 'not a real token'
+
+BB_USER: localuser
+METADATA_REPO_URL: http://metadata
+OWNER_REGEX: .*
+UPDATE_JOB_INTERVAL_MINUTES: 5

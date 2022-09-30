@@ -1,0 +1,5 @@
+{
+  "details": "validation error: field contact cannot be set to empty, field commitHash is mandatory for patching, field timeStamp is mandatory for patching",
+  "message": "owner.invalid.values",
+  "timestamp": "2022-11-06T18:14:10Z"
+}

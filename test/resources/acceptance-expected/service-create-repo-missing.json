@@ -1,0 +1,5 @@
+{
+  "details": "validation error: you referenced a repository that does not exist: no such instance: post-service-invalid-repo.helm-deployment",
+  "message": "service.invalid.missing.repository",
+  "timestamp": "2022-11-06T18:14:10Z"
+}

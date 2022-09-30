@@ -1,0 +1,27 @@
+name: API Publisher
+permissions:
+  contents: write
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'docs/openapi-v3-spec.json'
+
+jobs:
+  publish:
+    name: 🚀 Publish API to Github Pages
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v3
+      - name: Generate Swagger UI 🔧
+        uses: Legion2/swagger-ui-action@v1
+        with:
+          output: swagger-ui
+          spec-file: docs/openapi-v3-spec.json
+      - name: Deploy 🚀
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: swagger-ui

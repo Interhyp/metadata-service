@@ -1,0 +1,9 @@
+{
+  "commitHash": "6c8ac2c35791edf9979623c717a243fc53400000",
+  "jiraIssue": "",
+  "mainline": "master",
+  "owner": "some-owner",
+  "timeStamp": "2022-11-06T18:14:10Z",
+  "unittest": false,
+  "url": "ssh://git@bitbucket.some-organisation.com:7999/helm/karma-wrapper.git"
+}

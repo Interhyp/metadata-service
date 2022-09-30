@@ -1,0 +1,5 @@
+{
+  "details": "this repository is being referenced in a service, you cannot change its owner directly - you can change the owner of the service and this will move it along",
+  "message": "repository.conflict.referenced",
+  "timestamp": "2022-11-06T18:14:10Z"
+}

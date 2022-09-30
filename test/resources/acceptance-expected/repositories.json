@@ -1,0 +1,68 @@
+{
+  "repositories": {
+    "karma-wrapper.helm-chart": {
+      "commitHash": "6c8ac2c35791edf9979623c717a243fc53400000",
+      "jiraIssue": "ISSUE-0000",
+      "mainline": "master",
+      "owner": "some-owner",
+      "timeStamp": "2022-11-06T18:14:10Z",
+      "unittest": false,
+      "url": "ssh://git@bitbucket.some-organisation.com:7999/helm/karma-wrapper.git"
+    },
+    "new-service.helm-deployment": {
+      "commitHash": "6c8ac2c35791edf9979623c717a243fc53400000",
+      "generator": "third-party-software",
+      "jiraIssue": "ISSUE-0000",
+      "mainline": "main",
+      "owner": "some-owner",
+      "timeStamp": "2022-11-06T18:14:10Z",
+      "url": "ssh://git@bitbucket.some-organisation.com:7999/PROJECT/new-service-deployment.git"
+    },
+    "new-service.implementation": {
+      "commitHash": "6c8ac2c35791edf9979623c717a243fc53400000",
+      "generator": "java-spring-cloud",
+      "jiraIssue": "ISSUE-0000",
+      "mainline": "master",
+      "owner": "some-owner",
+      "timeStamp": "2022-11-06T18:14:10Z",
+      "url": "ssh://git@bitbucket.some-organisation.com:7999/PROJECT/new-service.git"
+    },
+    "some-service-backend.helm-deployment": {
+      "commitHash": "6c8ac2c35791edf9979623c717a243fc53400000",
+      "configuration": {
+        "accessKeys": [
+          {
+            "key": "DEPLOYMENT",
+            "permission": "REPO_READ"
+          }
+        ],
+        "approvers": {
+          "testing": [
+            "some-user"
+          ]
+        },
+        "commitMessageType": "DEFAULT",
+        "requireIssue": true,
+        "webhooks": {
+          "pipelineTrigger": true
+        }
+      },
+      "generator": "third-party-software",
+      "jiraIssue": "ISSUE-0000",
+      "mainline": "main",
+      "owner": "some-owner",
+      "timeStamp": "2022-11-06T18:14:10Z",
+      "url": "ssh://git@bitbucket.some-organisation.com:7999/PROJECT/some-service-backend-deployment.git"
+    },
+    "some-service-backend.implementation": {
+      "commitHash": "6c8ac2c35791edf9979623c717a243fc53400000",
+      "generator": "java-spring-cloud",
+      "jiraIssue": "ISSUE-0000",
+      "mainline": "master",
+      "owner": "some-owner",
+      "timeStamp": "2022-11-06T18:14:10Z",
+      "url": "ssh://git@bitbucket.some-organisation.com:7999/PROJECT/some-service-backend.git"
+    }
+  },
+  "timeStamp": "2022-11-06T18:14:10Z"
+}

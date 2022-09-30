@@ -1,0 +1,5 @@
+{
+  "details": "missing or invalid Authorization header (JWT bearer token expected) or token invalid or expired",
+  "message": "unauthorized",
+  "timestamp": "2022-11-06T18:14:10Z"
+}
