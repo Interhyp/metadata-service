@@ -1905,6 +1905,19 @@
             "description": "The product owner of this owner space",
             "example": "kschlangenheld"
           },
+          "promoters": {
+            "type": "array",
+            "description": "A list of users that are allowed to promote services in this owner space",
+            "items": {
+              "type": "string",
+              "description": "The username of a user allowed to promote services in this owner space",
+              "example": "kschlangenheld"
+            },
+            "example": [
+              "kschlangenheld",
+              "someotheruser"
+            ]
+          },
           "defaultJiraProject": {
             "type": "string",
             "description": "The default jira project that is used by this owner space",

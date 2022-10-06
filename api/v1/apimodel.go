@@ -36,6 +36,8 @@ type OwnerDto struct {
 	Contact string `json:"contact" yaml:"contact"`
 	// The product owner of this owner space
 	ProductOwner *string `json:"productOwner,omitempty" yaml:"productOwner,omitempty"`
+	// A list of users that are allowed to promote services in this owner space
+	Promoters []string `json:"promoters,omitempty" yaml:"promoters,omitempty"`
 	// The default jira project that is used by this owner space
 	DefaultJiraProject *string `json:"defaultJiraProject,omitempty" yaml:"defaultJiraProject,omitempty"`
 	// ISO-8601 UTC date time at which this information was originally committed. When sending an update, include the original timestamp you got so we can detect concurrent updates.
