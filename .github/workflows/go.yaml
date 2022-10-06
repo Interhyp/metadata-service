@@ -50,7 +50,7 @@ jobs:
 
   release:
     name: 🚀 Release
-    if: github.ref == 'refs/heads/releases' # change to main to enable when we've stabilized the rest of the build
+    if: github.ref == 'refs/heads/main'
     needs: build
     runs-on: ubuntu-latest
     steps:
