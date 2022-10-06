@@ -6,7 +6,7 @@ if [ -d "api-generator" ]; then
   cd api-generator
 fi
 
-GENERATOR_VERSION="6.0.1"
+GENERATOR_VERSION="6.2.0"
 GENERATOR="openapi-generator-cli-$GENERATOR_VERSION.jar"
 
 if [ ! -f "$GENERATOR" ]; then
