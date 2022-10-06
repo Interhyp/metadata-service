@@ -25,6 +25,8 @@ type OwnerCreateDto struct {
 	Contact string `json:"contact"`
 	// The product owner of this owner space
 	ProductOwner *string `json:"productOwner,omitempty"`
+	// A list of users that are allowed to promote services in this owner space
+	Promoters []string `json:"promoters,omitempty"`
 	// The default jira project that is used by this owner space
 	DefaultJiraProject *string `json:"defaultJiraProject,omitempty"`
 	// The jira issue to use for committing a change, or the last jira issue used.
@@ -59,6 +61,8 @@ type OwnerPatchDto struct {
 	Contact *string `json:"contact,omitempty"`
 	// The product owner of this owner space
 	ProductOwner *string `json:"productOwner,omitempty"`
+	// A list of users that are allowed to promote services in this owner space
+	Promoters []string `json:"promoters,omitempty"`
 	// The default jira project that is used by this owner space
 	DefaultJiraProject *string `json:"defaultJiraProject,omitempty"`
 	// ISO-8601 UTC date time at which this information was originally committed. When sending an update, include the original timestamp you got so we can detect concurrent updates.
