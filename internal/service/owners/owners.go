@@ -80,6 +80,7 @@ func (s *Impl) mapOwnerCreateDtoToOwnerDto(ownerCreateDto openapi.OwnerCreateDto
 		ProductOwner:       ownerCreateDto.ProductOwner,
 		JiraIssue:          ownerCreateDto.JiraIssue,
 		DefaultJiraProject: ownerCreateDto.DefaultJiraProject,
+		Promoters:          ownerCreateDto.Promoters,
 	}
 }
 
@@ -211,6 +212,7 @@ func patchOwner(current openapi.OwnerDto, patch openapi.OwnerPatchDto) openapi.O
 		Contact:            patchString(patch.Contact, current.Contact),
 		ProductOwner:       patchStringPtr(patch.ProductOwner, current.ProductOwner),
 		DefaultJiraProject: patchStringPtr(patch.DefaultJiraProject, current.DefaultJiraProject),
+		Promoters:          patchStringArray(patch.Promoters, current.Promoters),
 		TimeStamp:          patch.TimeStamp,
 		CommitHash:         patch.CommitHash,
 		JiraIssue:          patch.JiraIssue,
@@ -235,6 +237,14 @@ func patchString(patch *string, original string) string {
 		return *patch
 	} else {
 		return original
+	}
+}
+
+func patchStringArray(patch []string, original []string) []string {
+	if len(patch) == 0 {
+		return original
+	} else {
+		return patch
 	}
 }
 

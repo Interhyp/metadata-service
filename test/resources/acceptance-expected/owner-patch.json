@@ -4,5 +4,10 @@
   "defaultJiraProject": "ISSUE",
   "jiraIssue": "ISSUE-2345",
   "productOwner": "kschlangenheldt",
+  "promoters": [
+    "someone",
+    "else",
+    "entirely"
+  ],
   "timeStamp": "2022-11-06T18:14:10Z"
 }

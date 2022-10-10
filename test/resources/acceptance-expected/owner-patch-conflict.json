@@ -4,5 +4,9 @@
   "defaultJiraProject": "ISSUE",
   "jiraIssue": "ISSUE-0000",
   "productOwner": "kschlangenheldt",
+  "promoters": [
+    "someone",
+    "else"
+  ],
   "timeStamp": "2022-11-06T18:14:10Z"
 }

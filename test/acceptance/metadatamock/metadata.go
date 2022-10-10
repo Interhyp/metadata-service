@@ -31,6 +31,14 @@ type Impl struct {
 const ownerInfo = `contact: somebody@some-organisation.com
 productOwner: kschlangenheldt
 defaultJiraProject: ISSUE
+promoters:
+- someone
+- else
+`
+
+const ownerInfoNoPromoters = `contact: somebody@some-organisation.com
+productOwner: kschlangenheldt
+defaultJiraProject: ISSUE
 `
 
 const service = `quicklinks:
@@ -181,7 +189,7 @@ func (r *Impl) Clone(ctx context.Context) error {
 		return err
 	}
 
-	err = r.writeFile("owners/deleteme/owner.info.yaml", ownerInfo)
+	err = r.writeFile("owners/deleteme/owner.info.yaml", ownerInfoNoPromoters)
 	if err != nil {
 		return err
 	}
