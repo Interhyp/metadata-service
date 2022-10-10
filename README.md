@@ -1,5 +1,5 @@
 [![Build Status](https://github.com/interhyp/metadata-service/actions/workflows/go.yaml/badge.svg)](../../actions/workflows/go.yaml)
-[![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/interhyp/service-metadata)][release]
+[![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/interhyp/metadata-service)][release]
 [![GitHub Latest Stable Release](https://img.shields.io/github/v/release/interhyp/metadata-service?TODO?label=Stable)][release]
 [![Swagger Validator](https://img.shields.io/swagger/valid/3.0?label=swagger&specUrl=https%3A%2F%2Finterhyp.github.io%2Fmetadata-service%2Fopenapi-v3-spec.json)][swagger]
 [![Codecov](https://img.shields.io/codecov/c/github/interhyp/metadata-service?TODO?token=bBAfT3Wn89)](https://codecov.io/gh/interhyp/metadata-service)
