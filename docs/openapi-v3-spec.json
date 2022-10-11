@@ -1183,6 +1183,68 @@
         }
       }
     },
+    "/rest/api/v1/services/{service}/promoters": {
+      "get": {
+        "tags": [
+          "/rest/api/v1/services"
+        ],
+        "summary": "get all users who may promote a service",
+        "operationId": "getServicePromoters",
+        "parameters": [
+          {
+            "name": "service",
+            "in": "path",
+            "required": true,
+            "description": "The (globally unique) name of the service, must match `^[a-z](-?[a-z0-9]+)*$`.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServicePromotersDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unable to parse input (usually: invalid service name format)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Service not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/rest/api/v1/repositories": {
       "get": {
         "tags": [
@@ -2329,6 +2391,21 @@
             "type": "string",
             "description": "ISO-8601 UTC date time at which the list of services was obtained from service-metadata",
             "example": "2022-04-18T14:22:38Z"
+          }
+        }
+      },
+      "ServicePromotersDto": {
+        "required": [
+          "promoters"
+        ],
+        "type": "object",
+        "properties": {
+          "promoters": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": ["user1","user2"]
           }
         }
       },

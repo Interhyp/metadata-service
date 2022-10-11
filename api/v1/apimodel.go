@@ -242,3 +242,7 @@ type ServicePatchDto struct {
 	// The jira issue to use for committing a change, or the last jira issue used.
 	JiraIssue string `json:"jiraIssue"`
 }
+
+type ServicePromotersDto struct {
+	Promoters []string `json:"promoters"`
+}
