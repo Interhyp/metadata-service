@@ -22,6 +22,7 @@ const (
 	KeyVaultKafkaSecretPath     = "VAULT_KAFKA_SECRET_PATH"
 	KeyAlertTargetPrefix        = "ALERT_TARGET_PREFIX"
 	KeyAlertTargetSuffix        = "ALERT_TARGET_SUFFIX"
+	KeyAdditionalPromoters      = "ADDITIONAL_PROMOTERS_FROM_OWNERS"
 )
 
 var CustomConfigItems = []auconfigapi.ConfigItem{
@@ -134,5 +135,12 @@ var CustomConfigItems = []auconfigapi.ConfigItem{
 		EnvName:  KeyAlertTargetSuffix,
 		Default:  "",
 		Validate: auconfigenv.ObtainPatternValidator("^@[a-z0-9-]+.[a-z]{2,3}$"),
+	},
+	{
+		Key:         KeyAdditionalPromoters,
+		EnvName:     KeyAdditionalPromoters,
+		Default:     "",
+		Description: "owner aliases from which to get additional promoters to be added for all services. Can be left empty, or contain a comma separated list of owner aliases",
+		Validate:    auconfigenv.ObtainPatternValidator("^|[a-z](-?[a-z0-9]+)*(,[a-z](-?[a-z0-9]+)*)*$"),
 	},
 }

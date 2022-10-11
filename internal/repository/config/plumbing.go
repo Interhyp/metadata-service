@@ -23,6 +23,7 @@ type CustomConfigImpl struct {
 	VVaultKafkaSecretPath      string
 	VAlertTargetPrefix         string
 	VAlertTargetSuffix         string
+	VAdditionalPromoters       string
 }
 
 func New() auacornapi.Acorn {
@@ -47,6 +48,7 @@ func (c *CustomConfigImpl) Obtain(getter func(key string) string) {
 	c.VVaultKafkaSecretPath = getter(KeyVaultKafkaSecretPath)
 	c.VAlertTargetPrefix = getter(KeyAlertTargetPrefix)
 	c.VAlertTargetSuffix = getter(KeyAlertTargetSuffix)
+	c.VAdditionalPromoters = getter(KeyAdditionalPromoters)
 }
 
 // used after validation, so known safe
