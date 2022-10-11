@@ -45,6 +45,7 @@ func (c *Impl) WireUp(_ context.Context, router chi.Router) {
 
 	baseEndpoint := "/rest/api/v1/services"
 	serviceEndpoint := baseEndpoint + "/{service}"
+	promotersEndpoint := baseEndpoint + "/{service}/promoters"
 
 	router.Get(baseEndpoint, c.GetServices)
 	router.Get(serviceEndpoint, c.GetSingleService)
@@ -52,6 +53,7 @@ func (c *Impl) WireUp(_ context.Context, router chi.Router) {
 	router.Put(serviceEndpoint, c.UpdateService)
 	router.Patch(serviceEndpoint, c.PatchService)
 	router.Delete(serviceEndpoint, c.DeleteService)
+	router.Get(promotersEndpoint, c.GetServicePromoters)
 }
 
 // --- handlers ---
@@ -259,6 +261,31 @@ func (c *Impl) DeleteService(w http.ResponseWriter, r *http.Request) {
 		}
 	} else {
 		util.SuccessNoBody(ctx, w, r, http.StatusNoContent)
+	}
+}
+
+func (c *Impl) GetServicePromoters(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	serviceName := util.StringPathParam(r, "service")
+	if !c.validServiceName(serviceName) {
+		c.serviceParamInvalid(ctx, w, r, serviceName)
+		return
+	}
+
+	serviceDto, err := c.Services.GetService(ctx, serviceName)
+	if err != nil {
+		if nosuchserviceerror.Is(err) {
+			c.serviceNotFoundErrorHandler(ctx, w, r, serviceName)
+		} else {
+			util.UnexpectedErrorHandler(ctx, w, r, err, c.Now())
+		}
+	} else {
+		promotersDto, err := c.Services.GetServicePromoters(ctx, serviceDto.Owner)
+		if err != nil {
+			util.UnexpectedErrorHandler(ctx, w, r, err, c.Now())
+		} else {
+			util.Success(ctx, w, r, promotersDto)
+		}
 	}
 }
 
