@@ -45,6 +45,10 @@ exclude (
 	golang.org/x/net v0.0.0-20210525063256-abc453219eb5
 	golang.org/x/net v0.0.0-20210805182204-aaa1db679c0d
 	golang.org/x/net v0.0.0-20211112202133-69e39bad7dc2
+	golang.org/x/text v0.0.0-20170915032832-14c0d48ead0c
+	golang.org/x/text v0.3.0
+	golang.org/x/text v0.3.1-0.20180807135948-17ff2d5776d2
+	golang.org/x/text v0.3.2
 )
 
 require (
