@@ -1,5 +1,7 @@
 package config
 
+import "strings"
+
 func (c *CustomConfigImpl) BbUser() string {
 	return c.VBbUser
 }
@@ -62,4 +64,8 @@ func (c *CustomConfigImpl) AlertTargetPrefix() string {
 
 func (c *CustomConfigImpl) AlertTargetSuffix() string {
 	return c.VAlertTargetSuffix
+}
+
+func (c *CustomConfigImpl) AdditionalPromotersFromOwners() []string {
+	return strings.Split(c.VAdditionalPromoters, ",")
 }

@@ -1065,3 +1065,63 @@ func TestDELETEService_GitServerDown(t *testing.T) {
 	require.Equal(t, 0, len(metadataImpl.FilesWritten))
 	require.Equal(t, 0, len(metadataImpl.FilesCommitted))
 }
+
+// get service promoters
+
+func TestGETServicePromoters_Success(t *testing.T) {
+	tstReset()
+
+	docs.Given("Given an unauthenticated user")
+	token := tstUnauthenticated()
+
+	docs.When("When they request the promoters for an existing service")
+	response, err := tstPerformGet("/rest/api/v1/services/some-service-backend/promoters", token)
+
+	docs.Then("Then the request is successful and the response is as expected")
+	tstAssert(t, response, err, http.StatusOK, "service-promoters.json")
+}
+
+func TestGETServicePromoters_InvalidName(t *testing.T) {
+	tstReset()
+
+	docs.Given("Given an unauthenticated user")
+	token := tstUnauthenticated()
+
+	docs.When("When they request the promoters for a service with an invalid name")
+	response, err := tstPerformGet("/rest/api/v1/services/äbü/promoters", token)
+
+	docs.Then("Then the request fails and the error response is as expected")
+	tstAssert(t, response, err, http.StatusBadRequest, "service-invalid.json")
+}
+
+func TestGETServicePromoters_NotFound(t *testing.T) {
+	tstReset()
+
+	docs.Given("Given an unauthenticated user")
+	token := tstUnauthenticated()
+
+	docs.When("When they request the promoters for a service that does not exist")
+	response, err := tstPerformGet("/rest/api/v1/services/unicorn/promoters", token)
+
+	docs.Then("Then the request fails and the error response is as expected")
+	tstAssert(t, response, err, http.StatusNotFound, "service-notfound.json")
+}
+
+func TestGETServicePromoters_Success_WithAdditionals(t *testing.T) {
+	tstReset()
+
+	docs.Given("Given extra promoters have been added to the owner configured as additional promoters source")
+	body := tstOwnerPatch()
+	ownerPatchResponse, err := tstPerformPatch("/rest/api/v1/owners/deleteme", tstValidAdminToken(), &body)
+	require.Nil(t, err)
+	require.Equal(t, http.StatusOK, ownerPatchResponse.status)
+
+	docs.Given("Given an unauthenticated user")
+	token := tstUnauthenticated()
+
+	docs.When("When they request the promoters for an existing service")
+	response, err := tstPerformGet("/rest/api/v1/services/some-service-backend/promoters", token)
+
+	docs.Then("Then the request is successful and the response is as expected")
+	tstAssert(t, response, err, http.StatusOK, "service-promoters-with-additionals.json")
+}

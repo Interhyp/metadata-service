@@ -209,6 +209,10 @@ func (c *MockConfig) AlertTargetSuffix() string {
 	return "@some-organisation.com"
 }
 
+func (c *MockConfig) AdditionalPromotersFromOwners() []string {
+	return make([]string, 0)
+}
+
 func tstValidationTestcaseAllOps(t *testing.T, expectedMessage string, data openapi.ServiceDto, create openapi.ServiceCreateDto, patch openapi.ServicePatchDto) {
 	mockConfig := MockConfig{}
 	impl := &Impl{

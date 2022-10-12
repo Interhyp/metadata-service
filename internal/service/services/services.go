@@ -13,6 +13,7 @@ import (
 	"github.com/Interhyp/metadata-service/acorns/service"
 	openapi "github.com/Interhyp/metadata-service/api/v1"
 	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
+	"sort"
 	"strings"
 )
 
@@ -379,6 +380,71 @@ func (s *Impl) validateDeletionDto(ctx context.Context, deletionInfo openapi.Del
 	}
 	if len(messages) > 0 {
 		return validationerror.New(ctx, strings.Join(messages, ", "))
+	}
+	return nil
+}
+
+func (s *Impl) GetServicePromoters(ctx context.Context, serviceOwnerAlias string) (openapi.ServicePromotersDto, error) {
+	resultSet := make(map[string]bool)
+
+	// add the promoters for the given ownerAlias
+	err := s.addPromotersForOwner(ctx, serviceOwnerAlias, resultSet)
+	if err != nil {
+		return openapi.ServicePromotersDto{}, err
+	}
+
+	// add any extra promoters according to configuration
+	for _, additionalOwnerAlias := range s.CustomConfiguration.AdditionalPromotersFromOwners() {
+		err := s.addPromotersForOwner(ctx, additionalOwnerAlias, resultSet)
+		if err != nil {
+			return openapi.ServicePromotersDto{}, err
+		}
+	}
+
+	// add all product owners from all owners
+	err = s.addAllProductOwners(ctx, resultSet)
+	if err != nil {
+		return openapi.ServicePromotersDto{}, err
+	}
+
+	// sorted unique user list
+	result := make([]string, 0)
+	for user := range resultSet {
+		result = append(result, user)
+	}
+	sort.Strings(result)
+
+	return openapi.ServicePromotersDto{Promoters: result}, nil
+}
+
+func (s *Impl) addPromotersForOwner(ctx context.Context, ownerAlias string, resultSet map[string]bool) error {
+	serviceOwner, err := s.Cache.GetOwner(ctx, ownerAlias)
+	if err != nil {
+		if !nosuchownererror.Is(err) {
+			// concurrent cache update -> ok
+			return err
+		}
+	} else {
+		for _, user := range serviceOwner.Promoters {
+			resultSet[user] = true
+		}
+	}
+	return nil
+}
+
+func (s *Impl) addAllProductOwners(ctx context.Context, resultSet map[string]bool) error {
+	for _, alias := range s.Cache.GetSortedOwnerAliases(ctx) {
+		owner, err := s.Cache.GetOwner(ctx, alias)
+		if err != nil {
+			// owner not found errors are ok, the cache may have been changed concurrently, just drop the entry
+			if !nosuchownererror.Is(err) {
+				return err
+			}
+		} else {
+			if owner.ProductOwner != nil {
+				resultSet[*owner.ProductOwner] = true
+			}
+		}
 	}
 	return nil
 }

@@ -31,4 +31,14 @@ type Services interface {
 	//
 	// Reason: they still need to be configured by bit-brother.
 	DeleteService(ctx context.Context, serviceName string, deletionInfo openapi.DeletionDto) error
+
+	// GetServicePromoters obtains the users who are allowed to promote a service.
+	//
+	// The promoters come from
+	// - the promoters field in the owner info for the given owner alias
+	// - ALL productOwners
+	// - the promoters field for any owner alias listed in the configuration (like it admins)
+	//
+	// The list is sorted and made unique.
+	GetServicePromoters(ctx context.Context, serviceOwnerAlias string) (openapi.ServicePromotersDto, error)
 }

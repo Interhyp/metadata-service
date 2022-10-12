@@ -27,6 +27,8 @@ type CustomConfiguration interface {
 
 	AlertTargetPrefix() string
 	AlertTargetSuffix() string
+
+	AdditionalPromotersFromOwners() []string
 }
 
 // Custom is a type casting helper that gets you from the configuration acorn to your CustomConfiguration
