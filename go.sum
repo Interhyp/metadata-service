@@ -54,8 +54,8 @@ github.com/StephanHCB/go-autumn-restclient-prometheus v0.1.1 h1:lf1KNCeoKiW0YDti
 github.com/StephanHCB/go-autumn-restclient-prometheus v0.1.1/go.mod h1:HA5/lI0LRic1zHCaEeOLlfrnAlNFjtN6VFrMq8pkNGM=
 github.com/StephanHCB/go-autumn-web-swagger-ui v0.2.3 h1:aC/rTlw9pBPCWYH46KGzSB942sTALIcIsZi0piVUuEo=
 github.com/StephanHCB/go-autumn-web-swagger-ui v0.2.3/go.mod h1:EBtCQXF8JhoADnadezundz2xWEdFPmx2NUTgZYtUE0M=
-github.com/StephanHCB/go-backend-service-common v0.1.4 h1:kVg0vc3ftKZ5S6uzJhBAXkZLgpBIu37fvIgl/8/BHKQ=
-github.com/StephanHCB/go-backend-service-common v0.1.4/go.mod h1:bL8gd++acCZZgrMzPsVcg/iBtLfSJd2+8u5jhIcGvqc=
+github.com/StephanHCB/go-backend-service-common v0.1.5 h1:omoZlRTf/Edq+Duzt/VEjtyqHhxSlZkc8VGNX4VXAlE=
+github.com/StephanHCB/go-backend-service-common v0.1.5/go.mod h1:ulIKzDFktDh9z7IhWazby7ma5wvnv/jJEKIH60E+B/Q=
 github.com/acomagu/bufpipe v1.0.3 h1:fxAGrHZTgQ9w5QqVItgzwj235/uYZYgbXitB+dLupOk=
 github.com/acomagu/bufpipe v1.0.3/go.mod h1:mxdxdup/WdsKVreO5GpW4+M/1CE2sMG4jeGJ2sYmHc4=
 github.com/anmitsu/go-shlex v0.0.0-20161002113705-648efa622239 h1:kFOfPq6dUM1hTo4JG6LR5AXSUEsOjtdm0kw0FtQtMJA=
