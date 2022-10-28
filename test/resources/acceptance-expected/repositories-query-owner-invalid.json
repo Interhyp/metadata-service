@@ -1,0 +1,5 @@
+{
+  "details": "owner filter must match ^[a-z](-?[a-z0-9]+)*$",
+  "message": "owner.invalid.filter",
+  "timestamp": "2022-11-06T18:14:10Z"
+}

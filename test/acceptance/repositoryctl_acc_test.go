@@ -23,6 +23,110 @@ func TestGETRepositories_Success(t *testing.T) {
 	tstAssert(t, response, err, http.StatusOK, "repositories.json")
 }
 
+func TestGETRepositories_Filtered_InvalidOwnerQuery(t *testing.T) {
+	tstReset()
+
+	docs.Given("Given an unauthenticated user")
+	token := tstUnauthenticated()
+
+	docs.When("When they request the list of repositories with a syntactically invalid owner name")
+	response, err := tstPerformGet("/rest/api/v1/repositories?owner=INVALID", token)
+
+	docs.Then("Then the request fails and the error response is as expected")
+	tstAssert(t, response, err, http.StatusBadRequest, "repositories-query-owner-invalid.json")
+}
+
+func TestGETRepositories_Filtered_InvalidServiceQuery(t *testing.T) {
+	tstReset()
+
+	docs.Given("Given an unauthenticated user")
+	token := tstUnauthenticated()
+
+	docs.When("When they request the list of repositories with a syntactically invalid service name")
+	response, err := tstPerformGet("/rest/api/v1/repositories?service=INVALID", token)
+
+	docs.Then("Then the request fails and the error response is as expected")
+	tstAssert(t, response, err, http.StatusBadRequest, "repositories-query-service-invalid.json")
+}
+
+func TestGETRepositories_Filtered_InvalidRepoNameQuery(t *testing.T) {
+	tstReset()
+
+	docs.Given("Given an unauthenticated user")
+	token := tstUnauthenticated()
+
+	docs.When("When they request the list of repositories with a syntactically invalid repository name")
+	response, err := tstPerformGet("/rest/api/v1/repositories?name=INVALID", token)
+
+	docs.Then("Then the request fails and the error response is as expected")
+	tstAssert(t, response, err, http.StatusBadRequest, "repositories-query-name-invalid.json")
+}
+
+func TestGETRepositories_Filtered_InvalidRepoTypeQuery(t *testing.T) {
+	tstReset()
+
+	docs.Given("Given an unauthenticated user")
+	token := tstUnauthenticated()
+
+	docs.When("When they request the list of repositories with a syntactically invalid repository type")
+	response, err := tstPerformGet("/rest/api/v1/repositories?type=unicorn-generator", token)
+
+	docs.Then("Then the request fails and the error response is as expected")
+	tstAssert(t, response, err, http.StatusBadRequest, "repositories-query-type-invalid.json")
+}
+
+func TestGETRepositories_Filtered_NonexistingService(t *testing.T) {
+	tstReset()
+
+	docs.Given("Given an unauthenticated user")
+	token := tstUnauthenticated()
+
+	docs.When("When they request the list of repositories filtered by a service that does not exist")
+	response, err := tstPerformGet("/rest/api/v1/repositories?service=does-not-exist", token)
+
+	docs.Then("Then the request is successful and the response contains an empty result")
+	tstAssert(t, response, err, http.StatusOK, "repositories-empty.json")
+}
+
+func TestGETRepositories_Filtered_NonexistingOwner(t *testing.T) {
+	tstReset()
+
+	docs.Given("Given an unauthenticated user")
+	token := tstUnauthenticated()
+
+	docs.When("When they request the list of repositories filtered by an owner that does not exist")
+	response, err := tstPerformGet("/rest/api/v1/repositories?owner=does-not-exist", token)
+
+	docs.Then("Then the request is successful and the response contains an empty result")
+	tstAssert(t, response, err, http.StatusOK, "repositories-empty.json")
+}
+
+func TestGETRepositories_Filtered_Service(t *testing.T) {
+	tstReset()
+
+	docs.Given("Given an unauthenticated user")
+	token := tstUnauthenticated()
+
+	docs.When("When they request the list of repositories filtered by a single service")
+	response, err := tstPerformGet("/rest/api/v1/repositories?service=some-service-backend", token)
+
+	docs.Then("Then the request is successful and the response contains an empty result")
+	tstAssert(t, response, err, http.StatusOK, "repositories-filtered-service.json")
+}
+
+func TestGETRepositories_Filtered_Type(t *testing.T) {
+	tstReset()
+
+	docs.Given("Given an unauthenticated user")
+	token := tstUnauthenticated()
+
+	docs.When("When they request the list of repositories filtered by a single service")
+	response, err := tstPerformGet("/rest/api/v1/repositories?type=implementation", token)
+
+	docs.Then("Then the request is successful and the response contains an empty result")
+	tstAssert(t, response, err, http.StatusOK, "repositories-filtered-type.json")
+}
+
 // get repository
 
 func TestGETRepository_Success(t *testing.T) {
