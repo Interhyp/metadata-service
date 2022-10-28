@@ -3,6 +3,7 @@ package config
 import (
 	auconfigapi "github.com/StephanHCB/go-autumn-config-api"
 	auconfigenv "github.com/StephanHCB/go-autumn-config-env"
+	"strconv"
 )
 
 const (
@@ -23,6 +24,7 @@ const (
 	KeyAlertTargetPrefix        = "ALERT_TARGET_PREFIX"
 	KeyAlertTargetSuffix        = "ALERT_TARGET_SUFFIX"
 	KeyAdditionalPromoters      = "ADDITIONAL_PROMOTERS_FROM_OWNERS"
+	KeyElasticApmDisabled       = "ELASTIC_APM_DISABLED"
 )
 
 var CustomConfigItems = []auconfigapi.ConfigItem{
@@ -142,5 +144,16 @@ var CustomConfigItems = []auconfigapi.ConfigItem{
 		Default:     "",
 		Description: "owner aliases from which to get additional promoters to be added for all services. Can be left empty, or contain a comma separated list of owner aliases",
 		Validate:    auconfigenv.ObtainPatternValidator("^|[a-z](-?[a-z0-9]+)*(,[a-z](-?[a-z0-9]+)*)*$"),
+	},
+	{
+		Key:         KeyElasticApmDisabled,
+		EnvName:     KeyElasticApmDisabled,
+		Default:     "false",
+		Description: "Disable Elastic APM middleware. Supports all values supported by ParseBool (https://pkg.go.dev/strconv#ParseBool).",
+		Validate: func(key string) error {
+			value := auconfigenv.Get(key)
+			_, err := strconv.ParseBool(value)
+			return err
+		},
 	},
 }

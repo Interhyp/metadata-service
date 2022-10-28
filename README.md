@@ -231,6 +231,14 @@ After this, the application can be started with:
 
 `go run main.go`
 
+### use Elastic APM during local development
+
+To use Elastic APM add the following environment to your (run) configuration:
+
+`ELASTIC_APM_SERVER_URL=https://apm-server.sys.ehyp.dev.interhyp-cloud.de;ELASTIC_APM_ENVIRONMENT=dev;ELASTIC_APM_SERVICE_NAME=metadata`
+
+To disable APM, even if it is configured, add `ELASTIC_APM_DISABLED: true` to your `local-config.yaml`.
+
 ### swagger-ui
 
 This service comes with the swagger ui built-in.

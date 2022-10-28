@@ -20,6 +20,8 @@ import (
 	"github.com/StephanHCB/go-backend-service-common/web/middleware/timeout"
 	"github.com/go-chi/chi/v5"
 	chimiddleware "github.com/go-chi/chi/v5/middleware"
+	"go.elastic.co/apm/module/apmchiv5/v2"
+	"go.elastic.co/apm/module/apmhttp/v2"
 	"net"
 	"net/http"
 	"os"
@@ -29,16 +31,17 @@ import (
 )
 
 type Impl struct {
-	Logging          librepo.Logging
-	Configuration    librepo.Configuration
-	Vault            repository.Vault
-	IdentityProvider repository.IdentityProvider
-	HealthCtl        libcontroller.HealthController
-	SwaggerCtl       libcontroller.SwaggerController
-	OwnerCtl         controller.OwnerController
-	ServiceCtl       controller.ServiceController
-	RepositoryCtl    controller.RepositoryController
-	WebhookCtl       controller.WebhookController
+	Logging             librepo.Logging
+	Configuration       librepo.Configuration
+	CustomConfiguration repository.CustomConfiguration
+	Vault               repository.Vault
+	IdentityProvider    repository.IdentityProvider
+	HealthCtl           libcontroller.HealthController
+	SwaggerCtl          libcontroller.SwaggerController
+	OwnerCtl            controller.OwnerController
+	ServiceCtl          controller.ServiceController
+	RepositoryCtl       controller.RepositoryController
+	WebhookCtl          controller.WebhookController
 
 	Router chi.Router
 }
@@ -48,13 +51,20 @@ func (s *Impl) WireUp(ctx context.Context) {
 		s.Logging.Logger().Ctx(ctx).Info().Print("creating router and setting up filter chain")
 		s.Router = chi.NewRouter()
 
-		// generate request id (or read from request header if present) and add it to request context
-		requestid.RequestIDHeader = "X-B3-TraceId"
-		s.Router.Use(requestid.RequestID)
-
+		requestid.RequestIDHeader = apmhttp.W3CTraceparentHeader
 		loggermiddleware.RequestIdFieldName = "trace.id"
 		loggermiddleware.MethodFieldName = "http.request.method"
 		loggermiddleware.PathFieldName = "url.path"
+
+		if s.CustomConfiguration.ElasticApmEnabled() {
+			middleware.TraceContextFetcherForResponseHeaders = middleware.UseElasticApmTraceContext
+			//TODO disable panic propagation (?)
+			s.Router.Use(apmchiv5.Middleware())
+		} else {
+			middleware.TraceContextFetcherForResponseHeaders = middleware.RestoreOrCreateTraceContextWithoutAPM
+			s.Logging.Logger().NoCtx().Warn().Printf("Elastic APM not configured or disabled, skipping middleware.")
+		}
+
 		// build a request specific logger (includes request id and some fields) and add it to the request context
 		s.Router.Use(loggermiddleware.AddZerologLoggerToContext)
 
