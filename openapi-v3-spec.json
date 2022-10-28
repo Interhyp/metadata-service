@@ -1316,16 +1316,6 @@
               }
             }
           },
-          "404": {
-            "description": "Owner or service not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorDto"
-                }
-              }
-            }
-          },
           "500": {
             "description": "Unexpected error",
             "content": {
