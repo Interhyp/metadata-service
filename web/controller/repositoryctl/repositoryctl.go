@@ -107,7 +107,8 @@ func (c *Impl) GetRepositories(w http.ResponseWriter, r *http.Request) {
 		nameFilter, typeFilter)
 	if err != nil {
 		if nosuchserviceerror.Is(err) {
-			c.serviceNotFoundErrorHandler(ctx, w, r, serviceNameFilter)
+			// acceptable case - no matching repositories, so return empty list
+			util.Success(ctx, w, r, repositories)
 		} else {
 			util.UnexpectedErrorHandler(ctx, w, r, err, c.Now())
 		}
@@ -324,11 +325,6 @@ func (c *Impl) repoNameParamInvalid(ctx context.Context, w http.ResponseWriter, 
 func (c *Impl) repoTypeParamInvalid(ctx context.Context, w http.ResponseWriter, r *http.Request, repoType string) {
 	c.Logging.Logger().Ctx(ctx).Warn().Printf("repo type parameter %v invalid", url.QueryEscape(repoType))
 	util.ErrorHandler(ctx, w, r, "repository.invalid.filter.type", http.StatusBadRequest, fmt.Sprintf("repository type filter must match %s", typeRegex), c.Now())
-}
-
-func (c *Impl) serviceNotFoundErrorHandler(ctx context.Context, w http.ResponseWriter, r *http.Request, service string) {
-	c.Logging.Logger().Ctx(ctx).Warn().Printf("service %v not found", service)
-	util.ErrorHandler(ctx, w, r, "service.notfound", http.StatusNotFound, "", c.Now())
 }
 
 func (c *Impl) repositoryParamInvalid(ctx context.Context, w http.ResponseWriter, r *http.Request, repository string) {

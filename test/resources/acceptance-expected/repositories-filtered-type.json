@@ -1,0 +1,23 @@
+{
+  "repositories": {
+    "new-service.implementation": {
+      "commitHash": "6c8ac2c35791edf9979623c717a243fc53400000",
+      "generator": "java-spring-cloud",
+      "jiraIssue": "ISSUE-0000",
+      "mainline": "master",
+      "owner": "some-owner",
+      "timeStamp": "2022-11-06T18:14:10Z",
+      "url": "ssh://git@bitbucket.some-organisation.com:7999/PROJECT/new-service.git"
+    },
+    "some-service-backend.implementation": {
+      "commitHash": "6c8ac2c35791edf9979623c717a243fc53400000",
+      "generator": "java-spring-cloud",
+      "jiraIssue": "ISSUE-0000",
+      "mainline": "master",
+      "owner": "some-owner",
+      "timeStamp": "2022-11-06T18:14:10Z",
+      "url": "ssh://git@bitbucket.some-organisation.com:7999/PROJECT/some-service-backend.git"
+    }
+  },
+  "timeStamp": "2022-11-06T18:14:10Z"
+}
