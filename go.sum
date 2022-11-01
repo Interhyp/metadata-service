@@ -48,8 +48,8 @@ github.com/StephanHCB/go-autumn-logging v0.3.0 h1:G0zs8xoth8i8mOeoFgG3Dvk6dIY9dP
 github.com/StephanHCB/go-autumn-logging v0.3.0/go.mod h1:dPABYdECU3XrFib03uXbQFVLftUP5c4YaKSineiw37U=
 github.com/StephanHCB/go-autumn-logging-zerolog v0.3.1 h1:ZkMZhgA9XyG5UKypNPsWHhyXBZ6207megv/dr/hM1Kg=
 github.com/StephanHCB/go-autumn-logging-zerolog v0.3.1/go.mod h1:LB3tb1gP4mY17sjal55SRlxG6Cp03gxoHpFXIcebJOI=
-github.com/StephanHCB/go-autumn-restclient v0.4.2 h1:hHn76HRk9lIaOrgwZqWaTbzDGPspq9e7uTqSs5eSraA=
-github.com/StephanHCB/go-autumn-restclient v0.4.2/go.mod h1:Kwi2YgK+Pc+msWsAnhyeF6VEqf6YIMlKlrOUXnmh0kQ=
+github.com/StephanHCB/go-autumn-restclient v0.4.3 h1:d9ytjvlQC339odC8cE7nu2pLh0KgrTQcGa+pn2HzsN8=
+github.com/StephanHCB/go-autumn-restclient v0.4.3/go.mod h1:Kwi2YgK+Pc+msWsAnhyeF6VEqf6YIMlKlrOUXnmh0kQ=
 github.com/StephanHCB/go-autumn-restclient-prometheus v0.1.1 h1:lf1KNCeoKiW0YDtiealkMVO2CdyW2ZFbyBw6e7ROLpU=
 github.com/StephanHCB/go-autumn-restclient-prometheus v0.1.1/go.mod h1:HA5/lI0LRic1zHCaEeOLlfrnAlNFjtN6VFrMq8pkNGM=
 github.com/StephanHCB/go-autumn-web-swagger-ui v0.2.3 h1:aC/rTlw9pBPCWYH46KGzSB942sTALIcIsZi0piVUuEo=
