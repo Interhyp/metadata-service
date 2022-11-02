@@ -64,6 +64,7 @@ the [`local-config.yaml`][config] can be used to set the variables.
 | `ALERT_TARGET_PREFIX`              |            | Validates the alert target to either match the prefix or suffix.                                                                                                           |
 | `ALERT_TARGET_SUFFIX`              |            |                                                                                                                                                                            |
 |                                    |            |                                                                                                                                                                            |
+| `ADDITIONAL_PROMOTERS`             |            | promoters to be added for all services. Can be left empty, or contain a comma separated list of usernames                                                                  |
 | `ADDITIONAL_PROMOTERS_FROM_OWNERS` |            | owner aliases from which to get additional promoters to be added for all services. Can be left empty, or contain a comma separated list of owner aliases                   |
 
 ## Datastore

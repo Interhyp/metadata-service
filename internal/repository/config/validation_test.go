@@ -135,5 +135,6 @@ func TestAccessors(t *testing.T) {
 	require.Equal(t, "kafka/feat/room-service", repository.Custom(cut).VaultKafkaSecretPath())
 	require.Equal(t, "https://some-domain.com/", repository.Custom(cut).AlertTargetPrefix())
 	require.Equal(t, "@some-domain.com", repository.Custom(cut).AlertTargetSuffix())
+	require.EqualValues(t, []string{"someguy"}, repository.Custom(cut).AdditionalPromoters())
 	require.EqualValues(t, []string{"add-my-promoters-to-every-service", "also-add-my-promoters"}, repository.Custom(cut).AdditionalPromotersFromOwners())
 }
