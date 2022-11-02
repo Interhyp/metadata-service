@@ -131,6 +131,10 @@ func tstCreateValid() openapi.ServiceCreateDto {
 type MockConfig struct {
 }
 
+func (c *MockConfig) ElasticApmEnabled() bool {
+	return false
+}
+
 func (c *MockConfig) BbUser() string {
 	//TODO implement me
 	panic("implement me")

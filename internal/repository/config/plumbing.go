@@ -4,6 +4,7 @@ import (
 	auacornapi "github.com/StephanHCB/go-autumn-acorn-registry/api"
 	auconfigenv "github.com/StephanHCB/go-autumn-config-env"
 	libconfig "github.com/StephanHCB/go-backend-service-common/repository/config"
+	"strconv"
 )
 
 type CustomConfigImpl struct {
@@ -24,6 +25,7 @@ type CustomConfigImpl struct {
 	VAlertTargetPrefix         string
 	VAlertTargetSuffix         string
 	VAdditionalPromoters       string
+	VElasticApmDisabled        bool
 }
 
 func New() auacornapi.Acorn {
@@ -49,6 +51,7 @@ func (c *CustomConfigImpl) Obtain(getter func(key string) string) {
 	c.VAlertTargetPrefix = getter(KeyAlertTargetPrefix)
 	c.VAlertTargetSuffix = getter(KeyAlertTargetSuffix)
 	c.VAdditionalPromoters = getter(KeyAdditionalPromoters)
+	c.VElasticApmDisabled, _ = strconv.ParseBool(getter(KeyElasticApmDisabled))
 }
 
 // used after validation, so known safe

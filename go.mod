@@ -72,6 +72,9 @@ require (
 	github.com/rs/zerolog v1.28.0
 	github.com/stretchr/testify v1.8.1
 	github.com/twmb/franz-go v1.9.0
+	go.elastic.co/apm/module/apmchiv5/v2 v2.1.0
+	go.elastic.co/apm/module/apmhttp/v2 v2.1.0
+	go.elastic.co/apm/v2 v2.1.0
 	gopkg.in/yaml.v3 v3.0.1
 )
 
@@ -80,10 +83,14 @@ require (
 	github.com/ProtonMail/go-crypto v0.0.0-20210428141323-04723f9f07d7 // indirect
 	github.com/StephanHCB/go-autumn-web-swagger-ui v0.2.3 // indirect
 	github.com/acomagu/bufpipe v1.0.3 // indirect
+	github.com/armon/go-radix v1.0.0 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.1.0 // indirect
+	github.com/elastic/go-licenser v0.4.0 // indirect
+	github.com/elastic/go-sysinfo v1.7.1 // indirect
+	github.com/elastic/go-windows v1.0.1 // indirect
 	github.com/emirpasic/gods v1.12.0 // indirect
 	github.com/go-git/gcfg v1.5.0 // indirect
 	github.com/goccy/go-json v0.9.11 // indirect
@@ -92,6 +99,8 @@ require (
 	github.com/hashicorp/logutils v1.0.0 // indirect
 	github.com/imdario/mergo v0.3.12 // indirect
 	github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99 // indirect
+	github.com/jcchavezs/porto v0.1.0 // indirect
+	github.com/joeshaw/multierror v0.0.0-20140124173710-69b34d4ec901 // indirect
 	github.com/kevinburke/ssh_config v0.0.0-20201106050909-4977a11b4351 // indirect
 	github.com/klauspost/compress v1.15.9 // indirect
 	github.com/lestrrat-go/blackmagic v1.0.1 // indirect
@@ -104,20 +113,27 @@ require (
 	github.com/matttproud/golang_protobuf_extensions v1.0.1 // indirect
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
 	github.com/pierrec/lz4/v4 v4.1.15 // indirect
+	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/prometheus/client_model v0.2.0 // indirect
 	github.com/prometheus/common v0.37.0 // indirect
 	github.com/prometheus/procfs v0.8.0 // indirect
+	github.com/santhosh-tekuri/jsonschema v1.2.4 // indirect
 	github.com/sergi/go-diff v1.1.0 // indirect
 	github.com/shurcooL/httpfs v0.0.0-20190707220628-8d4bc4ba7749 // indirect
 	github.com/shurcooL/vfsgen v0.0.0-20200824052919-0d455de96546 // indirect
 	github.com/tidwall/tinylru v1.1.0 // indirect
 	github.com/twmb/franz-go/pkg/kmsg v1.2.0 // indirect
 	github.com/xanzy/ssh-agent v0.3.0 // indirect
+	go.elastic.co/fastjson v1.1.0 // indirect
 	golang.org/x/crypto v0.0.0-20220817201139-bc19a97f63c8 // indirect
+	golang.org/x/mod v0.5.1 // indirect
 	golang.org/x/net v0.0.0-20220708220712-1185a9018129 // indirect
 	golang.org/x/sys v0.0.0-20220520151302-bc2c85ada10a // indirect
+	golang.org/x/tools v0.1.9 // indirect
+	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
 	google.golang.org/protobuf v1.28.1 // indirect
 	gopkg.in/warnings.v0 v0.1.2 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
+	howett.net/plist v1.0.0 // indirect
 )

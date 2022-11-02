@@ -29,6 +29,8 @@ type CustomConfiguration interface {
 	AlertTargetSuffix() string
 
 	AdditionalPromotersFromOwners() []string
+
+	ElasticApmEnabled() bool
 }
 
 // Custom is a type casting helper that gets you from the configuration acorn to your CustomConfiguration

@@ -82,6 +82,8 @@ func (s *Impl) SetupAcorn(registry auacornapi.AcornRegistry) error {
 		return err
 	}
 
+	s.CustomConfiguration = repository.Custom(s.Configuration)
+
 	ctx := auzerolog.AddLoggerToCtx(context.Background())
 
 	s.WireUp(ctx)

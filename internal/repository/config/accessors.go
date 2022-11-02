@@ -1,6 +1,9 @@
 package config
 
-import "strings"
+import (
+	"os"
+	"strings"
+)
 
 func (c *CustomConfigImpl) BbUser() string {
 	return c.VBbUser
@@ -68,4 +71,11 @@ func (c *CustomConfigImpl) AlertTargetSuffix() string {
 
 func (c *CustomConfigImpl) AdditionalPromotersFromOwners() []string {
 	return strings.Split(c.VAdditionalPromoters, ",")
+}
+
+func (c *CustomConfigImpl) ElasticApmEnabled() bool {
+	return !c.VElasticApmDisabled &&
+		os.Getenv("ELASTIC_APM_SERVER_URL") != "" &&
+		os.Getenv("ELASTIC_APM_SERVICE_NAME") != "" &&
+		os.Getenv("ELASTIC_APM_ENVIRONMENT") != ""
 }
