@@ -27,4 +27,6 @@ OWNER_REGEX: '[a-z][0-9]+'
 VAULT_KAFKA_SECRET_PATH: kafka/feat/room-service
 ALERT_TARGET_PREFIX: https://some-domain.com/
 ALERT_TARGET_SUFFIX: '@some-domain.com'
+
+ADDITIONAL_PROMOTERS: 'someguy'
 ADDITIONAL_PROMOTERS_FROM_OWNERS: 'add-my-promoters-to-every-service,also-add-my-promoters'

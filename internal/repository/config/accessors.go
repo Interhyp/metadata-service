@@ -69,8 +69,12 @@ func (c *CustomConfigImpl) AlertTargetSuffix() string {
 	return c.VAlertTargetSuffix
 }
 
-func (c *CustomConfigImpl) AdditionalPromotersFromOwners() []string {
+func (c *CustomConfigImpl) AdditionalPromoters() []string {
 	return strings.Split(c.VAdditionalPromoters, ",")
+}
+
+func (c *CustomConfigImpl) AdditionalPromotersFromOwners() []string {
+	return strings.Split(c.VAdditionalPromotersFromOwners, ",")
 }
 
 func (c *CustomConfigImpl) ElasticApmEnabled() bool {

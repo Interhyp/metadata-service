@@ -28,6 +28,7 @@ type CustomConfiguration interface {
 	AlertTargetPrefix() string
 	AlertTargetSuffix() string
 
+	AdditionalPromoters() []string
 	AdditionalPromotersFromOwners() []string
 
 	ElasticApmEnabled() bool

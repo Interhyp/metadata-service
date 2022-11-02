@@ -7,24 +7,25 @@ import (
 )
 
 const (
-	KeyBbUser                   = "BB_USER"
-	KeyGitCommitterName         = "GIT_COMMITTER_NAME"
-	KeyGitCommitterEmail        = "GIT_COMMITTER_EMAIL"
-	KeyKafkaUser                = "KAFKA_USER"
-	KeyKafkaTopic               = "KAFKA_TOPIC"
-	KeyKafkaSeedBrokers         = "KAFKA_SEED_BROKERS"
-	KeyKafkaGroupIdOverride     = "KAFKA_GROUP_ID_OVERRIDE"
-	KeyKeySetUrl                = "KEY_SET_URL"
-	KeyMetadataRepoUrl          = "METADATA_REPO_URL"
-	KeyOwnerRegex               = "OWNER_REGEX"
-	KeyUpdateJobIntervalMinutes = "UPDATE_JOB_INTERVAL_MINUTES"
-	KeyUpdateJobTimeoutSeconds  = "UPDATE_JOB_TIMEOUT_SECONDS"
-	KeyVaultSecretsBasePath     = "VAULT_SECRETS_BASE_PATH"
-	KeyVaultKafkaSecretPath     = "VAULT_KAFKA_SECRET_PATH"
-	KeyAlertTargetPrefix        = "ALERT_TARGET_PREFIX"
-	KeyAlertTargetSuffix        = "ALERT_TARGET_SUFFIX"
-	KeyAdditionalPromoters      = "ADDITIONAL_PROMOTERS_FROM_OWNERS"
-	KeyElasticApmDisabled       = "ELASTIC_APM_DISABLED"
+	KeyBbUser                        = "BB_USER"
+	KeyGitCommitterName              = "GIT_COMMITTER_NAME"
+	KeyGitCommitterEmail             = "GIT_COMMITTER_EMAIL"
+	KeyKafkaUser                     = "KAFKA_USER"
+	KeyKafkaTopic                    = "KAFKA_TOPIC"
+	KeyKafkaSeedBrokers              = "KAFKA_SEED_BROKERS"
+	KeyKafkaGroupIdOverride          = "KAFKA_GROUP_ID_OVERRIDE"
+	KeyKeySetUrl                     = "KEY_SET_URL"
+	KeyMetadataRepoUrl               = "METADATA_REPO_URL"
+	KeyOwnerRegex                    = "OWNER_REGEX"
+	KeyUpdateJobIntervalMinutes      = "UPDATE_JOB_INTERVAL_MINUTES"
+	KeyUpdateJobTimeoutSeconds       = "UPDATE_JOB_TIMEOUT_SECONDS"
+	KeyVaultSecretsBasePath          = "VAULT_SECRETS_BASE_PATH"
+	KeyVaultKafkaSecretPath          = "VAULT_KAFKA_SECRET_PATH"
+	KeyAlertTargetPrefix             = "ALERT_TARGET_PREFIX"
+	KeyAlertTargetSuffix             = "ALERT_TARGET_SUFFIX"
+	KeyAdditionalPromoters           = "ADDITIONAL_PROMOTERS"
+	KeyAdditionalPromotersFromOwners = "ADDITIONAL_PROMOTERS_FROM_OWNERS"
+	KeyElasticApmDisabled            = "ELASTIC_APM_DISABLED"
 )
 
 var CustomConfigItems = []auconfigapi.ConfigItem{
@@ -141,6 +142,13 @@ var CustomConfigItems = []auconfigapi.ConfigItem{
 	{
 		Key:         KeyAdditionalPromoters,
 		EnvName:     KeyAdditionalPromoters,
+		Default:     "",
+		Description: "promoters to be added for all services. Can be left empty, or contain a comma separated list of usernames",
+		Validate:    auconfigenv.ObtainPatternValidator("^|[a-z](-?[a-z0-9]+)*(,[a-z](-?[a-z0-9]+)*)*$"),
+	},
+	{
+		Key:         KeyAdditionalPromotersFromOwners,
+		EnvName:     KeyAdditionalPromotersFromOwners,
 		Default:     "",
 		Description: "owner aliases from which to get additional promoters to be added for all services. Can be left empty, or contain a comma separated list of owner aliases",
 		Validate:    auconfigenv.ObtainPatternValidator("^|[a-z](-?[a-z0-9]+)*(,[a-z](-?[a-z0-9]+)*)*$"),

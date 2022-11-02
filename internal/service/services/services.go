@@ -387,8 +387,14 @@ func (s *Impl) validateDeletionDto(ctx context.Context, deletionInfo openapi.Del
 func (s *Impl) GetServicePromoters(ctx context.Context, serviceOwnerAlias string) (openapi.ServicePromotersDto, error) {
 	resultSet := make(map[string]bool)
 
+	// add default promoters
+	err := s.addDefaultPromoters(ctx, resultSet)
+	if err != nil {
+		return openapi.ServicePromotersDto{}, err
+	}
+
 	// add the promoters for the given ownerAlias
-	err := s.addPromotersForOwner(ctx, serviceOwnerAlias, resultSet)
+	err = s.addPromotersForOwner(ctx, serviceOwnerAlias, resultSet)
 	if err != nil {
 		return openapi.ServicePromotersDto{}, err
 	}
@@ -415,6 +421,13 @@ func (s *Impl) GetServicePromoters(ctx context.Context, serviceOwnerAlias string
 	sort.Strings(result)
 
 	return openapi.ServicePromotersDto{Promoters: result}, nil
+}
+
+func (s *Impl) addDefaultPromoters(ctx context.Context, resultSet map[string]bool) error {
+	for _, user := range s.CustomConfiguration.AdditionalPromoters() {
+		resultSet[user] = true
+	}
+	return nil
 }
 
 func (s *Impl) addPromotersForOwner(ctx context.Context, ownerAlias string, resultSet map[string]bool) error {

@@ -8,24 +8,25 @@ import (
 )
 
 type CustomConfigImpl struct {
-	VBbUser                    string
-	VGitCommitterName          string
-	VGitCommitterEmail         string
-	VKafkaUser                 string
-	VKafkaTopic                string
-	VKafkaSeedBrokers          string
-	VKeySetUrl                 string
-	VKafkaGroupIdOverride      string
-	VMetadataRepoUrl           string
-	VOwnerRegex                string
-	VUpdateJobIntervalCronPart string
-	VUpdateJobTimeoutSeconds   uint16
-	VVaultSecretsBasePath      string
-	VVaultKafkaSecretPath      string
-	VAlertTargetPrefix         string
-	VAlertTargetSuffix         string
-	VAdditionalPromoters       string
-	VElasticApmDisabled        bool
+	VBbUser                        string
+	VGitCommitterName              string
+	VGitCommitterEmail             string
+	VKafkaUser                     string
+	VKafkaTopic                    string
+	VKafkaSeedBrokers              string
+	VKeySetUrl                     string
+	VKafkaGroupIdOverride          string
+	VMetadataRepoUrl               string
+	VOwnerRegex                    string
+	VUpdateJobIntervalCronPart     string
+	VUpdateJobTimeoutSeconds       uint16
+	VVaultSecretsBasePath          string
+	VVaultKafkaSecretPath          string
+	VAlertTargetPrefix             string
+	VAlertTargetSuffix             string
+	VAdditionalPromoters           string
+	VAdditionalPromotersFromOwners string
+	VElasticApmDisabled            bool
 }
 
 func New() auacornapi.Acorn {
@@ -51,6 +52,7 @@ func (c *CustomConfigImpl) Obtain(getter func(key string) string) {
 	c.VAlertTargetPrefix = getter(KeyAlertTargetPrefix)
 	c.VAlertTargetSuffix = getter(KeyAlertTargetSuffix)
 	c.VAdditionalPromoters = getter(KeyAdditionalPromoters)
+	c.VAdditionalPromotersFromOwners = getter(KeyAdditionalPromotersFromOwners)
 	c.VElasticApmDisabled, _ = strconv.ParseBool(getter(KeyElasticApmDisabled))
 }
 
