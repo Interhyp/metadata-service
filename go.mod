@@ -74,7 +74,7 @@ require (
 	github.com/twmb/franz-go v1.9.1
 	go.elastic.co/apm/module/apmchiv5/v2 v2.1.0
 	go.elastic.co/apm/module/apmhttp/v2 v2.1.0
-	go.elastic.co/apm/v2 v2.1.0
+	go.elastic.co/apm/v2 v2.2.0
 	gopkg.in/yaml.v3 v3.0.1
 )
 
