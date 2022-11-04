@@ -67,7 +67,7 @@ require (
 	github.com/golang-jwt/jwt/v4 v4.4.2
 	github.com/lestrrat-go/jwx/v2 v2.0.6
 	github.com/pact-foundation/pact-go v1.7.0
-	github.com/prometheus/client_golang v1.13.0
+	github.com/prometheus/client_golang v1.13.1
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/rs/zerolog v1.28.0
 	github.com/stretchr/testify v1.8.1
