@@ -72,7 +72,7 @@ require (
 	github.com/rs/zerolog v1.28.0
 	github.com/stretchr/testify v1.8.1
 	github.com/twmb/franz-go v1.9.1
-	go.elastic.co/apm/module/apmchiv5/v2 v2.1.0
+	go.elastic.co/apm/module/apmchiv5/v2 v2.2.0
 	go.elastic.co/apm/module/apmhttp/v2 v2.2.0
 	go.elastic.co/apm/v2 v2.2.0
 	gopkg.in/yaml.v3 v3.0.1
