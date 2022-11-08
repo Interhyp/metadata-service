@@ -84,6 +84,9 @@ func (s *Impl) GetRepository(ctx context.Context, repoKey string) (openapi.Repos
 }
 
 func (s *Impl) rebuildApprovers(ctx context.Context, result *openapi.RepositoryConfigurationDto) {
+	if result == nil {
+		return
+	}
 	filteredApprovers := make([]string, 0)
 	for key, approvers := range *result.Approvers {
 		for _, approver := range approvers {

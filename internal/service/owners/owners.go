@@ -49,6 +49,9 @@ func (s *Impl) GetOwner(ctx context.Context, ownerAlias string) (openapi.OwnerDt
 }
 
 func (s *Impl) rebuildPromoters(ctx context.Context, result *openapi.OwnerDto) {
+	if result == nil {
+		return
+	}
 	filteredPromoters := make([]string, 0)
 	for _, promoter := range result.Promoters {
 		isGroup, groupOwner, groupName := s.ParseGroupOwnerAndGroupName(promoter)
