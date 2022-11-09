@@ -1957,6 +1957,20 @@
             "description": "The product owner of this owner space",
             "example": "kschlangenheld"
           },
+          "groups": {
+            "type": "object",
+            "description": "Map of string (group name e.g. some-owner) of strings (list of usernames), one username for each group is required.",
+            "example": {
+              "some-owner": {
+              }
+            },
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
           "promoters": {
             "type": "array",
             "description": "A list of users that are allowed to promote services in this owner space",
