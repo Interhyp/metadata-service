@@ -78,27 +78,28 @@ func (s *Impl) GetRepositories(ctx context.Context,
 func (s *Impl) GetRepository(ctx context.Context, repoKey string) (openapi.RepositoryDto, error) {
 	repositoryDto, err := s.Cache.GetRepository(ctx, repoKey)
 
-	s.rebuildApprovers(ctx, repositoryDto.Configuration)
+	if err == nil && repositoryDto.Configuration != nil {
+		s.rebuildApprovers(ctx, repositoryDto.Configuration)
+	}
 
 	return repositoryDto, err
 }
 
 func (s *Impl) rebuildApprovers(ctx context.Context, result *openapi.RepositoryConfigurationDto) {
-	if result == nil {
-		return
-	}
-	filteredApprovers := make([]string, 0)
-	for key, approvers := range *result.Approvers {
-		for _, approver := range approvers {
-			isGroup, groupOwner, groupName := s.Owners.ParseGroupOwnerAndGroupName(approver)
-			if isGroup {
-				groupMembers := s.Owners.GetAllGroupMembers(ctx, groupOwner, groupName)
-				filteredApprovers = append(filteredApprovers, groupMembers...)
-			} else {
-				filteredApprovers = append(filteredApprovers, approver)
+	if result != nil && result.Approvers != nil {
+		filteredApprovers := make([]string, 0)
+		for key, approvers := range *result.Approvers {
+			for _, approver := range approvers {
+				isGroup, groupOwner, groupName := s.Owners.ParseGroupOwnerAndGroupName(approver)
+				if isGroup {
+					groupMembers := s.Owners.GetAllGroupMembers(ctx, groupOwner, groupName)
+					filteredApprovers = append(filteredApprovers, groupMembers...)
+				} else {
+					filteredApprovers = append(filteredApprovers, approver)
+				}
 			}
+			(*result.Approvers)[key] = filteredApprovers
 		}
-		(*result.Approvers)[key] = filteredApprovers
 	}
 }
 
