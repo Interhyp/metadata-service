@@ -43,7 +43,9 @@ func (s *Impl) GetOwners(ctx context.Context) (openapi.OwnerListDto, error) {
 func (s *Impl) GetOwner(ctx context.Context, ownerAlias string) (openapi.OwnerDto, error) {
 	owner, err := s.Cache.GetOwner(ctx, ownerAlias)
 
-	s.rebuildPromoters(ctx, &owner)
+	if err == nil {
+		s.rebuildPromoters(ctx, &owner)
+	}
 
 	return owner, err
 }
