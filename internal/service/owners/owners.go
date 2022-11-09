@@ -41,7 +41,50 @@ func (s *Impl) GetOwners(ctx context.Context) (openapi.OwnerListDto, error) {
 }
 
 func (s *Impl) GetOwner(ctx context.Context, ownerAlias string) (openapi.OwnerDto, error) {
-	return s.Cache.GetOwner(ctx, ownerAlias)
+	owner, err := s.Cache.GetOwner(ctx, ownerAlias)
+
+	s.rebuildPromoters(ctx, &owner)
+
+	return owner, err
+}
+
+func (s *Impl) rebuildPromoters(ctx context.Context, result *openapi.OwnerDto) {
+	if result == nil {
+		return
+	}
+	filteredPromoters := make([]string, 0)
+	for _, promoter := range result.Promoters {
+		isGroup, groupOwner, groupName := s.ParseGroupOwnerAndGroupName(promoter)
+		if isGroup {
+			groupMembers := s.GetAllGroupMembers(ctx, groupOwner, groupName)
+			filteredPromoters = append(filteredPromoters, groupMembers...)
+		} else {
+			filteredPromoters = append(filteredPromoters, promoter)
+		}
+	}
+	result.Promoters = filteredPromoters
+}
+
+func (s *Impl) ParseGroupOwnerAndGroupName(mayBeGroupReference string) (bool, string, string) {
+	hasGroupPrefix := strings.HasPrefix(mayBeGroupReference, "@")
+	indexOfDot := strings.Index(mayBeGroupReference, ".")
+	if hasGroupPrefix && indexOfDot > 0 {
+		return true, mayBeGroupReference[1:indexOfDot], mayBeGroupReference[indexOfDot+1:]
+	}
+	return false, "", ""
+}
+
+func (s *Impl) GetAllGroupMembers(ctx context.Context, groupOwner string, groupName string) []string {
+	allGroups := make(map[string][]string, 0)
+	// iterate over cache directly
+	owner, err := s.Cache.GetOwner(ctx, groupOwner)
+
+	if err == nil && owner.Groups != nil {
+		for k, v := range *owner.Groups {
+			allGroups[k] = v
+		}
+	}
+	return allGroups[groupName]
 }
 
 func (s *Impl) CreateOwner(ctx context.Context, ownerAlias string, ownerCreateDto openapi.OwnerCreateDto) (openapi.OwnerDto, error) {

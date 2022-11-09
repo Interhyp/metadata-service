@@ -20,6 +20,7 @@ type Impl struct {
 	Logging       librepo.Logging
 	Cache         service.Cache
 	Updater       service.Updater
+	Owners        service.Owners
 }
 
 func (s *Impl) GetRepositories(ctx context.Context,
@@ -75,7 +76,30 @@ func (s *Impl) GetRepositories(ctx context.Context,
 }
 
 func (s *Impl) GetRepository(ctx context.Context, repoKey string) (openapi.RepositoryDto, error) {
-	return s.Cache.GetRepository(ctx, repoKey)
+	repositoryDto, err := s.Cache.GetRepository(ctx, repoKey)
+
+	s.rebuildApprovers(ctx, repositoryDto.Configuration)
+
+	return repositoryDto, err
+}
+
+func (s *Impl) rebuildApprovers(ctx context.Context, result *openapi.RepositoryConfigurationDto) {
+	if result == nil {
+		return
+	}
+	filteredApprovers := make([]string, 0)
+	for key, approvers := range *result.Approvers {
+		for _, approver := range approvers {
+			isGroup, groupOwner, groupName := s.Owners.ParseGroupOwnerAndGroupName(approver)
+			if isGroup {
+				groupMembers := s.Owners.GetAllGroupMembers(ctx, groupOwner, groupName)
+				filteredApprovers = append(filteredApprovers, groupMembers...)
+			} else {
+				filteredApprovers = append(filteredApprovers, approver)
+			}
+		}
+		(*result.Approvers)[key] = filteredApprovers
+	}
 }
 
 func (s *Impl) CreateRepository(ctx context.Context, key string, repositoryCreateDto openapi.RepositoryCreateDto) (openapi.RepositoryDto, error) {

@@ -1,11 +1,52 @@
 package owners
 
 import (
+	"context"
 	openapi "github.com/Interhyp/metadata-service/api/v1"
 	"github.com/Interhyp/metadata-service/docs"
+	ownersmock "github.com/Interhyp/metadata-service/test/mocks"
 	"github.com/stretchr/testify/require"
 	"testing"
 )
+
+func TestParseGroupOwnerAndGroupName(t *testing.T) {
+	instance := Impl{
+		Configuration: nil,
+		Logging:       nil,
+		Cache:         nil,
+		Updater:       nil,
+	}
+	isGroup, ownerOfGroup, nameOfGroup := instance.ParseGroupOwnerAndGroupName("@someOwner.someGroupName")
+	require.True(t, isGroup)
+	require.Equal(t, "someOwner", ownerOfGroup)
+	require.Equal(t, "someGroupName", nameOfGroup)
+
+	isGroup, ownerOfGroup, nameOfGroup = instance.ParseGroupOwnerAndGroupName("someOwner.someGroupName")
+	require.False(t, isGroup)
+	require.Equal(t, "", ownerOfGroup)
+	require.Equal(t, "", nameOfGroup)
+
+	isGroup, ownerOfGroup, nameOfGroup = instance.ParseGroupOwnerAndGroupName("@someGroupName")
+	require.False(t, isGroup)
+	require.Equal(t, "", ownerOfGroup)
+	require.Equal(t, "", nameOfGroup)
+}
+
+func TestGetAllGroupMembers(t *testing.T) {
+	instance := Impl{
+		Configuration: nil,
+		Logging:       nil,
+		Cache:         &ownersmock.Mock{},
+		Updater:       nil,
+	}
+	groupMembers := instance.GetAllGroupMembers(context.Background(), "ownerWithGroup", "someGroupName")
+	require.Equal(t, 2, len(groupMembers))
+	require.Contains(t, groupMembers, "username1")
+	require.Contains(t, groupMembers, "username2")
+
+	groupMembers = instance.GetAllGroupMembers(context.Background(), "someOwner", "someGroupName")
+	require.Equal(t, 0, len(groupMembers))
+}
 
 func TestPatchOwner(t *testing.T) {
 	docs.Description("patching of owners works")

@@ -13,7 +13,7 @@ import (
 	"github.com/go-git/go-git/v5/plumbing/storer"
 	"github.com/go-git/go-git/v5/plumbing/transport/http"
 	"github.com/go-git/go-git/v5/storage/memory"
-	"io/ioutil"
+	"io"
 	"os"
 	"strings"
 	"sync"
@@ -416,7 +416,7 @@ func (r *Impl) ReadFile(filename string) ([]byte, repository.CommitInfo, error) 
 	}
 	defer fileHandle.Close()
 
-	data, err := ioutil.ReadAll(fileHandle)
+	data, err := io.ReadAll(fileHandle)
 	if err != nil {
 		return nil, errorCommitInfo, err
 	}
