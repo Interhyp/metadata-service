@@ -23,58 +23,6 @@ func TestGETRepositories_Success(t *testing.T) {
 	tstAssert(t, response, err, http.StatusOK, "repositories.json")
 }
 
-func TestGETRepositories_Filtered_InvalidOwnerQuery(t *testing.T) {
-	tstReset()
-
-	docs.Given("Given an unauthenticated user")
-	token := tstUnauthenticated()
-
-	docs.When("When they request the list of repositories with a syntactically invalid owner name")
-	response, err := tstPerformGet("/rest/api/v1/repositories?owner=INVALID", token)
-
-	docs.Then("Then the request fails and the error response is as expected")
-	tstAssert(t, response, err, http.StatusBadRequest, "repositories-query-owner-invalid.json")
-}
-
-func TestGETRepositories_Filtered_InvalidServiceQuery(t *testing.T) {
-	tstReset()
-
-	docs.Given("Given an unauthenticated user")
-	token := tstUnauthenticated()
-
-	docs.When("When they request the list of repositories with a syntactically invalid service name")
-	response, err := tstPerformGet("/rest/api/v1/repositories?service=INVALID", token)
-
-	docs.Then("Then the request fails and the error response is as expected")
-	tstAssert(t, response, err, http.StatusBadRequest, "repositories-query-service-invalid.json")
-}
-
-func TestGETRepositories_Filtered_InvalidRepoNameQuery(t *testing.T) {
-	tstReset()
-
-	docs.Given("Given an unauthenticated user")
-	token := tstUnauthenticated()
-
-	docs.When("When they request the list of repositories with a syntactically invalid repository name")
-	response, err := tstPerformGet("/rest/api/v1/repositories?name=INVALID", token)
-
-	docs.Then("Then the request fails and the error response is as expected")
-	tstAssert(t, response, err, http.StatusBadRequest, "repositories-query-name-invalid.json")
-}
-
-func TestGETRepositories_Filtered_InvalidRepoTypeQuery(t *testing.T) {
-	tstReset()
-
-	docs.Given("Given an unauthenticated user")
-	token := tstUnauthenticated()
-
-	docs.When("When they request the list of repositories with a syntactically invalid repository type")
-	response, err := tstPerformGet("/rest/api/v1/repositories?type=unicorn-generator", token)
-
-	docs.Then("Then the request fails and the error response is as expected")
-	tstAssert(t, response, err, http.StatusBadRequest, "repositories-query-type-invalid.json")
-}
-
 func TestGETRepositories_Filtered_NonexistingService(t *testing.T) {
 	tstReset()
 
@@ -140,19 +88,6 @@ func TestGETRepository_Success(t *testing.T) {
 
 	docs.Then("Then the request is successful and the response is as expected")
 	tstAssert(t, response, err, http.StatusOK, "repository.json")
-}
-
-func TestGETRepository_InvalidAlias(t *testing.T) {
-	tstReset()
-
-	docs.Given("Given an unauthenticated user")
-	token := tstUnauthenticated()
-
-	docs.When("When they request a single repository with an invalid alias")
-	response, err := tstPerformGet("/rest/api/v1/repositories/äöüäöü", token)
-
-	docs.Then("Then the request fails and the error response is as expected")
-	tstAssert(t, response, err, http.StatusBadRequest, "repository-invalid.json")
 }
 
 func TestGETRepository_NotFound(t *testing.T) {
@@ -255,7 +190,7 @@ func TestPOSTRepository_InvalidValues(t *testing.T) {
 	require.Equal(t, 0, len(metadataImpl.FilesCommitted))
 }
 
-func TestPOSTRepository_NonexistantOwner(t *testing.T) {
+func TestPOSTRepository_NonexistentOwner(t *testing.T) {
 	tstReset()
 
 	docs.Given("Given an authenticated admin user")
@@ -443,7 +378,7 @@ func TestPUTRepository_DoesNotExist(t *testing.T) {
 	require.Equal(t, 0, len(kafkaImpl.Recording))
 }
 
-func TestPUTRepository_NonexistantOwner(t *testing.T) {
+func TestPUTRepository_NonexistentOwner(t *testing.T) {
 	tstReset()
 
 	docs.Given("Given an authenticated admin user")
@@ -456,25 +391,6 @@ func TestPUTRepository_NonexistantOwner(t *testing.T) {
 
 	docs.Then("Then the request fails and the error response is as expected")
 	tstAssert(t, response, err, http.StatusBadRequest, "repository-update-owner-missing.json")
-
-	docs.Then("And no changes have been made in the metadata repository")
-	require.Equal(t, 0, len(metadataImpl.FilesWritten))
-	require.Equal(t, 0, len(metadataImpl.FilesCommitted))
-}
-
-func TestPUTRepository_InvalidKey(t *testing.T) {
-	tstReset()
-
-	docs.Given("Given an authenticated admin user")
-	token := tstValidAdminToken()
-
-	docs.When("When they request an update of a repository with an invalid key")
-
-	body := tstRepository()
-	response, err := tstPerformPut("/rest/api/v1/repositories/ABC123.nonsense-deployment", token, &body)
-
-	docs.Then("Then the request fails and the error response is as expected")
-	tstAssert(t, response, err, http.StatusBadRequest, "repository-invalid-key.json")
 
 	docs.Then("And no changes have been made in the metadata repository")
 	require.Equal(t, 0, len(metadataImpl.FilesWritten))
@@ -745,7 +661,7 @@ func TestPATCHRepository_DoesNotExist(t *testing.T) {
 	require.Equal(t, 0, len(kafkaImpl.Recording))
 }
 
-func TestPATCHRepository_NonexistantOwner(t *testing.T) {
+func TestPATCHRepository_NonexistentOwner(t *testing.T) {
 	tstReset()
 
 	docs.Given("Given an authenticated admin user")
@@ -758,25 +674,6 @@ func TestPATCHRepository_NonexistantOwner(t *testing.T) {
 
 	docs.Then("Then the request fails and the error response is as expected")
 	tstAssert(t, response, err, http.StatusBadRequest, "repository-update-owner-missing.json")
-
-	docs.Then("And no changes have been made in the metadata repository")
-	require.Equal(t, 0, len(metadataImpl.FilesWritten))
-	require.Equal(t, 0, len(metadataImpl.FilesCommitted))
-}
-
-func TestPATCHRepository_InvalidKey(t *testing.T) {
-	tstReset()
-
-	docs.Given("Given an authenticated admin user")
-	token := tstValidAdminToken()
-
-	docs.When("When they attempt to patch a repository with an invalid key")
-
-	body := tstRepositoryPatch()
-	response, err := tstPerformPatch("/rest/api/v1/repositories/INVALID.API", token, &body)
-
-	docs.Then("Then the request fails and the error response is as expected")
-	tstAssert(t, response, err, http.StatusBadRequest, "repository-invalid-key.json")
 
 	docs.Then("And no changes have been made in the metadata repository")
 	require.Equal(t, 0, len(metadataImpl.FilesWritten))
@@ -1021,24 +918,6 @@ func TestDELETERepository_DoesNotExist(t *testing.T) {
 
 	docs.Then("And no kafka messages have been sent")
 	require.Equal(t, 0, len(kafkaImpl.Recording))
-}
-
-func TestDELETERepository_InvalidKey(t *testing.T) {
-	tstReset()
-
-	docs.Given("Given an authenticated admin user")
-	token := tstValidAdminToken()
-
-	docs.When("When they attempt to delete a repository with an invalid key")
-	body := tstDelete()
-	response, err := tstPerformDelete("/rest/api/v1/repositories/___'", token, &body)
-
-	docs.Then("Then the request fails and the error response is as expected")
-	tstAssert(t, response, err, http.StatusBadRequest, "repository-invalid-key.json")
-
-	docs.Then("And no changes have been made in the metadata repository")
-	require.Equal(t, 0, len(metadataImpl.FilesWritten))
-	require.Equal(t, 0, len(metadataImpl.FilesCommitted))
 }
 
 func TestDELETERepository_MissingBody(t *testing.T) {

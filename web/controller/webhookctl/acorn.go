@@ -14,7 +14,7 @@ func New() auacornapi.Acorn {
 	return &Impl{}
 }
 
-func (a *Impl) IsWebhookController() bool {
+func (c *Impl) IsWebhookController() bool {
 	return true
 }
 

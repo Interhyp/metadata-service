@@ -2,6 +2,7 @@ package repositoryctl
 
 import (
 	"github.com/Interhyp/metadata-service/acorns/controller"
+	"github.com/Interhyp/metadata-service/acorns/repository"
 	"github.com/Interhyp/metadata-service/acorns/service"
 	"github.com/StephanHCB/go-autumn-acorn-registry/api"
 	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
@@ -14,7 +15,7 @@ func New() auacornapi.Acorn {
 	return &Impl{}
 }
 
-func (a *Impl) IsRepositoryController() bool {
+func (c *Impl) IsRepositoryController() bool {
 	return true
 }
 
@@ -23,8 +24,11 @@ func (c *Impl) AcornName() string {
 }
 
 func (c *Impl) AssembleAcorn(registry auacornapi.AcornRegistry) error {
+	c.Configuration = registry.GetAcornByName(librepo.ConfigurationAcornName).(librepo.Configuration)
 	c.Logging = registry.GetAcornByName(librepo.LoggingAcornName).(librepo.Logging)
 	c.Repositories = registry.GetAcornByName(service.RepositoriesAcornName).(service.Repositories)
+
+	c.CustomConfiguration = repository.Custom(c.Configuration)
 
 	c.Now = time.Now
 

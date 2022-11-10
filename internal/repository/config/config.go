@@ -1,8 +1,10 @@
 package config
 
 import (
+	"fmt"
 	auconfigapi "github.com/StephanHCB/go-autumn-config-api"
 	auconfigenv "github.com/StephanHCB/go-autumn-config-env"
+	"regexp"
 	"strconv"
 )
 
@@ -16,7 +18,6 @@ const (
 	KeyKafkaGroupIdOverride          = "KAFKA_GROUP_ID_OVERRIDE"
 	KeyKeySetUrl                     = "KEY_SET_URL"
 	KeyMetadataRepoUrl               = "METADATA_REPO_URL"
-	KeyOwnerRegex                    = "OWNER_REGEX"
 	KeyUpdateJobIntervalMinutes      = "UPDATE_JOB_INTERVAL_MINUTES"
 	KeyUpdateJobTimeoutSeconds       = "UPDATE_JOB_TIMEOUT_SECONDS"
 	KeyVaultSecretsBasePath          = "VAULT_SECRETS_BASE_PATH"
@@ -26,6 +27,15 @@ const (
 	KeyAdditionalPromoters           = "ADDITIONAL_PROMOTERS"
 	KeyAdditionalPromotersFromOwners = "ADDITIONAL_PROMOTERS_FROM_OWNERS"
 	KeyElasticApmDisabled            = "ELASTIC_APM_DISABLED"
+	KeyOwnerPermittedAliasRegex      = "OWNER_PERMITTED_ALIAS_REGEX"
+	KeyOwnerProhibitedAliasRegex     = "OWNER_PROHIBITED_ALIAS_REGEX"
+	KeyOwnerFilterAliasRegex         = "OWNER_FILTER_ALIAS_REGEX"
+	KeyServicePermittedNameRegex     = "SERVICE_PERMITTED_NAME_REGEX"
+	KeyServiceProhibitedNameRegex    = "SERVICE_PROHIBITED_NAME_REGEX"
+	KeyRepositoryPermittedNameRegex  = "REPOSITORY_PERMITTED_NAME_REGEX"
+	KeyRepositoryProhibitedNameRegex = "REPOSITORY_PROHIBITED_NAME_REGEX"
+	KeyRepositoryTypes               = "REPOSITORY_TYPES"
+	KeyRepositoryKeySeparator        = "REPOSITORY_KEY_SEPARATOR"
 )
 
 var CustomConfigItems = []auconfigapi.ConfigItem{
@@ -93,13 +103,6 @@ var CustomConfigItems = []auconfigapi.ConfigItem{
 		Validate:    auconfigenv.ObtainNotEmptyValidator(),
 	},
 	{
-		Key:         KeyOwnerRegex,
-		EnvName:     KeyOwnerRegex,
-		Default:     ".*",
-		Description: "regular expression to filter owners. Useful on localhost or for test instances to speed up service startup.",
-		Validate:    auconfigapi.ConfigNeedsNoValidation,
-	},
-	{
 		Key:         KeyUpdateJobIntervalMinutes,
 		EnvName:     KeyUpdateJobIntervalMinutes,
 		Default:     "5",
@@ -158,10 +161,91 @@ var CustomConfigItems = []auconfigapi.ConfigItem{
 		EnvName:     KeyElasticApmDisabled,
 		Default:     "false",
 		Description: "Disable Elastic APM middleware. Supports all values supported by ParseBool (https://pkg.go.dev/strconv#ParseBool).",
-		Validate: func(key string) error {
-			value := auconfigenv.Get(key)
-			_, err := strconv.ParseBool(value)
-			return err
-		},
+		Validate:    booleanValidator,
 	},
+	{
+		Key:         KeyOwnerPermittedAliasRegex,
+		EnvName:     KeyOwnerPermittedAliasRegex,
+		Default:     "^[a-z](-?[a-z0-9]+)*$",
+		Description: "regular expression to control the owner aliases that are permitted to be be created.",
+		Validate:    regexCompileValidator,
+	},
+	{
+		Key:         KeyOwnerProhibitedAliasRegex,
+		EnvName:     KeyOwnerProhibitedAliasRegex,
+		Default:     "^$",
+		Description: "regular expression to control the owner aliases that are prohibited to be be created.",
+		Validate:    regexCompileValidator,
+	},
+	{
+		Key:         KeyOwnerFilterAliasRegex,
+		EnvName:     KeyOwnerFilterAliasRegex,
+		Default:     "^.*$",
+		Description: "regular expression to filter owners based on their alias. Useful on localhost or for test instances to speed up service startup.",
+		Validate:    regexCompileValidator,
+	},
+	{
+		Key:         KeyServicePermittedNameRegex,
+		EnvName:     KeyServicePermittedNameRegex,
+		Default:     "^[a-z](-?[a-z0-9]+)*$",
+		Description: "regular expression to control the service names that are permitted to be be created.",
+		Validate:    regexCompileValidator,
+	},
+	{
+		Key:         KeyServiceProhibitedNameRegex,
+		EnvName:     KeyServiceProhibitedNameRegex,
+		Default:     "^$",
+		Description: "regular expression to control the service names that are prohibited to be be created.",
+		Validate:    regexCompileValidator,
+	},
+	{
+		Key:         KeyRepositoryPermittedNameRegex,
+		EnvName:     KeyRepositoryPermittedNameRegex,
+		Default:     "^[a-z](-?[a-z0-9]+)*$",
+		Description: "regular expression to control the repository names that are permitted to be be created.",
+		Validate:    regexCompileValidator,
+	},
+	{
+		Key:         KeyRepositoryProhibitedNameRegex,
+		EnvName:     KeyRepositoryProhibitedNameRegex,
+		Default:     "^$",
+		Description: "regular expression to control the repository names that are prohibited to be be created.",
+		Validate:    regexCompileValidator,
+	},
+	{
+		Key:         KeyRepositoryTypes,
+		EnvName:     KeyRepositoryTypes,
+		Default:     "",
+		Description: "comma separated list of supported repository types.",
+		Validate:    auconfigenv.ObtainPatternValidator("^|[a-z](-?[a-z0-9]+)*(,[a-z](-?[a-z0-9]+)*)*$"),
+	},
+	{
+		Key:         KeyRepositoryKeySeparator,
+		EnvName:     KeyRepositoryKeySeparator,
+		Default:     ".",
+		Description: "single character used to separate repository name from repository type. repository name and repository type must not contain separator.",
+		Validate:    singleCharacterValidator,
+	},
+}
+
+func booleanValidator(key string) error {
+	value := auconfigenv.Get(key)
+	_, err := strconv.ParseBool(value)
+	return err
+}
+
+func singleCharacterValidator(key string) error {
+	value := auconfigenv.Get(key)
+	if len(value) < 1 {
+		return fmt.Errorf("parameter cannot be empty")
+	} else if len(value) > 1 {
+		return fmt.Errorf("parameter cannot consist of multiple characters")
+	}
+	return nil
+}
+
+func regexCompileValidator(key string) error {
+	value := auconfigenv.Get(key)
+	_, err := regexp.Compile(value)
+	return err
 }

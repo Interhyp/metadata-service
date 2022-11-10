@@ -38,19 +38,6 @@ func TestGETOwner_Success(t *testing.T) {
 	tstAssert(t, response, err, http.StatusOK, "owner.json")
 }
 
-func TestGETOwner_InvalidAlias(t *testing.T) {
-	tstReset()
-
-	docs.Given("Given an unauthenticated user")
-	token := tstUnauthenticated()
-
-	docs.When("When they request a single owner with an invalid alias")
-	response, err := tstPerformGet("/rest/api/v1/owners/ääääää", token)
-
-	docs.Then("Then the request fails and the error response is as expected")
-	tstAssert(t, response, err, http.StatusBadRequest, "owner-invalid.json")
-}
-
 func TestGETOwner_NotFound(t *testing.T) {
 	tstReset()
 
@@ -338,25 +325,6 @@ func TestPUTOwner_DoesNotExist(t *testing.T) {
 	require.Equal(t, 0, len(kafkaImpl.Recording))
 }
 
-func TestPUTOwner_InvalidAlias(t *testing.T) {
-	tstReset()
-
-	docs.Given("Given an authenticated admin user")
-	token := tstValidAdminToken()
-
-	docs.When("When they request an update of an owner with an invalid alias")
-
-	body := tstOwner()
-	response, err := tstPerformPut("/rest/api/v1/owners/___'", token, &body)
-
-	docs.Then("Then the request fails and the error response is as expected")
-	tstAssert(t, response, err, http.StatusBadRequest, "owner-invalid-alias.json")
-
-	docs.Then("And no changes have been made in the metadata repository")
-	require.Equal(t, 0, len(metadataImpl.FilesWritten))
-	require.Equal(t, 0, len(metadataImpl.FilesCommitted))
-}
-
 func TestPUTOwner_InvalidBody(t *testing.T) {
 	tstReset()
 
@@ -585,25 +553,6 @@ func TestPATCHOwner_DoesNotExist(t *testing.T) {
 	require.Equal(t, 0, len(kafkaImpl.Recording))
 }
 
-func TestPATCHOwner_InvalidAlias(t *testing.T) {
-	tstReset()
-
-	docs.Given("Given an authenticated admin user")
-	token := tstValidAdminToken()
-
-	docs.When("When they request a patch of an owner with an invalid alias")
-
-	body := tstOwnerPatch()
-	response, err := tstPerformPatch("/rest/api/v1/owners/INVALID'", token, &body)
-
-	docs.Then("Then the request fails and the error response is as expected")
-	tstAssert(t, response, err, http.StatusBadRequest, "owner-invalid-alias.json")
-
-	docs.Then("And no changes have been made in the metadata repository")
-	require.Equal(t, 0, len(metadataImpl.FilesWritten))
-	require.Equal(t, 0, len(metadataImpl.FilesCommitted))
-}
-
 func TestPATCHOwner_InvalidBody(t *testing.T) {
 	tstReset()
 
@@ -788,24 +737,6 @@ func TestDELETEOwner_DoesNotExist(t *testing.T) {
 
 	docs.Then("And no kafka messages have been sent")
 	require.Equal(t, 0, len(kafkaImpl.Recording))
-}
-
-func TestDELETEOwner_InvalidAlias(t *testing.T) {
-	tstReset()
-
-	docs.Given("Given an authenticated admin user")
-	token := tstValidAdminToken()
-
-	docs.When("When they attempt to delete an owner with an invalid alias")
-	body := tstDelete()
-	response, err := tstPerformDelete("/rest/api/v1/owners/___'", token, &body)
-
-	docs.Then("Then the request fails and the error response is as expected")
-	tstAssert(t, response, err, http.StatusBadRequest, "owner-invalid-alias.json")
-
-	docs.Then("And no changes have been made in the metadata repository")
-	require.Equal(t, 0, len(metadataImpl.FilesWritten))
-	require.Equal(t, 0, len(metadataImpl.FilesCommitted))
 }
 
 func TestDELETEOwner_MissingBody(t *testing.T) {

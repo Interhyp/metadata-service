@@ -19,7 +19,7 @@ func (s *Impl) GetSortedOwnerAliases(_ context.Context) ([]string, error) {
 			// check presence of owner.info.yaml to be sure
 			_, err := s.Metadata.Stat("owners/" + alias + "/owner.info.yaml")
 			if err == nil {
-				if s.OwnerRegex.MatchString(alias) {
+				if s.CustomConfiguration.OwnerFilterAliasRegex().MatchString(alias) {
 					result = append(result, alias)
 				}
 			}

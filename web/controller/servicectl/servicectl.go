@@ -11,6 +11,7 @@ import (
 	"github.com/Interhyp/metadata-service/acorns/errors/nosuchserviceerror"
 	"github.com/Interhyp/metadata-service/acorns/errors/unavailableerror"
 	"github.com/Interhyp/metadata-service/acorns/errors/validationerror"
+	"github.com/Interhyp/metadata-service/acorns/repository"
 	"github.com/Interhyp/metadata-service/acorns/service"
 	openapi "github.com/Interhyp/metadata-service/api/v1"
 	"github.com/Interhyp/metadata-service/web/middleware/jwt"
@@ -21,28 +22,21 @@ import (
 	"github.com/go-http-utils/headers"
 	"net/http"
 	"net/url"
-	"regexp"
 	"time"
 )
 
 const ownerParam = "owner"
 
 type Impl struct {
-	Logging  librepo.Logging
-	Services service.Services
+	Configuration       librepo.Configuration
+	CustomConfiguration repository.CustomConfiguration
+	Logging             librepo.Logging
+	Services            service.Services
 
-	ownerAliasRegexp  *regexp.Regexp
-	serviceNameRegexp *regexp.Regexp
-	Now               func() time.Time
+	Now func() time.Time
 }
 
-const ownerRegex = "^[a-z](-?[a-z0-9]+)*$"
-const serviceRegex = "^[a-z](-?[a-z0-9]+)*$"
-
 func (c *Impl) WireUp(_ context.Context, router chi.Router) {
-	c.ownerAliasRegexp = regexp.MustCompile(ownerRegex)
-	c.serviceNameRegexp = regexp.MustCompile(serviceRegex)
-
 	baseEndpoint := "/rest/api/v1/services"
 	serviceEndpoint := baseEndpoint + "/{service}"
 	promotersEndpoint := baseEndpoint + "/{service}/promoters"
@@ -61,12 +55,6 @@ func (c *Impl) WireUp(_ context.Context, router chi.Router) {
 func (c *Impl) GetServices(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	ownerAliasFilter := util.StringQueryParam(r, ownerParam)
-	if ownerAliasFilter != "" {
-		if !c.validOwnerAlias(ownerAliasFilter) {
-			c.ownerParamInvalid(ctx, w, r, ownerAliasFilter)
-			return
-		}
-	}
 
 	services, err := c.Services.GetServices(ctx, ownerAliasFilter)
 	if err != nil {
@@ -79,10 +67,6 @@ func (c *Impl) GetServices(w http.ResponseWriter, r *http.Request) {
 func (c *Impl) GetSingleService(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	serviceName := util.StringPathParam(r, "service")
-	if !c.validServiceName(serviceName) {
-		c.serviceParamInvalid(ctx, w, r, serviceName)
-		return
-	}
 
 	serviceDto, err := c.Services.GetService(ctx, serviceName)
 	if err != nil {
@@ -125,9 +109,9 @@ func (c *Impl) CreateService(w http.ResponseWriter, r *http.Request) {
 		} else if validationerror.Is(err) {
 			c.serviceValidationError(ctx, w, r, err)
 		} else if nosuchownererror.Is(err) {
-			c.serviceNonexistantOwner(ctx, w, r, err)
+			c.serviceNonexistentOwner(ctx, w, r, err)
 		} else if nosuchrepoerror.Is(err) {
-			c.serviceNonexistantRepository(ctx, w, r, err)
+			c.serviceNonexistentRepository(ctx, w, r, err)
 		} else if unavailableerror.Is(err) {
 			util.BadGatewayErrorHandler(ctx, w, r, err, c.Now())
 		} else {
@@ -150,10 +134,6 @@ func (c *Impl) UpdateService(w http.ResponseWriter, r *http.Request) {
 	}
 
 	name := util.StringPathParam(r, "service")
-	if !c.validServiceName(name) {
-		c.serviceParamInvalid(ctx, w, r, name)
-		return
-	}
 	serviceDto, err := c.parseBodyToServiceDto(ctx, r)
 	if err != nil {
 		c.serviceBodyInvalid(ctx, w, r, err)
@@ -165,9 +145,9 @@ func (c *Impl) UpdateService(w http.ResponseWriter, r *http.Request) {
 		if nosuchserviceerror.Is(err) {
 			c.serviceNotFoundErrorHandler(ctx, w, r, name)
 		} else if nosuchownererror.Is(err) {
-			c.serviceNonexistantOwner(ctx, w, r, err)
+			c.serviceNonexistentOwner(ctx, w, r, err)
 		} else if nosuchrepoerror.Is(err) {
-			c.serviceNonexistantRepository(ctx, w, r, err)
+			c.serviceNonexistentRepository(ctx, w, r, err)
 		} else if concurrencyerror.Is(err) {
 			c.serviceConcurrentlyUpdated(ctx, w, r, name, serviceWritten)
 		} else if validationerror.Is(err) {
@@ -194,10 +174,6 @@ func (c *Impl) PatchService(w http.ResponseWriter, r *http.Request) {
 	}
 
 	name := util.StringPathParam(r, "service")
-	if !c.validServiceName(name) {
-		c.serviceParamInvalid(ctx, w, r, name)
-		return
-	}
 	servicePatch, err := c.parseBodyToServicePatchDto(ctx, r)
 	if err != nil {
 		c.serviceBodyInvalid(ctx, w, r, err)
@@ -209,9 +185,9 @@ func (c *Impl) PatchService(w http.ResponseWriter, r *http.Request) {
 		if nosuchserviceerror.Is(err) {
 			c.serviceNotFoundErrorHandler(ctx, w, r, name)
 		} else if nosuchownererror.Is(err) {
-			c.serviceNonexistantOwner(ctx, w, r, err)
+			c.serviceNonexistentOwner(ctx, w, r, err)
 		} else if nosuchrepoerror.Is(err) {
-			c.serviceNonexistantRepository(ctx, w, r, err)
+			c.serviceNonexistentRepository(ctx, w, r, err)
 		} else if concurrencyerror.Is(err) {
 			c.serviceConcurrentlyUpdated(ctx, w, r, name, serviceWritten)
 		} else if validationerror.Is(err) {
@@ -238,10 +214,6 @@ func (c *Impl) DeleteService(w http.ResponseWriter, r *http.Request) {
 	}
 
 	name := util.StringPathParam(r, "service")
-	if !c.validServiceName(name) {
-		c.serviceParamInvalid(ctx, w, r, name)
-		return
-	}
 	info, err := util.ParseBodyToDeletionDto(ctx, r)
 	if err != nil {
 		util.DeletionBodyInvalid(ctx, w, r, err, c.Now())
@@ -267,10 +239,6 @@ func (c *Impl) DeleteService(w http.ResponseWriter, r *http.Request) {
 func (c *Impl) GetServicePromoters(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	serviceName := util.StringPathParam(r, "service")
-	if !c.validServiceName(serviceName) {
-		c.serviceParamInvalid(ctx, w, r, serviceName)
-		return
-	}
 
 	serviceDto, err := c.Services.GetService(ctx, serviceName)
 	if err != nil {
@@ -291,14 +259,13 @@ func (c *Impl) GetServicePromoters(w http.ResponseWriter, r *http.Request) {
 
 // --- specific error handlers ---
 
-func (c *Impl) ownerParamInvalid(ctx context.Context, w http.ResponseWriter, r *http.Request, owner string) {
-	c.Logging.Logger().Ctx(ctx).Warn().Printf("owner parameter %v invalid", url.QueryEscape(owner))
-	util.ErrorHandler(ctx, w, r, "owner.invalid.filter", http.StatusBadRequest, fmt.Sprintf("owner filter must match %s", ownerRegex), c.Now())
-}
-
 func (c *Impl) serviceParamInvalid(ctx context.Context, w http.ResponseWriter, r *http.Request, service string) {
 	c.Logging.Logger().Ctx(ctx).Warn().Printf("service parameter %v invalid", url.QueryEscape(service))
-	util.ErrorHandler(ctx, w, r, "service.invalid.name", http.StatusBadRequest, fmt.Sprintf("service name must match %s", serviceRegex), c.Now())
+	permitted := c.CustomConfiguration.ServicePermittedNameRegex().String()
+	prohibited := c.CustomConfiguration.ServiceProhibitedNameRegex().String()
+
+	util.ErrorHandler(ctx, w, r, "service.invalid.name", http.StatusBadRequest,
+		fmt.Sprintf("service name must match %s and is not allowed to match %s", permitted, prohibited), c.Now())
 }
 
 func (c *Impl) serviceNotFoundErrorHandler(ctx context.Context, w http.ResponseWriter, r *http.Request, service string) {
@@ -330,12 +297,12 @@ func (c *Impl) serviceValidationError(ctx context.Context, w http.ResponseWriter
 	util.ErrorHandler(ctx, w, r, "service.invalid.values", http.StatusBadRequest, err.Error(), c.Now())
 }
 
-func (c *Impl) serviceNonexistantOwner(ctx context.Context, w http.ResponseWriter, r *http.Request, err error) {
+func (c *Impl) serviceNonexistentOwner(ctx context.Context, w http.ResponseWriter, r *http.Request, err error) {
 	c.Logging.Logger().Ctx(ctx).Warn().Printf("service values invalid: %s", err.Error())
 	util.ErrorHandler(ctx, w, r, "service.invalid.missing.owner", http.StatusBadRequest, err.Error(), c.Now())
 }
 
-func (c *Impl) serviceNonexistantRepository(ctx context.Context, w http.ResponseWriter, r *http.Request, err error) {
+func (c *Impl) serviceNonexistentRepository(ctx context.Context, w http.ResponseWriter, r *http.Request, err error) {
 	c.Logging.Logger().Ctx(ctx).Warn().Printf("service values invalid: %s", err.Error())
 	util.ErrorHandler(ctx, w, r, "service.invalid.missing.repository", http.StatusBadRequest, "validation error: you referenced a repository that does not exist: "+err.Error(), c.Now())
 }
@@ -347,12 +314,9 @@ func (c *Impl) deletionValidationError(ctx context.Context, w http.ResponseWrite
 
 // --- helpers
 
-func (c *Impl) validOwnerAlias(owner string) bool {
-	return c.ownerAliasRegexp.MatchString(owner)
-}
-
 func (c *Impl) validServiceName(service string) bool {
-	return c.serviceNameRegexp.MatchString(service)
+	return c.CustomConfiguration.ServicePermittedNameRegex().MatchString(service) &&
+		!c.CustomConfiguration.ServiceProhibitedNameRegex().MatchString(service)
 }
 
 func (c *Impl) parseBodyToServiceDto(_ context.Context, r *http.Request) (openapi.ServiceDto, error) {

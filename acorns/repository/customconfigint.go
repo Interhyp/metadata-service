@@ -1,6 +1,9 @@
 package repository
 
-import librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
+import (
+	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
+	"regexp"
+)
 
 type CustomConfiguration interface {
 	BbUser() string
@@ -17,8 +20,6 @@ type CustomConfiguration interface {
 
 	MetadataRepoUrl() string
 
-	OwnerRegex() string
-
 	UpdateJobIntervalCronPart() string
 	UpdateJobTimeoutSeconds() uint16
 
@@ -32,6 +33,18 @@ type CustomConfiguration interface {
 	AdditionalPromotersFromOwners() []string
 
 	ElasticApmEnabled() bool
+
+	OwnerPermittedAliasRegex() *regexp.Regexp
+	OwnerProhibitedAliasRegex() *regexp.Regexp
+	OwnerFilterAliasRegex() *regexp.Regexp
+
+	ServicePermittedNameRegex() *regexp.Regexp
+	ServiceProhibitedNameRegex() *regexp.Regexp
+
+	RepositoryPermittedNameRegex() *regexp.Regexp
+	RepositoryProhibitedNameRegex() *regexp.Regexp
+	RepositoryTypes() []string
+	RepositoryKeySeparator() string
 }
 
 // Custom is a type casting helper that gets you from the configuration acorn to your CustomConfiguration

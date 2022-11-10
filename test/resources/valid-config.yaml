@@ -11,8 +11,13 @@ LOCAL_VAULT_TOKEN: 'not a real token'
 
 BB_USER: localuser
 METADATA_REPO_URL: http://metadata
-OWNER_REGEX: .*
 UPDATE_JOB_INTERVAL_MINUTES: 5
 
 ADDITIONAL_PROMOTERS: 'someguy'
 ADDITIONAL_PROMOTERS_FROM_OWNERS: 'deleteme'
+
+SERVICE_PROHIBITED_NAME_REGEX: "-service$"
+
+OWNER_FILTER_ALIAS_REGEX: .*
+
+REPOSITORY_TYPES: 'implementation,deployment,api,helm-chart'

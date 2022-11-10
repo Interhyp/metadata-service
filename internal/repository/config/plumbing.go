@@ -4,6 +4,7 @@ import (
 	auacornapi "github.com/StephanHCB/go-autumn-acorn-registry/api"
 	auconfigenv "github.com/StephanHCB/go-autumn-config-env"
 	libconfig "github.com/StephanHCB/go-backend-service-common/repository/config"
+	"regexp"
 	"strconv"
 )
 
@@ -17,7 +18,6 @@ type CustomConfigImpl struct {
 	VKeySetUrl                     string
 	VKafkaGroupIdOverride          string
 	VMetadataRepoUrl               string
-	VOwnerRegex                    string
 	VUpdateJobIntervalCronPart     string
 	VUpdateJobTimeoutSeconds       uint16
 	VVaultSecretsBasePath          string
@@ -27,6 +27,15 @@ type CustomConfigImpl struct {
 	VAdditionalPromoters           string
 	VAdditionalPromotersFromOwners string
 	VElasticApmDisabled            bool
+	VOwnerPermittedAliasRegex      *regexp.Regexp
+	VOwnerProhibitedAliasRegex     *regexp.Regexp
+	VOwnerFilterAliasRegex         *regexp.Regexp
+	VServicePermittedNameRegex     *regexp.Regexp
+	VServiceProhibitedNameRegex    *regexp.Regexp
+	VRepositoryPermittedNameRegex  *regexp.Regexp
+	VRepositoryProhibitedNameRegex *regexp.Regexp
+	VRepositoryTypes               string
+	VRepositoryKeySeparator        string
 }
 
 func New() auacornapi.Acorn {
@@ -44,7 +53,6 @@ func (c *CustomConfigImpl) Obtain(getter func(key string) string) {
 	c.VKafkaGroupIdOverride = getter(KeyKafkaGroupIdOverride)
 	c.VKeySetUrl = getter(KeyKeySetUrl)
 	c.VMetadataRepoUrl = getter(KeyMetadataRepoUrl)
-	c.VOwnerRegex = getter(KeyOwnerRegex)
 	c.VUpdateJobIntervalCronPart = getter(KeyUpdateJobIntervalMinutes)
 	c.VUpdateJobTimeoutSeconds = toUint16(getter(KeyUpdateJobTimeoutSeconds))
 	c.VVaultSecretsBasePath = getter(KeyVaultSecretsBasePath)
@@ -54,6 +62,15 @@ func (c *CustomConfigImpl) Obtain(getter func(key string) string) {
 	c.VAdditionalPromoters = getter(KeyAdditionalPromoters)
 	c.VAdditionalPromotersFromOwners = getter(KeyAdditionalPromotersFromOwners)
 	c.VElasticApmDisabled, _ = strconv.ParseBool(getter(KeyElasticApmDisabled))
+	c.VOwnerPermittedAliasRegex, _ = regexp.Compile(getter(KeyOwnerPermittedAliasRegex))
+	c.VOwnerProhibitedAliasRegex, _ = regexp.Compile(getter(KeyOwnerProhibitedAliasRegex))
+	c.VOwnerFilterAliasRegex, _ = regexp.Compile(getter(KeyOwnerFilterAliasRegex))
+	c.VServicePermittedNameRegex, _ = regexp.Compile(getter(KeyServicePermittedNameRegex))
+	c.VServiceProhibitedNameRegex, _ = regexp.Compile(getter(KeyServiceProhibitedNameRegex))
+	c.VRepositoryPermittedNameRegex, _ = regexp.Compile(getter(KeyRepositoryPermittedNameRegex))
+	c.VRepositoryProhibitedNameRegex, _ = regexp.Compile(getter(KeyRepositoryProhibitedNameRegex))
+	c.VRepositoryTypes = getter(KeyRepositoryTypes)
+	c.VRepositoryKeySeparator = getter(KeyRepositoryKeySeparator)
 }
 
 // used after validation, so known safe

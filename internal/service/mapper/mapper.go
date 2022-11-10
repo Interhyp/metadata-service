@@ -4,7 +4,6 @@ import (
 	"context"
 	"github.com/Interhyp/metadata-service/acorns/repository"
 	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
-	"regexp"
 	"strings"
 	"sync"
 	"time"
@@ -20,18 +19,10 @@ type Impl struct {
 	serviceOwnerCache    map[string]string
 	repositoryOwnerCache map[string]string
 
-	OwnerRegex *regexp.Regexp
-	Now        func() time.Time
+	Now func() time.Time
 }
 
 func (s *Impl) Setup(_ context.Context) error {
-	ownerRegex, err := regexp.Compile(s.CustomConfiguration.OwnerRegex())
-	if err != nil {
-		return err
-	}
-
-	s.OwnerRegex = ownerRegex
-
 	s.serviceOwnerCache = make(map[string]string)
 	s.repositoryOwnerCache = make(map[string]string)
 

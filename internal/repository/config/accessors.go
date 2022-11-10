@@ -2,6 +2,7 @@ package config
 
 import (
 	"os"
+	"regexp"
 	"strings"
 )
 
@@ -41,10 +42,6 @@ func (c *CustomConfigImpl) MetadataRepoUrl() string {
 	return c.VMetadataRepoUrl
 }
 
-func (c *CustomConfigImpl) OwnerRegex() string {
-	return c.VOwnerRegex
-}
-
 func (c *CustomConfigImpl) UpdateJobIntervalCronPart() string {
 	return c.VUpdateJobIntervalCronPart
 }
@@ -82,4 +79,40 @@ func (c *CustomConfigImpl) ElasticApmEnabled() bool {
 		os.Getenv("ELASTIC_APM_SERVER_URL") != "" &&
 		os.Getenv("ELASTIC_APM_SERVICE_NAME") != "" &&
 		os.Getenv("ELASTIC_APM_ENVIRONMENT") != ""
+}
+
+func (c *CustomConfigImpl) OwnerPermittedAliasRegex() *regexp.Regexp {
+	return c.VOwnerPermittedAliasRegex
+}
+
+func (c *CustomConfigImpl) OwnerProhibitedAliasRegex() *regexp.Regexp {
+	return c.VOwnerProhibitedAliasRegex
+}
+
+func (c *CustomConfigImpl) OwnerFilterAliasRegex() *regexp.Regexp {
+	return c.VOwnerFilterAliasRegex
+}
+
+func (c *CustomConfigImpl) ServicePermittedNameRegex() *regexp.Regexp {
+	return c.VServicePermittedNameRegex
+}
+
+func (c *CustomConfigImpl) ServiceProhibitedNameRegex() *regexp.Regexp {
+	return c.VServiceProhibitedNameRegex
+}
+
+func (c *CustomConfigImpl) RepositoryPermittedNameRegex() *regexp.Regexp {
+	return c.VRepositoryPermittedNameRegex
+}
+
+func (c *CustomConfigImpl) RepositoryProhibitedNameRegex() *regexp.Regexp {
+	return c.VRepositoryProhibitedNameRegex
+}
+
+func (c *CustomConfigImpl) RepositoryTypes() []string {
+	return strings.Split(c.VRepositoryTypes, ",")
+}
+
+func (c *CustomConfigImpl) RepositoryKeySeparator() string {
+	return c.VRepositoryKeySeparator
 }

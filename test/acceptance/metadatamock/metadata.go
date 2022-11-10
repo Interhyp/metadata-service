@@ -86,7 +86,7 @@ configuration:
 `
 
 const deployment2 = `mainline: main
-url: ssh://git@bitbucket.some-organisation.com:7999/PROJECT/new-service-deployment.git
+url: ssh://git@bitbucket.some-organisation.com:7999/PROJECT/whatever-deployment.git
 generator: third-party-software
 `
 
@@ -96,7 +96,7 @@ generator: java-spring-cloud
 `
 
 const implementation2 = `mainline: master
-url: ssh://git@bitbucket.some-organisation.com:7999/PROJECT/new-service.git
+url: ssh://git@bitbucket.some-organisation.com:7999/PROJECT/whatever.git
 generator: java-spring-cloud
 `
 
@@ -176,11 +176,11 @@ func (r *Impl) Clone(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	err = r.writeFile("owners/some-owner/repositories/new-service.helm-deployment.yaml", deployment2)
+	err = r.writeFile("owners/some-owner/repositories/whatever.helm-deployment.yaml", deployment2)
 	if err != nil {
 		return err
 	}
-	err = r.writeFile("owners/some-owner/repositories/new-service.implementation.yaml", implementation2)
+	err = r.writeFile("owners/some-owner/repositories/whatever.implementation.yaml", implementation2)
 	if err != nil {
 		return err
 	}

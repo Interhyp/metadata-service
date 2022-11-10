@@ -5,6 +5,7 @@ import (
 	openapi "github.com/Interhyp/metadata-service/api/v1"
 	"github.com/Interhyp/metadata-service/docs"
 	"github.com/stretchr/testify/require"
+	"regexp"
 	"testing"
 )
 
@@ -185,11 +186,6 @@ func (c *MockConfig) MetadataRepoUrl() string {
 	panic("implement me")
 }
 
-func (c *MockConfig) OwnerRegex() string {
-	//TODO implement me
-	panic("implement me")
-}
-
 func (c *MockConfig) UpdateJobIntervalCronPart() string {
 	//TODO implement me
 	panic("implement me")
@@ -220,6 +216,51 @@ func (c *MockConfig) AlertTargetSuffix() string {
 
 func (c *MockConfig) AdditionalPromotersFromOwners() []string {
 	return make([]string, 0)
+}
+
+func (c *MockConfig) OwnerPermittedAliasRegex() *regexp.Regexp {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (c *MockConfig) OwnerProhibitedAliasRegex() *regexp.Regexp {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (c *MockConfig) OwnerFilterAliasRegex() *regexp.Regexp {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (c *MockConfig) ServicePermittedNameRegex() *regexp.Regexp {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (c *MockConfig) ServiceProhibitedNameRegex() *regexp.Regexp {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (c *MockConfig) RepositoryPermittedNameRegex() *regexp.Regexp {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (c *MockConfig) RepositoryProhibitedNameRegex() *regexp.Regexp {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (c *MockConfig) RepositoryTypes() []string {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (c *MockConfig) RepositoryKeySeparator() string {
+	//TODO implement me
+	panic("implement me")
 }
 
 func tstValidationTestcaseAllOps(t *testing.T, expectedMessage string, data openapi.ServiceDto, create openapi.ServiceCreateDto, patch openapi.ServicePatchDto) {
