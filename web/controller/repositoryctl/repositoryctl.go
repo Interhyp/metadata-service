@@ -12,6 +12,7 @@ import (
 	"github.com/Interhyp/metadata-service/acorns/errors/referencederror"
 	"github.com/Interhyp/metadata-service/acorns/errors/unavailableerror"
 	"github.com/Interhyp/metadata-service/acorns/errors/validationerror"
+	"github.com/Interhyp/metadata-service/acorns/repository"
 	"github.com/Interhyp/metadata-service/acorns/service"
 	openapi "github.com/Interhyp/metadata-service/api/v1"
 	"github.com/Interhyp/metadata-service/web/middleware/jwt"
@@ -22,7 +23,7 @@ import (
 	"github.com/go-http-utils/headers"
 	"net/http"
 	"net/url"
-	"regexp"
+	"strings"
 	"time"
 )
 
@@ -32,32 +33,15 @@ const nameParam = "name"
 const typeParam = "type"
 
 type Impl struct {
-	Logging      librepo.Logging
-	Repositories service.Repositories
+	Configuration       librepo.Configuration
+	CustomConfiguration repository.CustomConfiguration
+	Logging             librepo.Logging
+	Repositories        service.Repositories
 
-	ownerAliasRegexp  *regexp.Regexp
-	serviceNameRegexp *regexp.Regexp
-	repoNameRegex     *regexp.Regexp
-	repoTypeRegex     *regexp.Regexp
-	repoKeyRegex      *regexp.Regexp
-	Now               func() time.Time
+	Now func() time.Time
 }
 
-// TODO repo types map with service association instead of hard coded Regex
-
-const ownerRegex = "^[a-z](-?[a-z0-9]+)*$"
-const serviceRegex = "^[a-z](-?[a-z0-9]+)*$"
-const nameRegex = "^[a-z](-?[a-z0-9]+)*$"
-const typeRegex = "^(api|helm-chart|helm-deployment|implementation|terraform-module|javascript-module|none)(-generator)?$"
-const repoRegex = "^[a-z](-?[a-z0-9]+)*[.](api|helm-chart|helm-deployment|implementation|terraform-module|javascript-module|none)(-generator)?$"
-
 func (c *Impl) WireUp(_ context.Context, router chi.Router) {
-	c.ownerAliasRegexp = regexp.MustCompile(ownerRegex)
-	c.serviceNameRegexp = regexp.MustCompile(serviceRegex)
-	c.repoNameRegex = regexp.MustCompile(nameRegex)
-	c.repoTypeRegex = regexp.MustCompile(typeRegex)
-	c.repoKeyRegex = regexp.MustCompile(repoRegex)
-
 	baseEndpoint := "/rest/api/v1/repositories"
 	repositoryEndpoint := baseEndpoint + "/{repository}"
 
@@ -74,33 +58,9 @@ func (c *Impl) WireUp(_ context.Context, router chi.Router) {
 func (c *Impl) GetRepositories(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	ownerAliasFilter := util.StringQueryParam(r, ownerParam)
-	if ownerAliasFilter != "" {
-		if !c.validOwnerAlias(ownerAliasFilter) {
-			c.ownerParamInvalid(ctx, w, r, ownerAliasFilter)
-			return
-		}
-	}
 	serviceNameFilter := util.StringQueryParam(r, serviceParam)
-	if serviceNameFilter != "" {
-		if !c.validServiceName(serviceNameFilter) {
-			c.serviceParamInvalid(ctx, w, r, serviceNameFilter)
-			return
-		}
-	}
 	nameFilter := util.StringQueryParam(r, nameParam)
-	if nameFilter != "" {
-		if !c.validRepositoryName(nameFilter) {
-			c.repoNameParamInvalid(ctx, w, r, nameFilter)
-			return
-		}
-	}
 	typeFilter := util.StringQueryParam(r, typeParam)
-	if typeFilter != "" {
-		if !c.validRepositoryType(typeFilter) {
-			c.repoTypeParamInvalid(ctx, w, r, typeFilter)
-			return
-		}
-	}
 
 	repositories, err := c.Repositories.GetRepositories(ctx,
 		ownerAliasFilter, serviceNameFilter,
@@ -119,16 +79,12 @@ func (c *Impl) GetRepositories(w http.ResponseWriter, r *http.Request) {
 
 func (c *Impl) GetSingleRepository(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	repository := util.StringPathParam(r, "repository")
-	if !c.validRepositoryKey(repository) {
-		c.repositoryParamInvalid(ctx, w, r, repository)
-		return
-	}
+	key := util.StringPathParam(r, "repository")
 
-	repositoryDto, err := c.Repositories.GetRepository(ctx, repository)
+	repositoryDto, err := c.Repositories.GetRepository(ctx, key)
 	if err != nil {
 		if nosuchrepoerror.Is(err) {
-			c.repositoryNotFoundErrorHandler(ctx, w, r, repository)
+			c.repositoryNotFoundErrorHandler(ctx, w, r, key)
 		} else {
 			util.UnexpectedErrorHandler(ctx, w, r, err, c.Now())
 		}
@@ -150,7 +106,7 @@ func (c *Impl) CreateRepository(w http.ResponseWriter, r *http.Request) {
 
 	key := util.StringPathParam(r, "repository")
 	if !c.validRepositoryKey(key) {
-		c.repositoryParamInvalid(ctx, w, r, key)
+		c.repositoryKeyParamInvalid(ctx, w, r, key)
 		return
 	}
 	repositoryCreateDto, err := c.parseBodyToRepositoryCreateDto(ctx, r)
@@ -166,7 +122,7 @@ func (c *Impl) CreateRepository(w http.ResponseWriter, r *http.Request) {
 		} else if validationerror.Is(err) {
 			c.repositoryValidationError(ctx, w, r, err)
 		} else if nosuchownererror.Is(err) {
-			c.repositoryNonexistantOwner(ctx, w, r, err)
+			c.repositoryNonexistentOwner(ctx, w, r, err)
 		} else if unavailableerror.Is(err) {
 			util.BadGatewayErrorHandler(ctx, w, r, err, c.Now())
 		} else {
@@ -189,10 +145,6 @@ func (c *Impl) UpdateRepository(w http.ResponseWriter, r *http.Request) {
 	}
 
 	key := util.StringPathParam(r, "repository")
-	if !c.validRepositoryKey(key) {
-		c.repositoryParamInvalid(ctx, w, r, key)
-		return
-	}
 	repositoryDto, err := c.parseBodyToRepositoryDto(ctx, r)
 	if err != nil {
 		c.repositoryBodyInvalid(ctx, w, r, err)
@@ -204,7 +156,7 @@ func (c *Impl) UpdateRepository(w http.ResponseWriter, r *http.Request) {
 		if nosuchrepoerror.Is(err) {
 			c.repositoryNotFoundErrorHandler(ctx, w, r, key)
 		} else if nosuchownererror.Is(err) {
-			c.repositoryNonexistantOwner(ctx, w, r, err)
+			c.repositoryNonexistentOwner(ctx, w, r, err)
 		} else if concurrencyerror.Is(err) {
 			c.repositoryConcurrentlyUpdated(ctx, w, r, key, repositoryWritten)
 		} else if referencederror.Is(err) {
@@ -233,10 +185,6 @@ func (c *Impl) PatchRepository(w http.ResponseWriter, r *http.Request) {
 	}
 
 	key := util.StringPathParam(r, "repository")
-	if !c.validRepositoryKey(key) {
-		c.repositoryParamInvalid(ctx, w, r, key)
-		return
-	}
 	repositoryPatch, err := c.parseBodyToRepositoryPatchDto(ctx, r)
 	if err != nil {
 		c.repositoryBodyInvalid(ctx, w, r, err)
@@ -248,7 +196,7 @@ func (c *Impl) PatchRepository(w http.ResponseWriter, r *http.Request) {
 		if nosuchrepoerror.Is(err) {
 			c.repositoryNotFoundErrorHandler(ctx, w, r, key)
 		} else if nosuchownererror.Is(err) {
-			c.repositoryNonexistantOwner(ctx, w, r, err)
+			c.repositoryNonexistentOwner(ctx, w, r, err)
 		} else if concurrencyerror.Is(err) {
 			c.repositoryConcurrentlyUpdated(ctx, w, r, key, repositoryWritten)
 		} else if referencederror.Is(err) {
@@ -277,10 +225,6 @@ func (c *Impl) DeleteRepository(w http.ResponseWriter, r *http.Request) {
 	}
 
 	key := util.StringPathParam(r, "repository")
-	if !c.validRepositoryKey(key) {
-		c.repositoryParamInvalid(ctx, w, r, key)
-		return
-	}
 	info, err := util.ParseBodyToDeletionDto(ctx, r)
 	if err != nil {
 		util.DeletionBodyInvalid(ctx, w, r, err, c.Now())
@@ -307,29 +251,15 @@ func (c *Impl) DeleteRepository(w http.ResponseWriter, r *http.Request) {
 
 // --- specific error handlers ---
 
-func (c *Impl) ownerParamInvalid(ctx context.Context, w http.ResponseWriter, r *http.Request, owner string) {
-	c.Logging.Logger().Ctx(ctx).Warn().Printf("owner parameter %v invalid", url.QueryEscape(owner))
-	util.ErrorHandler(ctx, w, r, "owner.invalid.filter", http.StatusBadRequest, fmt.Sprintf("owner filter must match %s", ownerRegex), c.Now())
-}
-
-func (c *Impl) serviceParamInvalid(ctx context.Context, w http.ResponseWriter, r *http.Request, service string) {
-	c.Logging.Logger().Ctx(ctx).Warn().Printf("service parameter %v invalid", url.QueryEscape(service))
-	util.ErrorHandler(ctx, w, r, "service.invalid.filter", http.StatusBadRequest, fmt.Sprintf("service name filter must match %s", serviceRegex), c.Now())
-}
-
-func (c *Impl) repoNameParamInvalid(ctx context.Context, w http.ResponseWriter, r *http.Request, repoName string) {
-	c.Logging.Logger().Ctx(ctx).Warn().Printf("repo name parameter %v invalid", url.QueryEscape(repoName))
-	util.ErrorHandler(ctx, w, r, "repository.invalid.filter.name", http.StatusBadRequest, fmt.Sprintf("repository name filter must match %s", nameRegex), c.Now())
-}
-
-func (c *Impl) repoTypeParamInvalid(ctx context.Context, w http.ResponseWriter, r *http.Request, repoType string) {
-	c.Logging.Logger().Ctx(ctx).Warn().Printf("repo type parameter %v invalid", url.QueryEscape(repoType))
-	util.ErrorHandler(ctx, w, r, "repository.invalid.filter.type", http.StatusBadRequest, fmt.Sprintf("repository type filter must match %s", typeRegex), c.Now())
-}
-
-func (c *Impl) repositoryParamInvalid(ctx context.Context, w http.ResponseWriter, r *http.Request, repository string) {
+func (c *Impl) repositoryKeyParamInvalid(ctx context.Context, w http.ResponseWriter, r *http.Request, repository string) {
 	c.Logging.Logger().Ctx(ctx).Warn().Printf("repository parameter %v invalid", url.QueryEscape(repository))
-	util.ErrorHandler(ctx, w, r, "repository.invalid", http.StatusBadRequest, fmt.Sprintf("repository key must match %s", repoRegex), c.Now())
+	permitted := c.CustomConfiguration.RepositoryNamePermittedRegex().String()
+	prohibited := c.CustomConfiguration.RepositoryNameProhibitedRegex().String()
+	max := c.CustomConfiguration.RepositoryNameMaxLength()
+	repoTypes := c.CustomConfiguration.RepositoryTypes()
+	separator := c.CustomConfiguration.RepositoryKeySeparator()
+	util.ErrorHandler(ctx, w, r, "repository.invalid", http.StatusBadRequest,
+		fmt.Sprintf("repository name must match %s, is not allowed to match %s and may have up to %d characters; repository type must be one of %v and name and type must be separated by a %s character", permitted, prohibited, max, repoTypes, separator), c.Now())
 }
 
 func (c *Impl) repositoryNotFoundErrorHandler(ctx context.Context, w http.ResponseWriter, r *http.Request, repository string) {
@@ -366,7 +296,7 @@ func (c *Impl) repositoryValidationError(ctx context.Context, w http.ResponseWri
 	util.ErrorHandler(ctx, w, r, "repository.invalid.values", http.StatusBadRequest, err.Error(), c.Now())
 }
 
-func (c *Impl) repositoryNonexistantOwner(ctx context.Context, w http.ResponseWriter, r *http.Request, err error) {
+func (c *Impl) repositoryNonexistentOwner(ctx context.Context, w http.ResponseWriter, r *http.Request, err error) {
 	c.Logging.Logger().Ctx(ctx).Warn().Printf("repository values invalid: %s", err.Error())
 	util.ErrorHandler(ctx, w, r, "repository.invalid.missing.owner", http.StatusBadRequest, err.Error(), c.Now())
 }
@@ -383,24 +313,27 @@ func (c *Impl) deletionValidationError(ctx context.Context, w http.ResponseWrite
 
 // --- helpers
 
-func (c *Impl) validOwnerAlias(owner string) bool {
-	return c.ownerAliasRegexp.MatchString(owner)
-}
-
-func (c *Impl) validServiceName(service string) bool {
-	return c.serviceNameRegexp.MatchString(service)
+func (c *Impl) validRepositoryKey(key string) bool {
+	keyParts := strings.Split(key, c.CustomConfiguration.RepositoryKeySeparator())
+	if len(keyParts) != 2 {
+		return false
+	}
+	return c.validRepositoryName(keyParts[0]) && c.validRepositoryType(keyParts[1])
 }
 
 func (c *Impl) validRepositoryName(name string) bool {
-	return c.repoNameRegex.MatchString(name)
+	return c.CustomConfiguration.RepositoryNamePermittedRegex().MatchString(name) &&
+		!c.CustomConfiguration.RepositoryNameProhibitedRegex().MatchString(name) &&
+		uint16(len(name)) <= c.CustomConfiguration.RepositoryNameMaxLength()
 }
 
 func (c *Impl) validRepositoryType(repoType string) bool {
-	return c.repoTypeRegex.MatchString(repoType)
-}
-
-func (c *Impl) validRepositoryKey(repository string) bool {
-	return c.repoKeyRegex.MatchString(repository)
+	for _, validRepoType := range c.CustomConfiguration.RepositoryTypes() {
+		if validRepoType == repoType {
+			return true
+		}
+	}
+	return false
 }
 
 func (c *Impl) parseBodyToRepositoryDto(_ context.Context, r *http.Request) (openapi.RepositoryDto, error) {

@@ -1,8 +1,10 @@
 package config
 
 import (
+	"fmt"
 	auconfigapi "github.com/StephanHCB/go-autumn-config-api"
 	auconfigenv "github.com/StephanHCB/go-autumn-config-env"
+	"regexp"
 	"strconv"
 )
 
@@ -16,7 +18,6 @@ const (
 	KeyKafkaGroupIdOverride          = "KAFKA_GROUP_ID_OVERRIDE"
 	KeyKeySetUrl                     = "KEY_SET_URL"
 	KeyMetadataRepoUrl               = "METADATA_REPO_URL"
-	KeyOwnerRegex                    = "OWNER_REGEX"
 	KeyUpdateJobIntervalMinutes      = "UPDATE_JOB_INTERVAL_MINUTES"
 	KeyUpdateJobTimeoutSeconds       = "UPDATE_JOB_TIMEOUT_SECONDS"
 	KeyVaultSecretsBasePath          = "VAULT_SECRETS_BASE_PATH"
@@ -26,6 +27,18 @@ const (
 	KeyAdditionalPromoters           = "ADDITIONAL_PROMOTERS"
 	KeyAdditionalPromotersFromOwners = "ADDITIONAL_PROMOTERS_FROM_OWNERS"
 	KeyElasticApmDisabled            = "ELASTIC_APM_DISABLED"
+	KeyOwnerAliasPermittedRegex      = "OWNER_ALIAS_PERMITTED_REGEX"
+	KeyOwnerAliasProhibitedRegex     = "OWNER_ALIAS_PROHIBITED_REGEX"
+	KeyOwnerAliasMaxLength           = "OWNER_ALIAS_MAX_LENGTH"
+	KeyOwnerAliasFilterRegex         = "OWNER_ALIAS_FILTER_REGEX"
+	KeyServiceNamePermittedRegex     = "SERVICE_NAME_PERMITTED_REGEX"
+	KeyServiceNameProhibitedRegex    = "SERVICE_NAME_PROHIBITED_REGEX"
+	KeyServiceNameMaxLength          = "SERVICE_NAME_MAX_LENGTH"
+	KeyRepositoryNamePermittedRegex  = "REPOSITORY_NAME_PERMITTED_REGEX"
+	KeyRepositoryNameProhibitedRegex = "REPOSITORY_NAME_PROHIBITED_REGEX"
+	KeyRepositoryNameMaxLength       = "REPOSITORY_NAME_MAX_LENGTH"
+	KeyRepositoryKeySeparator        = "REPOSITORY_KEY_SEPARATOR"
+	KeyRepositoryTypes               = "REPOSITORY_TYPES"
 )
 
 var CustomConfigItems = []auconfigapi.ConfigItem{
@@ -93,13 +106,6 @@ var CustomConfigItems = []auconfigapi.ConfigItem{
 		Validate:    auconfigenv.ObtainNotEmptyValidator(),
 	},
 	{
-		Key:         KeyOwnerRegex,
-		EnvName:     KeyOwnerRegex,
-		Default:     ".*",
-		Description: "regular expression to filter owners. Useful on localhost or for test instances to speed up service startup.",
-		Validate:    auconfigapi.ConfigNeedsNoValidation,
-	},
-	{
 		Key:         KeyUpdateJobIntervalMinutes,
 		EnvName:     KeyUpdateJobIntervalMinutes,
 		Default:     "5",
@@ -158,10 +164,112 @@ var CustomConfigItems = []auconfigapi.ConfigItem{
 		EnvName:     KeyElasticApmDisabled,
 		Default:     "false",
 		Description: "Disable Elastic APM middleware. Supports all values supported by ParseBool (https://pkg.go.dev/strconv#ParseBool).",
-		Validate: func(key string) error {
-			value := auconfigenv.Get(key)
-			_, err := strconv.ParseBool(value)
-			return err
-		},
+		Validate:    booleanValidator,
 	},
+	{
+		Key:         KeyOwnerAliasPermittedRegex,
+		EnvName:     KeyOwnerAliasPermittedRegex,
+		Default:     "^[a-z](-?[a-z0-9]+)*$",
+		Description: "regular expression to control the owner aliases that are permitted to be be created.",
+		Validate:    regexCompileValidator,
+	},
+	{
+		Key:         KeyOwnerAliasProhibitedRegex,
+		EnvName:     KeyOwnerAliasProhibitedRegex,
+		Default:     "^$",
+		Description: "regular expression to control the owner aliases that are prohibited to be be created.",
+		Validate:    regexCompileValidator,
+	},
+	{
+		Key:         KeyOwnerAliasFilterRegex,
+		EnvName:     KeyOwnerAliasFilterRegex,
+		Default:     "^.*$",
+		Description: "regular expression to filter owners based on their alias. Useful on localhost or for test instances to speed up service startup.",
+		Validate:    regexCompileValidator,
+	},
+	{
+		Key:         KeyOwnerAliasMaxLength,
+		EnvName:     KeyOwnerAliasMaxLength,
+		Default:     "28",
+		Description: "maximum length of a valid owner alias.",
+		Validate:    auconfigenv.ObtainIntRangeValidator(1, 100),
+	},
+	{
+		Key:         KeyServiceNamePermittedRegex,
+		EnvName:     KeyServiceNamePermittedRegex,
+		Default:     "^[a-z](-?[a-z0-9]+)*$",
+		Description: "regular expression to control the service names that are permitted to be be created.",
+		Validate:    regexCompileValidator,
+	},
+	{
+		Key:         KeyServiceNameProhibitedRegex,
+		EnvName:     KeyServiceNameProhibitedRegex,
+		Default:     "^$",
+		Description: "regular expression to control the service names that are prohibited to be be created.",
+		Validate:    regexCompileValidator,
+	},
+	{
+		Key:         KeyServiceNameMaxLength,
+		EnvName:     KeyServiceNameMaxLength,
+		Default:     "28",
+		Description: "maximum length of a valid service name.",
+		Validate:    auconfigenv.ObtainIntRangeValidator(1, 100),
+	},
+	{
+		Key:         KeyRepositoryNamePermittedRegex,
+		EnvName:     KeyRepositoryNamePermittedRegex,
+		Default:     "^[a-z](-?[a-z0-9]+)*$",
+		Description: "regular expression to control the repository names that are permitted to be be created.",
+		Validate:    regexCompileValidator,
+	},
+	{
+		Key:         KeyRepositoryNameProhibitedRegex,
+		EnvName:     KeyRepositoryNameProhibitedRegex,
+		Default:     "^$",
+		Description: "regular expression to control the repository names that are prohibited to be be created.",
+		Validate:    regexCompileValidator,
+	},
+	{
+		Key:         KeyRepositoryNameMaxLength,
+		EnvName:     KeyRepositoryNameMaxLength,
+		Default:     "64",
+		Description: "maximum length of a valid repository name.",
+		Validate:    auconfigenv.ObtainIntRangeValidator(1, 100),
+	},
+	{
+		Key:         KeyRepositoryTypes,
+		EnvName:     KeyRepositoryTypes,
+		Default:     "",
+		Description: "comma separated list of supported repository types.",
+		Validate:    auconfigenv.ObtainPatternValidator("^|[a-z](-?[a-z0-9]+)*(,[a-z](-?[a-z0-9]+)*)*$"),
+	},
+	{
+		Key:         KeyRepositoryKeySeparator,
+		EnvName:     KeyRepositoryKeySeparator,
+		Default:     ".",
+		Description: "single character used to separate repository name from repository type. repository name and repository type must not contain separator.",
+		Validate:    singleCharacterValidator,
+	},
+}
+
+func booleanValidator(key string) error {
+	value := auconfigenv.Get(key)
+	_, err := strconv.ParseBool(value)
+	return err
+}
+
+func singleCharacterValidator(key string) error {
+	value := auconfigenv.Get(key)
+	if len(value) < 1 {
+		return fmt.Errorf("parameter cannot be empty")
+	} else if len(value) > 1 {
+		return fmt.Errorf("parameter cannot consist of multiple characters")
+	}
+	return nil
+}
+
+func regexCompileValidator(key string) error {
+	value := auconfigenv.Get(key)
+	_, err := regexp.Compile(value)
+	return err
 }

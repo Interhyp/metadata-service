@@ -28,48 +28,67 @@ the [![Use Template](https://img.shields.io/badge/use%20-template-blue?TODO?logo
 In production all configuration is sourced from environment variables. For localhost development
 the [`local-config.yaml`][config] can be used to set the variables.
 
-| Variable                           | Default    | Description                                                                                                                                                                |
-|------------------------------------|------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `APPLICATION_NAME`                 | `metadata` | The name of the application, lowercase, numbers and - only.                                                                                                                |
-| `SERVER_ADDRESS`                   | `0.0.0.0`  | Address to bind to, one of IP, Hostname, ipv6_ip, ipv6ip%interface                                                                                                         |
-| `SERVER_PORT`                      | `8080`     | Port to listen on, cannot be a privileged port. Must be in range of 1024 - 65535.                                                                                          |
-| `METRICS_PORT`                     | `9090`     | Port to provide prometheus metrics on, cannot be a privileged port. Must be in range of 1024 - 65535.                                                                      |
-|                                    |            |                                                                                                                                                                            |
-| `METADATA_REPO_URL`                |            | The HTTP url to the repository containing the metadata. e.g.: `https://github.com/Interhyp/metadata-service-template.git`                                                  |
-| `OWNER_REGEX`                      | `.*`       | The regex used to limt owner aliases to load. Mostly useful for local development to minimize startup time. Default loads all owners.                                      |
-|                                    |            |                                                                                                                                                                            |
-| `LOGSTYLE`                         | `ecs`      | The logstyle to use (defaults to [elastic common schema][ecs]) and can be changed to `plain` for localhost debugging.                                                      |
-|                                    |            |                                                                                                                                                                            |
-| `VAULT_SERVER`                     |            | FQDN of the [Vault][vault] server - do not add any other part of the URL.                                                                                                  |
-| `ENVIRONMENT`                      | `dev`      | Used for creating the full Vault secret path by combining `VAULT_SECRET_BASE_PATH`/`ENVIRONMENT`/`VAULT_SECRET_PATH`.                                                      |
-| `VAULT_SECRETS_BASE_PATH`          |            | Used for creating the full Vault secret path by combining `VAULT_SECRET_BASE_PATH`/`ENVIRONMENT`/`VAULT_SECRET_PATH`.                                                      |
-| `VAULT_SECRET_PATH`                |            | Used for creating the full Vault secret path by combining `VAULT_SECRET_BASE_PATH`/`ENVIRONMENT`/`VAULT_SECRET_PATH`.                                                      |
-| `LOCAL_VAULT_TOKEN`                |            | Setting this implicitly switches from [Kubernetes authentication][vault-k8-auth] to [token mode][vault-token-auth], only use this on localhost.                            |
-|                                    |            |                                                                                                                                                                            |
-| `BB_USER`                          |            | User used for basic git authentication to pull and update the metadata repository. The password is fetched from the Vault path under the `BB_PASSWORD` key.                |
-| `GIT_COMMITTER_NAME`               |            | Name of the user used to create the Git commits.                                                                                                                           |
-| `GIT_COMMITTER_EMAIL`              |            | E-Mail of the user used to create the Git commits.                                                                                                                         |
-|                                    |            |                                                                                                                                                                            |
-| `KAFKA_USER`                       |            | Leave ALL of the following `KAFKA_` fields empty to skip the Kafka integration.                                                                                            |
-| `KAFKA_TOPIC`                      |            |                                                                                                                                                                            |
-| `KAFKA_SEED_BROKERS`               |            | A comma separated list of Kafka brokers, e.g. first-kafka-broker.domain.com:9092,second-kafka-broker.domain.com:9092                                                       |                        
-| `KAFKA_GROUP_ID_OVERRIDE`          |            | Override the kafka group id for local development to avoid creating lots of consumer groups. If unset, derived from local IP address so each k8s pod gets their own group. |
-| `VAULT_KAFKA_SECRET_PATH`          |            | The full path to the Kafka broker secret in Vault.                                                                                                                         |
-|                                    |            |                                                                                                                                                                            |
-| `KEY_SET_URL`                      |            | URL to the [OpenID Connect Keyset][openid] for validating JWT tokens. See [authentication](#authentication) for more details.                                              |
-|                                    |            |                                                                                                                                                                            |
-| `UPDATE_JOB_INTERVAL_MINUTES`      | `15`       | Interval in minutes for refreshing the metadata repository cache.                                                                                                          |
-| `UPDATE_JOB_TIMEOUT_SECONDS`       | `30`       | Timeout in seconds when fetching the Git repository.                                                                                                                       |
-|                                    |            |                                                                                                                                                                            |
-| `ALERT_TARGET_PREFIX`              |            | Validates the alert target to either match the prefix or suffix.                                                                                                           |
-| `ALERT_TARGET_SUFFIX`              |            |                                                                                                                                                                            |
-|                                    |            |                                                                                                                                                                            |
-| `ADDITIONAL_PROMOTERS`             |            | promoters to be added for all services. Can be left empty, or contain a comma separated list of usernames                                                                  |
-| `ADDITIONAL_PROMOTERS_FROM_OWNERS` |            | owner aliases from which to get additional promoters to be added for all services. Can be left empty, or contain a comma separated list of owner aliases                   |
+| Variable                           | Default                 | Description                                                                                                                                                                |
+|------------------------------------|-------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `APPLICATION_NAME`                 | `metadata`              | The name of the application, lowercase, numbers and - only.                                                                                                                |
+| `SERVER_ADDRESS`                   | `0.0.0.0`               | Address to bind to, one of IP, Hostname, ipv6_ip, ipv6ip%interface                                                                                                         |
+| `SERVER_PORT`                      | `8080`                  | Port to listen on, cannot be a privileged port. Must be in range of 1024 - 65535.                                                                                          |
+| `METRICS_PORT`                     | `9090`                  | Port to provide prometheus metrics on, cannot be a privileged port. Must be in range of 1024 - 65535.                                                                      |
+|                                    |                         |                                                                                                                                                                            |
+| `METADATA_REPO_URL`                |                         | The HTTP url to the repository containing the metadata. e.g.: `https://github.com/Interhyp/metadata-service-template.git`                                                  |
+| `OWNER_REGEX`                      | `.*`                    | The regex used to limt owner aliases to load. Mostly useful for local development to minimize startup time. Default loads all owners.                                      |
+|                                    |                         |                                                                                                                                                                            |
+| `LOGSTYLE`                         | `ecs`                   | The logstyle to use (defaults to [elastic common schema][ecs]) and can be changed to `plain` for localhost debugging.                                                      |
+|                                    |                         |                                                                                                                                                                            |
+| `VAULT_SERVER`                     |                         | FQDN of the [Vault][vault] server - do not add any other part of the URL.                                                                                                  |
+| `ENVIRONMENT`                      | `dev`                   | Used for creating the full Vault secret path by combining `VAULT_SECRET_BASE_PATH`/`ENVIRONMENT`/`VAULT_SECRET_PATH`.                                                      |
+| `VAULT_SECRETS_BASE_PATH`          |                         | Used for creating the full Vault secret path by combining `VAULT_SECRET_BASE_PATH`/`ENVIRONMENT`/`VAULT_SECRET_PATH`.                                                      |
+| `VAULT_SECRET_PATH`                |                         | Used for creating the full Vault secret path by combining `VAULT_SECRET_BASE_PATH`/`ENVIRONMENT`/`VAULT_SECRET_PATH`.                                                      |
+| `LOCAL_VAULT_TOKEN`                |                         | Setting this implicitly switches from [Kubernetes authentication][vault-k8-auth] to [token mode][vault-token-auth], only use this on localhost.                            |
+|                                    |                         |                                                                                                                                                                            |
+| `BB_USER`                          |                         | User used for basic git authentication to pull and update the metadata repository. The password is fetched from the Vault path under the `BB_PASSWORD` key.                |
+| `GIT_COMMITTER_NAME`               |                         | Name of the user used to create the Git commits.                                                                                                                           |
+| `GIT_COMMITTER_EMAIL`              |                         | E-Mail of the user used to create the Git commits.                                                                                                                         |
+|                                    |                         |                                                                                                                                                                            |
+| `KAFKA_USER`                       |                         | Leave ALL of the following `KAFKA_` fields empty to skip the Kafka integration.                                                                                            |
+| `KAFKA_TOPIC`                      |                         |                                                                                                                                                                            |
+| `KAFKA_SEED_BROKERS`               |                         | A comma separated list of Kafka brokers, e.g. first-kafka-broker.domain.com:9092,second-kafka-broker.domain.com:9092                                                       |                        
+| `KAFKA_GROUP_ID_OVERRIDE`          |                         | Override the kafka group id for local development to avoid creating lots of consumer groups. If unset, derived from local IP address so each k8s pod gets their own group. |
+| `VAULT_KAFKA_SECRET_PATH`          |                         | The full path to the Kafka broker secret in Vault.                                                                                                                         |
+|                                    |                         |                                                                                                                                                                            |
+| `KEY_SET_URL`                      |                         | URL to the [OpenID Connect Keyset][openid] for validating JWT tokens. See [authentication](#authentication) for more details.                                              |
+|                                    |                         |                                                                                                                                                                            |
+| `UPDATE_JOB_INTERVAL_MINUTES`      | `15`                    | Interval in minutes for refreshing the metadata repository cache.                                                                                                          |
+| `UPDATE_JOB_TIMEOUT_SECONDS`       | `30`                    | Timeout in seconds when fetching the Git repository.                                                                                                                       |
+|                                    |                         |                                                                                                                                                                            |
+| `ALERT_TARGET_PREFIX`              |                         | Validates the alert target to either match the prefix or suffix.                                                                                                           |
+| `ALERT_TARGET_SUFFIX`              |                         |                                                                                                                                                                            |
+|                                    |                         |                                                                                                                                                                            |
+| `ADDITIONAL_PROMOTERS`             |                         | Promoters to be added for all services. Can be left empty, or contain a comma separated list of usernames                                                                  |
+| `ADDITIONAL_PROMOTERS_FROM_OWNERS` |                         | Owner aliases from which to get additional promoters to be added for all services. Can be left empty, or contain a comma separated list of owner aliases                   |
+|                                    |                         |                                                                                                                                                                            |
+| `OWNER_ALIAS_PERMITTED_REGEX`      | `^[a-z](-?[a-z0-9]+)*$` | Regular expression to control the owner aliases that are permitted to be be created.                                                                                       |
+| `OWNER_ALIAS_PROHIBITED_REGEX`     | `^$`                    | Regular expression to control the owner aliases that are prohibited to be be created.                                                                                      |
+| `OWNER_ALIAS_MAX_LENGTH`           | `28`                    | Maximum length of a valid owner alias.                                                                                                                                     |
+| `OWNER_ALIAS_FILTER_REGEX`         |                         | Regular expression to filter owners based on their alias. Useful on localhost or for test instances to speed up service startup.                                           |
+|                                    |                         |                                                                                                                                                                            |
+| `SERVICE_NAME_PERMITTED_REGEX`     | `^[a-z](-?[a-z0-9]+)*$` | Regular expression to control the service names that are permitted to be be created.                                                                                       |
+| `SERVICE_NAME_PROHIBITED_REGEX`    | `^$`                    | Regular expression to control the service names that are prohibited to be be created.                                                                                      |
+| `SERVICE_NAME_MAX_LENGTH`          | `28`                    | Maximum length of a valid service name.                                                                                                                                    |
+|                                    |                         |                                                                                                                                                                            |
+| `REPOSITORY_NAME_PERMITTED_REGEX`  | `^[a-z](-?[a-z0-9]+)*$` | Regular expression to control the repository names that are permitted to be be created.                                                                                    |
+| `REPOSITORY_NAME_PROHIBITED_REGEX` | `^$`                    | Regular expression to control the repository names that are prohibited to be be created.                                                                                   |
+| `REPOSITORY_NAME_MAX_LENGTH`       | `64`                    | Maximum length of a valid repository name.                                                                                                                                 |
+| `REPOSITORY_TYPES`                 |                         | Comma separated list of supported repository types.                                                                                                                        |
+| `REPOSITORY_KEY_SEPARATOR`         | `.`                     | Single character used to separate repository name from repository type. repository name and repository type must not contain separator.                                    |
 
 ## Datastore
 
-The metadata-service uses a Git repository as [its datastore][template] and caches it in memory. This enables a [GitOps][gitops] pattern for maintaining the metadata of services. The metadata is categorized into the three types `owner`, `service` and `repository`. The structure of the repository is as follows. See the [![Swagger](https://img.shields.io/badge/-Swagger-%23Clojure?style=for-the-badge&logo=swagger&logoColor=white)][swagger] documentation for details on the API.
+The metadata-service uses a Git repository as [its datastore][template] and caches it in memory. This enables
+a [GitOps][gitops] pattern for maintaining the metadata of services. The metadata is categorized into the three
+types `owner`, `service` and `repository`. The structure of the repository is as follows. See
+the [![Swagger](https://img.shields.io/badge/-Swagger-%23Clojure?style=for-the-badge&logo=swagger&logoColor=white)][swagger]
+documentation for details on the API.
 
 ```
 owners/
@@ -87,18 +106,25 @@ owners/
 
 ## Authentication
 
-The metadata-service has two kinds of authentication. One for the repository used as the [datastore](#datastore) and another set of credentials used to authenticate against the protected API (create, update, delete operations) of the service.
+The metadata-service has two kinds of authentication. One for the repository used as the [datastore](#datastore) and
+another set of credentials used to authenticate against the protected API (create, update, delete operations) of the
+service.
 
 ### Datastore Authentication
 
-The service currently only supports Basic Authentication for fetching and updating the git repository used as the [datastore](#datastore). The credentials are configured via the `BB_USERNAME` environment variable and the password is fetched from [Vault][vault] using the `BB_PASSWORD` key.
+The service currently only supports Basic Authentication for fetching and updating the git repository used as
+the [datastore](#datastore). The credentials are configured via the `BB_USERNAME` environment variable and the password
+is fetched from [Vault][vault] using the `BB_PASSWORD` key.
 
 ### API Authentication
 
-Authentication against the API of the metadata-service can be done using a JWT token and configuring the `KEY_SET_URL` with a valid [OpenID][openid] backend. As an alternative the `BASIC_AUTH_USERNAME` and `BASIC_AUTH_PASSWORD` keys can be set in Vault to enable Basic Authentication against the API.
+Authentication against the API of the metadata-service can be done using a JWT token and configuring the `KEY_SET_URL`
+with a valid [OpenID][openid] backend. As an alternative the `BASIC_AUTH_USERNAME` and `BASIC_AUTH_PASSWORD` keys can be
+set in Vault to enable Basic Authentication against the API.
 
 > **WARNING**  
-> Leaving `BASIC_AUTH_USERNAME` and `BASIC_AUTH_PASSWORD` empty will currently expose your protected API to anonymous requests.
+> Leaving `BASIC_AUTH_USERNAME` and `BASIC_AUTH_PASSWORD` empty will currently expose your protected API to anonymous
+> requests.
 
 ## concurrency and eventual consistency
 
@@ -253,15 +279,27 @@ The api docs URL is /v3/api-docs (in case the swagger ui does not automatically 
 `go mod graph > deps.txt`
 
 [15-factor]: https://domenicoluciani.com/2021/10/30/15-factor-app.html
+
 [gitops]: https://about.gitlab.com/topics/gitops/
+
 [swagger]: https://interhyp.github.io/metadata-service/
+
 [template]: https://github.com/Interhyp/metadata-service-template/
+
 [use-template]: https://github.com/Interhyp/metadata-service-template/generate
+
 [release]: ../../releases/latest
+
 [docker]: Dockerfile
+
 [config]: docs/local-config.template.yaml
+
 [vault]: https://www.vaultproject.io/
+
 [vault-k8-auth]: https://www.vaultproject.io/docs/auth/kubernetes
+
 [vault-token-auth]: https://www.vaultproject.io/docs/auth/token
+
 [ecs]: https://www.elastic.co/guide/en/ecs/current/index.html
+
 [openid]: https://github.com/dexidp/dex

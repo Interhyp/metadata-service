@@ -2,6 +2,7 @@ package config
 
 import (
 	"os"
+	"regexp"
 	"strings"
 )
 
@@ -41,10 +42,6 @@ func (c *CustomConfigImpl) MetadataRepoUrl() string {
 	return c.VMetadataRepoUrl
 }
 
-func (c *CustomConfigImpl) OwnerRegex() string {
-	return c.VOwnerRegex
-}
-
 func (c *CustomConfigImpl) UpdateJobIntervalCronPart() string {
 	return c.VUpdateJobIntervalCronPart
 }
@@ -82,4 +79,52 @@ func (c *CustomConfigImpl) ElasticApmEnabled() bool {
 		os.Getenv("ELASTIC_APM_SERVER_URL") != "" &&
 		os.Getenv("ELASTIC_APM_SERVICE_NAME") != "" &&
 		os.Getenv("ELASTIC_APM_ENVIRONMENT") != ""
+}
+
+func (c *CustomConfigImpl) OwnerAliasPermittedRegex() *regexp.Regexp {
+	return c.VOwnerAliasPermittedRegex
+}
+
+func (c *CustomConfigImpl) OwnerAliasProhibitedRegex() *regexp.Regexp {
+	return c.VOwnerAliasProhibitedRegex
+}
+
+func (c *CustomConfigImpl) OwnerAliasMaxLength() uint16 {
+	return c.VOwnerAliasMaxLength
+}
+
+func (c *CustomConfigImpl) OwnerFilterAliasRegex() *regexp.Regexp {
+	return c.VOwnerAliasFilterRegex
+}
+
+func (c *CustomConfigImpl) ServiceNamePermittedRegex() *regexp.Regexp {
+	return c.VServiceNamePermittedRegex
+}
+
+func (c *CustomConfigImpl) ServiceNameProhibitedRegex() *regexp.Regexp {
+	return c.VServiceNameProhibitedRegex
+}
+
+func (c *CustomConfigImpl) ServiceNameMaxLength() uint16 {
+	return c.VServiceNameMaxLength
+}
+
+func (c *CustomConfigImpl) RepositoryNamePermittedRegex() *regexp.Regexp {
+	return c.VRepositoryNamePermittedRegex
+}
+
+func (c *CustomConfigImpl) RepositoryNameProhibitedRegex() *regexp.Regexp {
+	return c.VRepositoryNameProhibitedRegex
+}
+
+func (c *CustomConfigImpl) RepositoryNameMaxLength() uint16 {
+	return c.VRepositoryNameMaxLength
+}
+
+func (c *CustomConfigImpl) RepositoryTypes() []string {
+	return strings.Split(c.VRepositoryTypes, ",")
+}
+
+func (c *CustomConfigImpl) RepositoryKeySeparator() string {
+	return c.VRepositoryKeySeparator
 }

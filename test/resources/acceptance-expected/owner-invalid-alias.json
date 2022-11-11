@@ -1,5 +1,5 @@
 {
-  "details": "owner alias must match ^[a-z](-?[a-z0-9]+)*$",
+  "details": "owner alias must match ^[a-z](-?[a-z0-9]+)*$, is not allowed to match ^$ and may have up to 28 characters",
   "message": "owner.invalid.alias",
   "timestamp": "2022-11-06T18:14:10Z"
 }

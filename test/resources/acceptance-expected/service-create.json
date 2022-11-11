@@ -11,8 +11,8 @@
     }
   ],
   "repositories": [
-    "new-service.helm-deployment",
-    "new-service.implementation"
+    "whatever.helm-deployment",
+    "whatever.implementation"
   ],
   "requiredScans": [
     "SAST",

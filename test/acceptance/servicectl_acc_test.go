@@ -38,19 +38,6 @@ func TestGETService_Success(t *testing.T) {
 	tstAssert(t, response, err, http.StatusOK, "service.json")
 }
 
-func TestGETService_InvalidAlias(t *testing.T) {
-	tstReset()
-
-	docs.Given("Given an unauthenticated user")
-	token := tstUnauthenticated()
-
-	docs.When("When they request a single service with an invalid name")
-	response, err := tstPerformGet("/rest/api/v1/services/ääääää", token)
-
-	docs.Then("Then the request fails and the error response is as expected")
-	tstAssert(t, response, err, http.StatusBadRequest, "service-invalid.json")
-}
-
 func TestGETService_NotFound(t *testing.T) {
 	tstReset()
 
@@ -73,26 +60,26 @@ func TestPOSTService_Success(t *testing.T) {
 	token := tstValidAdminToken()
 
 	docs.When("When they request the creation of a valid service that does not exist")
-	body := tstService("new-service")
-	response, err := tstPerformPost("/rest/api/v1/services/new-service", token, &body)
+	body := tstService("whatever")
+	response, err := tstPerformPost("/rest/api/v1/services/whatever", token, &body)
 
 	docs.Then("Then the request is successful and the response is as expected")
 	tstAssert(t, response, err, http.StatusCreated, "service-create.json")
 
 	docs.Then("And the service has been correctly written, committed and pushed")
-	filename := "owners/some-owner/services/new-service.yaml"
-	require.Equal(t, tstServiceExpectedYaml("new-service"), metadataImpl.ReadContents(filename))
+	filename := "owners/some-owner/services/whatever.yaml"
+	require.Equal(t, tstServiceExpectedYaml("whatever"), metadataImpl.ReadContents(filename))
 	require.True(t, metadataImpl.FilesCommitted[filename])
 	require.True(t, metadataImpl.Pushed)
 
 	docs.Then("And the service has been cached and can be read again")
-	readAgain, err := tstPerformGet("/rest/api/v1/services/new-service", tstUnauthenticated())
+	readAgain, err := tstPerformGet("/rest/api/v1/services/whatever", tstUnauthenticated())
 	tstAssert(t, readAgain, err, http.StatusOK, "service-create.json")
 
 	docs.Then("And a kafka message notifying other instances of the creation has been sent")
 	require.Equal(t, 1, len(kafkaImpl.Recording))
 	actual, _ := json.Marshal(kafkaImpl.Recording[0])
-	require.Equal(t, tstServiceExpectedKafka("new-service"), string(actual))
+	require.Equal(t, tstServiceExpectedKafka("whatever"), string(actual))
 }
 
 func TestPOSTService_InvalidName(t *testing.T) {
@@ -105,6 +92,25 @@ func TestPOSTService_InvalidName(t *testing.T) {
 
 	body := tstService("CapitalsAreForbidden")
 	response, err := tstPerformPost("/rest/api/v1/services/CapitalsAreForbidden", token, &body)
+
+	docs.Then("Then the request fails and the error response is as expected")
+	tstAssert(t, response, err, http.StatusBadRequest, "service-invalid-name.json")
+
+	docs.Then("And no changes have been made in the metadata repository")
+	require.Equal(t, 0, len(metadataImpl.FilesWritten))
+	require.Equal(t, 0, len(metadataImpl.FilesCommitted))
+}
+
+func TestPOSTService_ProhibitedName(t *testing.T) {
+	tstReset()
+
+	docs.Given("Given an authenticated admin user")
+	token := tstValidAdminToken()
+
+	docs.When("When they request the creation of a service with an invalid name")
+
+	body := tstService("some-service")
+	response, err := tstPerformPost("/rest/api/v1/services/some-service", token, &body)
 
 	docs.Then("Then the request fails and the error response is as expected")
 	tstAssert(t, response, err, http.StatusBadRequest, "service-invalid-name.json")
@@ -141,7 +147,7 @@ func TestPOSTService_InvalidValues(t *testing.T) {
 	docs.When("When they request the creation of a service with invalid values in the body")
 	body := tstService("post-service-invalid-values")
 	body.Repositories = []string{
-		"new-service.helm-deployment", // cross ref to other service not allowed
+		"whatever.helm-deployment", // cross ref to other service not allowed
 	}
 	response, err := tstPerformPost("/rest/api/v1/services/post-service-invalid-values", token, &body)
 
@@ -153,7 +159,7 @@ func TestPOSTService_InvalidValues(t *testing.T) {
 	require.Equal(t, 0, len(metadataImpl.FilesCommitted))
 }
 
-func TestPOSTService_NonexistantRepository(t *testing.T) {
+func TestPOSTService_NonexistentRepository(t *testing.T) {
 	tstReset()
 
 	docs.Given("Given an authenticated admin user")
@@ -171,16 +177,16 @@ func TestPOSTService_NonexistantRepository(t *testing.T) {
 	require.Equal(t, 0, len(metadataImpl.FilesCommitted))
 }
 
-func TestPOSTService_NonexistantOwner(t *testing.T) {
+func TestPOSTService_NonexistentOwner(t *testing.T) {
 	tstReset()
 
 	docs.Given("Given an authenticated admin user")
 	token := tstValidAdminToken()
 
 	docs.When("When they request the creation of a service referring to an owner that does not exist")
-	body := tstService("new-service")
+	body := tstService("whatever")
 	body.Owner = "not-there"
-	response, err := tstPerformPost("/rest/api/v1/services/new-service", token, &body)
+	response, err := tstPerformPost("/rest/api/v1/services/whatever", token, &body)
 
 	docs.Then("Then the request fails and the error response is as expected")
 	tstAssert(t, response, err, http.StatusBadRequest, "service-create-owner-missing.json")
@@ -197,8 +203,8 @@ func TestPOSTService_Unauthenticated(t *testing.T) {
 	token := tstUnauthenticated()
 
 	docs.When("When they request the creation of a valid service that does not exist")
-	body := tstService("new-service")
-	response, err := tstPerformPost("/rest/api/v1/services/new-service", token, &body)
+	body := tstService("whatever")
+	response, err := tstPerformPost("/rest/api/v1/services/whatever", token, &body)
 
 	docs.Then("Then the request is denied")
 	tstAssert(t, response, err, http.StatusUnauthorized, "unauthorized.json")
@@ -215,8 +221,8 @@ func TestPOSTService_ExpiredToken(t *testing.T) {
 	token := tstExpiredAdminToken()
 
 	docs.When("When they request the creation of a valid service that does not exist")
-	body := tstService("new-service")
-	response, err := tstPerformPost("/rest/api/v1/services/new-service", token, &body)
+	body := tstService("whatever")
+	response, err := tstPerformPost("/rest/api/v1/services/whatever", token, &body)
 
 	docs.Then("Then the request is denied")
 	tstAssert(t, response, err, http.StatusUnauthorized, "unauthorized.json")
@@ -233,8 +239,8 @@ func TestPOSTService_NonAdminToken(t *testing.T) {
 	token := tstValidUserToken()
 
 	docs.When("When they request the creation of a valid service that does not exist")
-	body := tstService("new-service")
-	response, err := tstPerformPost("/rest/api/v1/services/new-service", token, &body)
+	body := tstService("whatever")
+	response, err := tstPerformPost("/rest/api/v1/services/whatever", token, &body)
 
 	docs.Then("Then the request is denied")
 	tstAssert(t, response, err, http.StatusForbidden, "forbidden.json")
@@ -272,8 +278,8 @@ func TestPOSTService_GitServerDown(t *testing.T) {
 	token := tstValidAdminToken()
 
 	docs.When("When they request the creation of a valid service")
-	body := tstService("new-service")
-	response, err := tstPerformPost("/rest/api/v1/services/new-service", token, &body)
+	body := tstService("whatever")
+	response, err := tstPerformPost("/rest/api/v1/services/whatever", token, &body)
 
 	docs.Then("Then the request fails and the error response is as expected")
 	tstAssert(t, response, err, http.StatusBadGateway, "bad-gateway.json")
@@ -359,7 +365,7 @@ func TestPUTService_DoesNotExist(t *testing.T) {
 	require.Equal(t, 0, len(kafkaImpl.Recording))
 }
 
-func TestPUTService_NonexistantRepository(t *testing.T) {
+func TestPUTService_NonexistentRepository(t *testing.T) {
 	tstReset()
 
 	docs.Given("Given an authenticated admin user")
@@ -378,7 +384,7 @@ func TestPUTService_NonexistantRepository(t *testing.T) {
 	require.Equal(t, 0, len(metadataImpl.FilesCommitted))
 }
 
-func TestPUTService_NonexistantOwner(t *testing.T) {
+func TestPUTService_NonexistentOwner(t *testing.T) {
 	tstReset()
 
 	docs.Given("Given an authenticated admin user")
@@ -391,25 +397,6 @@ func TestPUTService_NonexistantOwner(t *testing.T) {
 
 	docs.Then("Then the request fails and the error response is as expected")
 	tstAssert(t, response, err, http.StatusBadRequest, "service-update-owner-missing.json")
-
-	docs.Then("And no changes have been made in the metadata repository")
-	require.Equal(t, 0, len(metadataImpl.FilesWritten))
-	require.Equal(t, 0, len(metadataImpl.FilesCommitted))
-}
-
-func TestPUTService_InvalidName(t *testing.T) {
-	tstReset()
-
-	docs.Given("Given an authenticated admin user")
-	token := tstValidAdminToken()
-
-	docs.When("When they request an update of a service with an invalid name")
-
-	body := tstService("abc")
-	response, err := tstPerformPut("/rest/api/v1/services/ABC'", token, &body)
-
-	docs.Then("Then the request fails and the error response is as expected")
-	tstAssert(t, response, err, http.StatusBadRequest, "service-invalid-name.json")
 
 	docs.Then("And no changes have been made in the metadata repository")
 	require.Equal(t, 0, len(metadataImpl.FilesWritten))
@@ -666,7 +653,7 @@ func TestPATCHService_DoesNotExist(t *testing.T) {
 	require.Equal(t, 0, len(kafkaImpl.Recording))
 }
 
-func TestPATCHService_NonexistantRepository(t *testing.T) {
+func TestPATCHService_NonexistentRepository(t *testing.T) {
 	tstReset()
 
 	docs.Given("Given an authenticated admin user")
@@ -685,7 +672,7 @@ func TestPATCHService_NonexistantRepository(t *testing.T) {
 	require.Equal(t, 0, len(metadataImpl.FilesCommitted))
 }
 
-func TestPATCHService_NonexistantOwner(t *testing.T) {
+func TestPATCHService_NonexistentOwner(t *testing.T) {
 	tstReset()
 
 	docs.Given("Given an authenticated admin user")
@@ -698,25 +685,6 @@ func TestPATCHService_NonexistantOwner(t *testing.T) {
 
 	docs.Then("Then the request fails and the error response is as expected")
 	tstAssert(t, response, err, http.StatusBadRequest, "service-update-owner-missing.json")
-
-	docs.Then("And no changes have been made in the metadata repository")
-	require.Equal(t, 0, len(metadataImpl.FilesWritten))
-	require.Equal(t, 0, len(metadataImpl.FilesCommitted))
-}
-
-func TestPATCHService_InvalidName(t *testing.T) {
-	tstReset()
-
-	docs.Given("Given an authenticated admin user")
-	token := tstValidAdminToken()
-
-	docs.When("When they attempt to patch a service with an invalid name")
-
-	body := tstServicePatch()
-	response, err := tstPerformPatch("/rest/api/v1/services/INVALID'", token, &body)
-
-	docs.Then("Then the request fails and the error response is as expected")
-	tstAssert(t, response, err, http.StatusBadRequest, "service-invalid-name.json")
 
 	docs.Then("And no changes have been made in the metadata repository")
 	require.Equal(t, 0, len(metadataImpl.FilesWritten))
@@ -956,24 +924,6 @@ func TestDELETEService_DoesNotExist(t *testing.T) {
 	require.Equal(t, 0, len(kafkaImpl.Recording))
 }
 
-func TestDELETEService_InvalidName(t *testing.T) {
-	tstReset()
-
-	docs.Given("Given an authenticated admin user")
-	token := tstValidAdminToken()
-
-	docs.When("When they attempt to delete a service with an invalid name")
-	body := tstDelete()
-	response, err := tstPerformDelete("/rest/api/v1/services/___'", token, &body)
-
-	docs.Then("Then the request fails and the error response is as expected")
-	tstAssert(t, response, err, http.StatusBadRequest, "service-invalid-name.json")
-
-	docs.Then("And no changes have been made in the metadata repository")
-	require.Equal(t, 0, len(metadataImpl.FilesWritten))
-	require.Equal(t, 0, len(metadataImpl.FilesCommitted))
-}
-
 func TestDELETEService_MissingBody(t *testing.T) {
 	tstReset()
 
@@ -1079,19 +1029,6 @@ func TestGETServicePromoters_Success(t *testing.T) {
 
 	docs.Then("Then the request is successful and the response is as expected")
 	tstAssert(t, response, err, http.StatusOK, "service-promoters.json")
-}
-
-func TestGETServicePromoters_InvalidName(t *testing.T) {
-	tstReset()
-
-	docs.Given("Given an unauthenticated user")
-	token := tstUnauthenticated()
-
-	docs.When("When they request the promoters for a service with an invalid name")
-	response, err := tstPerformGet("/rest/api/v1/services/äbü/promoters", token)
-
-	docs.Then("Then the request fails and the error response is as expected")
-	tstAssert(t, response, err, http.StatusBadRequest, "service-invalid.json")
 }
 
 func TestGETServicePromoters_NotFound(t *testing.T) {

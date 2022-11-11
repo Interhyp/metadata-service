@@ -10,6 +10,7 @@ import (
 	"github.com/Interhyp/metadata-service/acorns/errors/referencederror"
 	"github.com/Interhyp/metadata-service/acorns/errors/unavailableerror"
 	"github.com/Interhyp/metadata-service/acorns/errors/validationerror"
+	"github.com/Interhyp/metadata-service/acorns/repository"
 	"github.com/Interhyp/metadata-service/acorns/service"
 	openapi "github.com/Interhyp/metadata-service/api/v1"
 	"github.com/Interhyp/metadata-service/web/middleware/jwt"
@@ -20,23 +21,19 @@ import (
 	"github.com/go-http-utils/headers"
 	"net/http"
 	"net/url"
-	"regexp"
 	"time"
 )
 
 type Impl struct {
-	Logging librepo.Logging
-	Owners  service.Owners
+	Configuration       librepo.Configuration
+	CustomConfiguration repository.CustomConfiguration
+	Logging             librepo.Logging
+	Owners              service.Owners
 
-	ownerAliasRegexp *regexp.Regexp
-	Now              func() time.Time
+	Now func() time.Time
 }
 
-const ownerRegex = "^[a-z](-?[a-z0-9]+)*$"
-
 func (c *Impl) WireUp(_ context.Context, router chi.Router) {
-	c.ownerAliasRegexp = regexp.MustCompile(ownerRegex)
-
 	baseEndpoint := "/rest/api/v1/owners"
 	ownerEndpoint := baseEndpoint + "/{owner}"
 
@@ -64,10 +61,6 @@ func (c *Impl) GetOwners(w http.ResponseWriter, r *http.Request) {
 func (c *Impl) GetSingleOwner(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	owner := util.StringPathParam(r, "owner")
-	if !c.validOwnerAlias(owner) {
-		c.ownerParamInvalid(ctx, w, r, owner)
-		return
-	}
 
 	ownerDto, err := c.Owners.GetOwner(ctx, owner)
 	if err != nil {
@@ -131,10 +124,6 @@ func (c *Impl) UpdateOwner(w http.ResponseWriter, r *http.Request) {
 	}
 
 	alias := util.StringPathParam(r, "owner")
-	if !c.validOwnerAlias(alias) {
-		c.ownerParamInvalid(ctx, w, r, alias)
-		return
-	}
 	ownerDto, err := c.parseBodyToOwnerDto(ctx, r)
 	if err != nil {
 		c.ownerBodyInvalid(ctx, w, r, err)
@@ -171,10 +160,6 @@ func (c *Impl) PatchOwner(w http.ResponseWriter, r *http.Request) {
 	}
 
 	alias := util.StringPathParam(r, "owner")
-	if !c.validOwnerAlias(alias) {
-		c.ownerParamInvalid(ctx, w, r, alias)
-		return
-	}
 	ownerPatch, err := c.parseBodyToOwnerPatchDto(ctx, r)
 	if err != nil {
 		c.ownerBodyInvalid(ctx, w, r, err)
@@ -211,10 +196,6 @@ func (c *Impl) DeleteOwner(w http.ResponseWriter, r *http.Request) {
 	}
 
 	alias := util.StringPathParam(r, "owner")
-	if !c.validOwnerAlias(alias) {
-		c.ownerParamInvalid(ctx, w, r, alias)
-		return
-	}
 	info, err := util.ParseBodyToDeletionDto(ctx, r)
 	if err != nil {
 		util.DeletionBodyInvalid(ctx, w, r, err, c.Now())
@@ -243,7 +224,11 @@ func (c *Impl) DeleteOwner(w http.ResponseWriter, r *http.Request) {
 
 func (c *Impl) ownerParamInvalid(ctx context.Context, w http.ResponseWriter, r *http.Request, owner string) {
 	c.Logging.Logger().Ctx(ctx).Warn().Printf("owner parameter %v invalid", url.QueryEscape(owner))
-	util.ErrorHandler(ctx, w, r, "owner.invalid.alias", http.StatusBadRequest, fmt.Sprintf("owner alias must match %s", ownerRegex), c.Now())
+	permitted := c.CustomConfiguration.OwnerAliasPermittedRegex().String()
+	prohibited := c.CustomConfiguration.OwnerAliasProhibitedRegex().String()
+	max := c.CustomConfiguration.OwnerAliasMaxLength()
+	util.ErrorHandler(ctx, w, r, "owner.invalid.alias", http.StatusBadRequest,
+		fmt.Sprintf("owner alias must match %s, is not allowed to match %s and may have up to %d characters", permitted, prohibited, max), c.Now())
 }
 
 func (c *Impl) ownerNotFoundErrorHandler(ctx context.Context, w http.ResponseWriter, r *http.Request, owner string) {
@@ -288,7 +273,9 @@ func (c *Impl) deletionValidationError(ctx context.Context, w http.ResponseWrite
 // --- helpers
 
 func (c *Impl) validOwnerAlias(owner string) bool {
-	return c.ownerAliasRegexp.MatchString(owner)
+	return c.CustomConfiguration.OwnerAliasPermittedRegex().MatchString(owner) &&
+		!c.CustomConfiguration.OwnerAliasProhibitedRegex().MatchString(owner) &&
+		uint16(len(owner)) <= c.CustomConfiguration.OwnerAliasMaxLength()
 }
 
 func (c *Impl) parseBodyToOwnerDto(_ context.Context, r *http.Request) (openapi.OwnerDto, error) {
