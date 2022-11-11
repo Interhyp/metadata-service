@@ -94,16 +94,6 @@
               }
             }
           },
-          "400": {
-            "description": "Unable to parse input (usually: invalid owner alias format)",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorDto"
-                }
-              }
-            }
-          },
           "404": {
             "description": "Owner not found",
             "content": {
@@ -289,7 +279,7 @@
             }
           },
           "400": {
-            "description": "Unable to parse input (invalid owner alias format, or the body failed to validate)",
+            "description": "Unable to parse input (the body failed to validate)",
             "content": {
               "application/json": {
                 "schema": {
@@ -407,7 +397,7 @@
             }
           },
           "400": {
-            "description": "Unable to parse input (invalid owner alias format, or the body failed to validate)",
+            "description": "Unable to parse input (the body failed to validate)",
             "content": {
               "application/json": {
                 "schema": {
@@ -518,7 +508,7 @@
             "description": "No Content - successfully deleted"
           },
           "400": {
-            "description": "Unable to parse input (invalid owner alias format, or the body failed to validate)",
+            "description": "Unable to parse input (the body failed to validate)",
             "content": {
               "application/json": {
                 "schema": {
@@ -621,16 +611,6 @@
               }
             }
           },
-          "400": {
-            "description": "Unable to parse input (usually: invalid owner alias format)",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorDto"
-                }
-              }
-            }
-          },
           "404": {
             "description": "Owner not found",
             "content": {
@@ -679,16 +659,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ServiceDto"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Unable to parse input (usually: invalid service name format)",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorDto"
                 }
               }
             }
@@ -880,7 +850,7 @@
             }
           },
           "400": {
-            "description": "Unable to parse input (invalid service name format, or the body failed to validate)",
+            "description": "Unable to parse input (the body failed to validate)",
             "content": {
               "application/json": {
                 "schema": {
@@ -999,7 +969,7 @@
             }
           },
           "400": {
-            "description": "Unable to parse input (invalid service name format, or the body failed to validate)",
+            "description": "Unable to parse input (the body failed to validate)",
             "content": {
               "application/json": {
                 "schema": {
@@ -1111,7 +1081,7 @@
             "description": "No Content - successfully deleted"
           },
           "400": {
-            "description": "Unable to parse input (invalid owner alias format, or the body failed to validate)",
+            "description": "Unable to parse input (the body failed to validate)",
             "content": {
               "application/json": {
                 "schema": {
@@ -1212,16 +1182,6 @@
               }
             }
           },
-          "400": {
-            "description": "Unable to parse input (usually: invalid service name format)",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorDto"
-                }
-              }
-            }
-          },
           "404": {
             "description": "Service not found",
             "content": {
@@ -1306,16 +1266,6 @@
               }
             }
           },
-          "400": {
-            "description": "Unable to parse input (usually: invalid owner alias or service name format)",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorDto"
-                }
-              }
-            }
-          },
           "500": {
             "description": "Unexpected error",
             "content": {
@@ -1354,16 +1304,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/RepositoryDto"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Unable to parse input (usually: invalid repository key format)",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorDto"
                 }
               }
             }
@@ -1555,7 +1495,7 @@
             }
           },
           "400": {
-            "description": "Unable to parse input (invalid repository key format, or the body failed to validate)",
+            "description": "Unable to parse input (the body failed to validate)",
             "content": {
               "application/json": {
                 "schema": {
@@ -1674,7 +1614,7 @@
             }
           },
           "400": {
-            "description": "Unable to parse input (invalid repository key format, or the body failed to validate)",
+            "description": "Unable to parse input (the body failed to validate)",
             "content": {
               "application/json": {
                 "schema": {
@@ -1786,7 +1726,7 @@
             "description": "No Content - successfully deleted"
           },
           "400": {
-            "description": "Unable to parse input (invalid repository key format, or the body failed to validate)",
+            "description": "Unable to parse input (the body failed to validate)",
             "content": {
               "application/json": {
                 "schema": {
