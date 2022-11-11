@@ -1,5 +1,5 @@
 {
-  "details": "service name must match ^[a-z](-?[a-z0-9]+)*$ and is not allowed to match -service$",
+  "details": "service name must match ^[a-z](-?[a-z0-9]+)*$, is not allowed to match -service$ and may have up to 28 characters",
   "message": "service.invalid.name",
   "timestamp": "2022-11-06T18:14:10Z"
 }

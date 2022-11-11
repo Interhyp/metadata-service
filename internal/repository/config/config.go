@@ -27,15 +27,18 @@ const (
 	KeyAdditionalPromoters           = "ADDITIONAL_PROMOTERS"
 	KeyAdditionalPromotersFromOwners = "ADDITIONAL_PROMOTERS_FROM_OWNERS"
 	KeyElasticApmDisabled            = "ELASTIC_APM_DISABLED"
-	KeyOwnerPermittedAliasRegex      = "OWNER_PERMITTED_ALIAS_REGEX"
-	KeyOwnerProhibitedAliasRegex     = "OWNER_PROHIBITED_ALIAS_REGEX"
-	KeyOwnerFilterAliasRegex         = "OWNER_FILTER_ALIAS_REGEX"
-	KeyServicePermittedNameRegex     = "SERVICE_PERMITTED_NAME_REGEX"
-	KeyServiceProhibitedNameRegex    = "SERVICE_PROHIBITED_NAME_REGEX"
-	KeyRepositoryPermittedNameRegex  = "REPOSITORY_PERMITTED_NAME_REGEX"
-	KeyRepositoryProhibitedNameRegex = "REPOSITORY_PROHIBITED_NAME_REGEX"
-	KeyRepositoryTypes               = "REPOSITORY_TYPES"
+	KeyOwnerAliasPermittedRegex      = "OWNER_ALIAS_PERMITTED_REGEX"
+	KeyOwnerAliasProhibitedRegex     = "OWNER_ALIAS_PROHIBITED_REGEX"
+	KeyOwnerAliasMaxLength           = "OWNER_ALIAS_MAX_LENGTH"
+	KeyOwnerAliasFilterRegex         = "OWNER_ALIAS_FILTER_REGEX"
+	KeyServiceNamePermittedRegex     = "SERVICE_NAME_PERMITTED_REGEX"
+	KeyServiceNameProhibitedRegex    = "SERVICE_NAME_PROHIBITED_REGEX"
+	KeyServiceNameMaxLength          = "SERVICE_NAME_MAX_LENGTH"
+	KeyRepositoryNamePermittedRegex  = "REPOSITORY_NAME_PERMITTED_REGEX"
+	KeyRepositoryNameProhibitedRegex = "REPOSITORY_NAME_PROHIBITED_REGEX"
+	KeyRepositoryNameMaxLength       = "REPOSITORY_NAME_MAX_LENGTH"
 	KeyRepositoryKeySeparator        = "REPOSITORY_KEY_SEPARATOR"
+	KeyRepositoryTypes               = "REPOSITORY_TYPES"
 )
 
 var CustomConfigItems = []auconfigapi.ConfigItem{
@@ -164,53 +167,74 @@ var CustomConfigItems = []auconfigapi.ConfigItem{
 		Validate:    booleanValidator,
 	},
 	{
-		Key:         KeyOwnerPermittedAliasRegex,
-		EnvName:     KeyOwnerPermittedAliasRegex,
+		Key:         KeyOwnerAliasPermittedRegex,
+		EnvName:     KeyOwnerAliasPermittedRegex,
 		Default:     "^[a-z](-?[a-z0-9]+)*$",
 		Description: "regular expression to control the owner aliases that are permitted to be be created.",
 		Validate:    regexCompileValidator,
 	},
 	{
-		Key:         KeyOwnerProhibitedAliasRegex,
-		EnvName:     KeyOwnerProhibitedAliasRegex,
+		Key:         KeyOwnerAliasProhibitedRegex,
+		EnvName:     KeyOwnerAliasProhibitedRegex,
 		Default:     "^$",
 		Description: "regular expression to control the owner aliases that are prohibited to be be created.",
 		Validate:    regexCompileValidator,
 	},
 	{
-		Key:         KeyOwnerFilterAliasRegex,
-		EnvName:     KeyOwnerFilterAliasRegex,
+		Key:         KeyOwnerAliasFilterRegex,
+		EnvName:     KeyOwnerAliasFilterRegex,
 		Default:     "^.*$",
 		Description: "regular expression to filter owners based on their alias. Useful on localhost or for test instances to speed up service startup.",
 		Validate:    regexCompileValidator,
 	},
 	{
-		Key:         KeyServicePermittedNameRegex,
-		EnvName:     KeyServicePermittedNameRegex,
+		Key:         KeyOwnerAliasMaxLength,
+		EnvName:     KeyOwnerAliasMaxLength,
+		Default:     "28",
+		Description: "maximum length of a valid owner alias.",
+		Validate:    auconfigenv.ObtainIntRangeValidator(1, 100),
+	},
+	{
+		Key:         KeyServiceNamePermittedRegex,
+		EnvName:     KeyServiceNamePermittedRegex,
 		Default:     "^[a-z](-?[a-z0-9]+)*$",
 		Description: "regular expression to control the service names that are permitted to be be created.",
 		Validate:    regexCompileValidator,
 	},
 	{
-		Key:         KeyServiceProhibitedNameRegex,
-		EnvName:     KeyServiceProhibitedNameRegex,
+		Key:         KeyServiceNameProhibitedRegex,
+		EnvName:     KeyServiceNameProhibitedRegex,
 		Default:     "^$",
 		Description: "regular expression to control the service names that are prohibited to be be created.",
 		Validate:    regexCompileValidator,
 	},
 	{
-		Key:         KeyRepositoryPermittedNameRegex,
-		EnvName:     KeyRepositoryPermittedNameRegex,
+		Key:         KeyServiceNameMaxLength,
+		EnvName:     KeyServiceNameMaxLength,
+		Default:     "28",
+		Description: "maximum length of a valid service name.",
+		Validate:    auconfigenv.ObtainIntRangeValidator(1, 100),
+	},
+	{
+		Key:         KeyRepositoryNamePermittedRegex,
+		EnvName:     KeyRepositoryNamePermittedRegex,
 		Default:     "^[a-z](-?[a-z0-9]+)*$",
 		Description: "regular expression to control the repository names that are permitted to be be created.",
 		Validate:    regexCompileValidator,
 	},
 	{
-		Key:         KeyRepositoryProhibitedNameRegex,
-		EnvName:     KeyRepositoryProhibitedNameRegex,
+		Key:         KeyRepositoryNameProhibitedRegex,
+		EnvName:     KeyRepositoryNameProhibitedRegex,
 		Default:     "^$",
 		Description: "regular expression to control the repository names that are prohibited to be be created.",
 		Validate:    regexCompileValidator,
+	},
+	{
+		Key:         KeyRepositoryNameMaxLength,
+		EnvName:     KeyRepositoryNameMaxLength,
+		Default:     "64",
+		Description: "maximum length of a valid repository name.",
+		Validate:    auconfigenv.ObtainIntRangeValidator(1, 100),
 	},
 	{
 		Key:         KeyRepositoryTypes,

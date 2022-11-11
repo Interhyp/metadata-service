@@ -224,10 +224,11 @@ func (c *Impl) DeleteOwner(w http.ResponseWriter, r *http.Request) {
 
 func (c *Impl) ownerParamInvalid(ctx context.Context, w http.ResponseWriter, r *http.Request, owner string) {
 	c.Logging.Logger().Ctx(ctx).Warn().Printf("owner parameter %v invalid", url.QueryEscape(owner))
-	permitted := c.CustomConfiguration.OwnerPermittedAliasRegex().String()
-	prohibited := c.CustomConfiguration.OwnerProhibitedAliasRegex().String()
+	permitted := c.CustomConfiguration.OwnerAliasPermittedRegex().String()
+	prohibited := c.CustomConfiguration.OwnerAliasProhibitedRegex().String()
+	max := c.CustomConfiguration.OwnerAliasMaxLength()
 	util.ErrorHandler(ctx, w, r, "owner.invalid.alias", http.StatusBadRequest,
-		fmt.Sprintf("owner alias must match %s and is not allowed to match %s", permitted, prohibited), c.Now())
+		fmt.Sprintf("owner alias must match %s, is not allowed to match %s and may have up to %d characters", permitted, prohibited, max), c.Now())
 }
 
 func (c *Impl) ownerNotFoundErrorHandler(ctx context.Context, w http.ResponseWriter, r *http.Request, owner string) {
@@ -272,8 +273,9 @@ func (c *Impl) deletionValidationError(ctx context.Context, w http.ResponseWrite
 // --- helpers
 
 func (c *Impl) validOwnerAlias(owner string) bool {
-	return c.CustomConfiguration.OwnerPermittedAliasRegex().MatchString(owner) &&
-		!c.CustomConfiguration.OwnerProhibitedAliasRegex().MatchString(owner)
+	return c.CustomConfiguration.OwnerAliasPermittedRegex().MatchString(owner) &&
+		!c.CustomConfiguration.OwnerAliasProhibitedRegex().MatchString(owner) &&
+		uint16(len(owner)) <= c.CustomConfiguration.OwnerAliasMaxLength()
 }
 
 func (c *Impl) parseBodyToOwnerDto(_ context.Context, r *http.Request) (openapi.OwnerDto, error) {

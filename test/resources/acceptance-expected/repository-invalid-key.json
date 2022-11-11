@@ -1,5 +1,5 @@
 {
-  "details": "repository name must match ^[a-z](-?[a-z0-9]+)*$ and is not allowed to match ^$, repository type must be one of [implementation deployment api helm-chart] and name and type must be separated by a . character",
+  "details": "repository name must match ^[a-z](-?[a-z0-9]+)*$, is not allowed to match ^$ and may have up to 64 characters; repository type must be one of [implementation deployment api helm-chart] and name and type must be separated by a . character",
   "message": "repository.invalid",
   "timestamp": "2022-11-06T18:14:10Z"
 }

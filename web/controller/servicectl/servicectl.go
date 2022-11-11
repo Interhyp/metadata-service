@@ -261,11 +261,12 @@ func (c *Impl) GetServicePromoters(w http.ResponseWriter, r *http.Request) {
 
 func (c *Impl) serviceParamInvalid(ctx context.Context, w http.ResponseWriter, r *http.Request, service string) {
 	c.Logging.Logger().Ctx(ctx).Warn().Printf("service parameter %v invalid", url.QueryEscape(service))
-	permitted := c.CustomConfiguration.ServicePermittedNameRegex().String()
-	prohibited := c.CustomConfiguration.ServiceProhibitedNameRegex().String()
+	permitted := c.CustomConfiguration.ServiceNamePermittedRegex().String()
+	prohibited := c.CustomConfiguration.ServiceNameProhibitedRegex().String()
+	max := c.CustomConfiguration.ServiceNameMaxLength()
 
 	util.ErrorHandler(ctx, w, r, "service.invalid.name", http.StatusBadRequest,
-		fmt.Sprintf("service name must match %s and is not allowed to match %s", permitted, prohibited), c.Now())
+		fmt.Sprintf("service name must match %s, is not allowed to match %s and may have up to %d characters", permitted, prohibited, max), c.Now())
 }
 
 func (c *Impl) serviceNotFoundErrorHandler(ctx context.Context, w http.ResponseWriter, r *http.Request, service string) {
@@ -314,9 +315,10 @@ func (c *Impl) deletionValidationError(ctx context.Context, w http.ResponseWrite
 
 // --- helpers
 
-func (c *Impl) validServiceName(service string) bool {
-	return c.CustomConfiguration.ServicePermittedNameRegex().MatchString(service) &&
-		!c.CustomConfiguration.ServiceProhibitedNameRegex().MatchString(service)
+func (c *Impl) validServiceName(name string) bool {
+	return c.CustomConfiguration.ServiceNamePermittedRegex().MatchString(name) &&
+		!c.CustomConfiguration.ServiceNameProhibitedRegex().MatchString(name) &&
+		uint16(len(name)) <= c.CustomConfiguration.ServiceNameMaxLength()
 }
 
 func (c *Impl) parseBodyToServiceDto(_ context.Context, r *http.Request) (openapi.ServiceDto, error) {

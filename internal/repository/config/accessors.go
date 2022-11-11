@@ -81,32 +81,44 @@ func (c *CustomConfigImpl) ElasticApmEnabled() bool {
 		os.Getenv("ELASTIC_APM_ENVIRONMENT") != ""
 }
 
-func (c *CustomConfigImpl) OwnerPermittedAliasRegex() *regexp.Regexp {
-	return c.VOwnerPermittedAliasRegex
+func (c *CustomConfigImpl) OwnerAliasPermittedRegex() *regexp.Regexp {
+	return c.VOwnerAliasPermittedRegex
 }
 
-func (c *CustomConfigImpl) OwnerProhibitedAliasRegex() *regexp.Regexp {
-	return c.VOwnerProhibitedAliasRegex
+func (c *CustomConfigImpl) OwnerAliasProhibitedRegex() *regexp.Regexp {
+	return c.VOwnerAliasProhibitedRegex
+}
+
+func (c *CustomConfigImpl) OwnerAliasMaxLength() uint16 {
+	return c.VOwnerAliasMaxLength
 }
 
 func (c *CustomConfigImpl) OwnerFilterAliasRegex() *regexp.Regexp {
-	return c.VOwnerFilterAliasRegex
+	return c.VOwnerAliasFilterRegex
 }
 
-func (c *CustomConfigImpl) ServicePermittedNameRegex() *regexp.Regexp {
-	return c.VServicePermittedNameRegex
+func (c *CustomConfigImpl) ServiceNamePermittedRegex() *regexp.Regexp {
+	return c.VServiceNamePermittedRegex
 }
 
-func (c *CustomConfigImpl) ServiceProhibitedNameRegex() *regexp.Regexp {
-	return c.VServiceProhibitedNameRegex
+func (c *CustomConfigImpl) ServiceNameProhibitedRegex() *regexp.Regexp {
+	return c.VServiceNameProhibitedRegex
 }
 
-func (c *CustomConfigImpl) RepositoryPermittedNameRegex() *regexp.Regexp {
-	return c.VRepositoryPermittedNameRegex
+func (c *CustomConfigImpl) ServiceNameMaxLength() uint16 {
+	return c.VServiceNameMaxLength
 }
 
-func (c *CustomConfigImpl) RepositoryProhibitedNameRegex() *regexp.Regexp {
-	return c.VRepositoryProhibitedNameRegex
+func (c *CustomConfigImpl) RepositoryNamePermittedRegex() *regexp.Regexp {
+	return c.VRepositoryNamePermittedRegex
+}
+
+func (c *CustomConfigImpl) RepositoryNameProhibitedRegex() *regexp.Regexp {
+	return c.VRepositoryNameProhibitedRegex
+}
+
+func (c *CustomConfigImpl) RepositoryNameMaxLength() uint16 {
+	return c.VRepositoryNameMaxLength
 }
 
 func (c *CustomConfigImpl) RepositoryTypes() []string {

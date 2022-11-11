@@ -253,12 +253,13 @@ func (c *Impl) DeleteRepository(w http.ResponseWriter, r *http.Request) {
 
 func (c *Impl) repositoryKeyParamInvalid(ctx context.Context, w http.ResponseWriter, r *http.Request, repository string) {
 	c.Logging.Logger().Ctx(ctx).Warn().Printf("repository parameter %v invalid", url.QueryEscape(repository))
-	permitted := c.CustomConfiguration.RepositoryPermittedNameRegex().String()
-	prohibited := c.CustomConfiguration.RepositoryProhibitedNameRegex().String()
+	permitted := c.CustomConfiguration.RepositoryNamePermittedRegex().String()
+	prohibited := c.CustomConfiguration.RepositoryNameProhibitedRegex().String()
+	max := c.CustomConfiguration.RepositoryNameMaxLength()
 	repoTypes := c.CustomConfiguration.RepositoryTypes()
 	separator := c.CustomConfiguration.RepositoryKeySeparator()
 	util.ErrorHandler(ctx, w, r, "repository.invalid", http.StatusBadRequest,
-		fmt.Sprintf("repository name must match %s and is not allowed to match %s, repository type must be one of %v and name and type must be separated by a %s character", permitted, prohibited, repoTypes, separator), c.Now())
+		fmt.Sprintf("repository name must match %s, is not allowed to match %s and may have up to %d characters; repository type must be one of %v and name and type must be separated by a %s character", permitted, prohibited, max, repoTypes, separator), c.Now())
 }
 
 func (c *Impl) repositoryNotFoundErrorHandler(ctx context.Context, w http.ResponseWriter, r *http.Request, repository string) {
@@ -321,8 +322,9 @@ func (c *Impl) validRepositoryKey(key string) bool {
 }
 
 func (c *Impl) validRepositoryName(name string) bool {
-	return c.CustomConfiguration.RepositoryPermittedNameRegex().MatchString(name) &&
-		!c.CustomConfiguration.RepositoryProhibitedNameRegex().MatchString(name)
+	return c.CustomConfiguration.RepositoryNamePermittedRegex().MatchString(name) &&
+		!c.CustomConfiguration.RepositoryNameProhibitedRegex().MatchString(name) &&
+		uint16(len(name)) <= c.CustomConfiguration.RepositoryNameMaxLength()
 }
 
 func (c *Impl) validRepositoryType(repoType string) bool {

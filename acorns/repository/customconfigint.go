@@ -34,15 +34,18 @@ type CustomConfiguration interface {
 
 	ElasticApmEnabled() bool
 
-	OwnerPermittedAliasRegex() *regexp.Regexp
-	OwnerProhibitedAliasRegex() *regexp.Regexp
+	OwnerAliasPermittedRegex() *regexp.Regexp
+	OwnerAliasProhibitedRegex() *regexp.Regexp
+	OwnerAliasMaxLength() uint16
 	OwnerFilterAliasRegex() *regexp.Regexp
 
-	ServicePermittedNameRegex() *regexp.Regexp
-	ServiceProhibitedNameRegex() *regexp.Regexp
+	ServiceNamePermittedRegex() *regexp.Regexp
+	ServiceNameProhibitedRegex() *regexp.Regexp
+	ServiceNameMaxLength() uint16
 
-	RepositoryPermittedNameRegex() *regexp.Regexp
-	RepositoryProhibitedNameRegex() *regexp.Regexp
+	RepositoryNamePermittedRegex() *regexp.Regexp
+	RepositoryNameProhibitedRegex() *regexp.Regexp
+	RepositoryNameMaxLength() uint16
 	RepositoryTypes() []string
 	RepositoryKeySeparator() string
 }

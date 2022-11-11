@@ -27,13 +27,16 @@ type CustomConfigImpl struct {
 	VAdditionalPromoters           string
 	VAdditionalPromotersFromOwners string
 	VElasticApmDisabled            bool
-	VOwnerPermittedAliasRegex      *regexp.Regexp
-	VOwnerProhibitedAliasRegex     *regexp.Regexp
-	VOwnerFilterAliasRegex         *regexp.Regexp
-	VServicePermittedNameRegex     *regexp.Regexp
-	VServiceProhibitedNameRegex    *regexp.Regexp
-	VRepositoryPermittedNameRegex  *regexp.Regexp
-	VRepositoryProhibitedNameRegex *regexp.Regexp
+	VOwnerAliasPermittedRegex      *regexp.Regexp
+	VOwnerAliasProhibitedRegex     *regexp.Regexp
+	VOwnerAliasMaxLength           uint16
+	VOwnerAliasFilterRegex         *regexp.Regexp
+	VServiceNamePermittedRegex     *regexp.Regexp
+	VServiceNameProhibitedRegex    *regexp.Regexp
+	VServiceNameMaxLength          uint16
+	VRepositoryNamePermittedRegex  *regexp.Regexp
+	VRepositoryNameProhibitedRegex *regexp.Regexp
+	VRepositoryNameMaxLength       uint16
 	VRepositoryTypes               string
 	VRepositoryKeySeparator        string
 }
@@ -62,13 +65,16 @@ func (c *CustomConfigImpl) Obtain(getter func(key string) string) {
 	c.VAdditionalPromoters = getter(KeyAdditionalPromoters)
 	c.VAdditionalPromotersFromOwners = getter(KeyAdditionalPromotersFromOwners)
 	c.VElasticApmDisabled, _ = strconv.ParseBool(getter(KeyElasticApmDisabled))
-	c.VOwnerPermittedAliasRegex, _ = regexp.Compile(getter(KeyOwnerPermittedAliasRegex))
-	c.VOwnerProhibitedAliasRegex, _ = regexp.Compile(getter(KeyOwnerProhibitedAliasRegex))
-	c.VOwnerFilterAliasRegex, _ = regexp.Compile(getter(KeyOwnerFilterAliasRegex))
-	c.VServicePermittedNameRegex, _ = regexp.Compile(getter(KeyServicePermittedNameRegex))
-	c.VServiceProhibitedNameRegex, _ = regexp.Compile(getter(KeyServiceProhibitedNameRegex))
-	c.VRepositoryPermittedNameRegex, _ = regexp.Compile(getter(KeyRepositoryPermittedNameRegex))
-	c.VRepositoryProhibitedNameRegex, _ = regexp.Compile(getter(KeyRepositoryProhibitedNameRegex))
+	c.VOwnerAliasPermittedRegex, _ = regexp.Compile(getter(KeyOwnerAliasPermittedRegex))
+	c.VOwnerAliasProhibitedRegex, _ = regexp.Compile(getter(KeyOwnerAliasProhibitedRegex))
+	c.VOwnerAliasMaxLength = toUint16(getter(KeyOwnerAliasMaxLength))
+	c.VOwnerAliasFilterRegex, _ = regexp.Compile(getter(KeyOwnerAliasFilterRegex))
+	c.VServiceNamePermittedRegex, _ = regexp.Compile(getter(KeyServiceNamePermittedRegex))
+	c.VServiceNameProhibitedRegex, _ = regexp.Compile(getter(KeyServiceNameProhibitedRegex))
+	c.VServiceNameMaxLength = toUint16(getter(KeyServiceNameMaxLength))
+	c.VRepositoryNamePermittedRegex, _ = regexp.Compile(getter(KeyRepositoryNamePermittedRegex))
+	c.VRepositoryNameProhibitedRegex, _ = regexp.Compile(getter(KeyRepositoryNameProhibitedRegex))
+	c.VRepositoryNameMaxLength = toUint16(getter(KeyRepositoryNameMaxLength))
 	c.VRepositoryTypes = getter(KeyRepositoryTypes)
 	c.VRepositoryKeySeparator = getter(KeyRepositoryKeySeparator)
 }

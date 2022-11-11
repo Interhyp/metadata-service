@@ -218,12 +218,17 @@ func (c *MockConfig) AdditionalPromotersFromOwners() []string {
 	return make([]string, 0)
 }
 
-func (c *MockConfig) OwnerPermittedAliasRegex() *regexp.Regexp {
+func (c *MockConfig) OwnerAliasPermittedRegex() *regexp.Regexp {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (c *MockConfig) OwnerProhibitedAliasRegex() *regexp.Regexp {
+func (c *MockConfig) OwnerAliasProhibitedRegex() *regexp.Regexp {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (c *MockConfig) OwnerAliasMaxLength() uint16 {
 	//TODO implement me
 	panic("implement me")
 }
@@ -233,22 +238,32 @@ func (c *MockConfig) OwnerFilterAliasRegex() *regexp.Regexp {
 	panic("implement me")
 }
 
-func (c *MockConfig) ServicePermittedNameRegex() *regexp.Regexp {
+func (c *MockConfig) ServiceNamePermittedRegex() *regexp.Regexp {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (c *MockConfig) ServiceProhibitedNameRegex() *regexp.Regexp {
+func (c *MockConfig) ServiceNameProhibitedRegex() *regexp.Regexp {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (c *MockConfig) RepositoryPermittedNameRegex() *regexp.Regexp {
+func (c *MockConfig) ServiceNameMaxLength() uint16 {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (c *MockConfig) RepositoryProhibitedNameRegex() *regexp.Regexp {
+func (c *MockConfig) RepositoryNamePermittedRegex() *regexp.Regexp {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (c *MockConfig) RepositoryNameProhibitedRegex() *regexp.Regexp {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (c *MockConfig) RepositoryNameMaxLength() uint16 {
 	//TODO implement me
 	panic("implement me")
 }
