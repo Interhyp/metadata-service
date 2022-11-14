@@ -191,6 +191,8 @@ type ServiceCreateDto struct {
 	RequiredScans []string `json:"requiredScans,omitempty"`
 	// The jira issue to use for committing a change, or the last jira issue used.
 	JiraIssue string `json:"jiraIssue"`
+	// A short description of the functionality of the service.
+	Description *string `json:"description,omitempty"`
 }
 
 type ServiceDto struct {
@@ -214,6 +216,8 @@ type ServiceDto struct {
 	CommitHash string `json:"commitHash" yaml:"-"`
 	// The jira issue to use for committing a change, or the last jira issue used.
 	JiraIssue string `json:"jiraIssue" yaml:"-"`
+	// A short description of the functionality of the service.
+	Description *string `json:"description,omitempty" yaml:"description,omitempty"`
 }
 
 type ServiceListDto struct {
@@ -243,6 +247,8 @@ type ServicePatchDto struct {
 	CommitHash string `json:"commitHash"`
 	// The jira issue to use for committing a change, or the last jira issue used.
 	JiraIssue string `json:"jiraIssue"`
+	// A short description of the functionality of the service.
+	Description *string `json:"description,omitempty"`
 }
 
 type ServicePromotersDto struct {
