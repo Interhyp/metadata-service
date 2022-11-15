@@ -39,7 +39,7 @@ func TestVaultConsumer_LocalToken_Success(t *testing.T) {
 
 		registry := auacorn.Registry.(*auacorn.AcornRegistryImpl)
 		configImpl := registry.GetAcornByName(librepo.ConfigurationAcornName).(*libconfig.ConfigImpl)
-		vaultImpl := registry.GetAcornByName(repository.VaultAcornName).(*vault.VaultImpl)
+		vaultImpl := registry.GetAcornByName(repository.VaultAcornName).(*vault.Impl)
 
 		// override target protocol and address
 		configImpl.VVaultServer = fmt.Sprintf("localhost:%d", pact.Server.Port)
@@ -58,7 +58,7 @@ func TestVaultConsumer_LocalToken_Success(t *testing.T) {
 			return err
 		}
 
-		require.Equal(t, "bb-secret-demosecret", vaultImpl.BbPassword())
+		require.Equal(t, "bb-secret-demosecret", vaultImpl.Bitbucket())
 
 		return nil
 	}

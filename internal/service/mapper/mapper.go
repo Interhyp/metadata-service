@@ -2,6 +2,7 @@ package mapper
 
 import (
 	"context"
+	"github.com/Interhyp/metadata-service/acorns/config"
 	"github.com/Interhyp/metadata-service/acorns/repository"
 	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
 	"strings"
@@ -11,7 +12,7 @@ import (
 
 type Impl struct {
 	Configuration       librepo.Configuration
-	CustomConfiguration repository.CustomConfiguration
+	CustomConfiguration config.CustomConfiguration
 	Logging             librepo.Logging
 	Metadata            repository.Metadata
 

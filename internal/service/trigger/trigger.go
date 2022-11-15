@@ -3,7 +3,7 @@ package trigger
 import (
 	"context"
 	"fmt"
-	"github.com/Interhyp/metadata-service/acorns/repository"
+	"github.com/Interhyp/metadata-service/acorns/config"
 	"github.com/Interhyp/metadata-service/acorns/service"
 	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
 	"github.com/StephanHCB/go-backend-service-common/web/middleware/requestid"
@@ -14,7 +14,7 @@ import (
 
 type Impl struct {
 	Configuration       librepo.Configuration
-	CustomConfiguration repository.CustomConfiguration
+	CustomConfiguration config.CustomConfiguration
 	Logging             librepo.Logging
 	Updater             service.Updater
 

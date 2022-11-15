@@ -21,13 +21,4 @@ type Vault interface {
 
 	// ObtainKafkaSecrets fetches the kafka secrets from vault (skipped if kafka username / topic not configured)
 	ObtainKafkaSecrets(ctx context.Context) error
-
-	// accessors
-
-	BbPassword() string
-
-	KafkaPassword() string
-
-	BasicAuthUsername() string
-	BasicAuthPassword() string
 }

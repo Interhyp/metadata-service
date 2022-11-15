@@ -2,6 +2,7 @@ package kafka
 
 import (
 	"context"
+	"github.com/Interhyp/metadata-service/acorns/config"
 	"github.com/Interhyp/metadata-service/acorns/repository"
 	"github.com/StephanHCB/go-autumn-acorn-registry/api"
 	auzerolog "github.com/StephanHCB/go-autumn-logging-zerolog"
@@ -27,29 +28,21 @@ func (r *Impl) AcornName() string {
 func (r *Impl) AssembleAcorn(registry auacornapi.AcornRegistry) error {
 	r.Configuration = registry.GetAcornByName(librepo.ConfigurationAcornName).(librepo.Configuration)
 	r.Logging = registry.GetAcornByName(librepo.LoggingAcornName).(librepo.Logging)
-	r.Vault = registry.GetAcornByName(repository.VaultAcornName).(repository.Vault)
 	r.HostIP = registry.GetAcornByName(repository.HostIPAcornName).(repository.HostIP)
 
-	r.CustomConfiguration = repository.Custom(r.Configuration)
+	r.CustomConfiguration = config.Custom(r.Configuration)
 
 	return nil
 }
 
 func (r *Impl) SetupAcorn(registry auacornapi.AcornRegistry) error {
-	err := registry.SetupAfter(r.Configuration.(auacornapi.Acorn))
-	if err != nil {
+	if err := registry.SetupAfter(r.Configuration.(auacornapi.Acorn)); err != nil {
 		return err
 	}
-	err = registry.SetupAfter(r.Logging.(auacornapi.Acorn))
-	if err != nil {
+	if err := registry.SetupAfter(r.Logging.(auacornapi.Acorn)); err != nil {
 		return err
 	}
-	err = registry.SetupAfter(r.Vault.(auacornapi.Acorn))
-	if err != nil {
-		return err
-	}
-	err = registry.SetupAfter(r.HostIP.(auacornapi.Acorn))
-	if err != nil {
+	if err := registry.SetupAfter(r.HostIP.(auacornapi.Acorn)); err != nil {
 		return err
 	}
 

@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/Interhyp/metadata-service/acorns/config"
 	"github.com/Interhyp/metadata-service/acorns/errors/alreadyexistserror"
 	"github.com/Interhyp/metadata-service/acorns/errors/concurrencyerror"
 	"github.com/Interhyp/metadata-service/acorns/errors/nosuchownererror"
@@ -11,7 +12,6 @@ import (
 	"github.com/Interhyp/metadata-service/acorns/errors/nosuchserviceerror"
 	"github.com/Interhyp/metadata-service/acorns/errors/unavailableerror"
 	"github.com/Interhyp/metadata-service/acorns/errors/validationerror"
-	"github.com/Interhyp/metadata-service/acorns/repository"
 	"github.com/Interhyp/metadata-service/acorns/service"
 	openapi "github.com/Interhyp/metadata-service/api/v1"
 	"github.com/Interhyp/metadata-service/web/middleware/jwt"
@@ -29,7 +29,7 @@ const ownerParam = "owner"
 
 type Impl struct {
 	Configuration       librepo.Configuration
-	CustomConfiguration repository.CustomConfiguration
+	CustomConfiguration config.CustomConfiguration
 	Logging             librepo.Logging
 	Services            service.Services
 

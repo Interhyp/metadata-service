@@ -2,6 +2,7 @@ package updater
 
 import (
 	"context"
+	"github.com/Interhyp/metadata-service/acorns/config"
 	"github.com/Interhyp/metadata-service/acorns/repository"
 	"github.com/Interhyp/metadata-service/acorns/service"
 	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
@@ -14,7 +15,7 @@ import (
 
 type Impl struct {
 	Configuration       librepo.Configuration
-	CustomConfiguration repository.CustomConfiguration
+	CustomConfiguration config.CustomConfiguration
 	Logging             librepo.Logging
 	Kafka               repository.Kafka
 	Mapper              service.Mapper

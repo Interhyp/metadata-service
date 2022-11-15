@@ -2,7 +2,7 @@ package trigger
 
 import (
 	"context"
-	"github.com/Interhyp/metadata-service/acorns/repository"
+	"github.com/Interhyp/metadata-service/acorns/config"
 	"github.com/Interhyp/metadata-service/acorns/service"
 	"github.com/StephanHCB/go-autumn-acorn-registry/api"
 	auzerolog "github.com/StephanHCB/go-autumn-logging-zerolog"
@@ -31,7 +31,7 @@ func (s *Impl) AssembleAcorn(registry auacornapi.AcornRegistry) error {
 	s.Logging = registry.GetAcornByName(librepo.LoggingAcornName).(librepo.Logging)
 	s.Updater = registry.GetAcornByName(service.UpdaterAcornName).(service.Updater)
 
-	s.CustomConfiguration = repository.Custom(s.Configuration)
+	s.CustomConfiguration = config.Custom(s.Configuration)
 
 	return nil
 }

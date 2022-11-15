@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	"github.com/Interhyp/metadata-service/acorns/config"
 	"github.com/Interhyp/metadata-service/acorns/errors/nochangeserror"
 	"github.com/Interhyp/metadata-service/acorns/repository"
 	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
@@ -23,9 +24,8 @@ import (
 
 type Impl struct {
 	Configuration       librepo.Configuration
-	CustomConfiguration repository.CustomConfiguration
+	CustomConfiguration config.CustomConfiguration
 	Logging             librepo.Logging
-	Vault               repository.Vault
 
 	GitRepo *git.Repository
 
@@ -187,8 +187,8 @@ func (r *Impl) Clone(ctx context.Context) error {
 
 	repo, err := git.CloneContext(childCtxWithTimeout, memory.NewStorage(), memfs.New(), &git.CloneOptions{
 		Auth: &http.BasicAuth{
-			Username: r.CustomConfiguration.BbUser(),
-			Password: r.Vault.BbPassword(),
+			Username: r.CustomConfiguration.BitbucketUsername(),
+			Password: r.CustomConfiguration.BitbucketPassword(),
 		},
 		NoCheckout:      false,
 		Progress:        r, // implements io.Writer, sends to Debug logging
@@ -228,8 +228,8 @@ func (r *Impl) Pull(ctx context.Context) error {
 
 	err = tree.PullContext(childCtxWithTimeout, &git.PullOptions{
 		Auth: &http.BasicAuth{
-			Username: r.CustomConfiguration.BbUser(),
-			Password: r.Vault.BbPassword(),
+			Username: r.CustomConfiguration.BitbucketUsername(),
+			Password: r.CustomConfiguration.BitbucketPassword(),
 		},
 		Progress:        r, // implements io.Writer, sends to Debug logging
 		RemoteName:      "origin",
@@ -315,8 +315,8 @@ func (r *Impl) Push(ctx context.Context) error {
 
 	err := r.GitRepo.PushContext(childCtxWithTimeout, &git.PushOptions{
 		Auth: &http.BasicAuth{
-			Username: r.CustomConfiguration.BbUser(),
-			Password: r.Vault.BbPassword(),
+			Username: r.CustomConfiguration.BitbucketUsername(),
+			Password: r.CustomConfiguration.BitbucketPassword(),
 		},
 		Progress:        r, // implements io.Writer, sends to Debug logging
 		RemoteName:      "origin",

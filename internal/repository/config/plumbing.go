@@ -1,7 +1,10 @@
 package config
 
 import (
+	"github.com/Interhyp/metadata-service/acorns/config"
+	"github.com/Interhyp/metadata-service/internal/repository/vault"
 	auacornapi "github.com/StephanHCB/go-autumn-acorn-registry/api"
+	auconfigapi "github.com/StephanHCB/go-autumn-config-api"
 	auconfigenv "github.com/StephanHCB/go-autumn-config-env"
 	libconfig "github.com/StephanHCB/go-backend-service-common/repository/config"
 	"regexp"
@@ -9,10 +12,14 @@ import (
 )
 
 type CustomConfigImpl struct {
-	VBbUser                        string
+	VBasicAuthUsername             string
+	VBasicAuthPassword             string
+	VBitbucketUsername             string
+	VBitbucketPassword             string
 	VGitCommitterName              string
 	VGitCommitterEmail             string
-	VKafkaUser                     string
+	VKafkaUsername                 string
+	VKafkaPassword                 string
 	VKafkaTopic                    string
 	VKafkaSeedBrokers              string
 	VKeySetUrl                     string
@@ -20,8 +27,6 @@ type CustomConfigImpl struct {
 	VMetadataRepoUrl               string
 	VUpdateJobIntervalCronPart     string
 	VUpdateJobTimeoutSeconds       uint16
-	VVaultSecretsBasePath          string
-	VVaultKafkaSecretPath          string
 	VAlertTargetPrefix             string
 	VAlertTargetSuffix             string
 	VAdditionalPromoters           string
@@ -43,40 +48,45 @@ type CustomConfigImpl struct {
 
 func New() auacornapi.Acorn {
 	instance := &CustomConfigImpl{}
-	return libconfig.New(instance, CustomConfigItems)
+	configItems := make([]auconfigapi.ConfigItem, 0)
+	configItems = append(configItems, CustomConfigItems...)
+	configItems = append(configItems, vault.ConfigItems...)
+	return libconfig.New(instance, configItems)
 }
 
 func (c *CustomConfigImpl) Obtain(getter func(key string) string) {
-	c.VBbUser = getter(KeyBbUser)
-	c.VGitCommitterName = getter(KeyGitCommitterName)
-	c.VGitCommitterEmail = getter(KeyGitCommitterEmail)
-	c.VKafkaUser = getter(KeyKafkaUser)
-	c.VKafkaTopic = getter(KeyKafkaTopic)
-	c.VKafkaSeedBrokers = getter(KeyKafkaSeedBrokers)
-	c.VKafkaGroupIdOverride = getter(KeyKafkaGroupIdOverride)
-	c.VKeySetUrl = getter(KeyKeySetUrl)
-	c.VMetadataRepoUrl = getter(KeyMetadataRepoUrl)
-	c.VUpdateJobIntervalCronPart = getter(KeyUpdateJobIntervalMinutes)
-	c.VUpdateJobTimeoutSeconds = toUint16(getter(KeyUpdateJobTimeoutSeconds))
-	c.VVaultSecretsBasePath = getter(KeyVaultSecretsBasePath)
-	c.VVaultKafkaSecretPath = getter(KeyVaultKafkaSecretPath)
-	c.VAlertTargetPrefix = getter(KeyAlertTargetPrefix)
-	c.VAlertTargetSuffix = getter(KeyAlertTargetSuffix)
-	c.VAdditionalPromoters = getter(KeyAdditionalPromoters)
-	c.VAdditionalPromotersFromOwners = getter(KeyAdditionalPromotersFromOwners)
-	c.VElasticApmDisabled, _ = strconv.ParseBool(getter(KeyElasticApmDisabled))
-	c.VOwnerAliasPermittedRegex, _ = regexp.Compile(getter(KeyOwnerAliasPermittedRegex))
-	c.VOwnerAliasProhibitedRegex, _ = regexp.Compile(getter(KeyOwnerAliasProhibitedRegex))
-	c.VOwnerAliasMaxLength = toUint16(getter(KeyOwnerAliasMaxLength))
-	c.VOwnerAliasFilterRegex, _ = regexp.Compile(getter(KeyOwnerAliasFilterRegex))
-	c.VServiceNamePermittedRegex, _ = regexp.Compile(getter(KeyServiceNamePermittedRegex))
-	c.VServiceNameProhibitedRegex, _ = regexp.Compile(getter(KeyServiceNameProhibitedRegex))
-	c.VServiceNameMaxLength = toUint16(getter(KeyServiceNameMaxLength))
-	c.VRepositoryNamePermittedRegex, _ = regexp.Compile(getter(KeyRepositoryNamePermittedRegex))
-	c.VRepositoryNameProhibitedRegex, _ = regexp.Compile(getter(KeyRepositoryNameProhibitedRegex))
-	c.VRepositoryNameMaxLength = toUint16(getter(KeyRepositoryNameMaxLength))
-	c.VRepositoryTypes = getter(KeyRepositoryTypes)
-	c.VRepositoryKeySeparator = getter(KeyRepositoryKeySeparator)
+	c.VBasicAuthUsername = getter(config.KeyBasicAuthUsername)
+	c.VBasicAuthPassword = getter(config.KeyBasicAuthPassword)
+	c.VBitbucketUsername = getter(config.KeyBitbucketUsername)
+	c.VBitbucketPassword = getter(config.KeyBitbucketPassword)
+	c.VGitCommitterName = getter(config.KeyGitCommitterName)
+	c.VGitCommitterEmail = getter(config.KeyGitCommitterEmail)
+	c.VKafkaUsername = getter(config.KeyKafkaUsername)
+	c.VKafkaPassword = getter(config.KeyKafkaPassword)
+	c.VKafkaTopic = getter(config.KeyKafkaTopic)
+	c.VKafkaSeedBrokers = getter(config.KeyKafkaSeedBrokers)
+	c.VKafkaGroupIdOverride = getter(config.KeyKafkaGroupIdOverride)
+	c.VKeySetUrl = getter(config.KeyKeySetUrl)
+	c.VMetadataRepoUrl = getter(config.KeyMetadataRepoUrl)
+	c.VUpdateJobIntervalCronPart = getter(config.KeyUpdateJobIntervalMinutes)
+	c.VUpdateJobTimeoutSeconds = toUint16(getter(config.KeyUpdateJobTimeoutSeconds))
+	c.VAlertTargetPrefix = getter(config.KeyAlertTargetPrefix)
+	c.VAlertTargetSuffix = getter(config.KeyAlertTargetSuffix)
+	c.VAdditionalPromoters = getter(config.KeyAdditionalPromoters)
+	c.VAdditionalPromotersFromOwners = getter(config.KeyAdditionalPromotersFromOwners)
+	c.VElasticApmDisabled, _ = strconv.ParseBool(getter(config.KeyElasticApmDisabled))
+	c.VOwnerAliasPermittedRegex, _ = regexp.Compile(getter(config.KeyOwnerAliasPermittedRegex))
+	c.VOwnerAliasProhibitedRegex, _ = regexp.Compile(getter(config.KeyOwnerAliasProhibitedRegex))
+	c.VOwnerAliasMaxLength = toUint16(getter(config.KeyOwnerAliasMaxLength))
+	c.VOwnerAliasFilterRegex, _ = regexp.Compile(getter(config.KeyOwnerAliasFilterRegex))
+	c.VServiceNamePermittedRegex, _ = regexp.Compile(getter(config.KeyServiceNamePermittedRegex))
+	c.VServiceNameProhibitedRegex, _ = regexp.Compile(getter(config.KeyServiceNameProhibitedRegex))
+	c.VServiceNameMaxLength = toUint16(getter(config.KeyServiceNameMaxLength))
+	c.VRepositoryNamePermittedRegex, _ = regexp.Compile(getter(config.KeyRepositoryNamePermittedRegex))
+	c.VRepositoryNameProhibitedRegex, _ = regexp.Compile(getter(config.KeyRepositoryNameProhibitedRegex))
+	c.VRepositoryNameMaxLength = toUint16(getter(config.KeyRepositoryNameMaxLength))
+	c.VRepositoryTypes = getter(config.KeyRepositoryTypes)
+	c.VRepositoryKeySeparator = getter(config.KeyRepositoryKeySeparator)
 }
 
 // used after validation, so known safe

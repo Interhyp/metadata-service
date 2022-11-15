@@ -6,8 +6,20 @@ import (
 	"strings"
 )
 
-func (c *CustomConfigImpl) BbUser() string {
-	return c.VBbUser
+func (c *CustomConfigImpl) BasicAuthUsername() string {
+	return c.VBasicAuthUsername
+}
+
+func (c *CustomConfigImpl) BasicAuthPassword() string {
+	return c.VBasicAuthPassword
+}
+
+func (c *CustomConfigImpl) BitbucketUsername() string {
+	return c.VBitbucketUsername
+}
+
+func (c *CustomConfigImpl) BitbucketPassword() string {
+	return c.VBitbucketPassword
 }
 
 func (c *CustomConfigImpl) GitCommitterName() string {
@@ -18,8 +30,12 @@ func (c *CustomConfigImpl) GitCommitterEmail() string {
 	return c.VGitCommitterEmail
 }
 
-func (c *CustomConfigImpl) KafkaUser() string {
-	return c.VKafkaUser
+func (c *CustomConfigImpl) KafkaUsername() string {
+	return c.VKafkaUsername
+}
+
+func (c *CustomConfigImpl) KafkaPassword() string {
+	return c.VKafkaPassword
 }
 
 func (c *CustomConfigImpl) KafkaTopic() string {
@@ -48,14 +64,6 @@ func (c *CustomConfigImpl) UpdateJobIntervalCronPart() string {
 
 func (c *CustomConfigImpl) UpdateJobTimeoutSeconds() uint16 {
 	return c.VUpdateJobTimeoutSeconds
-}
-
-func (c *CustomConfigImpl) VaultSecretsBasePath() string {
-	return c.VVaultSecretsBasePath
-}
-
-func (c *CustomConfigImpl) VaultKafkaSecretPath() string {
-	return c.VVaultKafkaSecretPath
 }
 
 func (c *CustomConfigImpl) AlertTargetPrefix() string {
