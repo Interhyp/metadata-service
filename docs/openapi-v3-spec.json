@@ -2086,6 +2086,10 @@
             "description": "The alias of the service owner. Note, an update with changed owner will move the service and any associated repositories to the new owner, but of course this will not move e.g. Jenkins jobs. That's your job.",
             "example": "some-owner"
           },
+          "description": {
+            "type": "string",
+            "description": "A short description of the functionality of the service."
+          },
           "quicklinks": {
             "type": "array",
             "description": "A list of quicklinks related to the service",
@@ -2150,10 +2154,6 @@
             "type": "string",
             "description": "The jira issue to use for committing a change, or the last jira issue used.",
             "example": "ISSUE-0000"
-          },
-          "description": {
-            "type": "string",
-            "description": "A short description of the functionality of the service."
           }
         }
       },
@@ -2172,6 +2172,10 @@
             "description": "The alias of the service owner. Note, an update with changed owner will move the service and any associated repositories to the new owner, but of course this will not move e.g. Jenkins jobs. That's your job.",
             "example": "some-owner"
           },
+          "description": {
+            "type": "string",
+            "description": "A short description of the functionality of the service."
+          },
           "quicklinks": {
             "type": "array",
             "description": "A list of quicklinks related to the service",
@@ -2226,10 +2230,6 @@
             "type": "string",
             "description": "The jira issue to use for committing a change, or the last jira issue used.",
             "example": "ISSUE-0000"
-          },
-          "description": {
-            "type": "string",
-            "description": "A short description of the functionality of the service."
           }
         }
       },
@@ -2245,6 +2245,10 @@
             "type": "string",
             "description": "The alias of the service owner. Note, a patch with changed owner will move the service and any associated repositories to the new owner, but of course this will not move e.g. Jenkins jobs. That's your job.",
             "example": "some-owner"
+          },
+          "description": {
+            "type": "string",
+            "description": "A short description of the functionality of the service."
           },
           "quicklinks": {
             "type": "array",
@@ -2310,10 +2314,6 @@
             "type": "string",
             "description": "The jira issue to use for committing a change, or the last jira issue used.",
             "example": "ISSUE-0000"
-          },
-          "description": {
-            "type": "string",
-            "description": "A short description of the functionality of the service."
           }
         }
       },

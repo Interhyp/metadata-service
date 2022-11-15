@@ -177,6 +177,8 @@ type RepositoryPatchDto struct {
 type ServiceCreateDto struct {
 	// The alias of the service owner. Note, an update with changed owner will move the service and any associated repositories to the new owner, but of course this will not move e.g. Jenkins jobs. That's your job.
 	Owner string `json:"owner"`
+	// A short description of the functionality of the service.
+	Description *string `json:"description,omitempty"`
 	// A list of quicklinks related to the service
 	Quicklinks []Quicklink `json:"quicklinks"`
 	// The keys of repositories associated with the service. When sending an update, they must refer to repositories that belong to this service, or the update will fail
@@ -191,13 +193,13 @@ type ServiceCreateDto struct {
 	RequiredScans []string `json:"requiredScans,omitempty"`
 	// The jira issue to use for committing a change, or the last jira issue used.
 	JiraIssue string `json:"jiraIssue"`
-	// A short description of the functionality of the service.
-	Description *string `json:"description,omitempty"`
 }
 
 type ServiceDto struct {
 	// The alias of the service owner. Note, an update with changed owner will move the service and any associated repositories to the new owner, but of course this will not move e.g. Jenkins jobs. That's your job.
 	Owner string `json:"owner" yaml:"-"`
+	// A short description of the functionality of the service.
+	Description *string `json:"description,omitempty" yaml:"description,omitempty"`
 	// A list of quicklinks related to the service
 	Quicklinks []Quicklink `json:"quicklinks" yaml:"quicklinks"`
 	// The keys of repositories associated with the service. When sending an update, they must refer to repositories that belong to this service, or the update will fail
@@ -216,8 +218,6 @@ type ServiceDto struct {
 	CommitHash string `json:"commitHash" yaml:"-"`
 	// The jira issue to use for committing a change, or the last jira issue used.
 	JiraIssue string `json:"jiraIssue" yaml:"-"`
-	// A short description of the functionality of the service.
-	Description *string `json:"description,omitempty" yaml:"description,omitempty"`
 }
 
 type ServiceListDto struct {
@@ -229,6 +229,8 @@ type ServiceListDto struct {
 type ServicePatchDto struct {
 	// The alias of the service owner. Note, a patch with changed owner will move the service and any associated repositories to the new owner, but of course this will not move e.g. Jenkins jobs. That's your job.
 	Owner *string `json:"owner,omitempty"`
+	// A short description of the functionality of the service.
+	Description *string `json:"description,omitempty"`
 	// A list of quicklinks related to the service
 	Quicklinks []Quicklink `json:"quicklinks,omitempty"`
 	// The keys of repositories associated with the service. When sending an update, they must refer to repositories that belong to this service, or the update will fail
@@ -247,8 +249,6 @@ type ServicePatchDto struct {
 	CommitHash string `json:"commitHash"`
 	// The jira issue to use for committing a change, or the last jira issue used.
 	JiraIssue string `json:"jiraIssue"`
-	// A short description of the functionality of the service.
-	Description *string `json:"description,omitempty"`
 }
 
 type ServicePromotersDto struct {

@@ -286,7 +286,7 @@ func patchService(current openapi.ServiceDto, patch openapi.ServicePatchDto) ope
 		TimeStamp:       patch.TimeStamp,
 		CommitHash:      patch.CommitHash,
 		JiraIssue:       patch.JiraIssue,
-		Description:     patch.Description,
+		Description:     patchStringPtr(patch.Description, current.Description),
 	}
 }
 
