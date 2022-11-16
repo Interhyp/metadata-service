@@ -94,6 +94,7 @@ func TestPatchService_ClearFields(t *testing.T) {
 	docs.Description("patching of services works with a patch that clears fields (result would not validate)")
 	tstPatchService(t, openapi.ServicePatchDto{
 		Owner:         p(""),
+		Description:   p(""),
 		Quicklinks:    []openapi.Quicklink{},
 		Repositories:  []string{},
 		AlertTarget:   p(""),
@@ -103,6 +104,7 @@ func TestPatchService_ClearFields(t *testing.T) {
 		CommitHash:    "",
 	}, openapi.ServiceDto{
 		Owner:           "",
+		Description:     nil,
 		AlertTarget:     "",
 		DevelopmentOnly: b(true),
 		OperationType:   nil,
@@ -112,8 +114,10 @@ func TestPatchService_ClearFields(t *testing.T) {
 }
 
 func tstValid() openapi.ServiceDto {
+	description := "short service description"
 	return openapi.ServiceDto{
 		Owner:       "some-owner",
+		Description: &description,
 		AlertTarget: "somebody@some-organisation.com",
 		TimeStamp:   "timestamp",
 		CommitHash:  "commithash",
@@ -122,8 +126,10 @@ func tstValid() openapi.ServiceDto {
 }
 
 func tstCreateValid() openapi.ServiceCreateDto {
+	description := "short service description"
 	return openapi.ServiceCreateDto{
 		Owner:       "some-owner",
+		Description: &description,
 		AlertTarget: "somebody@some-organisation.com",
 		JiraIssue:   "jiraissue",
 	}
