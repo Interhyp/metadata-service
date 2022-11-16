@@ -112,6 +112,7 @@ func (s *Impl) validateNewServiceDto(ctx context.Context, serviceName string, dt
 	messages := make([]string, 0)
 
 	messages = validateOwner(messages, dto.Owner)
+	messages = validateDescription(messages, dto.Description)
 	messages = validateRepositories(messages, serviceName, dto.Repositories)
 	messages = s.validateAlertTarget(messages, dto.AlertTarget)
 	messages = validateOperationType(messages, dto.OperationType)
@@ -176,6 +177,7 @@ func (s *Impl) validateExistingServiceDto(ctx context.Context, serviceName strin
 	messages := make([]string, 0)
 
 	messages = validateOwner(messages, dto.Owner)
+	messages = validateDescription(messages, dto.Description)
 	messages = validateRepositories(messages, serviceName, dto.Repositories)
 	messages = s.validateAlertTarget(messages, dto.AlertTarget)
 	messages = validateOperationType(messages, dto.OperationType)
@@ -254,6 +256,7 @@ func (s *Impl) validateServicePatchDto(ctx context.Context, serviceName string, 
 	dto := patchService(current, patchDto)
 
 	messages = validateOwner(messages, dto.Owner)
+	messages = validateDescription(messages, dto.Description)
 	messages = validateRepositories(messages, serviceName, dto.Repositories)
 	messages = s.validateAlertTarget(messages, dto.AlertTarget)
 	messages = validateOperationType(messages, dto.OperationType)
@@ -507,6 +510,13 @@ func validateRequiredScans(messages []string, requiredScans []string) []string {
 		if !validScanType(candidate) {
 			messages = append(messages, "field requiredScans can only contain SAST and SCA")
 		}
+	}
+	return messages
+}
+
+func validateDescription(messages []string, description *string) []string {
+	if description != nil && len(*description) > 500 {
+		messages = append(messages, "allowed length of the service description is 500 characters")
 	}
 	return messages
 }
