@@ -104,6 +104,7 @@ func (s *Impl) mapServiceCreateDtoToServiceDto(serviceCreateDto openapi.ServiceC
 		Repositories:    serviceCreateDto.Repositories,
 		DevelopmentOnly: serviceCreateDto.DevelopmentOnly,
 		Quicklinks:      serviceCreateDto.Quicklinks,
+		Description:     serviceCreateDto.Description,
 	}
 }
 
@@ -285,6 +286,7 @@ func patchService(current openapi.ServiceDto, patch openapi.ServicePatchDto) ope
 		TimeStamp:       patch.TimeStamp,
 		CommitHash:      patch.CommitHash,
 		JiraIssue:       patch.JiraIssue,
+		Description:     patchStringPtr(patch.Description, current.Description),
 	}
 }
 
