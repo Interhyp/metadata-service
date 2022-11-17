@@ -11,6 +11,7 @@ import (
 	"github.com/Interhyp/metadata-service/acorns/errors/validationerror"
 	"github.com/Interhyp/metadata-service/acorns/service"
 	openapi "github.com/Interhyp/metadata-service/api/v1"
+	"github.com/Interhyp/metadata-service/internal/service/util"
 	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
 	"strings"
 )
@@ -87,9 +88,9 @@ func (s *Impl) GetRepository(ctx context.Context, repoKey string) (openapi.Repos
 
 func (s *Impl) rebuildApprovers(ctx context.Context, result *openapi.RepositoryConfigurationDto) {
 	if result != nil && result.Approvers != nil {
-		filteredApprovers := make([]string, 0)
-		for key, approvers := range *result.Approvers {
-			for _, approver := range approvers {
+		for approversGroupName, approversGroup := range *result.Approvers {
+			filteredApprovers := make([]string, 0)
+			for _, approver := range approversGroup {
 				isGroup, groupOwner, groupName := s.Owners.ParseGroupOwnerAndGroupName(approver)
 				if isGroup {
 					groupMembers := s.Owners.GetAllGroupMembers(ctx, groupOwner, groupName)
@@ -98,7 +99,7 @@ func (s *Impl) rebuildApprovers(ctx context.Context, result *openapi.RepositoryC
 					filteredApprovers = append(filteredApprovers, approver)
 				}
 			}
-			(*result.Approvers)[key] = filteredApprovers
+			(*result.Approvers)[approversGroupName] = util.RemoveDuplicateStr(filteredApprovers)
 		}
 	}
 }

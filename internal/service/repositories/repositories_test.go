@@ -4,6 +4,7 @@ import (
 	"context"
 	openapi "github.com/Interhyp/metadata-service/api/v1"
 	"github.com/Interhyp/metadata-service/docs"
+	"github.com/Interhyp/metadata-service/internal/service/owners"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"testing"
@@ -289,4 +290,48 @@ func TestValidate_Mainline(t *testing.T) {
 	expectedMessage = "validation error: field mainline is mandatory"
 
 	tstValidationTestcaseAllOps(t, expectedMessage, data, create, patch)
+}
+
+func TestRebuildApprovers_DuplicatesAndMultipleGroups(t *testing.T) {
+	instance := createInstance()
+
+	testApprovers := make(map[string][]string, 0)
+	testApprovers["one"] = []string{"x", "y", "z", "z"}
+	testApprovers["two"] = []string{"z", "o", "v", "v"}
+	configDto := createRepositoryConfigDto(&testApprovers)
+
+	instance.rebuildApprovers(context.TODO(), configDto)
+
+	require.Equal(t, 2, len(*configDto.Approvers))
+	require.Exactly(t, (*configDto.Approvers)["one"], []string{"x", "y", "z"})
+	require.Exactly(t, (*configDto.Approvers)["two"], []string{"z", "o", "v"})
+}
+
+func createInstance() Impl {
+	instance := Impl{
+		Configuration: nil,
+		Logging:       nil,
+		Cache:         nil,
+		Updater:       nil,
+		Owners: &owners.Impl{
+			Configuration: nil,
+			Logging:       nil,
+			Cache:         nil,
+			Updater:       nil,
+		},
+	}
+	return instance
+}
+
+func createRepositoryConfigDto(testApprovers *map[string][]string) *openapi.RepositoryConfigurationDto {
+	return &openapi.RepositoryConfigurationDto{
+		AccessKeys:              nil,
+		CommitMessageType:       nil,
+		RequireIssue:            nil,
+		RequireSuccessfulBuilds: nil,
+		Webhooks:                nil,
+		Approvers:               testApprovers,
+		DefaultReviewers:        nil,
+		SignedApprovers:         nil,
+	}
 }
