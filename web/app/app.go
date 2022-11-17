@@ -2,7 +2,6 @@ package app
 
 import (
 	"github.com/Interhyp/metadata-service/acorns/application"
-	"github.com/Interhyp/metadata-service/acorns/repository"
 	"github.com/Interhyp/metadata-service/internal/repository/config"
 	"github.com/Interhyp/metadata-service/internal/repository/hostip"
 	"github.com/Interhyp/metadata-service/internal/repository/idp"
@@ -22,7 +21,6 @@ import (
 	"github.com/Interhyp/metadata-service/web/controller/webhookctl"
 	"github.com/Interhyp/metadata-service/web/server"
 	auacorn "github.com/StephanHCB/go-autumn-acorn-registry"
-	auacornapi "github.com/StephanHCB/go-autumn-acorn-registry/api"
 	"github.com/StephanHCB/go-backend-service-common/repository/logging"
 	"github.com/StephanHCB/go-backend-service-common/web/controller/healthctl"
 	"github.com/StephanHCB/go-backend-service-common/web/controller/swaggerctl"
@@ -99,9 +97,6 @@ func (a *ApplicationImpl) Run() int {
 		return 10
 	}
 
-	// ToDo: For now, vault needs to be set up first (before the configuration) so that the values are written before validation happens.
-	// ToDo: Add some way to declare order of setup for acorns (even those coming from libraries), currently does not work with "SetupAfter".
-	err = auacorn.Registry.GetAcornByName(repository.VaultAcornName).(auacornapi.Acorn).SetupAcorn(auacorn.Registry)
 	if err != nil {
 		return 20
 	}

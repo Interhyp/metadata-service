@@ -1,29 +1,29 @@
 APPLICATION_NAME: room-service
-SERVER_ADDRESS: '192.168.150.0'
-SERVER_PORT: '8081'
-METRICS_PORT: '9091'
-ENVIRONMENT: dev
 PLATFORM: example
-LOGSTYLE: plain
-VAULT_SERVER: localhost
-VAULT_SECRETS_BASE_PATH: base/path
-VAULT_SECRET_PATH: room-service/secrets
-LOCAL_VAULT_TOKEN: 'not a real token'
-VAULT_KUBERNETES_ROLE: 'example_microservice_role_room-service_prod'
-VAULT_KUBERNETES_TOKEN_PATH: '/some/thing'
-VAULT_KUBERNETES_BACKEND: 'k8s-dev-something'
 
-BB_USER: somebody
+LOGSTYLE: plain
+
+BASIC_AUTH_USERNAME: some-basic-auth-username
+BASIC_AUTH_PASSWORD: some-basic-auth-password
+
+BITBUCKET_USERNAME: some-bitbucket-username
+BITBUCKET_PASSWORD: some-bitbucket-password
+
 GIT_COMMITTER_NAME: 'Body, Some'
 GIT_COMMITTER_EMAIL: 'somebody@somewhere.com'
-KAFKA_USER: 'some-kafka-user'
+
+KAFKA_USERNAME: 'some-kafka-username'
+KAFKA_PASSWORD: 'some-kafka-password'
 KAFKA_TOPIC: 'some-kafka-topic'
 KAFKA_SEED_BROKERS: 'first-kafka-broker.domain.com:9092,second-kafka-broker.domain.com:9092'
+
 KEY_SET_URL: http://keyset
+
+METADATA_REPO_URL: http://metadata
+
 UPDATE_JOB_INTERVAL_MINUTES: 5
 UPDATE_JOB_TIMEOUT_SECONDS: 30
-METADATA_REPO_URL: http://metadata
-VAULT_KAFKA_SECRET_PATH: kafka/feat/room-service
+
 ALERT_TARGET_PREFIX: https://some-domain.com/
 ALERT_TARGET_SUFFIX: '@some-domain.com'
 

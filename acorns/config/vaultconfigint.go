@@ -4,12 +4,11 @@ type VaultConfiguration interface {
 }
 
 const (
-	KeyVaultEnabled             = "VAULT_ENABLED"
-	KeyVaultServer              = "VAULT_SERVER"
-	KeyVaultToken               = "LOCAL_VAULT_TOKEN"
-	KeyVaultKubernetesRole      = "VAULT_KUBERNETES_ROLE"
-	KeyVaultKubernetesTokenPath = "VAULT_KUBERNETES_TOKEN_PATH"
-	KeyVaultKubernetesBackend   = "VAULT_KUBERNETES_BACKEND"
-	KeyVaultServiceSecretsPath  = "VAULT_SERVICE_SECRETS_PATH"
-	KeyVaultKafkaSecretsPath    = "VAULT_KAFKA_SECRETS_PATH"
+	KeyVaultEnabled                 = "VAULT_ENABLED"
+	KeyVaultServer                  = "VAULT_SERVER"
+	KeyVaultAuthToken               = "VAULT_AUTH_TOKEN"
+	KeyVaultAuthKubernetesRole      = "VAULT_AUTH_KUBERNETES_ROLE"
+	KeyVaultAuthKubernetesTokenPath = "VAULT_AUTH_KUBERNETES_TOKEN_PATH"
+	KeyVaultAuthKubernetesBackend   = "VAULT_AUTH_KUBERNETES_BACKEND"
+	KeyVaultSecretsConfig           = "VAULT_SECRETS_CONFIG"
 )

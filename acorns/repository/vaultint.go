@@ -18,7 +18,11 @@ type Vault interface {
 
 	// ObtainSecrets fetches the regular secrets from vault
 	ObtainSecrets(ctx context.Context) error
+}
 
-	// ObtainKafkaSecrets fetches the kafka secrets from vault (skipped if kafka username / topic not configured)
-	ObtainKafkaSecrets(ctx context.Context) error
+type VaultSecretsConfig map[string][]VaultSecretConfig
+
+type VaultSecretConfig struct {
+	VaultKey  string  `json:"vaultKey"`
+	ConfigKey *string `json:"configKey,omitempty"`
 }

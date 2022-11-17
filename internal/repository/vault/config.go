@@ -2,8 +2,10 @@ package vault
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"github.com/Interhyp/metadata-service/acorns/config"
+	"github.com/Interhyp/metadata-service/acorns/repository"
 	auconfigapi "github.com/StephanHCB/go-autumn-config-api"
 	auconfigenv "github.com/StephanHCB/go-autumn-config-env"
 	"strconv"
@@ -18,18 +20,43 @@ var ConfigItems = []auconfigapi.ConfigItem{
 		Validate:    auconfigenv.ObtainIsBooleanValidator(),
 	},
 	{
-		Key:         config.KeyVaultServiceSecretsPath,
-		EnvName:     config.KeyVaultServiceSecretsPath,
+		Key:         config.KeyVaultAuthToken,
+		EnvName:     config.KeyVaultAuthToken,
 		Default:     "",
-		Description: "total vault secret path is composed of VAULT_SECRETS_BASE_PATH/ENVIRONMENT/VAULT_SECRET_PATH",
-		Validate:    auconfigenv.ObtainPatternValidator("^(|[a-z0-9-/]+)$"),
+		Description: "authentication token used to fetch secrets.",
+		Validate:    auconfigapi.ConfigNeedsNoValidation,
 	},
 	{
-		Key:         config.KeyVaultKafkaSecretsPath,
-		EnvName:     config.KeyVaultKafkaSecretsPath,
+		Key:         config.KeyVaultAuthKubernetesRole,
+		EnvName:     config.KeyVaultAuthKubernetesRole,
 		Default:     "",
-		Description: "optional: kafka secret path in vault (needed to send kafka notifications), leaving this or any of the other *KAFKA* fields empty will switch off all Kafka functionality, including the Vault query for Kafka credentials",
-		Validate:    auconfigenv.ObtainPatternValidator("^(|[a-z0-9-/]+)$"),
+		Description: "role binding to use for vault kubernetes authentication.",
+		Validate:    auconfigapi.ConfigNeedsNoValidation,
+	},
+	{
+		Key:         config.KeyVaultAuthKubernetesTokenPath,
+		EnvName:     config.KeyVaultAuthKubernetesTokenPath,
+		Default:     "",
+		Description: "file path to the service-account token",
+		Validate:    auconfigapi.ConfigNeedsNoValidation,
+	},
+	{
+		Key:         config.KeyVaultAuthKubernetesBackend,
+		EnvName:     config.KeyVaultAuthKubernetesBackend,
+		Default:     "",
+		Description: "authentication path for the kubernetes cluster",
+		Validate:    auconfigapi.ConfigNeedsNoValidation,
+	},
+	{
+		Key:         config.KeyVaultSecretsConfig,
+		EnvName:     config.KeyVaultSecretsConfig,
+		Default:     "{}",
+		Description: "configuration consisting of vault paths and keys to fetch from the corresponding path. values will be written to the global configuration object.",
+		Validate: func(key string) error {
+			value := auconfigenv.Get(key)
+			_, err := parseSecretsConfig(value)
+			return err
+		},
 	},
 }
 
@@ -55,10 +82,17 @@ func (v *Impl) Validate(ctx context.Context) error {
 func (v *Impl) Obtain(ctx context.Context) {
 	v.VaultEnabled, _ = strconv.ParseBool(auconfigenv.Get(config.KeyVaultEnabled))
 	v.VaultServer = auconfigenv.Get(config.KeyVaultServer)
-	v.VaultToken = auconfigenv.Get(config.KeyVaultToken)
-	v.VaultKubernetesRole = auconfigenv.Get(config.KeyVaultKubernetesRole)
-	v.VaultKubernetesAuthPath = auconfigenv.Get(config.KeyVaultKubernetesTokenPath)
-	v.VaultKubernetesBackend = auconfigenv.Get(config.KeyVaultKubernetesBackend)
-	v.VaultServiceSecretsPath = auconfigenv.Get(config.KeyVaultServiceSecretsPath)
-	v.VaultKafkaSecretsPath = auconfigenv.Get(config.KeyVaultKafkaSecretsPath)
+	v.VaultAuthToken = auconfigenv.Get(config.KeyVaultAuthToken)
+	v.VaultAuthKubernetesRole = auconfigenv.Get(config.KeyVaultAuthKubernetesRole)
+	v.VaultAuthKubernetesTokenPath = auconfigenv.Get(config.KeyVaultAuthKubernetesTokenPath)
+	v.VaultAuthKubernetesBackend = auconfigenv.Get(config.KeyVaultAuthKubernetesBackend)
+	v.VaultSecretsConfig, _ = parseSecretsConfig(auconfigenv.Get(config.KeyVaultSecretsConfig))
+}
+
+func parseSecretsConfig(jsonString string) (repository.VaultSecretsConfig, error) {
+	secretsConfig := repository.VaultSecretsConfig{}
+	if err := json.Unmarshal([]byte(jsonString), &secretsConfig); err != nil {
+		return nil, err
+	}
+	return secretsConfig, nil
 }

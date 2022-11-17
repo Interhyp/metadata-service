@@ -33,6 +33,11 @@ func tstSetup() error {
 
 	application.Register()
 	application.Create()
+	// config has to be read again as application.Create() reinitialises without reading
+	err = configImpl.Read()
+	if err != nil {
+		return err
+	}
 	// now can manipulate the registry by inserting custom instances
 	registry := auacorn.Registry.(*auacorn.AcornRegistryImpl)
 	registry.CreateOverride("configuration", configImpl)

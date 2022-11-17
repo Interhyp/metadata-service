@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/Interhyp/metadata-service/acorns/config"
+	"github.com/Interhyp/metadata-service/acorns/repository"
 	auconfigenv "github.com/StephanHCB/go-autumn-config-env"
 	aurestclientprometheus "github.com/StephanHCB/go-autumn-restclient-prometheus"
 	aurestclientapi "github.com/StephanHCB/go-autumn-restclient/api"
@@ -18,19 +18,17 @@ import (
 )
 
 type Impl struct {
-	Configuration       librepo.Configuration
-	CustomConfiguration config.CustomConfiguration
-	Logging             librepo.Logging
+	Configuration librepo.Configuration
+	Logging       librepo.Logging
 
-	VaultEnabled            bool
-	VaultProtocol           string
-	VaultServer             string
-	VaultToken              string
-	VaultKubernetesRole     string
-	VaultKubernetesAuthPath string
-	VaultKubernetesBackend  string
-	VaultServiceSecretsPath string
-	VaultKafkaSecretsPath   string
+	VaultEnabled                 bool
+	VaultProtocol                string
+	VaultServer                  string
+	VaultAuthToken               string
+	VaultAuthKubernetesRole      string
+	VaultAuthKubernetesTokenPath string
+	VaultAuthKubernetesBackend   string
+	VaultSecretsConfig           repository.VaultSecretsConfig
 
 	VaultClient aurestclientapi.Client
 }
@@ -72,8 +70,8 @@ func (v *Impl) publicCertOrNil() ([]byte, error) {
 func (v *Impl) vaultRequestHeaderManipulator() func(ctx context.Context, r *http.Request) {
 	return func(ctx context.Context, r *http.Request) {
 		r.Header.Set(headers.Accept, aurestclientapi.ContentTypeApplicationJson)
-		if v.VaultToken != "" {
-			r.Header.Set("X-Vault-Token", v.VaultToken)
+		if v.VaultAuthToken != "" {
+			r.Header.Set("X-Vault-Token", v.VaultAuthToken)
 		}
 	}
 }
@@ -93,22 +91,22 @@ type K8sAuth struct {
 }
 
 func (v *Impl) Authenticate(ctx context.Context) error {
-	if v.VaultToken != "" {
+	if v.VaultAuthToken != "" {
 		v.Logging.Logger().Ctx(ctx).Info().Print("using passed in vault token, skipping authentication with vault")
 		return nil
 	} else {
 		v.Logging.Logger().Ctx(ctx).Info().Print("authenticating with vault")
 
-		remoteUrl := fmt.Sprintf("%s://%s/v1/auth/%s/login", v.VaultProtocol, v.VaultServer, v.VaultKubernetesBackend)
+		remoteUrl := fmt.Sprintf("%s://%s/v1/auth/%s/login", v.VaultProtocol, v.VaultServer, v.VaultAuthKubernetesBackend)
 
-		k8sToken, err := os.ReadFile(v.VaultKubernetesAuthPath)
+		k8sToken, err := os.ReadFile(v.VaultAuthKubernetesTokenPath)
 		if err != nil {
-			return fmt.Errorf("unable to read vault token file from path %s: %s", v.VaultKubernetesAuthPath, err.Error())
+			return fmt.Errorf("unable to read vault token file from path %s: %s", v.VaultAuthKubernetesTokenPath, err.Error())
 		}
 
 		requestDto := &K8sAuthRequest{
 			Jwt:  string(k8sToken),
-			Role: v.VaultKubernetesRole,
+			Role: v.VaultAuthKubernetesRole,
 		}
 
 		responseDto := &K8sAuthResponse{}
@@ -134,7 +132,7 @@ func (v *Impl) Authenticate(ctx context.Context) error {
 			return errors.New("response from vault did not include a client_token")
 		}
 
-		v.VaultToken = responseDto.Auth.ClientToken
+		v.VaultAuthToken = responseDto.Auth.ClientToken
 
 		return nil
 	}
@@ -150,34 +148,24 @@ type SecretsResponseData struct {
 }
 
 func (v *Impl) ObtainSecrets(ctx context.Context) error {
-	secrets, err := v.lowlevelObtainSecrets(ctx, v.VaultServiceSecretsPath)
-	if err != nil {
-		return err
+	for path, secretsConfig := range v.VaultSecretsConfig {
+		secrets, err := v.lowlevelObtainSecrets(ctx, path)
+		if err != nil {
+			return err
+		}
+		for _, secretConfig := range secretsConfig {
+			vaultKey := secretConfig.VaultKey
+			if secret, ok := secrets[vaultKey]; ok {
+				configKey := vaultKey
+				if secretConfig.ConfigKey != nil && *secretConfig.ConfigKey != "" {
+					configKey = *secretConfig.ConfigKey
+				}
+				auconfigenv.Set(configKey, secret)
+			} else {
+				return fmt.Errorf("key %s does not exist at vault path %s", vaultKey, path)
+			}
+		}
 	}
-
-	auconfigenv.Set(config.KeyBasicAuthUsername, secrets["BASIC_AUTH_USERNAME"])
-	auconfigenv.Set(config.KeyBasicAuthPassword, secrets["BASIC_AUTH_PASSWORD"])
-	auconfigenv.Set(config.KeyBitbucketUsername, secrets["BITBUCKET_USERNAME"])
-	auconfigenv.Set(config.KeyBitbucketPassword, secrets["BITBUCKET_PASSWORD"])
-
-	return nil
-}
-
-func (v *Impl) ObtainKafkaSecrets(ctx context.Context) error {
-	fullSecretsPath := v.VaultKafkaSecretsPath
-	if fullSecretsPath == "" {
-		v.Logging.Logger().Ctx(ctx).Info().Printf("NOT querying vault for kafka secret, configuration missing (ok, feature toggle)")
-		return nil
-	}
-
-	secrets, err := v.lowlevelObtainSecrets(ctx, fullSecretsPath)
-	if err != nil {
-		return err
-	}
-
-	auconfigenv.Set(config.KeyKafkaUsername, secrets["KAFKA_USERNAME"])
-	auconfigenv.Set(config.KeyKafkaPassword, secrets["KAFKA_PASSWORD"])
-
 	return nil
 }
 

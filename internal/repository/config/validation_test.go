@@ -72,7 +72,7 @@ func TestValidate_LotsOfErrors(t *testing.T) {
 	_, err := tstSetupCutAndLogRecorder(t, "invalid-config-values.yaml")
 
 	require.NotNil(t, err)
-	require.Contains(t, err.Error(), "some configuration values failed to validate or parse. There were 20 error(s). See details above")
+	require.Contains(t, err.Error(), "some configuration values failed to validate or parse. There were 23 error(s). See details above")
 
 	actualLog := goauzerolog.RecordedLogForTesting.String()
 
@@ -93,6 +93,12 @@ func TestValidate_LotsOfErrors(t *testing.T) {
 
 	expectedPart6 := "failed to validate configuration field ALERT_TARGET_SUFFIX: must match ^@[a-z0-9-]+.[a-z]{2,3}$"
 	require.Contains(t, actualLog, expectedPart6)
+
+	expectedPart7 := "failed to validate configuration field VAULT_ENABLED: value what is not a valid boolean value"
+	require.Contains(t, actualLog, expectedPart7)
+
+	expectedPart8 := "failed to validate configuration field VAULT_SECRETS_CONFIG: invalid character '}' after top-level value"
+	require.Contains(t, actualLog, expectedPart8)
 }
 
 func TestAccessors(t *testing.T) {
@@ -105,37 +111,22 @@ func TestAccessors(t *testing.T) {
 	actualLog := goauzerolog.RecordedLogForTesting.String()
 	require.Equal(t, "", actualLog)
 
-	require.Equal(t, "room-service", cut.ApplicationName())
-	require.Equal(t, "192.168.150.0", cut.ServerAddress())
-	require.Equal(t, uint16(8081), cut.ServerPort())
-	require.Equal(t, uint16(9091), cut.MetricsPort())
-	require.Equal(t, "dev", cut.Environment())
 	require.Equal(t, true, cut.PlainLogging())
-	require.Equal(t, "localhost", cut.VaultServer())
-	require.Equal(t, "", cut.VaultCertificateFile())
-	require.Equal(t, "room-service/secrets", cut.VaultSecretPath())
-	require.Equal(t, true, cut.LocalVault())
-	require.Equal(t, "not a real token", cut.LocalVaultToken())
-	require.Equal(t, "example_microservice_role_room-service_prod", cut.VaultKubernetesRole())
-	require.Equal(t, "/some/thing", cut.VaultKubernetesTokenPath())
-	require.Equal(t, "k8s-dev-something", cut.VaultKubernetesBackend())
 
-	require.Equal(t, "some-basicauth-username", config.Custom(cut).BasicAuthUsername())
-	require.Equal(t, "some-basicauth-password", config.Custom(cut).BasicAuthPassword())
+	require.Equal(t, "some-basic-auth-username", config.Custom(cut).BasicAuthUsername())
+	require.Equal(t, "some-basic-auth-password", config.Custom(cut).BasicAuthPassword())
 	require.Equal(t, "some-bitbucket-username", config.Custom(cut).BitbucketUsername())
 	require.Equal(t, "some-bitbucket-password", config.Custom(cut).BitbucketPassword())
 	require.Equal(t, "Body, Some", config.Custom(cut).GitCommitterName())
 	require.Equal(t, "somebody@somewhere.com", config.Custom(cut).GitCommitterEmail())
-	require.Equal(t, "some-kafka-user", config.Custom(cut).KafkaUsername())
-	require.Equal(t, "some-kafka-password", config.Custom(cut).KafkaUsername())
+	require.Equal(t, "some-kafka-username", config.Custom(cut).KafkaUsername())
+	require.Equal(t, "some-kafka-password", config.Custom(cut).KafkaPassword())
 	require.Equal(t, "some-kafka-topic", config.Custom(cut).KafkaTopic())
 	require.Equal(t, "first-kafka-broker.domain.com:9092,second-kafka-broker.domain.com:9092", config.Custom(cut).KafkaSeedBrokers())
 	require.Equal(t, "http://keyset", config.Custom(cut).KeySetUrl())
 	require.Equal(t, "http://metadata", config.Custom(cut).MetadataRepoUrl())
 	require.Equal(t, "5", config.Custom(cut).UpdateJobIntervalCronPart())
 	require.Equal(t, uint16(30), config.Custom(cut).UpdateJobTimeoutSeconds())
-	require.Equal(t, "base/path", config.Custom(cut).VaultSecretsBasePath())
-	require.Equal(t, "kafka/feat/room-service", config.Custom(cut).VaultKafkaSecretPath())
 	require.Equal(t, "https://some-domain.com/", config.Custom(cut).AlertTargetPrefix())
 	require.Equal(t, "@some-domain.com", config.Custom(cut).AlertTargetSuffix())
 	require.EqualValues(t, []string{"someguy"}, config.Custom(cut).AdditionalPromoters())

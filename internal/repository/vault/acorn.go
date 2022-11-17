@@ -2,7 +2,6 @@ package vault
 
 import (
 	"context"
-	"github.com/Interhyp/metadata-service/acorns/config"
 	"github.com/Interhyp/metadata-service/acorns/repository"
 	"github.com/StephanHCB/go-autumn-acorn-registry/api"
 	auzerolog "github.com/StephanHCB/go-autumn-logging-zerolog"
@@ -29,7 +28,7 @@ func (v *Impl) AssembleAcorn(registry auacornapi.AcornRegistry) error {
 	v.Configuration = registry.GetAcornByName(librepo.ConfigurationAcornName).(librepo.Configuration)
 	v.Logging = registry.GetAcornByName(librepo.LoggingAcornName).(librepo.Logging)
 
-	return nil
+	return registry.AddSetupOrderRule(v, v.Configuration.(auacornapi.Acorn))
 }
 
 func (v *Impl) SetupAcorn(registry auacornapi.AcornRegistry) error {
@@ -43,8 +42,6 @@ func (v *Impl) SetupAcorn(registry auacornapi.AcornRegistry) error {
 		return err
 	}
 	v.Obtain(ctx)
-
-	v.CustomConfiguration = config.Custom(v.Configuration)
 
 	if !v.VaultEnabled {
 		v.Logging.Logger().Ctx(ctx).Info().Print("vault disabled, local values will be used.")
@@ -61,10 +58,6 @@ func (v *Impl) SetupAcorn(registry auacornapi.AcornRegistry) error {
 	}
 	if err := v.ObtainSecrets(ctx); err != nil {
 		v.Logging.Logger().Ctx(ctx).Error().WithErr(err).Print("failed to get secrets from vault. BAILING OUT")
-		return err
-	}
-	if err := v.ObtainKafkaSecrets(ctx); err != nil {
-		v.Logging.Logger().Ctx(ctx).Error().WithErr(err).Print("failed to get kafka secrets from vault. BAILING OUT")
 		return err
 	}
 	v.Logging.Logger().Ctx(ctx).Info().Print("successfully obtained vault secrets")
