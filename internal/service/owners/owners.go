@@ -10,6 +10,7 @@ import (
 	"github.com/Interhyp/metadata-service/acorns/errors/validationerror"
 	"github.com/Interhyp/metadata-service/acorns/service"
 	openapi "github.com/Interhyp/metadata-service/api/v1"
+	"github.com/Interhyp/metadata-service/internal/service/util"
 	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
 	"strings"
 )
@@ -64,7 +65,7 @@ func (s *Impl) rebuildPromoters(ctx context.Context, result *openapi.OwnerDto) {
 			filteredPromoters = append(filteredPromoters, promoter)
 		}
 	}
-	result.Promoters = filteredPromoters
+	result.Promoters = util.RemoveDuplicateStr(filteredPromoters)
 }
 
 func (s *Impl) ParseGroupOwnerAndGroupName(mayBeGroupReference string) (bool, string, string) {
