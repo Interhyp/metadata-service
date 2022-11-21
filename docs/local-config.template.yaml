@@ -1,5 +1,4 @@
 APPLICATION_NAME: metadata
-PLATFORM: ehyp
 
 # switch off ECS json logging in favor of readable localhost logs
 LOGSTYLE: plain
@@ -7,30 +6,28 @@ LOGSTYLE: plain
 #BASIC_AUTH_USERNAME: <YOU MUST ADD ANY USERNAME HERE IF VAULT IS DISABLED - SEE README>
 #BASIC_AUTH_PASSWORD: <YOU MUST ADD ANY PASSWORD HERE IF VAULT IS DISABLED - SEE README>
 
-BITBUCKET_USERNAME: bitbucket_metad_test
+BITBUCKET_USERNAME: <YOU MUST ADD THE USERNAME HERE - SEE README>
 #BITBUCKET_PASSWORD: <YOU MUST ADD THE PASSWORD HERE IF VAULT IS DISABLED - SEE README>
 
-GIT_COMMITTER_NAME: bitbucket_metad_test
-GIT_COMMITTER_EMAIL: _DPT_Squad_TechnicalExcellence@interhyp.de
+GIT_COMMITTER_NAME: <YOU MUST ADD SOME COMMITTER NAME HERE - SEE README>
+GIT_COMMITTER_EMAIL: <YOU MUST ADD SOME COMMITTER EMAIL HERE - SEE README>
 
 #VAULT_ENABLED: false
 VAULT_SERVER: vault.interhyp-intern.de
 VAULT_AUTH_TOKEN: <YOU MUST ADD YOUR TOKEN HERE - SEE README>
 VAULT_SECRETS_CONFIG: >-
   {
-    "ehyp/microservices/dev/metadata/secrets": [
+    "some/path/to/secrets": [
       {"vaultKey": "BASIC_AUTH_USERNAME"},
       {"vaultKey": "BASIC_AUTH_PASSWORD"},
-      {"vaultKey": "BB_PASSWORD", "configKey": "BITBUCKET_PASSWORD"}
-    ],
-    "kafka/test/metadata": [
-       {"vaultKey": "key", "configKey": "KAFKA_PASSWORD"}
+      {"vaultKey": "BITBUCKET_PASSWORD"},
+      {"vaultKey": "KAFKA_PASSWORD"}
     ]
   }
 
 KEY_SET_URL: https://dex.sys.ehyp.prod.interhyp-cloud.de/keys
 
-METADATA_REPO_URL: https://bitbucket.interhyp.de/bitbucket/scm/er/service-metadata-test.git
+METADATA_REPO_URL: https://github.com/Interhyp/service-metadata-example
 
 UPDATE_JOB_INTERVAL_MINUTES: 15
 UPDATE_JOB_TIMEOUT_SECONDS: 30
