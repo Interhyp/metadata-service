@@ -2,6 +2,7 @@ package idp
 
 import (
 	"context"
+	"github.com/Interhyp/metadata-service/acorns/config"
 	"github.com/Interhyp/metadata-service/acorns/repository"
 	"github.com/StephanHCB/go-autumn-acorn-registry/api"
 	auzerolog "github.com/StephanHCB/go-autumn-logging-zerolog"
@@ -26,7 +27,7 @@ func (r *Impl) AssembleAcorn(registry auacornapi.AcornRegistry) error {
 	r.Configuration = registry.GetAcornByName(librepo.ConfigurationAcornName).(librepo.Configuration)
 	r.Logging = registry.GetAcornByName(librepo.LoggingAcornName).(librepo.Logging)
 
-	r.CustomConfiguration = repository.Custom(r.Configuration)
+	r.CustomConfiguration = config.Custom(r.Configuration)
 
 	return nil
 }

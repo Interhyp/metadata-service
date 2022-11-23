@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/Interhyp/metadata-service/acorns/config"
 	"github.com/Interhyp/metadata-service/acorns/repository"
 	auzerolog "github.com/StephanHCB/go-autumn-logging-zerolog"
 	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
@@ -19,9 +20,8 @@ import _ "github.com/go-git/go-git/v5"
 
 type Impl struct {
 	Configuration       librepo.Configuration
-	CustomConfiguration repository.CustomConfiguration
+	CustomConfiguration config.CustomConfiguration
 	Logging             librepo.Logging
-	Vault               repository.Vault
 	HostIP              repository.HostIP
 
 	Callback      repository.ReceiverCallback
@@ -190,8 +190,8 @@ func (r *Impl) createProducer(seedBrokers string, user string, pass string) (*kg
 
 func (r *Impl) Connect(ctx context.Context) error {
 	seedBrokers := r.CustomConfiguration.KafkaSeedBrokers()
-	user := r.CustomConfiguration.KafkaUser()
-	pass := r.Vault.KafkaPassword()
+	user := r.CustomConfiguration.KafkaUsername()
+	pass := r.CustomConfiguration.KafkaPassword()
 	topic := r.CustomConfiguration.KafkaTopic()
 
 	if seedBrokers == "" || user == "" || topic == "" {
@@ -199,7 +199,7 @@ func (r *Impl) Connect(ctx context.Context) error {
 		return nil
 	}
 	if pass == "" {
-		r.Logging.Logger().Ctx(ctx).Warn().Print("kafka configuration present but got empty password from vault")
+		r.Logging.Logger().Ctx(ctx).Warn().Print("kafka configuration present but password is missing")
 		return errors.New("kafka configuration present but got empty password from vault")
 	}
 

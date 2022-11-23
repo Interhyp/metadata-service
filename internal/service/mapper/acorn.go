@@ -2,6 +2,7 @@ package mapper
 
 import (
 	"context"
+	"github.com/Interhyp/metadata-service/acorns/config"
 	"github.com/Interhyp/metadata-service/acorns/repository"
 	"github.com/Interhyp/metadata-service/acorns/service"
 	"github.com/StephanHCB/go-autumn-acorn-registry/api"
@@ -31,7 +32,7 @@ func (s *Impl) AssembleAcorn(registry auacornapi.AcornRegistry) error {
 	s.Logging = registry.GetAcornByName(librepo.LoggingAcornName).(librepo.Logging)
 	s.Metadata = registry.GetAcornByName(repository.MetadataAcornName).(repository.Metadata)
 
-	s.CustomConfiguration = repository.Custom(s.Configuration)
+	s.CustomConfiguration = config.Custom(s.Configuration)
 
 	return nil
 }

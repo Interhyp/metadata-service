@@ -138,16 +138,22 @@ func tstCreateValid() openapi.ServiceCreateDto {
 type MockConfig struct {
 }
 
-func (c *MockConfig) AdditionalPromoters() []string {
+func (c *MockConfig) BasicAuthUsername() string {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (c *MockConfig) ElasticApmEnabled() bool {
-	return false
+func (c *MockConfig) BasicAuthPassword() string {
+	//TODO implement me
+	panic("implement me")
 }
 
-func (c *MockConfig) BbUser() string {
+func (c *MockConfig) BitbucketUsername() string {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (c *MockConfig) BitbucketPassword() string {
 	//TODO implement me
 	panic("implement me")
 }
@@ -162,7 +168,12 @@ func (c *MockConfig) GitCommitterEmail() string {
 	panic("implement me")
 }
 
-func (c *MockConfig) KafkaUser() string {
+func (c *MockConfig) KafkaUsername() string {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (c *MockConfig) KafkaPassword() string {
 	//TODO implement me
 	panic("implement me")
 }
@@ -202,16 +213,6 @@ func (c *MockConfig) UpdateJobTimeoutSeconds() uint16 {
 	panic("implement me")
 }
 
-func (c *MockConfig) VaultSecretsBasePath() string {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (c *MockConfig) VaultKafkaSecretPath() string {
-	//TODO implement me
-	panic("implement me")
-}
-
 func (c *MockConfig) AlertTargetPrefix() string {
 	return "https://some-domain.com/"
 }
@@ -222,6 +223,15 @@ func (c *MockConfig) AlertTargetSuffix() string {
 
 func (c *MockConfig) AdditionalPromotersFromOwners() []string {
 	return make([]string, 0)
+}
+
+func (c *MockConfig) AdditionalPromoters() []string {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (c *MockConfig) ElasticApmEnabled() bool {
+	return false
 }
 
 func (c *MockConfig) OwnerAliasPermittedRegex() *regexp.Regexp {

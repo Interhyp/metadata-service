@@ -1,11 +1,12 @@
 APPLICATION_NAME: metadata
-SERVER_ADDRESS: ''
-SERVER_PORT: '8080'
-METRICS_PORT: ''
-ENVIRONMENT: feat
-PLATFORM: example
+
 LOGSTYLE: plain
+
 VAULT_SERVER: localhost
-VAULT_SECRET_PATH: some-service/secrets
-LOCAL_VAULT_TOKEN: 'notarealtoken'
-VAULT_SECRETS_BASE_PATH: base/path
+VAULT_AUTH_TOKEN: notarealtoken
+VAULT_SECRETS_CONFIG: >-
+  {
+    "base/path/feat/some-service/secrets": [
+      {"vaultKey": "BB_PASSWORD", "configKey": "BITBUCKET_PASSWORD"}
+    ]
+  }

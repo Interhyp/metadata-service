@@ -3,11 +3,11 @@ package consumer
 import (
 	"context"
 	"fmt"
+	"github.com/Interhyp/metadata-service/acorns/config"
 	"github.com/Interhyp/metadata-service/acorns/repository"
 	"github.com/Interhyp/metadata-service/internal/repository/vault"
 	auacorn "github.com/StephanHCB/go-autumn-acorn-registry"
-	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
-	libconfig "github.com/StephanHCB/go-backend-service-common/repository/config"
+	auconfigenv "github.com/StephanHCB/go-autumn-config-env"
 	"github.com/StephanHCB/go-backend-service-common/web/util/media"
 	"github.com/go-http-utils/headers"
 	"github.com/pact-foundation/pact-go/dsl"
@@ -30,35 +30,33 @@ func TestVaultConsumer_LocalToken_Success(t *testing.T) {
 	// The actual test case (consumer side)
 	// This uses the repository on the consumer side to make the http call, should be as low level as possible
 	var test = func() error {
-		err := tstSetup()
-		if err != nil {
+		if err := tstSetup(); err != nil {
 			return err
 		}
 
 		ctx := log.Logger.WithContext(context.Background())
 
 		registry := auacorn.Registry.(*auacorn.AcornRegistryImpl)
-		configImpl := registry.GetAcornByName(librepo.ConfigurationAcornName).(*libconfig.ConfigImpl)
-		vaultImpl := registry.GetAcornByName(repository.VaultAcornName).(*vault.VaultImpl)
+		vaultImpl := registry.GetAcornByName(repository.VaultAcornName).(*vault.Impl)
 
+		if err := vaultImpl.Validate(ctx); err != nil {
+			return err
+		}
+		vaultImpl.Obtain(ctx)
 		// override target protocol and address
-		configImpl.VVaultServer = fmt.Sprintf("localhost:%d", pact.Server.Port)
+		vaultImpl.VaultServer = fmt.Sprintf("localhost:%d", pact.Server.Port)
 		vaultImpl.VaultProtocol = "http"
-
-		err = vaultImpl.Setup(ctx)
-		if err != nil {
+		if err := vaultImpl.Setup(ctx); err != nil {
 			return err
 		}
-		err = vaultImpl.Authenticate(ctx)
-		if err != nil {
+		if err := vaultImpl.Authenticate(ctx); err != nil {
 			return err
 		}
-		err = vaultImpl.ObtainSecrets(ctx)
-		if err != nil {
+		if err := vaultImpl.ObtainSecrets(ctx); err != nil {
 			return err
 		}
 
-		require.Equal(t, "bb-secret-demosecret", vaultImpl.BbPassword())
+		require.Equal(t, "bb-secret-demosecret", auconfigenv.Get(config.KeyBitbucketPassword))
 
 		return nil
 	}

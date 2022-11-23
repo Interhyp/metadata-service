@@ -3,13 +3,13 @@ package services
 import (
 	"context"
 	"fmt"
+	"github.com/Interhyp/metadata-service/acorns/config"
 	"github.com/Interhyp/metadata-service/acorns/errors/alreadyexistserror"
 	"github.com/Interhyp/metadata-service/acorns/errors/concurrencyerror"
 	"github.com/Interhyp/metadata-service/acorns/errors/nosuchownererror"
 	"github.com/Interhyp/metadata-service/acorns/errors/nosuchrepoerror"
 	"github.com/Interhyp/metadata-service/acorns/errors/nosuchserviceerror"
 	"github.com/Interhyp/metadata-service/acorns/errors/validationerror"
-	"github.com/Interhyp/metadata-service/acorns/repository"
 	"github.com/Interhyp/metadata-service/acorns/service"
 	openapi "github.com/Interhyp/metadata-service/api/v1"
 	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
@@ -19,7 +19,7 @@ import (
 
 type Impl struct {
 	Configuration       librepo.Configuration
-	CustomConfiguration repository.CustomConfiguration
+	CustomConfiguration config.CustomConfiguration
 	Logging             librepo.Logging
 	Cache               service.Cache
 	Updater             service.Updater

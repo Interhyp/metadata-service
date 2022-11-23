@@ -3,6 +3,7 @@ package server
 import (
 	"context"
 	"github.com/Interhyp/metadata-service/acorns/application"
+	"github.com/Interhyp/metadata-service/acorns/config"
 	"github.com/Interhyp/metadata-service/acorns/controller"
 	"github.com/Interhyp/metadata-service/acorns/repository"
 	"github.com/StephanHCB/go-autumn-acorn-registry/api"
@@ -27,7 +28,6 @@ func (s *Impl) AcornName() string {
 
 func (s *Impl) AssembleAcorn(registry auacornapi.AcornRegistry) error {
 	s.Configuration = registry.GetAcornByName(librepo.ConfigurationAcornName).(librepo.Configuration)
-	s.Vault = registry.GetAcornByName(repository.VaultAcornName).(repository.Vault)
 	s.Logging = registry.GetAcornByName(librepo.LoggingAcornName).(librepo.Logging)
 	s.IdentityProvider = registry.GetAcornByName(repository.IdentityProviderAcornName).(repository.IdentityProvider)
 	s.HealthCtl = registry.GetAcornByName(libcontroller.HealthControllerAcornName).(libcontroller.HealthController)
@@ -41,48 +41,35 @@ func (s *Impl) AssembleAcorn(registry auacornapi.AcornRegistry) error {
 }
 
 func (s *Impl) SetupAcorn(registry auacornapi.AcornRegistry) error {
-	err := registry.SetupAfter(s.Configuration.(auacornapi.Acorn))
-	if err != nil {
+	if err := registry.SetupAfter(s.Configuration.(auacornapi.Acorn)); err != nil {
 		return err
 	}
-	err = registry.SetupAfter(s.Vault.(auacornapi.Acorn))
-	if err != nil {
+	if err := registry.SetupAfter(s.Logging.(auacornapi.Acorn)); err != nil {
 		return err
 	}
-	err = registry.SetupAfter(s.Logging.(auacornapi.Acorn))
-	if err != nil {
+	if err := registry.SetupAfter(s.IdentityProvider.(auacornapi.Acorn)); err != nil {
 		return err
 	}
-	err = registry.SetupAfter(s.IdentityProvider.(auacornapi.Acorn))
-	if err != nil {
+	if err := registry.SetupAfter(s.HealthCtl.(auacornapi.Acorn)); err != nil {
 		return err
 	}
-	err = registry.SetupAfter(s.HealthCtl.(auacornapi.Acorn))
-	if err != nil {
+	if err := registry.SetupAfter(s.SwaggerCtl.(auacornapi.Acorn)); err != nil {
 		return err
 	}
-	err = registry.SetupAfter(s.SwaggerCtl.(auacornapi.Acorn))
-	if err != nil {
+	if err := registry.SetupAfter(s.OwnerCtl.(auacornapi.Acorn)); err != nil {
 		return err
 	}
-	err = registry.SetupAfter(s.OwnerCtl.(auacornapi.Acorn))
-	if err != nil {
+	if err := registry.SetupAfter(s.ServiceCtl.(auacornapi.Acorn)); err != nil {
 		return err
 	}
-	err = registry.SetupAfter(s.ServiceCtl.(auacornapi.Acorn))
-	if err != nil {
+	if err := registry.SetupAfter(s.RepositoryCtl.(auacornapi.Acorn)); err != nil {
 		return err
 	}
-	err = registry.SetupAfter(s.RepositoryCtl.(auacornapi.Acorn))
-	if err != nil {
-		return err
-	}
-	err = registry.SetupAfter(s.WebhookCtl.(auacornapi.Acorn))
-	if err != nil {
+	if err := registry.SetupAfter(s.WebhookCtl.(auacornapi.Acorn)); err != nil {
 		return err
 	}
 
-	s.CustomConfiguration = repository.Custom(s.Configuration)
+	s.CustomConfiguration = config.Custom(s.Configuration)
 
 	ctx := auzerolog.AddLoggerToCtx(context.Background())
 

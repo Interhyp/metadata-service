@@ -2,6 +2,7 @@ package updater
 
 import (
 	"context"
+	"github.com/Interhyp/metadata-service/acorns/config"
 	"github.com/Interhyp/metadata-service/acorns/repository"
 	"github.com/Interhyp/metadata-service/acorns/service"
 	"github.com/StephanHCB/go-autumn-acorn-registry/api"
@@ -33,7 +34,7 @@ func (s *Impl) AssembleAcorn(registry auacornapi.AcornRegistry) error {
 	s.Mapper = registry.GetAcornByName(service.MapperAcornName).(service.Mapper)
 	s.Cache = registry.GetAcornByName(service.CacheAcornName).(service.Cache)
 
-	s.CustomConfiguration = repository.Custom(s.Configuration)
+	s.CustomConfiguration = config.Custom(s.Configuration)
 
 	return nil
 }

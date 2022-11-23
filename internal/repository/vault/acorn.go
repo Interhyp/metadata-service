@@ -11,60 +11,59 @@ import (
 // --- implementing Acorn ---
 
 func New() auacornapi.Acorn {
-	return &VaultImpl{
+	return &Impl{
 		VaultProtocol: "https",
 	}
 }
 
-func (r *VaultImpl) IsVault() bool {
+func (v *Impl) IsVault() bool {
 	return true
 }
 
-func (r *VaultImpl) AcornName() string {
+func (v *Impl) AcornName() string {
 	return repository.VaultAcornName
 }
 
-func (r *VaultImpl) AssembleAcorn(registry auacornapi.AcornRegistry) error {
-	r.Configuration = registry.GetAcornByName(librepo.ConfigurationAcornName).(librepo.Configuration)
-	r.Logging = registry.GetAcornByName(librepo.LoggingAcornName).(librepo.Logging)
+func (v *Impl) AssembleAcorn(registry auacornapi.AcornRegistry) error {
+	v.Configuration = registry.GetAcornByName(librepo.ConfigurationAcornName).(librepo.Configuration)
+	v.Logging = registry.GetAcornByName(librepo.LoggingAcornName).(librepo.Logging)
 
-	return nil
+	return registry.AddSetupOrderRule(v, v.Configuration.(auacornapi.Acorn))
 }
 
-func (r *VaultImpl) SetupAcorn(registry auacornapi.AcornRegistry) error {
-	err := registry.SetupAfter(r.Configuration.(auacornapi.Acorn))
-	if err != nil {
+func (v *Impl) SetupAcorn(registry auacornapi.AcornRegistry) error {
+	if err := registry.SetupAfter(v.Logging.(auacornapi.Acorn)); err != nil {
 		return err
 	}
-	err = registry.SetupAfter(r.Logging.(auacornapi.Acorn))
-	if err != nil {
-		return err
-	}
-
-	r.CustomConfiguration = repository.Custom(r.Configuration)
 
 	ctx := auzerolog.AddLoggerToCtx(context.Background())
 
-	if err := r.Setup(ctx); err != nil {
-		r.Logging.Logger().Ctx(ctx).Error().WithErr(err).Print("failed to set up vault client. BAILING OUT")
+	if err := v.Validate(ctx); err != nil {
 		return err
 	}
-	if err := r.Authenticate(ctx); err != nil {
-		r.Logging.Logger().Ctx(ctx).Error().WithErr(err).Print("failed to authenticate to vault. BAILING OUT")
+	v.Obtain(ctx)
+
+	if !v.VaultEnabled {
+		v.Logging.Logger().Ctx(ctx).Info().Print("vault disabled, local values will be used.")
+		return nil
+	}
+
+	if err := v.Setup(ctx); err != nil {
+		v.Logging.Logger().Ctx(ctx).Error().WithErr(err).Print("failed to set up vault client. BAILING OUT")
 		return err
 	}
-	if err := r.ObtainSecrets(ctx); err != nil {
-		r.Logging.Logger().Ctx(ctx).Error().WithErr(err).Print("failed to get secrets from vault. BAILING OUT")
+	if err := v.Authenticate(ctx); err != nil {
+		v.Logging.Logger().Ctx(ctx).Error().WithErr(err).Print("failed to authenticate to vault. BAILING OUT")
 		return err
 	}
-	if err := r.ObtainKafkaSecrets(ctx); err != nil {
-		r.Logging.Logger().Ctx(ctx).Error().WithErr(err).Print("failed to get kafka secrets from vault. BAILING OUT")
+	if err := v.ObtainSecrets(ctx); err != nil {
+		v.Logging.Logger().Ctx(ctx).Error().WithErr(err).Print("failed to get secrets from vault. BAILING OUT")
 		return err
 	}
-	r.Logging.Logger().Ctx(ctx).Info().Print("successfully obtained vault secrets")
+	v.Logging.Logger().Ctx(ctx).Info().Print("successfully obtained vault secrets")
 	return nil
 }
 
-func (r *VaultImpl) TeardownAcorn(registry auacornapi.AcornRegistry) error {
+func (v *Impl) TeardownAcorn(registry auacornapi.AcornRegistry) error {
 	return nil
 }

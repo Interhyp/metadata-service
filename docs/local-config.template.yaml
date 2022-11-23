@@ -1,31 +1,38 @@
 APPLICATION_NAME: metadata
-# hostname or IP to listen on, can be left blank for localhost
-SERVER_ADDRESS: ''
-SERVER_PORT: '8080'
-METRICS_PORT: '9090'
-ENVIRONMENT: dev
+
 # switch off ECS json logging in favor of readable localhost logs
 LOGSTYLE: plain
-VAULT_SERVER: <url-to-vault-server>
-VAULT_SECRETS_BASE_PATH: <base-path-to-secrets>
-VAULT_SECRET_PATH: <path-to-service-secrets>
-# setting this implicitly switches from kubernetes authentication to token mode, only use this on localhost
-LOCAL_VAULT_TOKEN: 'YOU MUST ADD YOUR TOKEN HERE - SEE README'
 
-BB_USER: <bitbucket-user-name>
-# you must configure this, probably best would be to use your own Last, First name
-GIT_COMMITTER_NAME: ''
-# you must configure this, probably best would be to use your own committer email address
-GIT_COMMITTER_EMAIL: ''
-KAFKA_USER: ''
-KAFKA_TOPIC: ''
-KAFKA_SEED_BROKERS: 'first-kafka-broker.domain.com:9092,second-kafka-broker.domain.com:9092'
-KAFKA_GROUP_ID_OVERRIDE: ''
-KEY_SET_URL: http://keyset
-METADATA_REPO_URL: 'https://github.com/Interhyp/service-metadata-example'
-OWNER_REGEX: '.*'
+#BASIC_AUTH_USERNAME: <YOU MUST ADD ANY USERNAME HERE IF VAULT IS DISABLED - SEE README>
+#BASIC_AUTH_PASSWORD: <YOU MUST ADD ANY PASSWORD HERE IF VAULT IS DISABLED - SEE README>
+
+BITBUCKET_USERNAME: <YOU MUST ADD THE USERNAME HERE - SEE README>
+#BITBUCKET_PASSWORD: <YOU MUST ADD THE PASSWORD HERE IF VAULT IS DISABLED - SEE README>
+
+GIT_COMMITTER_NAME: <YOU MUST ADD SOME COMMITTER NAME HERE - SEE README>
+GIT_COMMITTER_EMAIL: <YOU MUST ADD SOME COMMITTER EMAIL HERE - SEE README>
+
+#VAULT_ENABLED: false
+VAULT_SERVER: vault.interhyp-intern.de
+VAULT_AUTH_TOKEN: <YOU MUST ADD YOUR TOKEN HERE - SEE README>
+VAULT_SECRETS_CONFIG: >-
+  {
+    "some/path/to/secrets": [
+      {"vaultKey": "BASIC_AUTH_USERNAME"},
+      {"vaultKey": "BASIC_AUTH_PASSWORD"},
+      {"vaultKey": "BITBUCKET_PASSWORD"},
+      {"vaultKey": "KAFKA_PASSWORD"}
+    ]
+  }
+
+KEY_SET_URL: https://dex.sys.ehyp.prod.interhyp-cloud.de/keys
+
+METADATA_REPO_URL: https://github.com/Interhyp/service-metadata-example
+
 UPDATE_JOB_INTERVAL_MINUTES: 15
 UPDATE_JOB_TIMEOUT_SECONDS: 30
-VAULT_KAFKA_SECRET_PATH: <path-to-kafka-secrets>
+
 ALERT_TARGET_PREFIX: https://domain.com/
 ALERT_TARGET_SUFFIX: '@domain.com'
+
+OWNER_ALIAS_FILTER_REGEX: '.*'

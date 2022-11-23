@@ -18,15 +18,3 @@ func (v *VaultImpl) Authenticate(ctx context.Context) error {
 func (v *VaultImpl) ObtainSecrets(ctx context.Context) error {
 	return nil
 }
-
-func (v *VaultImpl) ObtainKafkaSecrets(ctx context.Context) error {
-	return nil
-}
-
-func (v *VaultImpl) BasicAuthUsername() string {
-	return ""
-}
-
-func (v *VaultImpl) BasicAuthPassword() string {
-	return ""
-}

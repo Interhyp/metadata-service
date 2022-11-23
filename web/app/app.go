@@ -37,7 +37,7 @@ func New() application.Application {
 	return &ApplicationImpl{}
 }
 
-func (r *ApplicationImpl) IsApplication() bool {
+func (a *ApplicationImpl) IsApplication() bool {
 	return true
 }
 

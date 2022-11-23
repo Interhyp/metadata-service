@@ -1,16 +1,11 @@
 APPLICATION_NAME: metadata
-SERVER_ADDRESS: ''
-SERVER_PORT: '8080'
-METRICS_PORT: '9090'
-ENVIRONMENT: dev
-PLATFORM: example
-LOGSTYLE: plain
-VAULT_SERVER: localhost
-VAULT_SECRET_PATH: app-some-service-bff/secrets
-LOCAL_VAULT_TOKEN: 'not a real token'
 
-BB_USER: localuser
+LOGSTYLE: plain
+
+BITBUCKET_USERNAME: localuser
+
 METADATA_REPO_URL: http://metadata
+
 UPDATE_JOB_INTERVAL_MINUTES: 5
 
 ADDITIONAL_PROMOTERS: 'someguy'

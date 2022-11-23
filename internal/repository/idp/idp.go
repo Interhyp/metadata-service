@@ -9,7 +9,7 @@ import (
 	"encoding/pem"
 	"errors"
 	"fmt"
-	"github.com/Interhyp/metadata-service/acorns/repository"
+	"github.com/Interhyp/metadata-service/acorns/config"
 	aurestclientprometheus "github.com/StephanHCB/go-autumn-restclient-prometheus"
 	aurestclientapi "github.com/StephanHCB/go-autumn-restclient/api"
 	auresthttpclient "github.com/StephanHCB/go-autumn-restclient/implementation/httpclient"
@@ -23,7 +23,7 @@ import _ "github.com/go-git/go-git/v5"
 
 type Impl struct {
 	Configuration       librepo.Configuration
-	CustomConfiguration repository.CustomConfiguration
+	CustomConfiguration config.CustomConfiguration
 	Logging             librepo.Logging
 
 	IDPClient aurestclientapi.Client

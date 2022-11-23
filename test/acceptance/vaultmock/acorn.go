@@ -11,22 +11,22 @@ func New() auacornapi.Acorn {
 	return &VaultImpl{}
 }
 
-func (r *VaultImpl) IsVault() bool {
+func (v *VaultImpl) IsVault() bool {
 	return true
 }
 
-func (r *VaultImpl) AcornName() string {
+func (v *VaultImpl) AcornName() string {
 	return repository.VaultAcornName
 }
 
-func (r *VaultImpl) AssembleAcorn(registry auacornapi.AcornRegistry) error {
+func (v *VaultImpl) AssembleAcorn(registry auacornapi.AcornRegistry) error {
 	return nil
 }
 
-func (r *VaultImpl) SetupAcorn(registry auacornapi.AcornRegistry) error {
+func (v *VaultImpl) SetupAcorn(registry auacornapi.AcornRegistry) error {
 	return nil
 }
 
-func (r *VaultImpl) TeardownAcorn(registry auacornapi.AcornRegistry) error {
+func (v *VaultImpl) TeardownAcorn(registry auacornapi.AcornRegistry) error {
 	return nil
 }

@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/Interhyp/metadata-service/acorns/config"
 	"github.com/Interhyp/metadata-service/acorns/controller"
 	"github.com/Interhyp/metadata-service/acorns/repository"
 	"github.com/Interhyp/metadata-service/web/middleware"
@@ -33,8 +34,7 @@ import (
 type Impl struct {
 	Logging             librepo.Logging
 	Configuration       librepo.Configuration
-	CustomConfiguration repository.CustomConfiguration
-	Vault               repository.Vault
+	CustomConfiguration config.CustomConfiguration
 	IdentityProvider    repository.IdentityProvider
 	HealthCtl           libcontroller.HealthController
 	SwaggerCtl          libcontroller.SwaggerController
@@ -83,7 +83,7 @@ func (s *Impl) WireUp(ctx context.Context) {
 		requestmetrics.Setup()
 		s.Router.Use(requestmetrics.RecordRequestMetrics)
 
-		_ = jwt.Setup(s.IdentityProvider.GetKeySet(ctx), s.Vault.BasicAuthUsername(), s.Vault.BasicAuthPassword())
+		_ = jwt.Setup(s.IdentityProvider.GetKeySet(ctx), s.CustomConfiguration.BasicAuthUsername(), s.CustomConfiguration.BasicAuthPassword())
 		s.Router.Use(jwt.JwtValidator)
 
 		s.Router.Use(timeout.AddRequestTimeout)
