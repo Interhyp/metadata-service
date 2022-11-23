@@ -97,9 +97,6 @@ func (a *ApplicationImpl) Run() int {
 		return 10
 	}
 
-	if err != nil {
-		return 20
-	}
 	err = auacorn.Registry.Setup()
 	defer auacorn.Registry.Teardown()
 	if err != nil {
