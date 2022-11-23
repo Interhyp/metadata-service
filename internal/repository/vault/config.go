@@ -36,7 +36,7 @@ var ConfigItems = []auconfigapi.ConfigItem{
 	{
 		Key:         config.KeyVaultAuthKubernetesTokenPath,
 		EnvName:     config.KeyVaultAuthKubernetesTokenPath,
-		Default:     "",
+		Default:     "/var/run/secrets/kubernetes.io/serviceaccount/token",
 		Description: "file path to the service-account token",
 		Validate:    auconfigapi.ConfigNeedsNoValidation,
 	},
