@@ -42,8 +42,8 @@ github.com/StephanHCB/go-autumn-acorn-registry v0.3.1 h1:rAJlEsrSTJArQZHOt4Q6Gkc
 github.com/StephanHCB/go-autumn-acorn-registry v0.3.1/go.mod h1:KB7wPWOEy2n8VGNw75H4w7wBSWSrgwNNJNmet/F+9RI=
 github.com/StephanHCB/go-autumn-config-api v0.2.1 h1:t2EeTsdFpLM2xH2T7QFQtbFYI8hG5I9S+Q2o3KT6mlk=
 github.com/StephanHCB/go-autumn-config-api v0.2.1/go.mod h1:6nJBwuT1uURHApOSFr6Rw+naK2YkO+sAduwEWZ0qsSU=
-github.com/StephanHCB/go-autumn-config-env v0.2.0 h1:4w8vU0HZueId1APsXA0YAYe9EnLRDaN3VJN+nuKD1z8=
-github.com/StephanHCB/go-autumn-config-env v0.2.0/go.mod h1:Ei5LvoHxsC2GUm68oCBnFRItDhwR3kC3Zdkmi0cYtpc=
+github.com/StephanHCB/go-autumn-config-env v0.2.2 h1:DWal2O4gKlNsrKnq8V5nRNUevqkH2+xGT/BwCyqrV3I=
+github.com/StephanHCB/go-autumn-config-env v0.2.2/go.mod h1:aTwlB8AVSnqGt4537uVHtZs9/3NEFYQwuVTRaNutgwg=
 github.com/StephanHCB/go-autumn-logging v0.3.0 h1:G0zs8xoth8i8mOeoFgG3Dvk6dIY9dPPJ7wkm6mjaPyY=
 github.com/StephanHCB/go-autumn-logging v0.3.0/go.mod h1:dPABYdECU3XrFib03uXbQFVLftUP5c4YaKSineiw37U=
 github.com/StephanHCB/go-autumn-logging-zerolog v0.3.1 h1:ZkMZhgA9XyG5UKypNPsWHhyXBZ6207megv/dr/hM1Kg=
