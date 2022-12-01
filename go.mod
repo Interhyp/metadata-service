@@ -64,7 +64,7 @@ require (
 	github.com/go-git/go-billy/v5 v5.3.1
 	github.com/go-git/go-git/v5 v5.4.2
 	github.com/go-http-utils/headers v0.0.0-20181008091004-fed159eddc2a
-	github.com/golang-jwt/jwt/v4 v4.4.2
+	github.com/golang-jwt/jwt/v4 v4.4.3
 	github.com/lestrrat-go/jwx/v2 v2.0.8
 	github.com/pact-foundation/pact-go v1.7.0
 	github.com/prometheus/client_golang v1.14.0
