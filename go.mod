@@ -60,7 +60,7 @@ require (
 	github.com/StephanHCB/go-autumn-restclient v0.4.4
 	github.com/StephanHCB/go-autumn-restclient-prometheus v0.1.1
 	github.com/StephanHCB/go-backend-service-common v0.1.5
-	github.com/go-chi/chi/v5 v5.0.7
+	github.com/go-chi/chi/v5 v5.0.8
 	github.com/go-git/go-billy/v5 v5.3.1
 	github.com/go-git/go-git/v5 v5.4.2
 	github.com/go-http-utils/headers v0.0.0-20181008091004-fed159eddc2a
