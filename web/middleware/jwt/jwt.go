@@ -20,16 +20,10 @@ const (
 	ClaimsKey   ctxJwtKeyType = 1
 )
 
-// example for custom claim structures, we will need to adapt this to match our DEX tokens, but right now the test tokens should work with this
-
-type GlobalClaims struct {
-	Name  string   `json:"name"`
-	Roles []string `json:"roles"`
-}
-
 type CustomClaims struct {
-	// add any custom claim fields here so you can parse them
-	Global GlobalClaims `json:"global"`
+	Name   string   `json:"name"`
+	Email  string   `json:"email"`
+	Groups []string `json:"groups"`
 }
 
 // end example
@@ -81,10 +75,10 @@ func JwtValidator(next http.Handler) http.Handler {
 				if checkBasicAuthValue(username, password) {
 					adminClaims := AllClaims{
 						RegisteredClaims: jwt.RegisteredClaims{},
-						CustomClaims: CustomClaims{GlobalClaims{
-							Name:  "basicAuthClaim",
-							Roles: strings.Fields("admin"),
-						}},
+						CustomClaims: CustomClaims{
+							Name:   "basicAuthClaim",
+							Groups: strings.Fields("admin"),
+						},
 					}
 					ctx = PutClaims(ctx, &adminClaims)
 					next.ServeHTTP(w, r.WithContext(ctx))
@@ -190,7 +184,7 @@ func HasRole(ctx context.Context, role string) bool {
 	if claimsPtr == nil {
 		return false
 	}
-	return contains(claimsPtr.Global.Roles, role)
+	return contains(claimsPtr.Groups, role)
 
 }
 
