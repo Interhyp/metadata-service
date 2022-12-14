@@ -13,7 +13,7 @@ GIT_COMMITTER_NAME: <YOU MUST ADD SOME COMMITTER NAME HERE - SEE README>
 GIT_COMMITTER_EMAIL: <YOU MUST ADD SOME COMMITTER EMAIL HERE - SEE README>
 
 #VAULT_ENABLED: false
-VAULT_SERVER: vault.interhyp-intern.de
+VAULT_SERVER: some-vault.de
 VAULT_AUTH_TOKEN: <YOU MUST ADD YOUR TOKEN HERE - SEE README>
 VAULT_SECRETS_CONFIG: >-
   {
@@ -25,7 +25,8 @@ VAULT_SECRETS_CONFIG: >-
     ]
   }
 
-KEY_SET_URL: https://dex.sys.ehyp.prod.interhyp-cloud.de/keys
+AUTH_OIDC_KEY_SET_URL: https://login.microsoftonline.com/<YOU MUST ADD CLIENT ID HERE>/discovery/v2.0/keys
+AUTH_OIDC_TOKEN_AUDIENCE: <YOU MUST ADD TOKEN AUDIENCE HERE>
 
 METADATA_REPO_URL: https://github.com/Interhyp/service-metadata-example
 

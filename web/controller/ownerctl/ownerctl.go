@@ -80,7 +80,7 @@ func (c *Impl) CreateOwner(w http.ResponseWriter, r *http.Request) {
 		util.UnauthorizedErrorHandler(ctx, w, r, "anonymous tried CreateOwner", c.Now())
 		return
 	}
-	if !jwt.HasRole(ctx, "admin") {
+	if !jwt.HasGroup(ctx, c.CustomConfiguration.AuthGroupWrite()) {
 		util.ForbiddenErrorHandler(ctx, w, r, fmt.Sprintf("%s tried CreateOwner", jwt.Subject(ctx)), c.Now())
 		return
 	}
@@ -118,7 +118,7 @@ func (c *Impl) UpdateOwner(w http.ResponseWriter, r *http.Request) {
 		util.UnauthorizedErrorHandler(ctx, w, r, "anonymous tried UpdateOwner", c.Now())
 		return
 	}
-	if !jwt.HasRole(ctx, "admin") {
+	if !jwt.HasGroup(ctx, c.CustomConfiguration.AuthGroupWrite()) {
 		util.ForbiddenErrorHandler(ctx, w, r, fmt.Sprintf("%s tried UpdateOwner", jwt.Subject(ctx)), c.Now())
 		return
 	}
@@ -154,7 +154,7 @@ func (c *Impl) PatchOwner(w http.ResponseWriter, r *http.Request) {
 		util.UnauthorizedErrorHandler(ctx, w, r, "anonymous tried PatchOwner", c.Now())
 		return
 	}
-	if !jwt.HasRole(ctx, "admin") {
+	if !jwt.HasGroup(ctx, c.CustomConfiguration.AuthGroupWrite()) {
 		util.ForbiddenErrorHandler(ctx, w, r, fmt.Sprintf("%s tried PatchOwner", jwt.Subject(ctx)), c.Now())
 		return
 	}
@@ -190,7 +190,7 @@ func (c *Impl) DeleteOwner(w http.ResponseWriter, r *http.Request) {
 		util.UnauthorizedErrorHandler(ctx, w, r, "anonymous tried DeleteOwner", c.Now())
 		return
 	}
-	if !jwt.HasRole(ctx, "admin") {
+	if !jwt.HasGroup(ctx, c.CustomConfiguration.AuthGroupWrite()) {
 		util.ForbiddenErrorHandler(ctx, w, r, fmt.Sprintf("%s tried DeleteOwner", jwt.Subject(ctx)), c.Now())
 		return
 	}

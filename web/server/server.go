@@ -83,7 +83,7 @@ func (s *Impl) WireUp(ctx context.Context) {
 		requestmetrics.Setup()
 		s.Router.Use(requestmetrics.RecordRequestMetrics)
 
-		_ = jwt.Setup(s.IdentityProvider.GetKeySet(ctx), s.CustomConfiguration.BasicAuthUsername(), s.CustomConfiguration.BasicAuthPassword())
+		_ = jwt.Setup(s.IdentityProvider.GetKeySet(ctx), s.CustomConfiguration)
 		s.Router.Use(jwt.JwtValidator)
 
 		s.Router.Use(timeout.AddRequestTimeout)

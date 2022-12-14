@@ -46,8 +46,16 @@ func (c *CustomConfigImpl) KafkaSeedBrokers() string {
 	return c.VKafkaSeedBrokers
 }
 
-func (c *CustomConfigImpl) KeySetUrl() string {
-	return c.VKeySetUrl
+func (c *CustomConfigImpl) AuthOidcKeySetUrl() string {
+	return c.VAuthOidcKeySetUrl
+}
+
+func (c *CustomConfigImpl) AuthOidcTokenAudience() string {
+	return c.VAuthOidcTokenAudience
+}
+
+func (c *CustomConfigImpl) AuthGroupWrite() string {
+	return c.VAuthGroupWrite
 }
 
 func (c *CustomConfigImpl) KafkaGroupIdOverride() string {

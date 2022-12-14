@@ -5,6 +5,7 @@ import (
 	"crypto/rsa"
 	"crypto/sha256"
 	"crypto/subtle"
+	"github.com/Interhyp/metadata-service/acorns/config"
 	"github.com/Interhyp/metadata-service/web/util"
 	"github.com/go-http-utils/headers"
 	"github.com/golang-jwt/jwt/v4"
@@ -20,16 +21,10 @@ const (
 	ClaimsKey   ctxJwtKeyType = 1
 )
 
-// example for custom claim structures, we will need to adapt this to match our DEX tokens, but right now the test tokens should work with this
-
-type GlobalClaims struct {
-	Name  string   `json:"name"`
-	Roles []string `json:"roles"`
-}
-
 type CustomClaims struct {
-	// add any custom claim fields here so you can parse them
-	Global GlobalClaims `json:"global"`
+	Name   string   `json:"name"`
+	Email  string   `json:"email"`
+	Groups []string `json:"groups"`
 }
 
 // end example
@@ -41,13 +36,12 @@ type AllClaims struct {
 }
 
 var RsaPublicKeys = make([]*rsa.PublicKey, 0)
-var basicAuthUsernameSha256 [sha256.Size]byte
-var basicAuthPasswordSha256 [sha256.Size]byte
+var customConfig config.CustomConfiguration
 
 // Now exported for testing
 var Now = time.Now
 
-func Setup(publicKeyPEMs []string, username string, password string) error {
+func Setup(publicKeyPEMs []string, config config.CustomConfiguration) error {
 	for _, publicKeyPEM := range publicKeyPEMs {
 		publicKey, err := jwt.ParseRSAPublicKeyFromPEM([]byte(publicKeyPEM))
 		if err != nil {
@@ -56,9 +50,8 @@ func Setup(publicKeyPEMs []string, username string, password string) error {
 
 		RsaPublicKeys = append(RsaPublicKeys, publicKey)
 	}
-	basicAuthUsernameSha256 = sha256.Sum256([]byte(username))
-	basicAuthPasswordSha256 = sha256.Sum256([]byte(password))
 
+	customConfig = config
 	return nil
 }
 
@@ -81,10 +74,11 @@ func JwtValidator(next http.Handler) http.Handler {
 				if checkBasicAuthValue(username, password) {
 					adminClaims := AllClaims{
 						RegisteredClaims: jwt.RegisteredClaims{},
-						CustomClaims: CustomClaims{GlobalClaims{
-							Name:  "basicAuthClaim",
-							Roles: strings.Fields("admin"),
-						}},
+						CustomClaims: CustomClaims{
+							Name:   customConfig.GitCommitterName(),
+							Email:  customConfig.GitCommitterEmail(),
+							Groups: strings.Fields(customConfig.AuthGroupWrite()),
+						},
 					}
 					ctx = PutClaims(ctx, &adminClaims)
 					next.ServeHTTP(w, r.WithContext(ctx))
@@ -127,11 +121,14 @@ func JwtValidator(next http.Handler) http.Handler {
 }
 
 func checkBasicAuthValue(username string, password string) bool {
+	expectedUsernameHash := sha256.Sum256([]byte(customConfig.BasicAuthUsername()))
+	expectedPasswordHash := sha256.Sum256([]byte(customConfig.BasicAuthPassword()))
+
 	usernameHash := sha256.Sum256([]byte(username))
 	passwordHash := sha256.Sum256([]byte(password))
 
-	usernameMatch := subtle.ConstantTimeCompare(usernameHash[:], basicAuthUsernameSha256[:]) == 1
-	passwordMatch := subtle.ConstantTimeCompare(passwordHash[:], basicAuthPasswordSha256[:]) == 1
+	usernameMatch := subtle.ConstantTimeCompare(expectedUsernameHash[:], usernameHash[:]) == 1
+	passwordMatch := subtle.ConstantTimeCompare(expectedPasswordHash[:], passwordHash[:]) == 1
 
 	return usernameMatch && passwordMatch
 }
@@ -185,19 +182,37 @@ func IsAuthenticated(ctx context.Context) bool {
 	return claimsPtr != nil
 }
 
-func HasRole(ctx context.Context, role string) bool {
+func HasGroup(ctx context.Context, group string) bool {
+	if group == "" {
+		return true
+	}
 	claimsPtr := GetClaims(ctx)
 	if claimsPtr == nil {
 		return false
 	}
-	return contains(claimsPtr.Global.Roles, role)
+	return contains(claimsPtr.Groups, group)
+}
 
+func Name(ctx context.Context) string {
+	claimsPtr := GetClaims(ctx)
+	if claimsPtr == nil {
+		return ""
+	}
+	return claimsPtr.Name
+}
+
+func Email(ctx context.Context) string {
+	claimsPtr := GetClaims(ctx)
+	if claimsPtr == nil {
+		return ""
+	}
+	return claimsPtr.Email
 }
 
 func Subject(ctx context.Context) string {
 	claimsPtr := GetClaims(ctx)
 	if claimsPtr == nil {
-		return "(no subject claim)"
+		return ""
 	}
 	return claimsPtr.RegisteredClaims.Subject
 }

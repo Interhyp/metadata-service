@@ -17,7 +17,9 @@ KAFKA_PASSWORD: 'some-kafka-password'
 KAFKA_TOPIC: 'some-kafka-topic'
 KAFKA_SEED_BROKERS: 'first-kafka-broker.domain.com:9092,second-kafka-broker.domain.com:9092'
 
-KEY_SET_URL: http://keyset
+AUTH_OIDC_KEY_SET_URL: http://keyset
+AUTH_OIDC_TOKEN_AUDIENCE: some-audience
+AUTH_GROUP_WRITE: admin
 
 METADATA_REPO_URL: http://metadata
 

@@ -86,7 +86,7 @@ func (c *Impl) CreateService(w http.ResponseWriter, r *http.Request) {
 		util.UnauthorizedErrorHandler(ctx, w, r, "anonymous tried CreateService", c.Now())
 		return
 	}
-	if !jwt.HasRole(ctx, "admin") {
+	if !jwt.HasGroup(ctx, c.CustomConfiguration.AuthGroupWrite()) {
 		util.ForbiddenErrorHandler(ctx, w, r, fmt.Sprintf("%s tried CreateService", jwt.Subject(ctx)), c.Now())
 		return
 	}
@@ -128,7 +128,7 @@ func (c *Impl) UpdateService(w http.ResponseWriter, r *http.Request) {
 		util.UnauthorizedErrorHandler(ctx, w, r, "anonymous tried UpdateService", c.Now())
 		return
 	}
-	if !jwt.HasRole(ctx, "admin") {
+	if !jwt.HasGroup(ctx, c.CustomConfiguration.AuthGroupWrite()) {
 		util.ForbiddenErrorHandler(ctx, w, r, fmt.Sprintf("%s tried UpdateService", jwt.Subject(ctx)), c.Now())
 		return
 	}
@@ -168,7 +168,7 @@ func (c *Impl) PatchService(w http.ResponseWriter, r *http.Request) {
 		util.UnauthorizedErrorHandler(ctx, w, r, "anonymous tried PatchService", c.Now())
 		return
 	}
-	if !jwt.HasRole(ctx, "admin") {
+	if !jwt.HasGroup(ctx, c.CustomConfiguration.AuthGroupWrite()) {
 		util.ForbiddenErrorHandler(ctx, w, r, fmt.Sprintf("%s tried PatchService", jwt.Subject(ctx)), c.Now())
 		return
 	}
@@ -208,7 +208,7 @@ func (c *Impl) DeleteService(w http.ResponseWriter, r *http.Request) {
 		util.UnauthorizedErrorHandler(ctx, w, r, "anonymous tried DeleteService", c.Now())
 		return
 	}
-	if !jwt.HasRole(ctx, "admin") {
+	if !jwt.HasGroup(ctx, c.CustomConfiguration.AuthGroupWrite()) {
 		util.ForbiddenErrorHandler(ctx, w, r, fmt.Sprintf("%s tried DeleteService", jwt.Subject(ctx)), c.Now())
 		return
 	}
