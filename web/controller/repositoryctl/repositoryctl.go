@@ -99,7 +99,7 @@ func (c *Impl) CreateRepository(w http.ResponseWriter, r *http.Request) {
 		util.UnauthorizedErrorHandler(ctx, w, r, "anonymous tried CreateRepository", c.Now())
 		return
 	}
-	if !jwt.HasRole(ctx, "admin") {
+	if !jwt.HasGroup(ctx, c.CustomConfiguration.AuthGroupWrite()) {
 		util.ForbiddenErrorHandler(ctx, w, r, fmt.Sprintf("%s tried CreateRepository", jwt.Subject(ctx)), c.Now())
 		return
 	}
@@ -139,7 +139,7 @@ func (c *Impl) UpdateRepository(w http.ResponseWriter, r *http.Request) {
 		util.UnauthorizedErrorHandler(ctx, w, r, "anonymous tried UpdateRepository", c.Now())
 		return
 	}
-	if !jwt.HasRole(ctx, "admin") {
+	if !jwt.HasGroup(ctx, c.CustomConfiguration.AuthGroupWrite()) {
 		util.ForbiddenErrorHandler(ctx, w, r, fmt.Sprintf("%s tried UpdateRepository", jwt.Subject(ctx)), c.Now())
 		return
 	}
@@ -179,7 +179,7 @@ func (c *Impl) PatchRepository(w http.ResponseWriter, r *http.Request) {
 		util.UnauthorizedErrorHandler(ctx, w, r, "anonymous tried PatchRepository", c.Now())
 		return
 	}
-	if !jwt.HasRole(ctx, "admin") {
+	if !jwt.HasGroup(ctx, c.CustomConfiguration.AuthGroupWrite()) {
 		util.ForbiddenErrorHandler(ctx, w, r, fmt.Sprintf("%s tried PatchRepository", jwt.Subject(ctx)), c.Now())
 		return
 	}
@@ -219,7 +219,7 @@ func (c *Impl) DeleteRepository(w http.ResponseWriter, r *http.Request) {
 		util.UnauthorizedErrorHandler(ctx, w, r, "anonymous tried DeleteRepository", c.Now())
 		return
 	}
-	if !jwt.HasRole(ctx, "admin") {
+	if !jwt.HasGroup(ctx, c.CustomConfiguration.AuthGroupWrite()) {
 		util.ForbiddenErrorHandler(ctx, w, r, fmt.Sprintf("%s tried DeleteRepository", jwt.Subject(ctx)), c.Now())
 		return
 	}

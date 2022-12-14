@@ -193,7 +193,17 @@ func (c *MockConfig) KafkaGroupIdOverride() string {
 	panic("implement me")
 }
 
-func (c *MockConfig) KeySetUrl() string {
+func (c *MockConfig) AuthOidcKeySetUrl() string {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (c *MockConfig) AuthOidcTokenAudience() string {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (c *MockConfig) AuthGroupWrite() string {
 	//TODO implement me
 	panic("implement me")
 }

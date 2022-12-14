@@ -72,7 +72,7 @@ func TestValidate_LotsOfErrors(t *testing.T) {
 	_, err := tstSetupCutAndLogRecorder(t, "invalid-config-values.yaml")
 
 	require.NotNil(t, err)
-	require.Contains(t, err.Error(), "some configuration values failed to validate or parse. There were 23 error(s). See details above")
+	require.Contains(t, err.Error(), "some configuration values failed to validate or parse. There were 24 error(s). See details above")
 
 	actualLog := goauzerolog.RecordedLogForTesting.String()
 
@@ -123,7 +123,9 @@ func TestAccessors(t *testing.T) {
 	require.Equal(t, "some-kafka-password", config.Custom(cut).KafkaPassword())
 	require.Equal(t, "some-kafka-topic", config.Custom(cut).KafkaTopic())
 	require.Equal(t, "first-kafka-broker.domain.com:9092,second-kafka-broker.domain.com:9092", config.Custom(cut).KafkaSeedBrokers())
-	require.Equal(t, "http://keyset", config.Custom(cut).KeySetUrl())
+	require.Equal(t, "http://keyset", config.Custom(cut).AuthOidcKeySetUrl())
+	require.Equal(t, "some-audience", config.Custom(cut).AuthOidcTokenAudience())
+	require.Equal(t, "admin", config.Custom(cut).AuthGroupWrite())
 	require.Equal(t, "http://metadata", config.Custom(cut).MetadataRepoUrl())
 	require.Equal(t, "5", config.Custom(cut).UpdateJobIntervalCronPart())
 	require.Equal(t, uint16(30), config.Custom(cut).UpdateJobTimeoutSeconds())

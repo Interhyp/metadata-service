@@ -7,6 +7,7 @@ import (
 	"github.com/Interhyp/metadata-service/acorns/config"
 	"github.com/Interhyp/metadata-service/acorns/errors/nochangeserror"
 	"github.com/Interhyp/metadata-service/acorns/repository"
+	"github.com/Interhyp/metadata-service/web/middleware/jwt"
 	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
 	"github.com/go-git/go-billy/v5/memfs"
 	"github.com/go-git/go-git/v5"
@@ -285,8 +286,8 @@ func (r *Impl) Commit(ctx context.Context, message string) (repository.CommitInf
 	commitTimestamp := r.Now()
 	commit, err := tree.Commit(message, &git.CommitOptions{
 		Author: &object.Signature{
-			Name:  r.CustomConfiguration.GitCommitterName(),
-			Email: r.CustomConfiguration.GitCommitterEmail(),
+			Name:  jwt.Name(ctx),
+			Email: jwt.Email(ctx),
 			When:  commitTimestamp,
 		},
 	})

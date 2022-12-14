@@ -21,7 +21,9 @@ type CustomConfiguration interface {
 	KafkaSeedBrokers() string
 	KafkaGroupIdOverride() string
 
-	KeySetUrl() string
+	AuthOidcKeySetUrl() string
+	AuthOidcTokenAudience() string
+	AuthGroupWrite() string
 
 	MetadataRepoUrl() string
 
@@ -69,7 +71,9 @@ const (
 	KeyKafkaTopic                    = "KAFKA_TOPIC"
 	KeyKafkaSeedBrokers              = "KAFKA_SEED_BROKERS"
 	KeyKafkaGroupIdOverride          = "KAFKA_GROUP_ID_OVERRIDE"
-	KeyKeySetUrl                     = "KEY_SET_URL"
+	KeyAuthOidcKeySetUrl             = "AUTH_OIDC_KEY_SET_URL"
+	KeyAuthOidcTokenAudience         = "AUTH_OIDC_TOKEN_AUDIENCE"
+	KeyAuthGroupWrite                = "AUTH_GROUP_WRITE"
 	KeyMetadataRepoUrl               = "METADATA_REPO_URL"
 	KeyUpdateJobIntervalMinutes      = "UPDATE_JOB_INTERVAL_MINUTES"
 	KeyUpdateJobTimeoutSeconds       = "UPDATE_JOB_TIMEOUT_SECONDS"

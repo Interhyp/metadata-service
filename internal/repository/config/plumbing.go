@@ -22,7 +22,9 @@ type CustomConfigImpl struct {
 	VKafkaPassword                 string
 	VKafkaTopic                    string
 	VKafkaSeedBrokers              string
-	VKeySetUrl                     string
+	VAuthOidcKeySetUrl             string
+	VAuthOidcTokenAudience         string
+	VAuthGroupWrite                string
 	VKafkaGroupIdOverride          string
 	VMetadataRepoUrl               string
 	VUpdateJobIntervalCronPart     string
@@ -66,7 +68,9 @@ func (c *CustomConfigImpl) Obtain(getter func(key string) string) {
 	c.VKafkaTopic = getter(config.KeyKafkaTopic)
 	c.VKafkaSeedBrokers = getter(config.KeyKafkaSeedBrokers)
 	c.VKafkaGroupIdOverride = getter(config.KeyKafkaGroupIdOverride)
-	c.VKeySetUrl = getter(config.KeyKeySetUrl)
+	c.VAuthOidcKeySetUrl = getter(config.KeyAuthOidcKeySetUrl)
+	c.VAuthOidcTokenAudience = getter(config.KeyAuthOidcTokenAudience)
+	c.VAuthGroupWrite = getter(config.KeyAuthGroupWrite)
 	c.VMetadataRepoUrl = getter(config.KeyMetadataRepoUrl)
 	c.VUpdateJobIntervalCronPart = getter(config.KeyUpdateJobIntervalMinutes)
 	c.VUpdateJobTimeoutSeconds = toUint16(getter(config.KeyUpdateJobTimeoutSeconds))

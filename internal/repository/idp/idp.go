@@ -47,7 +47,7 @@ func (r *Impl) Setup(ctx context.Context) error {
 }
 
 func (r *Impl) ObtainKeySet(ctx context.Context) error {
-	keysetUrl := r.CustomConfiguration.KeySetUrl()
+	keysetUrl := r.CustomConfiguration.AuthOidcKeySetUrl()
 
 	responseMap := make(map[string]interface{})
 	response := &aurestclientapi.ParsedResponse{
