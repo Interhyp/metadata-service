@@ -53,10 +53,16 @@ func TestPatchOwner(t *testing.T) {
 
 	productowner := "productowner"
 	jiraproject := "jira"
+	groups := map[string][]string{
+		"group0": {"user1", "user2"},
+	}
 
 	newProductowner := "productowner.new"
 	newJiraproject := "jira.new"
 	newContact := "contact.new"
+	newGroups := map[string][]string{
+		"group1": {"user1"},
+	}
 
 	emptyJiraproject := ""
 
@@ -64,6 +70,7 @@ func TestPatchOwner(t *testing.T) {
 		Contact:            "contact",
 		ProductOwner:       &productowner,
 		DefaultJiraProject: &jiraproject,
+		Groups:             &groups,
 		TimeStamp:          "timestamp",
 		CommitHash:         "commithash",
 	}
@@ -77,6 +84,7 @@ func TestPatchOwner(t *testing.T) {
 		Contact:            "contact",
 		ProductOwner:       &productowner,
 		DefaultJiraProject: &jiraproject,
+		Groups:             &groups,
 		TimeStamp:          "timestamp.new",
 		CommitHash:         "commithash.new",
 	}
@@ -86,12 +94,14 @@ func TestPatchOwner(t *testing.T) {
 		Contact:    &newContact,
 		TimeStamp:  "timestamp.new",
 		CommitHash: "commithash.new",
+		Groups:     &newGroups,
 	}
 	actual1 := patchOwner(current, patch1)
 	expected1 := openapi.OwnerDto{
 		Contact:            "contact.new",
 		ProductOwner:       &productowner,
 		DefaultJiraProject: &jiraproject,
+		Groups:             &newGroups,
 		TimeStamp:          "timestamp.new",
 		CommitHash:         "commithash.new",
 	}
@@ -108,6 +118,7 @@ func TestPatchOwner(t *testing.T) {
 		Contact:            "contact",
 		ProductOwner:       &newProductowner,
 		DefaultJiraProject: nil,
+		Groups:             &groups,
 		TimeStamp:          "timestamp.new",
 		CommitHash:         "commithash.new",
 	}
@@ -123,6 +134,7 @@ func TestPatchOwner(t *testing.T) {
 		Contact:            "contact",
 		ProductOwner:       &productowner,
 		DefaultJiraProject: &newJiraproject,
+		Groups:             &groups,
 		TimeStamp:          "timestamp.new",
 		CommitHash:         "commithash.new",
 	}
