@@ -63,6 +63,8 @@ type OwnerPatchDto struct {
 	Contact *string `json:"contact,omitempty"`
 	// The product owner of this owner space
 	ProductOwner *string `json:"productOwner,omitempty"`
+	// Map of string (group name e.g. some-owner) of strings (list of usernames), one username for each group is required.
+	Groups *map[string][]string `json:"groups,omitempty" yaml:"groups,omitempty"`
 	// A list of users that are allowed to promote services in this owner space
 	Promoters []string `json:"promoters,omitempty"`
 	// The default jira project that is used by this owner space

@@ -259,6 +259,7 @@ func patchOwner(current openapi.OwnerDto, patch openapi.OwnerPatchDto) openapi.O
 		ProductOwner:       patchStringPtr(patch.ProductOwner, current.ProductOwner),
 		DefaultJiraProject: patchStringPtr(patch.DefaultJiraProject, current.DefaultJiraProject),
 		Promoters:          patchStringArray(patch.Promoters, current.Promoters),
+		Groups:             patchStringToStringArrayMapPtr(patch.Groups, current.Groups),
 		TimeStamp:          patch.TimeStamp,
 		CommitHash:         patch.CommitHash,
 		JiraIssue:          patch.JiraIssue,
@@ -288,6 +289,17 @@ func patchString(patch *string, original string) string {
 
 func patchStringArray(patch []string, original []string) []string {
 	if len(patch) == 0 {
+		return original
+	} else {
+		return patch
+	}
+}
+
+func patchStringToStringArrayMapPtr(patch *map[string][]string, original *map[string][]string) *map[string][]string {
+	if patch == nil {
+		return original
+	}
+	if len(*patch) == 0 {
 		return original
 	} else {
 		return patch
