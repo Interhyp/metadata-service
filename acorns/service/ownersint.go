@@ -14,6 +14,7 @@ type Owners interface {
 	GetOwners(ctx context.Context) (openapi.OwnerListDto, error)
 	GetOwner(ctx context.Context, ownerAlias string) (openapi.OwnerDto, error)
 
+	RebuildPromoters(ctx context.Context, result *openapi.OwnerDto)
 	ParseGroupOwnerAndGroupName(mayBeGroupReference string) (bool, string, string)
 	GetAllGroupMembers(ctx context.Context, groupOwner string, groupName string) []string
 

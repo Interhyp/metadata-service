@@ -28,6 +28,7 @@ func (s *Impl) AssembleAcorn(registry auacornapi.AcornRegistry) error {
 	s.Logging = registry.GetAcornByName(librepo.LoggingAcornName).(librepo.Logging)
 	s.Cache = registry.GetAcornByName(service.CacheAcornName).(service.Cache)
 	s.Updater = registry.GetAcornByName(service.UpdaterAcornName).(service.Updater)
+	s.Owner = registry.GetAcornByName(service.OwnersAcornName).(service.Owners)
 
 	s.CustomConfiguration = config.Custom(s.Configuration)
 

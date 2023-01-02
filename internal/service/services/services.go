@@ -23,6 +23,7 @@ type Impl struct {
 	Logging             librepo.Logging
 	Cache               service.Cache
 	Updater             service.Updater
+	Owner               service.Owners
 }
 
 func (s *Impl) GetServices(ctx context.Context, ownerAliasFilter string) (openapi.ServiceListDto, error) {
@@ -443,6 +444,7 @@ func (s *Impl) addPromotersForOwner(ctx context.Context, ownerAlias string, resu
 			return err
 		}
 	} else {
+		s.Owner.RebuildPromoters(ctx, &serviceOwner)
 		for _, user := range serviceOwner.Promoters {
 			resultSet[user] = true
 		}

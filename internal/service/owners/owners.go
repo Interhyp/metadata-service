@@ -45,13 +45,13 @@ func (s *Impl) GetOwner(ctx context.Context, ownerAlias string) (openapi.OwnerDt
 	owner, err := s.Cache.GetOwner(ctx, ownerAlias)
 
 	if err == nil {
-		s.rebuildPromoters(ctx, &owner)
+		s.RebuildPromoters(ctx, &owner)
 	}
 
 	return owner, err
 }
 
-func (s *Impl) rebuildPromoters(ctx context.Context, result *openapi.OwnerDto) {
+func (s *Impl) RebuildPromoters(ctx context.Context, result *openapi.OwnerDto) {
 	if result == nil {
 		return
 	}
