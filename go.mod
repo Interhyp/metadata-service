@@ -62,7 +62,7 @@ require (
 	github.com/StephanHCB/go-backend-service-common v0.1.5
 	github.com/go-chi/chi/v5 v5.0.8
 	github.com/go-git/go-billy/v5 v5.4.0
-	github.com/go-git/go-git/v5 v5.5.1
+	github.com/go-git/go-git/v5 v5.5.2
 	github.com/go-http-utils/headers v0.0.0-20181008091004-fed159eddc2a
 	github.com/golang-jwt/jwt/v4 v4.4.3
 	github.com/lestrrat-go/jwx/v2 v2.0.8
