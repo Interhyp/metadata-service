@@ -69,7 +69,7 @@ require (
 	github.com/pact-foundation/pact-go v1.7.0
 	github.com/prometheus/client_golang v1.14.0
 	github.com/robfig/cron/v3 v3.0.1
-	github.com/rs/zerolog v1.28.0
+	github.com/rs/zerolog v1.29.0
 	github.com/stretchr/testify v1.8.1
 	github.com/twmb/franz-go v1.11.1
 	go.elastic.co/apm/module/apmchiv5/v2 v2.2.0
