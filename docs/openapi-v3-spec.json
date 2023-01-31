@@ -1976,6 +1976,20 @@
               "someotheruser"
             ]
           },
+          "groups": {
+            "type": "object",
+            "description": "Map of string (group name e.g. some-owner) of strings (list of usernames), one username for each group is required.",
+            "example": {
+              "some-owner": {
+              }
+            },
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
           "defaultJiraProject": {
             "type": "string",
             "description": "The default jira project that is used by this owner space",
