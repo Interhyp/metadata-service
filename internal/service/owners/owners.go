@@ -127,6 +127,7 @@ func (s *Impl) mapOwnerCreateDtoToOwnerDto(ownerCreateDto openapi.OwnerCreateDto
 		JiraIssue:          ownerCreateDto.JiraIssue,
 		DefaultJiraProject: ownerCreateDto.DefaultJiraProject,
 		Promoters:          ownerCreateDto.Promoters,
+		Groups:             ownerCreateDto.Groups,
 	}
 }
 
