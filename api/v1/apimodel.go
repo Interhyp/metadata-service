@@ -118,6 +118,8 @@ type RepositoryConfigurationWebhookDto struct {
 type RepositoryConfigurationWebhooksDto struct {
 	// Default pipeline trigger webhook.
 	PipelineTrigger *bool `json:"pipelineTrigger,omitempty" yaml:"pipelineTrigger,omitempty"`
+	// List of predefined webhooks
+	Predefined []string `json:"predefined,omitempty" yaml:"predefined,omitempty"`
 	// Additional webhooks to be configured.
 	Additional []RepositoryConfigurationWebhookDto `json:"additional,omitempty" yaml:"additional,omitempty"`
 }
