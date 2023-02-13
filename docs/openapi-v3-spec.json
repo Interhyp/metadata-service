@@ -2584,6 +2584,9 @@
                   ],
                   "webhooks": {
                     "pipelineTrigger": true,
+                    "predefined": [
+                      "jenkinsPipeline"
+                    ],
                     "additional": [
                       {
                         "name": "trigger something",
@@ -2716,6 +2719,13 @@
           "pipelineTrigger": {
             "type": "boolean",
             "description": "Default pipeline trigger webhook."
+          },
+          "predefined": {
+            "type": "array",
+            "description": "List of predefined webhooks",
+            "items": {
+              "type": "string"
+            }
           },
           "additional": {
             "type": "array",
