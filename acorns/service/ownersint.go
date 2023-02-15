@@ -15,7 +15,6 @@ type Owners interface {
 	GetOwner(ctx context.Context, ownerAlias string) (openapi.OwnerDto, error)
 
 	RebuildPromoters(ctx context.Context, result *openapi.OwnerDto)
-	ParseGroupOwnerAndGroupName(mayBeGroupReference string) (bool, string, string)
 	GetAllGroupMembers(ctx context.Context, groupOwner string, groupName string) []string
 
 	// CreateOwner returns the owner as it was created, with commit hash and timestamp filled in.

@@ -91,7 +91,7 @@ func (s *Impl) rebuildApprovers(ctx context.Context, result *openapi.RepositoryC
 		for approversGroupName, approversGroup := range *result.Approvers {
 			filteredApprovers := make([]string, 0)
 			for _, approver := range approversGroup {
-				isGroup, groupOwner, groupName := s.Owners.ParseGroupOwnerAndGroupName(approver)
+				isGroup, groupOwner, groupName := util.ParseGroupOwnerAndGroupName(approver)
 				if isGroup {
 					groupMembers := s.Owners.GetAllGroupMembers(ctx, groupOwner, groupName)
 					filteredApprovers = append(filteredApprovers, groupMembers...)

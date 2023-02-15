@@ -12,6 +12,11 @@ type CustomConfiguration interface {
 	BitbucketUsername() string
 	BitbucketPassword() string
 
+	BitbucketServer() string
+	BitbucketCacheSize() int
+	BitbucketCacheRetentionSeconds() uint32
+	BitbucketReviewerFallback() string
+
 	GitCommitterName() string
 	GitCommitterEmail() string
 
@@ -60,38 +65,42 @@ func Custom(configuration librepo.Configuration) CustomConfiguration {
 }
 
 const (
-	KeyBasicAuthUsername             = "BASIC_AUTH_USERNAME"
-	KeyBasicAuthPassword             = "BASIC_AUTH_PASSWORD"
-	KeyBitbucketUsername             = "BITBUCKET_USERNAME"
-	KeyBitbucketPassword             = "BITBUCKET_PASSWORD"
-	KeyGitCommitterName              = "GIT_COMMITTER_NAME"
-	KeyGitCommitterEmail             = "GIT_COMMITTER_EMAIL"
-	KeyKafkaUsername                 = "KAFKA_USERNAME"
-	KeyKafkaPassword                 = "KAFKA_PASSWORD"
-	KeyKafkaTopic                    = "KAFKA_TOPIC"
-	KeyKafkaSeedBrokers              = "KAFKA_SEED_BROKERS"
-	KeyKafkaGroupIdOverride          = "KAFKA_GROUP_ID_OVERRIDE"
-	KeyAuthOidcKeySetUrl             = "AUTH_OIDC_KEY_SET_URL"
-	KeyAuthOidcTokenAudience         = "AUTH_OIDC_TOKEN_AUDIENCE"
-	KeyAuthGroupWrite                = "AUTH_GROUP_WRITE"
-	KeyMetadataRepoUrl               = "METADATA_REPO_URL"
-	KeyUpdateJobIntervalMinutes      = "UPDATE_JOB_INTERVAL_MINUTES"
-	KeyUpdateJobTimeoutSeconds       = "UPDATE_JOB_TIMEOUT_SECONDS"
-	KeyAlertTargetPrefix             = "ALERT_TARGET_PREFIX"
-	KeyAlertTargetSuffix             = "ALERT_TARGET_SUFFIX"
-	KeyAdditionalPromoters           = "ADDITIONAL_PROMOTERS"
-	KeyAdditionalPromotersFromOwners = "ADDITIONAL_PROMOTERS_FROM_OWNERS"
-	KeyElasticApmDisabled            = "ELASTIC_APM_DISABLED"
-	KeyOwnerAliasPermittedRegex      = "OWNER_ALIAS_PERMITTED_REGEX"
-	KeyOwnerAliasProhibitedRegex     = "OWNER_ALIAS_PROHIBITED_REGEX"
-	KeyOwnerAliasMaxLength           = "OWNER_ALIAS_MAX_LENGTH"
-	KeyOwnerAliasFilterRegex         = "OWNER_ALIAS_FILTER_REGEX"
-	KeyServiceNamePermittedRegex     = "SERVICE_NAME_PERMITTED_REGEX"
-	KeyServiceNameProhibitedRegex    = "SERVICE_NAME_PROHIBITED_REGEX"
-	KeyServiceNameMaxLength          = "SERVICE_NAME_MAX_LENGTH"
-	KeyRepositoryNamePermittedRegex  = "REPOSITORY_NAME_PERMITTED_REGEX"
-	KeyRepositoryNameProhibitedRegex = "REPOSITORY_NAME_PROHIBITED_REGEX"
-	KeyRepositoryNameMaxLength       = "REPOSITORY_NAME_MAX_LENGTH"
-	KeyRepositoryKeySeparator        = "REPOSITORY_KEY_SEPARATOR"
-	KeyRepositoryTypes               = "REPOSITORY_TYPES"
+	KeyBasicAuthUsername              = "BASIC_AUTH_USERNAME"
+	KeyBasicAuthPassword              = "BASIC_AUTH_PASSWORD"
+	KeyBitbucketUsername              = "BITBUCKET_USERNAME"
+	KeyBitbucketPassword              = "BITBUCKET_PASSWORD"
+	KeyBitbucketServer                = "BITBUCKET_SERVER"
+	KeyBitbucketCacheSize             = "BITBUCKET_CACHE_SIZE"
+	KeyBitbucketCacheRetentionSeconds = "BITBUCKET_CACHE_RETENTION_SECONDS"
+	KeyBitbucketReviewerFallback      = "BITBUCKET_REVIEWER_FALLBACK"
+	KeyGitCommitterName               = "GIT_COMMITTER_NAME"
+	KeyGitCommitterEmail              = "GIT_COMMITTER_EMAIL"
+	KeyKafkaUsername                  = "KAFKA_USERNAME"
+	KeyKafkaPassword                  = "KAFKA_PASSWORD"
+	KeyKafkaTopic                     = "KAFKA_TOPIC"
+	KeyKafkaSeedBrokers               = "KAFKA_SEED_BROKERS"
+	KeyKafkaGroupIdOverride           = "KAFKA_GROUP_ID_OVERRIDE"
+	KeyAuthOidcKeySetUrl              = "AUTH_OIDC_KEY_SET_URL"
+	KeyAuthOidcTokenAudience          = "AUTH_OIDC_TOKEN_AUDIENCE"
+	KeyAuthGroupWrite                 = "AUTH_GROUP_WRITE"
+	KeyMetadataRepoUrl                = "METADATA_REPO_URL"
+	KeyUpdateJobIntervalMinutes       = "UPDATE_JOB_INTERVAL_MINUTES"
+	KeyUpdateJobTimeoutSeconds        = "UPDATE_JOB_TIMEOUT_SECONDS"
+	KeyAlertTargetPrefix              = "ALERT_TARGET_PREFIX"
+	KeyAlertTargetSuffix              = "ALERT_TARGET_SUFFIX"
+	KeyAdditionalPromoters            = "ADDITIONAL_PROMOTERS"
+	KeyAdditionalPromotersFromOwners  = "ADDITIONAL_PROMOTERS_FROM_OWNERS"
+	KeyElasticApmDisabled             = "ELASTIC_APM_DISABLED"
+	KeyOwnerAliasPermittedRegex       = "OWNER_ALIAS_PERMITTED_REGEX"
+	KeyOwnerAliasProhibitedRegex      = "OWNER_ALIAS_PROHIBITED_REGEX"
+	KeyOwnerAliasMaxLength            = "OWNER_ALIAS_MAX_LENGTH"
+	KeyOwnerAliasFilterRegex          = "OWNER_ALIAS_FILTER_REGEX"
+	KeyServiceNamePermittedRegex      = "SERVICE_NAME_PERMITTED_REGEX"
+	KeyServiceNameProhibitedRegex     = "SERVICE_NAME_PROHIBITED_REGEX"
+	KeyServiceNameMaxLength           = "SERVICE_NAME_MAX_LENGTH"
+	KeyRepositoryNamePermittedRegex   = "REPOSITORY_NAME_PERMITTED_REGEX"
+	KeyRepositoryNameProhibitedRegex  = "REPOSITORY_NAME_PROHIBITED_REGEX"
+	KeyRepositoryNameMaxLength        = "REPOSITORY_NAME_MAX_LENGTH"
+	KeyRepositoryKeySeparator         = "REPOSITORY_KEY_SEPARATOR"
+	KeyRepositoryTypes                = "REPOSITORY_TYPES"
 )

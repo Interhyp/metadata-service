@@ -8,6 +8,7 @@ BASIC_AUTH_PASSWORD: some-basic-auth-password
 
 BITBUCKET_USERNAME: some-bitbucket-username
 BITBUCKET_PASSWORD: some-bitbucket-password
+BITBUCKET_REVIEWER_FALLBACK: username
 
 GIT_COMMITTER_NAME: 'Body, Some'
 GIT_COMMITTER_EMAIL: 'somebody@somewhere.com'

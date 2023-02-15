@@ -158,6 +158,26 @@ func (c *MockConfig) BitbucketPassword() string {
 	panic("implement me")
 }
 
+func (c *MockConfig) BitbucketServer() string {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (c *MockConfig) BitbucketCacheSize() int {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (c *MockConfig) BitbucketCacheRetentionSeconds() uint32 {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (c *MockConfig) BitbucketReviewerFallback() string {
+	//TODO implement me
+	panic("implement me")
+}
+
 func (c *MockConfig) GitCommitterName() string {
 	//TODO implement me
 	panic("implement me")

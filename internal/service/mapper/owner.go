@@ -3,6 +3,7 @@ package mapper
 import (
 	"context"
 	openapi "github.com/Interhyp/metadata-service/api/v1"
+	"github.com/Interhyp/metadata-service/internal/service/util"
 	"sort"
 )
 
@@ -36,7 +37,59 @@ func (s *Impl) GetOwner(ctx context.Context, ownerAlias string) (openapi.OwnerDt
 	fullPath := "owners/" + ownerAlias + "/owner.info.yaml"
 	err := GetT[openapi.OwnerDto](ctx, s, &result, fullPath)
 
+	if nil == err {
+		s.processPromoters(ctx, &result)
+
+		if result.Groups != nil {
+			s.processGroupMap(ctx, result.Groups)
+		}
+	}
+
 	return result, err
+}
+
+func (s *Impl) processPromoters(ctx context.Context, result *openapi.OwnerDto) {
+	users, groups := util.SplitUsersAndGroups(result.Promoters)
+	if len(users) > 0 {
+		filteredExistingUsers, err2 := s.Bitbucket.FilterExistingUsernames(ctx, users)
+		if err2 == nil {
+			userDifference := util.Difference(users, filteredExistingUsers)
+			if len(userDifference) > 0 {
+				s.Logging.Logger().Ctx(ctx).Error().Printf("Found unknown users in configuration: %v", userDifference)
+			}
+			result.Promoters = append(filteredExistingUsers, groups...)
+		} else {
+			s.Logging.Logger().Ctx(ctx).Error().Printf("Error checking existing bitbucket users: %s", err2.Error())
+		}
+
+		if len(result.Promoters) <= 0 && len(users) > 0 {
+			s.Logging.Logger().Ctx(ctx).Warn().Printf("Fallback to predefined reviewers")
+			result.Promoters = append(result.Promoters, s.CustomConfiguration.BitbucketReviewerFallback())
+		}
+	}
+}
+
+func (s *Impl) processGroupMap(ctx context.Context, groupsMap *map[string][]string) {
+	for groupName, groupMembers := range *groupsMap {
+		users, groups := util.SplitUsersAndGroups(groupMembers)
+		if len(users) > 0 {
+			filteredExistingUsers, err2 := s.Bitbucket.FilterExistingUsernames(ctx, users)
+			if err2 == nil {
+				userDifference := util.Difference(users, filteredExistingUsers)
+				if len(userDifference) > 0 {
+					s.Logging.Logger().Ctx(ctx).Error().Printf("Found unknown users in configuration: %v", userDifference)
+				}
+				(*groupsMap)[groupName] = append(filteredExistingUsers, groups...)
+			} else {
+				s.Logging.Logger().Ctx(ctx).Error().Printf("Error checking existing bitbucket users: %s", err2.Error())
+			}
+
+			if len((*groupsMap)[groupName]) <= 0 && len(users) > 0 {
+				s.Logging.Logger().Ctx(ctx).Warn().Printf("Fallback to predefined reviewers")
+				(*groupsMap)[groupName] = append((*groupsMap)[groupName], s.CustomConfiguration.BitbucketReviewerFallback())
+			}
+		}
+	}
 }
 
 func (s *Impl) WriteOwner(ctx context.Context, ownerAlias string, owner openapi.OwnerDto) (openapi.OwnerDto, error) {

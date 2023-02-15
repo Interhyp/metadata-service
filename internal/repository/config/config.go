@@ -4,6 +4,7 @@ import (
 	"github.com/Interhyp/metadata-service/acorns/config"
 	auconfigapi "github.com/StephanHCB/go-autumn-config-api"
 	auconfigenv "github.com/StephanHCB/go-autumn-config-env"
+	"math"
 )
 
 var CustomConfigItems = []auconfigapi.ConfigItem{
@@ -33,6 +34,34 @@ var CustomConfigItems = []auconfigapi.ConfigItem{
 		EnvName:     config.KeyBitbucketPassword,
 		Default:     "",
 		Description: "bitbucket password for api and git clone service-metadata access",
+		Validate:    auconfigenv.ObtainNotEmptyValidator(),
+	},
+	{
+		Key:         config.KeyBitbucketServer,
+		EnvName:     config.KeyBitbucketServer,
+		Default:     "https://bitbucket.com",
+		Description: "base URL to the bitbucket server, including protocol",
+		Validate:    auconfigenv.ObtainPatternValidator("^https?://.*$"),
+	},
+	{
+		Key:         config.KeyBitbucketCacheSize,
+		EnvName:     config.KeyBitbucketCacheSize,
+		Default:     "1000",
+		Description: "size of the cache for bitbucket api items",
+		Validate:    auconfigenv.ObtainUintRangeValidator(10, 1000),
+	},
+	{
+		Key:         config.KeyBitbucketCacheRetentionSeconds,
+		EnvName:     config.KeyBitbucketCacheRetentionSeconds,
+		Default:     "3600",
+		Description: "seconds to keep items in the bitbucket api cache (only used for bitbucket users)",
+		Validate:    auconfigenv.ObtainUintRangeValidator(60, math.MaxUint32),
+	},
+	{
+		Key:         config.KeyBitbucketReviewerFallback,
+		EnvName:     config.KeyBitbucketReviewerFallback,
+		Default:     "",
+		Description: "default fallback reviewer username or groupname",
 		Validate:    auconfigenv.ObtainNotEmptyValidator(),
 	},
 	{

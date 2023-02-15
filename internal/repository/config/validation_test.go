@@ -72,7 +72,7 @@ func TestValidate_LotsOfErrors(t *testing.T) {
 	_, err := tstSetupCutAndLogRecorder(t, "invalid-config-values.yaml")
 
 	require.NotNil(t, err)
-	require.Contains(t, err.Error(), "some configuration values failed to validate or parse. There were 24 error(s). See details above")
+	require.Contains(t, err.Error(), "some configuration values failed to validate or parse. There were 25 error(s). See details above")
 
 	actualLog := goauzerolog.RecordedLogForTesting.String()
 
@@ -117,6 +117,7 @@ func TestAccessors(t *testing.T) {
 	require.Equal(t, "some-basic-auth-password", config.Custom(cut).BasicAuthPassword())
 	require.Equal(t, "some-bitbucket-username", config.Custom(cut).BitbucketUsername())
 	require.Equal(t, "some-bitbucket-password", config.Custom(cut).BitbucketPassword())
+	require.Equal(t, "username", config.Custom(cut).BitbucketReviewerFallback())
 	require.Equal(t, "Body, Some", config.Custom(cut).GitCommitterName())
 	require.Equal(t, "somebody@somewhere.com", config.Custom(cut).GitCommitterEmail())
 	require.Equal(t, "some-kafka-username", config.Custom(cut).KafkaUsername())

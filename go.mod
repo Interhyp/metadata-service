@@ -58,6 +58,8 @@ require (
 	github.com/StephanHCB/go-autumn-logging v0.3.0
 	github.com/StephanHCB/go-autumn-logging-zerolog v0.3.1
 	github.com/StephanHCB/go-autumn-restclient v0.5.0
+	github.com/StephanHCB/go-autumn-restclient-circuitbreaker v0.4.1
+	github.com/StephanHCB/go-autumn-restclient-circuitbreaker-prometheus v0.1.0
 	github.com/StephanHCB/go-autumn-restclient-prometheus v0.1.2
 	github.com/StephanHCB/go-backend-service-common v0.1.5
 	github.com/go-chi/chi/v5 v5.0.8
@@ -67,6 +69,7 @@ require (
 	github.com/golang-jwt/jwt/v4 v4.4.3
 	github.com/lestrrat-go/jwx/v2 v2.0.8
 	github.com/pact-foundation/pact-go v1.7.0
+	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.14.0
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/rs/zerolog v1.29.0
@@ -114,7 +117,6 @@ require (
 	github.com/matttproud/golang_protobuf_extensions v1.0.1 // indirect
 	github.com/pierrec/lz4/v4 v4.1.15 // indirect
 	github.com/pjbgf/sha1cd v0.2.3 // indirect
-	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/prometheus/client_model v0.3.0 // indirect
 	github.com/prometheus/common v0.37.0 // indirect
@@ -124,6 +126,7 @@ require (
 	github.com/shurcooL/httpfs v0.0.0-20190707220628-8d4bc4ba7749 // indirect
 	github.com/shurcooL/vfsgen v0.0.0-20200824052919-0d455de96546 // indirect
 	github.com/skeema/knownhosts v1.1.0 // indirect
+	github.com/sony/gobreaker v0.5.0 // indirect
 	github.com/tidwall/tinylru v1.1.0 // indirect
 	github.com/twmb/franz-go/pkg/kmsg v1.4.0 // indirect
 	github.com/xanzy/ssh-agent v0.3.3 // indirect

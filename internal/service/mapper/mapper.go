@@ -15,6 +15,7 @@ type Impl struct {
 	CustomConfiguration config.CustomConfiguration
 	Logging             librepo.Logging
 	Metadata            repository.Metadata
+	Bitbucket           repository.Bitbucket
 
 	muOwnerCaches        sync.Mutex
 	serviceOwnerCache    map[string]string
