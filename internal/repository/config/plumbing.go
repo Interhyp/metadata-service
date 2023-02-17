@@ -12,40 +12,44 @@ import (
 )
 
 type CustomConfigImpl struct {
-	VBasicAuthUsername             string
-	VBasicAuthPassword             string
-	VBitbucketUsername             string
-	VBitbucketPassword             string
-	VGitCommitterName              string
-	VGitCommitterEmail             string
-	VKafkaUsername                 string
-	VKafkaPassword                 string
-	VKafkaTopic                    string
-	VKafkaSeedBrokers              string
-	VAuthOidcKeySetUrl             string
-	VAuthOidcTokenAudience         string
-	VAuthGroupWrite                string
-	VKafkaGroupIdOverride          string
-	VMetadataRepoUrl               string
-	VUpdateJobIntervalCronPart     string
-	VUpdateJobTimeoutSeconds       uint16
-	VAlertTargetPrefix             string
-	VAlertTargetSuffix             string
-	VAdditionalPromoters           string
-	VAdditionalPromotersFromOwners string
-	VElasticApmDisabled            bool
-	VOwnerAliasPermittedRegex      *regexp.Regexp
-	VOwnerAliasProhibitedRegex     *regexp.Regexp
-	VOwnerAliasMaxLength           uint16
-	VOwnerAliasFilterRegex         *regexp.Regexp
-	VServiceNamePermittedRegex     *regexp.Regexp
-	VServiceNameProhibitedRegex    *regexp.Regexp
-	VServiceNameMaxLength          uint16
-	VRepositoryNamePermittedRegex  *regexp.Regexp
-	VRepositoryNameProhibitedRegex *regexp.Regexp
-	VRepositoryNameMaxLength       uint16
-	VRepositoryTypes               string
-	VRepositoryKeySeparator        string
+	VBasicAuthUsername              string
+	VBasicAuthPassword              string
+	VBitbucketUsername              string
+	VBitbucketPassword              string
+	VBitbucketServer                string
+	VBitbucketCacheSize             int
+	VBitbucketCacheRetentionSeconds uint32
+	VBitbucketReviewerFallback      string
+	VGitCommitterName               string
+	VGitCommitterEmail              string
+	VKafkaUsername                  string
+	VKafkaPassword                  string
+	VKafkaTopic                     string
+	VKafkaSeedBrokers               string
+	VAuthOidcKeySetUrl              string
+	VAuthOidcTokenAudience          string
+	VAuthGroupWrite                 string
+	VKafkaGroupIdOverride           string
+	VMetadataRepoUrl                string
+	VUpdateJobIntervalCronPart      string
+	VUpdateJobTimeoutSeconds        uint16
+	VAlertTargetPrefix              string
+	VAlertTargetSuffix              string
+	VAdditionalPromoters            string
+	VAdditionalPromotersFromOwners  string
+	VElasticApmDisabled             bool
+	VOwnerAliasPermittedRegex       *regexp.Regexp
+	VOwnerAliasProhibitedRegex      *regexp.Regexp
+	VOwnerAliasMaxLength            uint16
+	VOwnerAliasFilterRegex          *regexp.Regexp
+	VServiceNamePermittedRegex      *regexp.Regexp
+	VServiceNameProhibitedRegex     *regexp.Regexp
+	VServiceNameMaxLength           uint16
+	VRepositoryNamePermittedRegex   *regexp.Regexp
+	VRepositoryNameProhibitedRegex  *regexp.Regexp
+	VRepositoryNameMaxLength        uint16
+	VRepositoryTypes                string
+	VRepositoryKeySeparator         string
 }
 
 func New() auacornapi.Acorn {
@@ -61,6 +65,10 @@ func (c *CustomConfigImpl) Obtain(getter func(key string) string) {
 	c.VBasicAuthPassword = getter(config.KeyBasicAuthPassword)
 	c.VBitbucketUsername = getter(config.KeyBitbucketUsername)
 	c.VBitbucketPassword = getter(config.KeyBitbucketPassword)
+	c.VBitbucketServer = getter(config.KeyBitbucketServer)
+	c.VBitbucketCacheSize = toInt(getter(config.KeyBitbucketCacheSize))
+	c.VBitbucketCacheRetentionSeconds = toUint32(getter(config.KeyBitbucketCacheRetentionSeconds))
+	c.VBitbucketReviewerFallback = getter(config.KeyBitbucketReviewerFallback)
 	c.VGitCommitterName = getter(config.KeyGitCommitterName)
 	c.VGitCommitterEmail = getter(config.KeyGitCommitterEmail)
 	c.VKafkaUsername = getter(config.KeyKafkaUsername)
@@ -95,7 +103,17 @@ func (c *CustomConfigImpl) Obtain(getter func(key string) string) {
 
 // used after validation, so known safe
 
+func toInt(s string) int {
+	val, _ := auconfigenv.AToInt(s)
+	return val
+}
+
 func toUint16(s string) uint16 {
 	val, _ := auconfigenv.AToUint(s)
 	return uint16(val)
+}
+
+func toUint32(s string) uint32 {
+	val, _ := auconfigenv.AToUint(s)
+	return uint32(val)
 }

@@ -31,7 +31,7 @@ func (s *Impl) AssembleAcorn(registry auacornapi.AcornRegistry) error {
 	s.Configuration = registry.GetAcornByName(librepo.ConfigurationAcornName).(librepo.Configuration)
 	s.Logging = registry.GetAcornByName(librepo.LoggingAcornName).(librepo.Logging)
 	s.Metadata = registry.GetAcornByName(repository.MetadataAcornName).(repository.Metadata)
-
+	s.Bitbucket = registry.GetAcornByName(repository.BitbucketAcornName).(repository.Bitbucket)
 	s.CustomConfiguration = config.Custom(s.Configuration)
 
 	return nil
@@ -47,6 +47,10 @@ func (s *Impl) SetupAcorn(registry auacornapi.AcornRegistry) error {
 		return err
 	}
 	err = registry.SetupAfter(s.Metadata.(auacornapi.Acorn))
+	if err != nil {
+		return err
+	}
+	err = registry.SetupAfter(s.Bitbucket.(auacornapi.Acorn))
 	if err != nil {
 		return err
 	}

@@ -7,6 +7,7 @@ import (
 	"github.com/Interhyp/metadata-service/acorns/errors/nochangeserror"
 	"github.com/Interhyp/metadata-service/acorns/errors/nosuchrepoerror"
 	openapi "github.com/Interhyp/metadata-service/api/v1"
+	"github.com/Interhyp/metadata-service/internal/service/util"
 	"sort"
 	"strings"
 )
@@ -79,6 +80,30 @@ func (s *Impl) GetRepository(ctx context.Context, repoKey string) (openapi.Repos
 
 	fullPath := fmt.Sprintf("owners/%s/repositories/%s.yaml", ownerAlias, repoKey)
 	err = GetT[openapi.RepositoryDto](ctx, s, &result, fullPath)
+
+	if err == nil && result.Configuration != nil && result.Configuration.Approvers != nil {
+		approversGroupsMap := result.Configuration.Approvers
+		for approversGroupName, approversGroup := range *approversGroupsMap {
+			users, groups := util.SplitUsersAndGroups(approversGroup)
+			if len(users) > 0 {
+				filteredExistingUsers, err2 := s.Bitbucket.FilterExistingUsernames(ctx, users)
+				if err2 == nil {
+					userDifference := util.Difference(users, filteredExistingUsers)
+					if len(userDifference) > 0 {
+						s.Logging.Logger().Ctx(ctx).Error().Printf("Found unknown users in configuration: %v", userDifference)
+					}
+					(*approversGroupsMap)[approversGroupName] = append(filteredExistingUsers, groups...)
+				} else {
+					s.Logging.Logger().Ctx(ctx).Error().Printf("Error checking existing bitbucket users: %s", err2.Error())
+				}
+
+				if len((*approversGroupsMap)[approversGroupName]) <= 0 && len(users) > 0 {
+					s.Logging.Logger().Ctx(ctx).Warn().Printf("Fallback to predefined reviewers")
+					(*approversGroupsMap)[approversGroupName] = append((*approversGroupsMap)[approversGroupName], s.CustomConfiguration.BitbucketReviewerFallback())
+				}
+			}
+		}
+	}
 
 	result.Owner = ownerAlias
 	return result, err

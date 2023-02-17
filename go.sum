@@ -49,6 +49,10 @@ github.com/StephanHCB/go-autumn-logging-zerolog v0.3.1 h1:ZkMZhgA9XyG5UKypNPsWHh
 github.com/StephanHCB/go-autumn-logging-zerolog v0.3.1/go.mod h1:LB3tb1gP4mY17sjal55SRlxG6Cp03gxoHpFXIcebJOI=
 github.com/StephanHCB/go-autumn-restclient v0.5.0 h1:UadP+Tj8NShkaVPZWEVarYIyUeSYalZvEVi0znd9Dqo=
 github.com/StephanHCB/go-autumn-restclient v0.5.0/go.mod h1:cvpDXD4WxJuhJxJ0HIMep+teDYdRw4wakln0bFxVK0c=
+github.com/StephanHCB/go-autumn-restclient-circuitbreaker v0.4.1 h1:aRs7bVnENGiKsWyvz6d5jAb2LuRkM1AUIzMoOgjzRLs=
+github.com/StephanHCB/go-autumn-restclient-circuitbreaker v0.4.1/go.mod h1:ICUphrYTDMZ3HYZ8mEuFe0dZB163LBsmo1HtXaN10As=
+github.com/StephanHCB/go-autumn-restclient-circuitbreaker-prometheus v0.1.0 h1:e/URQHOH0SMTPwK6JGbt1DeGS4QFUtBDky0wadMlieQ=
+github.com/StephanHCB/go-autumn-restclient-circuitbreaker-prometheus v0.1.0/go.mod h1:Gc2lrqPVi938ZYzHdhcdy7NRQs5o2azDvvfnGBJRw/M=
 github.com/StephanHCB/go-autumn-restclient-prometheus v0.1.2 h1:xsTZdR9WlSaoeUc3H6cuMJWizC2+zwE8VggOLn61zvI=
 github.com/StephanHCB/go-autumn-restclient-prometheus v0.1.2/go.mod h1:74X7ghxTOjj6Tl0lvVJXOQHz+3RbKvGirvF5l82XDwk=
 github.com/StephanHCB/go-autumn-web-swagger-ui v0.2.3 h1:aC/rTlw9pBPCWYH46KGzSB942sTALIcIsZi0piVUuEo=
@@ -297,6 +301,8 @@ github.com/shurcooL/vfsgen v0.0.0-20200824052919-0d455de96546/go.mod h1:TrYk7fJV
 github.com/sirupsen/logrus v1.7.0/go.mod h1:yWOB1SBYBC5VeMP7gHvWumXLIWorT60ONWic61uBYv0=
 github.com/skeema/knownhosts v1.1.0 h1:Wvr9V0MxhjRbl3f9nMnKnFfiWTJmtECJ9Njkea3ysW0=
 github.com/skeema/knownhosts v1.1.0/go.mod h1:sKFq3RD6/TKZkSWn8boUbDC7Qkgcv+8XXijpFO6roag=
+github.com/sony/gobreaker v0.5.0 h1:dRCvqm0P490vZPmy7ppEk2qCnCieBooFJ+YoXGYB+yg=
+github.com/sony/gobreaker v0.5.0/go.mod h1:ZKptC7FHNvhBz7dN2LGjPVBz2sZJmc0/PkyDJOjmxWY=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/objx v0.4.0/go.mod h1:YvHI0jy2hoMjB+UWwv71VJQ9isScKT/TqJzVSSt89Yw=
 github.com/stretchr/objx v0.5.0/go.mod h1:Yh+to48EsGEfYuaHDzXPcE3xhTkx73EhmCGUpEOglKo=

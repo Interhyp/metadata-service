@@ -2,6 +2,7 @@ package app
 
 import (
 	"github.com/Interhyp/metadata-service/acorns/application"
+	"github.com/Interhyp/metadata-service/internal/repository/bitbucket"
 	"github.com/Interhyp/metadata-service/internal/repository/config"
 	"github.com/Interhyp/metadata-service/internal/repository/hostip"
 	"github.com/Interhyp/metadata-service/internal/repository/idp"
@@ -51,6 +52,7 @@ func (a *ApplicationImpl) Register() {
 		auacorn.Registry.Register(kafka.New)
 		auacorn.Registry.Register(idp.New)
 		auacorn.Registry.Register(hostip.New)
+		auacorn.Registry.Register(bitbucket.New)
 		// services
 		auacorn.Registry.Register(mapper.New)
 		auacorn.Registry.Register(trigger.New)

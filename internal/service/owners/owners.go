@@ -57,7 +57,7 @@ func (s *Impl) RebuildPromoters(ctx context.Context, result *openapi.OwnerDto) {
 	}
 	filteredPromoters := make([]string, 0)
 	for _, promoter := range result.Promoters {
-		isGroup, groupOwner, groupName := s.ParseGroupOwnerAndGroupName(promoter)
+		isGroup, groupOwner, groupName := util.ParseGroupOwnerAndGroupName(promoter)
 		if isGroup {
 			groupMembers := s.GetAllGroupMembers(ctx, groupOwner, groupName)
 			filteredPromoters = append(filteredPromoters, groupMembers...)
@@ -66,15 +66,6 @@ func (s *Impl) RebuildPromoters(ctx context.Context, result *openapi.OwnerDto) {
 		}
 	}
 	result.Promoters = util.RemoveDuplicateStr(filteredPromoters)
-}
-
-func (s *Impl) ParseGroupOwnerAndGroupName(mayBeGroupReference string) (bool, string, string) {
-	hasGroupPrefix := strings.HasPrefix(mayBeGroupReference, "@")
-	indexOfDot := strings.Index(mayBeGroupReference, ".")
-	if hasGroupPrefix && indexOfDot > 0 {
-		return true, mayBeGroupReference[1:indexOfDot], mayBeGroupReference[indexOfDot+1:]
-	}
-	return false, "", ""
 }
 
 func (s *Impl) GetAllGroupMembers(ctx context.Context, groupOwner string, groupName string) []string {

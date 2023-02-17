@@ -22,6 +22,22 @@ func (c *CustomConfigImpl) BitbucketPassword() string {
 	return c.VBitbucketPassword
 }
 
+func (c *CustomConfigImpl) BitbucketServer() string {
+	return c.VBitbucketServer
+}
+
+func (c *CustomConfigImpl) BitbucketCacheSize() int {
+	return c.VBitbucketCacheSize
+}
+
+func (c *CustomConfigImpl) BitbucketCacheRetentionSeconds() uint32 {
+	return c.VBitbucketCacheRetentionSeconds
+}
+
+func (c *CustomConfigImpl) BitbucketReviewerFallback() string {
+	return c.VBitbucketReviewerFallback
+}
+
 func (c *CustomConfigImpl) GitCommitterName() string {
 	return c.VGitCommitterName
 }
