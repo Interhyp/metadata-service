@@ -3,7 +3,7 @@ package webhookctl
 import (
 	"context"
 	"github.com/Interhyp/metadata-service/acorns/service"
-	"github.com/Interhyp/metadata-service/web/util"
+	"github.com/Interhyp/metadata-service/internal/web/util"
 	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
 	"github.com/go-chi/chi/v5"
 	"net/http"
