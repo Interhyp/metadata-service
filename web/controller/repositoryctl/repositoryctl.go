@@ -252,7 +252,7 @@ func (c *Impl) DeleteRepository(w http.ResponseWriter, r *http.Request) {
 // --- specific error handlers ---
 
 func (c *Impl) repositoryKeyParamInvalid(ctx context.Context, w http.ResponseWriter, r *http.Request, repository string) {
-	c.Logging.Logger().Ctx(ctx).Warn().Printf("repository parameter %v invalid", url.QueryEscape(repository))
+	c.Logging.Logger().Ctx(ctx).Info().Printf("repository parameter %v invalid", url.QueryEscape(repository))
 	permitted := c.CustomConfiguration.RepositoryNamePermittedRegex().String()
 	prohibited := c.CustomConfiguration.RepositoryNameProhibitedRegex().String()
 	max := c.CustomConfiguration.RepositoryNameMaxLength()
@@ -263,51 +263,51 @@ func (c *Impl) repositoryKeyParamInvalid(ctx context.Context, w http.ResponseWri
 }
 
 func (c *Impl) repositoryNotFoundErrorHandler(ctx context.Context, w http.ResponseWriter, r *http.Request, repository string) {
-	c.Logging.Logger().Ctx(ctx).Warn().Printf("repository %v not found", repository)
+	c.Logging.Logger().Ctx(ctx).Info().Printf("repository %v not found", repository)
 	util.ErrorHandler(ctx, w, r, "repository.notfound", http.StatusNotFound, "", c.Now())
 }
 
 func (c *Impl) repositoryBodyInvalid(ctx context.Context, w http.ResponseWriter, r *http.Request, err error) {
-	c.Logging.Logger().Ctx(ctx).Warn().Printf("repository body invalid: %s", err.Error())
+	c.Logging.Logger().Ctx(ctx).Info().Printf("repository body invalid: %s", err.Error())
 	util.ErrorHandler(ctx, w, r, "repository.invalid.body", http.StatusBadRequest, "body failed to parse", c.Now())
 }
 
 func (c *Impl) repositoryAlreadyExists(ctx context.Context, w http.ResponseWriter, _ *http.Request, repository string, resource any) {
-	c.Logging.Logger().Ctx(ctx).Warn().Printf("repository %v already exists", repository)
+	c.Logging.Logger().Ctx(ctx).Info().Printf("repository %v already exists", repository)
 	w.Header().Set(headers.ContentType, media.ContentTypeApplicationJson)
 	w.WriteHeader(http.StatusConflict)
 	util.WriteJson(ctx, w, resource)
 }
 
 func (c *Impl) repositoryReferenced(ctx context.Context, w http.ResponseWriter, r *http.Request, key string) {
-	c.Logging.Logger().Ctx(ctx).Warn().Printf("tried to move repository %v, which is still referenced by its service", key)
+	c.Logging.Logger().Ctx(ctx).Info().Printf("tried to move repository %v, which is still referenced by its service", key)
 	util.ErrorHandler(ctx, w, r, "repository.conflict.referenced", http.StatusConflict, "this repository is being referenced in a service, you cannot change its owner directly - you can change the owner of the service and this will move it along", c.Now())
 }
 
 func (c *Impl) repositoryConcurrentlyUpdated(ctx context.Context, w http.ResponseWriter, _ *http.Request, repository string, resource any) {
-	c.Logging.Logger().Ctx(ctx).Warn().Printf("repository %v was concurrently updated", repository)
+	c.Logging.Logger().Ctx(ctx).Info().Printf("repository %v was concurrently updated", repository)
 	w.Header().Set(headers.ContentType, media.ContentTypeApplicationJson)
 	w.WriteHeader(http.StatusConflict)
 	util.WriteJson(ctx, w, resource)
 }
 
 func (c *Impl) repositoryValidationError(ctx context.Context, w http.ResponseWriter, r *http.Request, err error) {
-	c.Logging.Logger().Ctx(ctx).Warn().Printf("repository values invalid: %s", err.Error())
+	c.Logging.Logger().Ctx(ctx).Info().Printf("repository values invalid: %s", err.Error())
 	util.ErrorHandler(ctx, w, r, "repository.invalid.values", http.StatusBadRequest, err.Error(), c.Now())
 }
 
 func (c *Impl) repositoryNonexistentOwner(ctx context.Context, w http.ResponseWriter, r *http.Request, err error) {
-	c.Logging.Logger().Ctx(ctx).Warn().Printf("repository values invalid: %s", err.Error())
+	c.Logging.Logger().Ctx(ctx).Info().Printf("repository values invalid: %s", err.Error())
 	util.ErrorHandler(ctx, w, r, "repository.invalid.missing.owner", http.StatusBadRequest, err.Error(), c.Now())
 }
 
 func (c *Impl) repoStillReferenced(ctx context.Context, w http.ResponseWriter, r *http.Request, key string) {
-	c.Logging.Logger().Ctx(ctx).Warn().Printf("tried to delete repository %v, which is still referenced by its service", key)
+	c.Logging.Logger().Ctx(ctx).Info().Printf("tried to delete repository %v, which is still referenced by its service", key)
 	util.ErrorHandler(ctx, w, r, "repository.conflict.referenced", http.StatusConflict, "this repository is still being referenced by a service and cannot be deleted", c.Now())
 }
 
 func (c *Impl) deletionValidationError(ctx context.Context, w http.ResponseWriter, r *http.Request, err error) {
-	c.Logging.Logger().Ctx(ctx).Warn().Printf("deletion info values invalid: %s", err.Error())
+	c.Logging.Logger().Ctx(ctx).Info().Printf("deletion info values invalid: %s", err.Error())
 	util.ErrorHandler(ctx, w, r, "deletion.invalid.values", http.StatusBadRequest, err.Error(), c.Now())
 }
 
