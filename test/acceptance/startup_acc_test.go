@@ -5,7 +5,7 @@ import (
 	"github.com/Interhyp/metadata-service/acorns/repository"
 	"github.com/Interhyp/metadata-service/acorns/service"
 	"github.com/Interhyp/metadata-service/docs"
-	"github.com/Interhyp/metadata-service/web/app"
+	"github.com/Interhyp/metadata-service/internal/web/app"
 	auacorn "github.com/StephanHCB/go-autumn-acorn-registry"
 	libcontroller "github.com/StephanHCB/go-backend-service-common/acorns/controller"
 	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"

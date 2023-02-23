@@ -7,7 +7,7 @@ import (
 	"github.com/Interhyp/metadata-service/acorns/config"
 	"github.com/Interhyp/metadata-service/acorns/errors/nochangeserror"
 	"github.com/Interhyp/metadata-service/acorns/repository"
-	"github.com/Interhyp/metadata-service/web/middleware/jwt"
+	"github.com/Interhyp/metadata-service/internal/web/middleware/jwt"
 	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
 	"github.com/go-git/go-billy/v5/memfs"
 	"github.com/go-git/go-git/v5"

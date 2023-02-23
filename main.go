@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/Interhyp/metadata-service/web/app"
+	"github.com/Interhyp/metadata-service/internal/web/app"
 	"os"
 )
 

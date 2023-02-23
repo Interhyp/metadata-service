@@ -6,7 +6,7 @@ import (
 	"crypto/sha256"
 	"crypto/subtle"
 	"github.com/Interhyp/metadata-service/acorns/config"
-	"github.com/Interhyp/metadata-service/web/util"
+	"github.com/Interhyp/metadata-service/internal/web/util"
 	"github.com/go-http-utils/headers"
 	"github.com/golang-jwt/jwt/v4"
 	"net/http"
