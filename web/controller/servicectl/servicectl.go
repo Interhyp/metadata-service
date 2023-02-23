@@ -260,7 +260,7 @@ func (c *Impl) GetServicePromoters(w http.ResponseWriter, r *http.Request) {
 // --- specific error handlers ---
 
 func (c *Impl) serviceParamInvalid(ctx context.Context, w http.ResponseWriter, r *http.Request, service string) {
-	c.Logging.Logger().Ctx(ctx).Warn().Printf("service parameter %v invalid", url.QueryEscape(service))
+	c.Logging.Logger().Ctx(ctx).Info().Printf("service parameter %v invalid", url.QueryEscape(service))
 	permitted := c.CustomConfiguration.ServiceNamePermittedRegex().String()
 	prohibited := c.CustomConfiguration.ServiceNameProhibitedRegex().String()
 	max := c.CustomConfiguration.ServiceNameMaxLength()
@@ -270,46 +270,46 @@ func (c *Impl) serviceParamInvalid(ctx context.Context, w http.ResponseWriter, r
 }
 
 func (c *Impl) serviceNotFoundErrorHandler(ctx context.Context, w http.ResponseWriter, r *http.Request, service string) {
-	c.Logging.Logger().Ctx(ctx).Warn().Printf("service %v not found", service)
+	c.Logging.Logger().Ctx(ctx).Info().Printf("service %v not found", service)
 	util.ErrorHandler(ctx, w, r, "service.notfound", http.StatusNotFound, "", c.Now())
 }
 
 func (c *Impl) serviceBodyInvalid(ctx context.Context, w http.ResponseWriter, r *http.Request, err error) {
-	c.Logging.Logger().Ctx(ctx).Warn().Printf("service body invalid: %s", err.Error())
+	c.Logging.Logger().Ctx(ctx).Info().Printf("service body invalid: %s", err.Error())
 	util.ErrorHandler(ctx, w, r, "service.invalid.body", http.StatusBadRequest, "body failed to parse", c.Now())
 }
 
 func (c *Impl) serviceAlreadyExists(ctx context.Context, w http.ResponseWriter, r *http.Request, service string, resource any) {
-	c.Logging.Logger().Ctx(ctx).Warn().Printf("service %v already exists", service)
+	c.Logging.Logger().Ctx(ctx).Info().Printf("service %v already exists", service)
 	w.Header().Set(headers.ContentType, media.ContentTypeApplicationJson)
 	w.WriteHeader(http.StatusConflict)
 	util.WriteJson(ctx, w, resource)
 }
 
 func (c *Impl) serviceConcurrentlyUpdated(ctx context.Context, w http.ResponseWriter, r *http.Request, service string, resource any) {
-	c.Logging.Logger().Ctx(ctx).Warn().Printf("service %v was concurrently updated", service)
+	c.Logging.Logger().Ctx(ctx).Info().Printf("service %v was concurrently updated", service)
 	w.Header().Set(headers.ContentType, media.ContentTypeApplicationJson)
 	w.WriteHeader(http.StatusConflict)
 	util.WriteJson(ctx, w, resource)
 }
 
 func (c *Impl) serviceValidationError(ctx context.Context, w http.ResponseWriter, r *http.Request, err error) {
-	c.Logging.Logger().Ctx(ctx).Warn().Printf("service values invalid: %s", err.Error())
+	c.Logging.Logger().Ctx(ctx).Info().Printf("service values invalid: %s", err.Error())
 	util.ErrorHandler(ctx, w, r, "service.invalid.values", http.StatusBadRequest, err.Error(), c.Now())
 }
 
 func (c *Impl) serviceNonexistentOwner(ctx context.Context, w http.ResponseWriter, r *http.Request, err error) {
-	c.Logging.Logger().Ctx(ctx).Warn().Printf("service values invalid: %s", err.Error())
+	c.Logging.Logger().Ctx(ctx).Info().Printf("service values invalid: %s", err.Error())
 	util.ErrorHandler(ctx, w, r, "service.invalid.missing.owner", http.StatusBadRequest, err.Error(), c.Now())
 }
 
 func (c *Impl) serviceNonexistentRepository(ctx context.Context, w http.ResponseWriter, r *http.Request, err error) {
-	c.Logging.Logger().Ctx(ctx).Warn().Printf("service values invalid: %s", err.Error())
+	c.Logging.Logger().Ctx(ctx).Info().Printf("service values invalid: %s", err.Error())
 	util.ErrorHandler(ctx, w, r, "service.invalid.missing.repository", http.StatusBadRequest, "validation error: you referenced a repository that does not exist: "+err.Error(), c.Now())
 }
 
 func (c *Impl) deletionValidationError(ctx context.Context, w http.ResponseWriter, r *http.Request, err error) {
-	c.Logging.Logger().Ctx(ctx).Warn().Printf("deletion info values invalid: %s", err.Error())
+	c.Logging.Logger().Ctx(ctx).Info().Printf("deletion info values invalid: %s", err.Error())
 	util.ErrorHandler(ctx, w, r, "deletion.invalid.values", http.StatusBadRequest, err.Error(), c.Now())
 }
 

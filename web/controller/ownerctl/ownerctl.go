@@ -223,7 +223,7 @@ func (c *Impl) DeleteOwner(w http.ResponseWriter, r *http.Request) {
 // --- specific error handlers ---
 
 func (c *Impl) ownerParamInvalid(ctx context.Context, w http.ResponseWriter, r *http.Request, owner string) {
-	c.Logging.Logger().Ctx(ctx).Warn().Printf("owner parameter %v invalid", url.QueryEscape(owner))
+	c.Logging.Logger().Ctx(ctx).Info().Printf("owner parameter %v invalid", url.QueryEscape(owner))
 	permitted := c.CustomConfiguration.OwnerAliasPermittedRegex().String()
 	prohibited := c.CustomConfiguration.OwnerAliasProhibitedRegex().String()
 	max := c.CustomConfiguration.OwnerAliasMaxLength()
@@ -232,41 +232,41 @@ func (c *Impl) ownerParamInvalid(ctx context.Context, w http.ResponseWriter, r *
 }
 
 func (c *Impl) ownerNotFoundErrorHandler(ctx context.Context, w http.ResponseWriter, r *http.Request, owner string) {
-	c.Logging.Logger().Ctx(ctx).Warn().Printf("owner %v not found", owner)
+	c.Logging.Logger().Ctx(ctx).Info().Printf("owner %v not found", owner)
 	util.ErrorHandler(ctx, w, r, "owner.notfound", http.StatusNotFound, "", c.Now())
 }
 
 func (c *Impl) ownerBodyInvalid(ctx context.Context, w http.ResponseWriter, r *http.Request, err error) {
-	c.Logging.Logger().Ctx(ctx).Warn().Printf("owner body invalid: %s", err.Error())
+	c.Logging.Logger().Ctx(ctx).Info().Printf("owner body invalid: %s", err.Error())
 	util.ErrorHandler(ctx, w, r, "owner.invalid.body", http.StatusBadRequest, "body failed to parse", c.Now())
 }
 
 func (c *Impl) ownerAlreadyExists(ctx context.Context, w http.ResponseWriter, _ *http.Request, owner string, resource any) {
-	c.Logging.Logger().Ctx(ctx).Warn().Printf("owner %v already exists", owner)
+	c.Logging.Logger().Ctx(ctx).Info().Printf("owner %v already exists", owner)
 	w.Header().Set(headers.ContentType, media.ContentTypeApplicationJson)
 	w.WriteHeader(http.StatusConflict)
 	util.WriteJson(ctx, w, resource)
 }
 
 func (c *Impl) ownerConcurrentlyUpdated(ctx context.Context, w http.ResponseWriter, _ *http.Request, owner string, resource any) {
-	c.Logging.Logger().Ctx(ctx).Warn().Printf("owner %v was concurrently updated", owner)
+	c.Logging.Logger().Ctx(ctx).Info().Printf("owner %v was concurrently updated", owner)
 	w.Header().Set(headers.ContentType, media.ContentTypeApplicationJson)
 	w.WriteHeader(http.StatusConflict)
 	util.WriteJson(ctx, w, resource)
 }
 
 func (c *Impl) ownerNotEmpty(ctx context.Context, w http.ResponseWriter, r *http.Request, owner string) {
-	c.Logging.Logger().Ctx(ctx).Warn().Printf("tried to delete owner %v, who still owns services or repositories", owner)
+	c.Logging.Logger().Ctx(ctx).Info().Printf("tried to delete owner %v, who still owns services or repositories", owner)
 	util.ErrorHandler(ctx, w, r, "owner.conflict.notempty", http.StatusConflict, "this owner still has services or repositories and cannot be deleted", c.Now())
 }
 
 func (c *Impl) ownerValidationError(ctx context.Context, w http.ResponseWriter, r *http.Request, err error) {
-	c.Logging.Logger().Ctx(ctx).Warn().Printf("owner values invalid: %s", err.Error())
+	c.Logging.Logger().Ctx(ctx).Info().Printf("owner values invalid: %s", err.Error())
 	util.ErrorHandler(ctx, w, r, "owner.invalid.values", http.StatusBadRequest, err.Error(), c.Now())
 }
 
 func (c *Impl) deletionValidationError(ctx context.Context, w http.ResponseWriter, r *http.Request, err error) {
-	c.Logging.Logger().Ctx(ctx).Warn().Printf("deletion info values invalid: %s", err.Error())
+	c.Logging.Logger().Ctx(ctx).Info().Printf("deletion info values invalid: %s", err.Error())
 	util.ErrorHandler(ctx, w, r, "deletion.invalid.values", http.StatusBadRequest, err.Error(), c.Now())
 }
 

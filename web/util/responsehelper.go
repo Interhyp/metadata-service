@@ -37,17 +37,17 @@ func BadGatewayErrorHandler(ctx context.Context, w http.ResponseWriter, r *http.
 }
 
 func UnauthorizedErrorHandler(ctx context.Context, w http.ResponseWriter, r *http.Request, logMessage string, timeStamp time.Time) {
-	aulogging.Logger.Ctx(ctx).Warn().Printf("unauthorized: %s", logMessage)
+	aulogging.Logger.Ctx(ctx).Info().Printf("unauthorized: %s", logMessage)
 	ErrorHandler(ctx, w, r, "unauthorized", http.StatusUnauthorized, "missing or invalid Authorization header (JWT bearer token expected) or token invalid or expired", timeStamp)
 }
 
 func ForbiddenErrorHandler(ctx context.Context, w http.ResponseWriter, r *http.Request, logMessage string, timeStamp time.Time) {
-	aulogging.Logger.Ctx(ctx).Warn().Printf("forbidden: %s", logMessage)
+	aulogging.Logger.Ctx(ctx).Info().Printf("forbidden: %s", logMessage)
 	ErrorHandler(ctx, w, r, "forbidden", http.StatusForbidden, "you are not authorized for this operation", timeStamp)
 }
 
 func DeletionBodyInvalid(ctx context.Context, w http.ResponseWriter, r *http.Request, err error, timeStamp time.Time) {
-	aulogging.Logger.Ctx(ctx).Warn().Printf("deletion body invalid: %s", err.Error())
+	aulogging.Logger.Ctx(ctx).Info().Printf("deletion body invalid: %s", err.Error())
 	ErrorHandler(ctx, w, r, "deletion.invalid.body", http.StatusBadRequest, "body failed to parse", timeStamp)
 }
 
