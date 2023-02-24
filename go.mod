@@ -61,7 +61,7 @@ require (
 	github.com/StephanHCB/go-autumn-restclient-circuitbreaker v0.4.1
 	github.com/StephanHCB/go-autumn-restclient-circuitbreaker-prometheus v0.1.0
 	github.com/StephanHCB/go-autumn-restclient-prometheus v0.1.2
-	github.com/StephanHCB/go-backend-service-common v0.1.5
+	github.com/StephanHCB/go-backend-service-common v0.1.6
 	github.com/go-chi/chi/v5 v5.0.8
 	github.com/go-git/go-billy/v5 v5.4.1
 	github.com/go-git/go-git/v5 v5.5.2
