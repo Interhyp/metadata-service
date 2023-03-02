@@ -48,7 +48,7 @@ func TestGETOwner_NotFound(t *testing.T) {
 	response, err := tstPerformGet("/rest/api/v1/owners/migration-excellence", token)
 
 	docs.Then("Then the request fails and the error response is as expected")
-	tstAssert(t, response, err, http.StatusNotFound, "owner-notfound.json")
+	tstAssert(t, response, err, http.StatusNotFound, "owner-notfound-migration-excellence.json")
 }
 
 // create owner
@@ -710,7 +710,7 @@ func TestDELETEOwner_Success(t *testing.T) {
 
 	docs.Then("And the owner has been removed from the cache")
 	readAgain, err := tstPerformGet("/rest/api/v1/owners/deleteme", tstUnauthenticated())
-	tstAssert(t, readAgain, err, http.StatusNotFound, "owner-notfound.json")
+	tstAssert(t, readAgain, err, http.StatusNotFound, "owner-notfound-deleteme.json")
 
 	docs.Then("And a kafka message notifying other instances of the deletion has been sent")
 	require.Equal(t, 1, len(kafkaImpl.Recording))

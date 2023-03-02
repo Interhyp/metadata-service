@@ -4,9 +4,9 @@ import (
 	"context"
 	"errors"
 	"github.com/Interhyp/metadata-service/acorns/errors/nochangeserror"
-	"github.com/Interhyp/metadata-service/acorns/errors/referencederror"
 	"github.com/Interhyp/metadata-service/acorns/repository"
 	openapi "github.com/Interhyp/metadata-service/api/v1"
+	"github.com/StephanHCB/go-backend-service-common/api/apierrors"
 )
 
 // --- business logic ---
@@ -19,7 +19,8 @@ func (s *Impl) WriteRepository(ctx context.Context, key string, repository opena
 
 			allowed := s.CanMoveOrDeleteRepository(subCtx, key)
 			if !allowed {
-				return referencederror.New(ctx, "this repository is still referenced by its service and cannot be moved - move the service instead")
+				s.Logging.Logger().Ctx(ctx).Info().Printf("tried to move repository %v, which is still referenced by its service", key)
+				return apierrors.NewConflictError("repository.conflict.referenced", "this repository is being referenced in a service, you cannot change its owner directly - you can change the owner of the service and this will move it along", nil, s.Now())
 			}
 
 			repositoryWritten, err := s.Mapper.WriteRepositoryWithChangedOwner(subCtx, key, repository)

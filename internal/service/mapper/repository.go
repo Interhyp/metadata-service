@@ -5,9 +5,9 @@ import (
 	"errors"
 	"fmt"
 	"github.com/Interhyp/metadata-service/acorns/errors/nochangeserror"
-	"github.com/Interhyp/metadata-service/acorns/errors/nosuchrepoerror"
 	openapi "github.com/Interhyp/metadata-service/api/v1"
 	"github.com/Interhyp/metadata-service/internal/service/util"
+	"github.com/StephanHCB/go-backend-service-common/api/apierrors"
 	"sort"
 	"strings"
 )
@@ -64,7 +64,7 @@ func (s *Impl) lookupRepositoryOwnerWithRefresh(ctx context.Context, repoKey str
 		}
 		ownerAlias, ok = s.lookupInRepositoryOwnerCache(repoKey)
 		if !ok {
-			return "", nosuchrepoerror.New(ctx, repoKey)
+			return "", apierrors.NewNotFoundError(fmt.Sprintf("repository not found %s", repoKey), "repository.notfound", nil, s.Now())
 		}
 	}
 	return ownerAlias, nil

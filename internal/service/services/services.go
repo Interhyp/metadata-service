@@ -4,17 +4,13 @@ import (
 	"context"
 	"fmt"
 	"github.com/Interhyp/metadata-service/acorns/config"
-	"github.com/Interhyp/metadata-service/acorns/errors/alreadyexistserror"
-	"github.com/Interhyp/metadata-service/acorns/errors/concurrencyerror"
-	"github.com/Interhyp/metadata-service/acorns/errors/nosuchownererror"
-	"github.com/Interhyp/metadata-service/acorns/errors/nosuchrepoerror"
-	"github.com/Interhyp/metadata-service/acorns/errors/nosuchserviceerror"
-	"github.com/Interhyp/metadata-service/acorns/errors/validationerror"
 	"github.com/Interhyp/metadata-service/acorns/service"
 	openapi "github.com/Interhyp/metadata-service/api/v1"
 	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
+	"github.com/StephanHCB/go-backend-service-common/api/apierrors"
 	"sort"
 	"strings"
+	"time"
 )
 
 type Impl struct {
@@ -24,6 +20,8 @@ type Impl struct {
 	Cache               service.Cache
 	Updater             service.Updater
 	Owner               service.Owners
+
+	Now func() time.Time
 }
 
 func (s *Impl) GetServices(ctx context.Context, ownerAliasFilter string) (openapi.ServiceListDto, error) {
@@ -35,7 +33,7 @@ func (s *Impl) GetServices(ctx context.Context, ownerAliasFilter string) (openap
 		service, err := s.GetService(ctx, name)
 		if err != nil {
 			// service not found errors are ok, the cache may have been changed concurrently, just drop the entry
-			if !nosuchserviceerror.Is(err) {
+			if !apierrors.IsNotFoundError(err) {
 				return openapi.ServiceListDto{}, err
 			}
 		} else {
@@ -69,18 +67,22 @@ func (s *Impl) CreateService(ctx context.Context, serviceName string, serviceCre
 		current, err := s.Cache.GetService(subCtx, serviceName)
 		if err == nil {
 			result = current
-			return alreadyexistserror.New(ctx, fmt.Sprintf("service %s already exists - cannot create", serviceName))
+			s.Logging.Logger().Ctx(ctx).Info().Printf("service %v already exists", serviceName)
+			return apierrors.NewConflictErrorWithResponse("owner.conflict.alreadyexists", fmt.Sprintf("service %s already exists - cannot create", serviceName), nil, result, s.Now())
 		}
 
 		_, err = s.Cache.GetOwner(subCtx, serviceDto.Owner)
 		if err != nil {
-			return nosuchownererror.New(ctx, serviceDto.Owner)
+			details := fmt.Sprintf("no such owner: %s", serviceDto.Owner)
+			s.Logging.Logger().Ctx(ctx).Info().Printf(details)
+			return apierrors.NewBadRequestError("service.invalid.missing.owner", details, err, s.Now())
 		}
 
 		for _, repoKey := range serviceDto.Repositories {
 			_, err = s.Cache.GetRepository(subCtx, repoKey)
 			if err != nil {
-				return nosuchrepoerror.New(ctx, repoKey)
+				s.Logging.Logger().Ctx(ctx).Info().Printf("service values invalid: %s", repoKey)
+				return apierrors.NewBadRequestError("service.invalid.missing.repository", "validation error: you referenced a repository that does not exist: no such instance: "+repoKey, nil, s.Now())
 			}
 		}
 
@@ -124,7 +126,9 @@ func (s *Impl) validateNewServiceDto(ctx context.Context, serviceName string, dt
 	}
 
 	if len(messages) > 0 {
-		return validationerror.New(ctx, strings.Join(messages, ", "))
+		details := strings.Join(messages, ", ")
+		s.Logging.Logger().Ctx(ctx).Info().Printf("service values invalid: %s", details)
+		return apierrors.NewBadRequestError("service.invalid.values", fmt.Sprintf("validation error: %s", details), nil, s.Now())
 	}
 	return nil
 }
@@ -143,24 +147,28 @@ func (s *Impl) UpdateService(ctx context.Context, serviceName string, serviceDto
 
 		current, err := s.Cache.GetService(subCtx, serviceName)
 		if err != nil {
-			return nosuchserviceerror.New(ctx, serviceName)
+			s.Logging.Logger().Ctx(ctx).Info().Printf("service %v not found", serviceName)
+			return apierrors.NewNotFoundError("service.notfound", fmt.Sprintf("service %s not found", serviceName), nil, s.Now())
 		}
 
 		_, err = s.Cache.GetOwner(subCtx, serviceDto.Owner)
 		if err != nil {
-			return nosuchownererror.New(ctx, serviceDto.Owner)
+			s.Logging.Logger().Ctx(ctx).Info().Printf("owner %v not found", serviceDto.Owner)
+			return apierrors.NewBadRequestError("service.invalid.missing.owner", fmt.Sprintf("no such owner: %s", serviceDto.Owner), nil, s.Now())
 		}
 
 		for _, repoKey := range serviceDto.Repositories {
 			_, err = s.Cache.GetRepository(subCtx, repoKey)
 			if err != nil {
-				return nosuchrepoerror.New(ctx, repoKey)
+				s.Logging.Logger().Ctx(ctx).Info().Printf("service values invalid: %s", repoKey)
+				return apierrors.NewBadRequestError("service.invalid.missing.repository", "validation error: you referenced a repository that does not exist: no such instance: "+repoKey, err, s.Now())
 			}
 		}
 
 		if current.TimeStamp != serviceDto.TimeStamp || current.CommitHash != serviceDto.CommitHash {
 			result = current
-			return concurrencyerror.New(ctx, "this service was concurrently updated")
+			s.Logging.Logger().Ctx(ctx).Info().Printf("service %v was concurrently updated", serviceName)
+			return apierrors.NewConflictErrorWithResponse("service.conflict.concurrentlyupdated", fmt.Sprintf("service %v was concurrently updated", serviceName), nil, result, s.Now())
 		}
 
 		serviceWritten, err := s.Updater.WriteService(subCtx, serviceName, serviceDto)
@@ -195,7 +203,9 @@ func (s *Impl) validateExistingServiceDto(ctx context.Context, serviceName strin
 	}
 
 	if len(messages) > 0 {
-		return validationerror.New(ctx, strings.Join(messages, ", "))
+		details := strings.Join(messages, ", ")
+		s.Logging.Logger().Ctx(ctx).Info().Printf("service values invalid: %s", details)
+		return apierrors.NewBadRequestError("service.invalid.values", fmt.Sprintf("validation error: %s", details), nil, s.Now())
 	}
 	return nil
 }
@@ -225,19 +235,24 @@ func (s *Impl) PatchService(ctx context.Context, serviceName string, servicePatc
 
 		_, err = s.Cache.GetOwner(subCtx, serviceDto.Owner)
 		if err != nil {
-			return nosuchownererror.New(ctx, serviceDto.Owner)
+			details := fmt.Sprintf("no such owner: %s", serviceDto.Owner)
+			s.Logging.Logger().Ctx(ctx).Info().Printf(details)
+			return apierrors.NewBadRequestError("service.invalid.missing.owner", details, err, s.Now())
 		}
 
 		for _, repoKey := range serviceDto.Repositories {
 			_, err = s.Cache.GetRepository(subCtx, repoKey)
 			if err != nil {
-				return nosuchrepoerror.New(ctx, repoKey)
+				details := fmt.Sprintf("validation error: you referenced a repository that does not exist: no such instance: %s", repoKey)
+				s.Logging.Logger().Ctx(ctx).Info().Printf(details)
+				return apierrors.NewBadRequestError("service.invalid.missing.repository", details, err, s.Now())
 			}
 		}
 
 		if current.TimeStamp != servicePatchDto.TimeStamp || current.CommitHash != servicePatchDto.CommitHash {
 			result = current
-			return concurrencyerror.New(ctx, "this service was concurrently updated")
+			s.Logging.Logger().Ctx(ctx).Info().Printf("service %v was concurrently updated", serviceName)
+			return apierrors.NewConflictErrorWithResponse("service.conflict.concurrentlyupdated", fmt.Sprintf("service %v was concurrently updated", serviceName), nil, result, s.Now())
 		}
 
 		serviceWritten, err := s.Updater.WriteService(subCtx, serviceName, serviceDto)
@@ -273,7 +288,9 @@ func (s *Impl) validateServicePatchDto(ctx context.Context, serviceName string, 
 		messages = append(messages, "field jiraIssue is mandatory for patching")
 	}
 	if len(messages) > 0 {
-		return validationerror.New(ctx, strings.Join(messages, ", "))
+		details := strings.Join(messages, ", ")
+		s.Logging.Logger().Ctx(ctx).Info().Printf("service values invalid: %s", details)
+		return apierrors.NewBadRequestError("service.invalid.values", fmt.Sprintf("validation error: %s", details), nil, s.Now())
 	}
 	return nil
 }
@@ -367,7 +384,7 @@ func (s *Impl) DeleteService(ctx context.Context, serviceName string, deletionIn
 
 		_, err = s.Cache.GetService(subCtx, serviceName)
 		if err != nil {
-			return nosuchserviceerror.New(ctx, serviceName)
+			return err
 		}
 
 		err = s.Updater.DeleteService(subCtx, serviceName, deletionInfo)
@@ -385,7 +402,9 @@ func (s *Impl) validateDeletionDto(ctx context.Context, deletionInfo openapi.Del
 		messages = append(messages, "field jiraIssue is mandatory for deletion")
 	}
 	if len(messages) > 0 {
-		return validationerror.New(ctx, strings.Join(messages, ", "))
+		details := strings.Join(messages, ", ")
+		s.Logging.Logger().Ctx(ctx).Info().Printf("deletion info values invalid: %s", details)
+		return apierrors.NewBadRequestError("deletion.invalid.values", fmt.Sprintf("validation error: %s", details), nil, s.Now())
 	}
 	return nil
 }
@@ -439,7 +458,7 @@ func (s *Impl) addDefaultPromoters(ctx context.Context, resultSet map[string]boo
 func (s *Impl) addPromotersForOwner(ctx context.Context, ownerAlias string, resultSet map[string]bool) error {
 	serviceOwner, err := s.Cache.GetOwner(ctx, ownerAlias)
 	if err != nil {
-		if !nosuchownererror.Is(err) {
+		if !apierrors.IsNotFoundError(err) {
 			// concurrent cache update -> ok
 			return err
 		}
@@ -457,7 +476,7 @@ func (s *Impl) addAllProductOwners(ctx context.Context, resultSet map[string]boo
 		owner, err := s.Cache.GetOwner(ctx, alias)
 		if err != nil {
 			// owner not found errors are ok, the cache may have been changed concurrently, just drop the entry
-			if !nosuchownererror.Is(err) {
+			if !apierrors.IsNotFoundError(err) {
 				return err
 			}
 		} else {

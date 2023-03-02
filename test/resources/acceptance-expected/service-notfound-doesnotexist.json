@@ -1,5 +1,5 @@
 {
-  "details": "service unicorn not found",
+  "details": "service does-not-exist not found",
   "message": "service.notfound",
   "timestamp": "2022-11-06T18:14:10Z"
 }

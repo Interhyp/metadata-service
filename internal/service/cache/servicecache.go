@@ -2,8 +2,9 @@ package cache
 
 import (
 	"context"
-	"github.com/Interhyp/metadata-service/acorns/errors/nosuchserviceerror"
+	"fmt"
 	openapi "github.com/Interhyp/metadata-service/api/v1"
+	"github.com/StephanHCB/go-backend-service-common/api/apierrors"
 )
 
 func (s *Impl) SetServiceListTimestamp(_ context.Context, timestamp string) {
@@ -22,7 +23,7 @@ func (s *Impl) GetSortedServiceNames(_ context.Context) []string {
 func (s *Impl) GetService(ctx context.Context, name string) (openapi.ServiceDto, error) {
 	immutableServicePtr := s.ServiceCache.GetEntryRef(name)
 	if immutableServicePtr == nil {
-		return openapi.ServiceDto{}, nosuchserviceerror.New(ctx, name)
+		return openapi.ServiceDto{}, apierrors.NewNotFoundError("service.notfound", fmt.Sprintf("service %s not found", name), nil, s.Now())
 	} else {
 		return deepCopyService(immutableServicePtr), nil
 	}

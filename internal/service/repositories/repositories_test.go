@@ -5,9 +5,12 @@ import (
 	openapi "github.com/Interhyp/metadata-service/api/v1"
 	"github.com/Interhyp/metadata-service/docs"
 	"github.com/Interhyp/metadata-service/internal/service/owners"
+	auloggingapi "github.com/StephanHCB/go-autumn-logging/api"
+	"github.com/StephanHCB/go-backend-service-common/api/apierrors"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"testing"
+	"time"
 )
 
 func p(v string) *string {
@@ -230,22 +233,117 @@ func tstCreateValid() openapi.RepositoryCreateDto {
 	}
 }
 
-func tstValidationTestcaseAllOps(t *testing.T, expectedMessage string, data openapi.RepositoryDto, create openapi.RepositoryCreateDto, patch openapi.RepositoryPatchDto) {
-	err := validateRepositoryCreateDto(context.TODO(), "any", create)
-	require.NotNil(t, err)
-	require.Equal(t, expectedMessage, err.Error())
+type MockLogging struct {
+}
 
-	err = validateExistingRepositoryDto(context.TODO(), "any", data)
+func (m MockLogging) IsLogging() bool {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (m MockLogging) Setup() {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (m MockLogging) Logger() auloggingapi.LoggingImplementation {
+	return MockLoggingImplementation{}
+}
+
+type MockLoggingImplementation struct {
+}
+
+func (m MockLoggingImplementation) Ctx(ctx context.Context) auloggingapi.ContextAwareLoggingImplementation {
+	return MockContextAwareLoggingImplementation{}
+}
+
+func (m MockLoggingImplementation) NoCtx() auloggingapi.ContextAwareLoggingImplementation {
+	//TODO implement me
+	panic("implement me")
+}
+
+type MockContextAwareLoggingImplementation struct {
+}
+
+func (m MockContextAwareLoggingImplementation) Trace() auloggingapi.LeveledLoggingImplementation {
+	return MockLeveledLoggingImplementation{}
+}
+
+func (m MockContextAwareLoggingImplementation) Debug() auloggingapi.LeveledLoggingImplementation {
+	return MockLeveledLoggingImplementation{}
+}
+
+func (m MockContextAwareLoggingImplementation) Info() auloggingapi.LeveledLoggingImplementation {
+	return MockLeveledLoggingImplementation{}
+}
+
+func (m MockContextAwareLoggingImplementation) Warn() auloggingapi.LeveledLoggingImplementation {
+	return MockLeveledLoggingImplementation{}
+}
+
+func (m MockContextAwareLoggingImplementation) Error() auloggingapi.LeveledLoggingImplementation {
+	return MockLeveledLoggingImplementation{}
+}
+
+func (m MockContextAwareLoggingImplementation) Fatal() auloggingapi.LeveledLoggingImplementation {
+	return MockLeveledLoggingImplementation{}
+}
+
+func (m MockContextAwareLoggingImplementation) Panic() auloggingapi.LeveledLoggingImplementation {
+	return MockLeveledLoggingImplementation{}
+}
+
+type MockLeveledLoggingImplementation struct {
+}
+
+func (m MockLeveledLoggingImplementation) WithErr(err error) auloggingapi.LeveledLoggingImplementation {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (m MockLeveledLoggingImplementation) With(key string, value string) auloggingapi.LeveledLoggingImplementation {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (m MockLeveledLoggingImplementation) Print(v ...interface{}) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (m MockLeveledLoggingImplementation) Printf(format string, v ...interface{}) {
+	// do nothing
+}
+
+func fakeNow() time.Time {
+	return time.Date(2022, 11, 6, 18, 14, 10, 0, time.UTC)
+}
+
+func tstValidationTestcaseAllOps(t *testing.T, expectedMessage string, data openapi.RepositoryDto, create openapi.RepositoryCreateDto, patch openapi.RepositoryPatchDto) {
+	mockLogging := MockLogging{}
+	impl := &Impl{
+		Configuration: nil,
+		Logging:       &mockLogging,
+		Cache:         nil,
+		Updater:       nil,
+		Now:           fakeNow,
+	}
+
+	err := (*Impl).validateRepositoryCreateDto(impl, context.TODO(), "any", create)
 	require.NotNil(t, err)
-	require.Equal(t, expectedMessage, err.Error())
+	require.Equal(t, expectedMessage, *err.(apierrors.AnnotatedError).ApiError().Details)
+
+	err = (*Impl).validateExistingRepositoryDto(impl, context.TODO(), "any", data)
+	require.NotNil(t, err)
+	require.Equal(t, expectedMessage, *err.(apierrors.AnnotatedError).ApiError().Details)
 
 	patch.TimeStamp = "newts"
 	patch.CommitHash = "newhash"
 	patch.JiraIssue = "newjiraissue"
 
-	err = validateRepositoryPatchDto(context.TODO(), "any", patch, data)
+	err = (*Impl).validateRepositoryPatchDto(impl, context.TODO(), "any", patch, data)
 	require.NotNil(t, err)
-	require.Equal(t, expectedMessage, err.Error())
+	require.Equal(t, expectedMessage, *err.(apierrors.AnnotatedError).ApiError().Details)
 }
 
 func TestValidate_Url(t *testing.T) {

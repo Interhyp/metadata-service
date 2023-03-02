@@ -4,8 +4,11 @@ import (
 	"context"
 	"encoding/json"
 	openapi "github.com/Interhyp/metadata-service/api/v1"
+	aulogging "github.com/StephanHCB/go-autumn-logging"
+	"github.com/StephanHCB/go-backend-service-common/api/apierrors"
 	"github.com/go-chi/chi/v5"
 	"net/http"
+	"time"
 )
 
 func StringPathParam(r *http.Request, key string) string {
@@ -17,12 +20,13 @@ func StringQueryParam(r *http.Request, key string) string {
 	return query.Get(key)
 }
 
-func ParseBodyToDeletionDto(_ context.Context, r *http.Request) (openapi.DeletionDto, error) {
+func ParseBodyToDeletionDto(ctx context.Context, r *http.Request, timestamp time.Time) (openapi.DeletionDto, error) {
 	decoder := json.NewDecoder(r.Body)
 	dto := openapi.DeletionDto{}
 	err := decoder.Decode(&dto)
 	if err != nil {
-		return openapi.DeletionDto{}, err
+		aulogging.Logger.Ctx(ctx).Info().Printf("deletion body invalid: %s", err.Error())
+		return openapi.DeletionDto{}, apierrors.NewBadRequestError("deletion.invalid.body", "body failed to parse", err, timestamp)
 	}
 	return dto, nil
 }

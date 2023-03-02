@@ -5,8 +5,8 @@ import (
 	"errors"
 	"fmt"
 	"github.com/Interhyp/metadata-service/acorns/errors/nochangeserror"
-	"github.com/Interhyp/metadata-service/acorns/errors/nosuchserviceerror"
 	openapi "github.com/Interhyp/metadata-service/api/v1"
+	"github.com/StephanHCB/go-backend-service-common/api/apierrors"
 	"sort"
 	"strings"
 )
@@ -63,7 +63,7 @@ func (s *Impl) lookupServiceOwnerWithRefresh(ctx context.Context, serviceName st
 		}
 		ownerAlias, ok = s.lookupInServiceOwnerCache(serviceName)
 		if !ok {
-			return "", nosuchserviceerror.New(ctx, serviceName)
+			return "", apierrors.NewNotFoundError(fmt.Sprintf("service not found %s", serviceName), "service.notfound", nil, s.Now())
 		}
 	}
 	return ownerAlias, nil

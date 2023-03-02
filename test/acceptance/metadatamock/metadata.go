@@ -3,10 +3,9 @@ package metadatamock
 import (
 	"context"
 	"errors"
-	"github.com/Interhyp/metadata-service/acorns/errors/concurrencyerror"
 	"github.com/Interhyp/metadata-service/acorns/errors/nochangeserror"
-	"github.com/Interhyp/metadata-service/acorns/errors/unavailableerror"
 	"github.com/Interhyp/metadata-service/acorns/repository"
+	"github.com/StephanHCB/go-backend-service-common/api/apierrors"
 	"github.com/go-git/go-billy/v5"
 	"github.com/go-git/go-billy/v5/memfs"
 	"io/ioutil"
@@ -225,10 +224,10 @@ func (r *Impl) Commit(ctx context.Context, message string) (repository.CommitInf
 
 func (r *Impl) Push(ctx context.Context) error {
 	if r.SimulateRemoteFailure {
-		return unavailableerror.New(ctx, "metadata")
+		return apierrors.NewBadGatewayError("downstream.unavailable", "the git server is currently unavailable or failed to service the request", nil, r.Now())
 	}
 	if r.SimulateConcurrencyFailure {
-		return concurrencyerror.New(ctx, "cannot push")
+		return apierrors.NewConflictError("", "cannot push", nil, r.Now())
 	}
 	r.Pushed = true
 	return nil
