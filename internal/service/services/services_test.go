@@ -4,9 +4,12 @@ import (
 	"context"
 	openapi "github.com/Interhyp/metadata-service/api/v1"
 	"github.com/Interhyp/metadata-service/docs"
+	auloggingapi "github.com/StephanHCB/go-autumn-logging/api"
+	"github.com/StephanHCB/go-backend-service-common/api/apierrors"
 	"github.com/stretchr/testify/require"
 	"regexp"
 	"testing"
+	"time"
 )
 
 func p(v string) *string {
@@ -324,23 +327,111 @@ func (c *MockConfig) RepositoryKeySeparator() string {
 	panic("implement me")
 }
 
+type MockLogging struct {
+}
+
+func (m MockLogging) IsLogging() bool {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (m MockLogging) Setup() {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (m MockLogging) Logger() auloggingapi.LoggingImplementation {
+	return MockLoggingImplementation{}
+}
+
+type MockLoggingImplementation struct {
+}
+
+func (m MockLoggingImplementation) Ctx(ctx context.Context) auloggingapi.ContextAwareLoggingImplementation {
+	return MockContextAwareLoggingImplementation{}
+}
+
+func (m MockLoggingImplementation) NoCtx() auloggingapi.ContextAwareLoggingImplementation {
+	//TODO implement me
+	panic("implement me")
+}
+
+type MockContextAwareLoggingImplementation struct {
+}
+
+func (m MockContextAwareLoggingImplementation) Trace() auloggingapi.LeveledLoggingImplementation {
+	return MockLeveledLoggingImplementation{}
+}
+
+func (m MockContextAwareLoggingImplementation) Debug() auloggingapi.LeveledLoggingImplementation {
+	return MockLeveledLoggingImplementation{}
+}
+
+func (m MockContextAwareLoggingImplementation) Info() auloggingapi.LeveledLoggingImplementation {
+	return MockLeveledLoggingImplementation{}
+}
+
+func (m MockContextAwareLoggingImplementation) Warn() auloggingapi.LeveledLoggingImplementation {
+	return MockLeveledLoggingImplementation{}
+}
+
+func (m MockContextAwareLoggingImplementation) Error() auloggingapi.LeveledLoggingImplementation {
+	return MockLeveledLoggingImplementation{}
+}
+
+func (m MockContextAwareLoggingImplementation) Fatal() auloggingapi.LeveledLoggingImplementation {
+	return MockLeveledLoggingImplementation{}
+}
+
+func (m MockContextAwareLoggingImplementation) Panic() auloggingapi.LeveledLoggingImplementation {
+	return MockLeveledLoggingImplementation{}
+}
+
+type MockLeveledLoggingImplementation struct {
+}
+
+func (m MockLeveledLoggingImplementation) WithErr(err error) auloggingapi.LeveledLoggingImplementation {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (m MockLeveledLoggingImplementation) With(key string, value string) auloggingapi.LeveledLoggingImplementation {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (m MockLeveledLoggingImplementation) Print(v ...interface{}) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (m MockLeveledLoggingImplementation) Printf(format string, v ...interface{}) {
+	// do nothing
+}
+
+func fakeNow() time.Time {
+	return time.Date(2022, 11, 6, 18, 14, 10, 0, time.UTC)
+}
+
 func tstValidationTestcaseAllOps(t *testing.T, expectedMessage string, data openapi.ServiceDto, create openapi.ServiceCreateDto, patch openapi.ServicePatchDto) {
 	mockConfig := MockConfig{}
+	mockLogging := MockLogging{}
 	impl := &Impl{
 		Configuration:       nil,
 		CustomConfiguration: &mockConfig,
-		Logging:             nil,
+		Logging:             &mockLogging,
 		Cache:               nil,
 		Updater:             nil,
+		Now:                 fakeNow,
 	}
 
 	err := (*Impl).validateNewServiceDto(impl, context.TODO(), "any", create)
 	require.NotNil(t, err)
-	require.Equal(t, expectedMessage, err.Error())
+	require.Equal(t, expectedMessage, *err.(apierrors.AnnotatedError).ApiError().Details)
 
 	err = (*Impl).validateExistingServiceDto(impl, context.TODO(), "any", data)
 	require.NotNil(t, err)
-	require.Equal(t, expectedMessage, err.Error())
+	require.Equal(t, expectedMessage, *err.(apierrors.AnnotatedError).ApiError().Details)
 
 	patch.TimeStamp = "newts"
 	patch.CommitHash = "newhash"
@@ -348,7 +439,7 @@ func tstValidationTestcaseAllOps(t *testing.T, expectedMessage string, data open
 
 	err = (*Impl).validateServicePatchDto(impl, context.TODO(), "any", patch, data)
 	require.NotNil(t, err)
-	require.Equal(t, expectedMessage, err.Error())
+	require.Equal(t, expectedMessage, *err.(apierrors.AnnotatedError).ApiError().Details)
 }
 
 func TestValidate_AlertTarget(t *testing.T) {

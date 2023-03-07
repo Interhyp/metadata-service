@@ -7,7 +7,11 @@ import (
 	"github.com/Interhyp/metadata-service/acorns/repository"
 	"github.com/Interhyp/metadata-service/acorns/service"
 	"github.com/Interhyp/metadata-service/internal/repository/config"
+	"github.com/Interhyp/metadata-service/internal/service/cache"
 	"github.com/Interhyp/metadata-service/internal/service/mapper"
+	"github.com/Interhyp/metadata-service/internal/service/owners"
+	"github.com/Interhyp/metadata-service/internal/service/repositories"
+	"github.com/Interhyp/metadata-service/internal/service/services"
 	"github.com/Interhyp/metadata-service/internal/service/trigger"
 	"github.com/Interhyp/metadata-service/internal/service/updater"
 	"github.com/Interhyp/metadata-service/internal/web/app"
@@ -104,6 +108,18 @@ func tstSetup(configPath string) error {
 
 	repositoryCtl := registry.GetAcornByName(controller.RepositoryControllerAcornName).(*repositoryctl.Impl)
 	repositoryCtl.Now = fakeNow
+
+	cacheImpl := registry.GetAcornByName(service.CacheAcornName).(*cache.Impl)
+	cacheImpl.Now = fakeNow
+
+	ownerImpl := registry.GetAcornByName(service.OwnersAcornName).(*owners.Impl)
+	ownerImpl.Now = fakeNow
+
+	repositoryImpl := registry.GetAcornByName(service.RepositoriesAcornName).(*repositories.Impl)
+	repositoryImpl.Now = fakeNow
+
+	serviceImpl := registry.GetAcornByName(service.ServicesAcornName).(*services.Impl)
+	serviceImpl.Now = fakeNow
 
 	metadataImpl.Now = fakeNow
 

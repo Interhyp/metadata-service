@@ -355,7 +355,7 @@ func TestPUTService_DoesNotExist(t *testing.T) {
 	response, err := tstPerformPut("/rest/api/v1/services/does-not-exist", token, &body)
 
 	docs.Then("Then the request fails and the error response is as expected")
-	tstAssert(t, response, err, http.StatusNotFound, "service-notfound.json")
+	tstAssert(t, response, err, http.StatusNotFound, "service-notfound-doesnotexist.json")
 
 	docs.Then("And no changes have been made in the metadata repository")
 	require.Equal(t, 0, len(metadataImpl.FilesWritten))
@@ -643,7 +643,7 @@ func TestPATCHService_DoesNotExist(t *testing.T) {
 	response, err := tstPerformPatch("/rest/api/v1/services/does-not-exist", token, &body)
 
 	docs.Then("Then the request fails and the error response is as expected")
-	tstAssert(t, response, err, http.StatusNotFound, "service-notfound.json")
+	tstAssert(t, response, err, http.StatusNotFound, "service-notfound-doesnotexist.json")
 
 	docs.Then("And no changes have been made in the metadata repository")
 	require.Equal(t, 0, len(metadataImpl.FilesWritten))
@@ -895,7 +895,7 @@ func TestDELETEService_Success(t *testing.T) {
 
 	docs.Then("And the service has been removed from the cache")
 	readAgain, err := tstPerformGet("/rest/api/v1/services/some-service-backend", tstUnauthenticated())
-	tstAssert(t, readAgain, err, http.StatusNotFound, "service-notfound.json")
+	tstAssert(t, readAgain, err, http.StatusNotFound, "service-notfound-someservicebackend.json")
 
 	docs.Then("And a kafka message notifying other instances of the deletion has been sent")
 	require.Equal(t, 1, len(kafkaImpl.Recording))
@@ -914,7 +914,7 @@ func TestDELETEService_DoesNotExist(t *testing.T) {
 	response, err := tstPerformDelete("/rest/api/v1/services/does-not-exist", token, &body)
 
 	docs.Then("Then the request fails and the error response is as expected")
-	tstAssert(t, response, err, http.StatusNotFound, "service-notfound.json")
+	tstAssert(t, response, err, http.StatusNotFound, "service-notfound-doesnotexist.json")
 
 	docs.Then("And no changes have been made in the metadata repository")
 	require.Equal(t, 0, len(metadataImpl.FilesWritten))

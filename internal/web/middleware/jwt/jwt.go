@@ -7,6 +7,8 @@ import (
 	"crypto/subtle"
 	"github.com/Interhyp/metadata-service/acorns/config"
 	"github.com/Interhyp/metadata-service/internal/web/util"
+	aulogging "github.com/StephanHCB/go-autumn-logging"
+	"github.com/StephanHCB/go-backend-service-common/api/apierrors"
 	"github.com/go-http-utils/headers"
 	"github.com/golang-jwt/jwt/v4"
 	"net/http"
@@ -177,20 +179,29 @@ func PutClaims(ctx context.Context, claimsPtr *AllClaims) context.Context {
 	return context.WithValue(ctx, ClaimsKey, claimsPtr)
 }
 
-func IsAuthenticated(ctx context.Context) bool {
+func IsAuthenticated(ctx context.Context, logMessage string, timestamp time.Time) apierrors.AnnotatedError {
 	claimsPtr := GetClaims(ctx)
-	return claimsPtr != nil
+	if claimsPtr == nil {
+		aulogging.Logger.Ctx(ctx).Info().Printf("unauthorized: %s", logMessage)
+		return apierrors.NewUnauthorisedError("unauthorized", "missing or invalid Authorization header (JWT bearer token expected) or token invalid or expired", nil, timestamp)
+	}
+	return nil
 }
 
-func HasGroup(ctx context.Context, group string) bool {
+func HasGroup(ctx context.Context, group string, logMessage string, timestamp time.Time) apierrors.AnnotatedError {
+	err := apierrors.NewForbiddenError("forbidden", "you are not authorized for this operation", nil, timestamp)
 	if group == "" {
-		return true
+		return nil
 	}
 	claimsPtr := GetClaims(ctx)
 	if claimsPtr == nil {
-		return false
+		aulogging.Logger.Ctx(ctx).Info().Printf("forbidden: %s", logMessage)
+		return err
 	}
-	return contains(claimsPtr.Groups, group)
+	if !contains(claimsPtr.Groups, group) {
+		return err
+	}
+	return nil
 }
 
 func Name(ctx context.Context) string {

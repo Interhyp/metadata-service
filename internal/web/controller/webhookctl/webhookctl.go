@@ -5,6 +5,7 @@ import (
 	"github.com/Interhyp/metadata-service/acorns/service"
 	"github.com/Interhyp/metadata-service/internal/web/util"
 	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
+	"github.com/StephanHCB/go-backend-service-common/api/apierrors"
 	"github.com/go-chi/chi/v5"
 	"net/http"
 	"time"
@@ -28,7 +29,7 @@ func (c *Impl) Webhook(w http.ResponseWriter, r *http.Request) {
 
 	err := c.Updater.PerformFullUpdateWithNotifications(ctx)
 	if err != nil {
-		util.UnexpectedErrorHandler(ctx, w, r, err, c.Now())
+		apierrors.HandleError(ctx, w, r, err)
 	} else {
 		util.SuccessNoBody(ctx, w, r, http.StatusNoContent)
 	}

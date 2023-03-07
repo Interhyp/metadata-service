@@ -368,7 +368,7 @@ func TestPUTRepository_DoesNotExist(t *testing.T) {
 	response, err := tstPerformPut("/rest/api/v1/repositories/does-not-exist.api", token, &body)
 
 	docs.Then("Then the request fails and the error response is as expected")
-	tstAssert(t, response, err, http.StatusNotFound, "repository-notfound.json")
+	tstAssert(t, response, err, http.StatusNotFound, "repository-notfound-doesnotexist.json")
 
 	docs.Then("And no changes have been made in the metadata repository")
 	require.Equal(t, 0, len(metadataImpl.FilesWritten))
@@ -651,7 +651,7 @@ func TestPATCHRepository_DoesNotExist(t *testing.T) {
 	response, err := tstPerformPatch("/rest/api/v1/repositories/does-not-exist.api", token, &body)
 
 	docs.Then("Then the request fails and the error response is as expected")
-	tstAssert(t, response, err, http.StatusNotFound, "repository-notfound.json")
+	tstAssert(t, response, err, http.StatusNotFound, "repository-notfound-doesnotexist.json")
 
 	docs.Then("And no changes have been made in the metadata repository")
 	require.Equal(t, 0, len(metadataImpl.FilesWritten))
@@ -891,7 +891,7 @@ func TestDELETERepository_Success(t *testing.T) {
 
 	docs.Then("And the repository has been removed from the cache")
 	readAgain, err := tstPerformGet("/rest/api/v1/repositories/karma-wrapper.helm-chart", tstUnauthenticated())
-	tstAssert(t, readAgain, err, http.StatusNotFound, "repository-notfound.json")
+	tstAssert(t, readAgain, err, http.StatusNotFound, "repository-notfound-karmawrapper.json")
 
 	docs.Then("And a kafka message notifying other instances of the deletion has been sent")
 	require.Equal(t, 1, len(kafkaImpl.Recording))
@@ -910,7 +910,7 @@ func TestDELETERepository_DoesNotExist(t *testing.T) {
 	response, err := tstPerformDelete("/rest/api/v1/repositories/does-not-exist.api", token, &body)
 
 	docs.Then("Then the request fails and the error response is as expected")
-	tstAssert(t, response, err, http.StatusNotFound, "repository-notfound.json")
+	tstAssert(t, response, err, http.StatusNotFound, "repository-notfound-doesnotexist.json")
 
 	docs.Then("And no changes have been made in the metadata repository")
 	require.Equal(t, 0, len(metadataImpl.FilesWritten))

@@ -3,17 +3,13 @@ package repositories
 import (
 	"context"
 	"fmt"
-	"github.com/Interhyp/metadata-service/acorns/errors/alreadyexistserror"
-	"github.com/Interhyp/metadata-service/acorns/errors/concurrencyerror"
-	"github.com/Interhyp/metadata-service/acorns/errors/nosuchownererror"
-	"github.com/Interhyp/metadata-service/acorns/errors/nosuchrepoerror"
-	"github.com/Interhyp/metadata-service/acorns/errors/referencederror"
-	"github.com/Interhyp/metadata-service/acorns/errors/validationerror"
 	"github.com/Interhyp/metadata-service/acorns/service"
 	openapi "github.com/Interhyp/metadata-service/api/v1"
 	"github.com/Interhyp/metadata-service/internal/service/util"
 	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
+	"github.com/StephanHCB/go-backend-service-common/api/apierrors"
 	"strings"
+	"time"
 )
 
 type Impl struct {
@@ -22,6 +18,8 @@ type Impl struct {
 	Cache         service.Cache
 	Updater       service.Updater
 	Owners        service.Owners
+
+	Now func() time.Time
 }
 
 func (s *Impl) GetRepositories(ctx context.Context,
@@ -51,7 +49,7 @@ func (s *Impl) GetRepositories(ctx context.Context,
 			repository, err := s.GetRepository(ctx, key)
 			if err != nil {
 				// repository not found errors are ok, the cache may have been changed concurrently, just drop the entry
-				if !nosuchrepoerror.Is(err) {
+				if !apierrors.IsNotFoundError(err) {
 					return openapi.RepositoryListDto{}, err
 				}
 			} else {
@@ -106,7 +104,7 @@ func (s *Impl) rebuildApprovers(ctx context.Context, result *openapi.RepositoryC
 
 func (s *Impl) CreateRepository(ctx context.Context, key string, repositoryCreateDto openapi.RepositoryCreateDto) (openapi.RepositoryDto, error) {
 	repositoryDto := s.mapRepoCreateDtoToRepoDto(repositoryCreateDto)
-	if err := validateRepositoryCreateDto(ctx, key, repositoryCreateDto); err != nil {
+	if err := s.validateRepositoryCreateDto(ctx, key, repositoryCreateDto); err != nil {
 		return repositoryDto, err
 	}
 
@@ -120,12 +118,15 @@ func (s *Impl) CreateRepository(ctx context.Context, key string, repositoryCreat
 		current, err := s.Cache.GetRepository(subCtx, key)
 		if err == nil {
 			result = current
-			return alreadyexistserror.New(ctx, fmt.Sprintf("repository %s already exists - cannot create", key))
+			s.Logging.Logger().Ctx(ctx).Info().Printf("repository %v already exists", key)
+			return apierrors.NewConflictErrorWithResponse("repository.conflict.alreadyexists", fmt.Sprintf("repository %s already exists - cannot create", key), nil, result, s.Now())
 		}
 
 		_, err = s.Cache.GetOwner(subCtx, repositoryDto.Owner)
 		if err != nil {
-			return nosuchownererror.New(ctx, repositoryDto.Owner)
+			details := fmt.Sprintf("no such owner: %s", repositoryDto.Owner)
+			s.Logging.Logger().Ctx(ctx).Info().Printf(details)
+			return apierrors.NewBadRequestError("repository.invalid.missing.owner", details, err, s.Now())
 		}
 
 		repositoryWritten, err := s.Updater.WriteRepository(subCtx, key, repositoryDto)
@@ -151,7 +152,7 @@ func (s *Impl) mapRepoCreateDtoToRepoDto(repositoryCreateDto openapi.RepositoryC
 	}
 }
 
-func validateRepositoryCreateDto(ctx context.Context, key string, dto openapi.RepositoryCreateDto) error {
+func (s *Impl) validateRepositoryCreateDto(ctx context.Context, key string, dto openapi.RepositoryCreateDto) error {
 	messages := make([]string, 0)
 
 	messages = validateOwner(messages, dto.Owner)
@@ -163,13 +164,15 @@ func validateRepositoryCreateDto(ctx context.Context, key string, dto openapi.Re
 	}
 
 	if len(messages) > 0 {
-		return validationerror.New(ctx, strings.Join(messages, ", "))
+		details := strings.Join(messages, ", ")
+		s.Logging.Logger().Ctx(ctx).Info().Printf("repository values invalid: %s", details)
+		return apierrors.NewBadRequestError("repository.invalid.values", fmt.Sprintf("validation error: %s", details), nil, s.Now())
 	}
 	return nil
 }
 
 func (s *Impl) UpdateRepository(ctx context.Context, key string, repositoryDto openapi.RepositoryDto) (openapi.RepositoryDto, error) {
-	if err := validateExistingRepositoryDto(ctx, key, repositoryDto); err != nil {
+	if err := s.validateExistingRepositoryDto(ctx, key, repositoryDto); err != nil {
 		return repositoryDto, err
 	}
 
@@ -182,17 +185,20 @@ func (s *Impl) UpdateRepository(ctx context.Context, key string, repositoryDto o
 
 		current, err := s.Cache.GetRepository(subCtx, key)
 		if err != nil {
-			return nosuchrepoerror.New(ctx, key)
+			s.Logging.Logger().Ctx(ctx).Info().Printf("repository %v not found", key)
+			return apierrors.NewNotFoundError("repository.notfound", fmt.Sprintf("repository %s not found", key), nil, s.Now())
 		}
 
 		_, err = s.Cache.GetOwner(subCtx, repositoryDto.Owner)
 		if err != nil {
-			return nosuchownererror.New(ctx, repositoryDto.Owner)
+			s.Logging.Logger().Ctx(ctx).Info().Printf("owner %v not found", repositoryDto.Owner)
+			return apierrors.NewBadRequestError("repository.invalid.missing.owner", fmt.Sprintf("no such owner: %s", repositoryDto.Owner), nil, s.Now())
 		}
 
 		if current.TimeStamp != repositoryDto.TimeStamp || current.CommitHash != repositoryDto.CommitHash {
 			result = current
-			return concurrencyerror.New(ctx, "this repository was concurrently updated")
+			s.Logging.Logger().Ctx(ctx).Info().Printf("repository %v was concurrently updated", key)
+			return apierrors.NewConflictErrorWithResponse("repository.conflict.concurrentlyupdated", fmt.Sprintf("repository %v was concurrently updated", key), nil, result, s.Now())
 		}
 
 		repositoryWritten, err := s.Updater.WriteRepository(subCtx, key, repositoryDto)
@@ -206,7 +212,7 @@ func (s *Impl) UpdateRepository(ctx context.Context, key string, repositoryDto o
 	return result, err
 }
 
-func validateExistingRepositoryDto(ctx context.Context, key string, dto openapi.RepositoryDto) error {
+func (s *Impl) validateExistingRepositoryDto(ctx context.Context, key string, dto openapi.RepositoryDto) error {
 	messages := make([]string, 0)
 
 	messages = validateOwner(messages, dto.Owner)
@@ -224,7 +230,9 @@ func validateExistingRepositoryDto(ctx context.Context, key string, dto openapi.
 	}
 
 	if len(messages) > 0 {
-		return validationerror.New(ctx, strings.Join(messages, ", "))
+		details := strings.Join(messages, ", ")
+		s.Logging.Logger().Ctx(ctx).Info().Printf("repository values invalid: %s", details)
+		return apierrors.NewBadRequestError("repository.invalid.values", fmt.Sprintf("validation error: %s", details), nil, s.Now())
 	}
 	return nil
 }
@@ -235,7 +243,7 @@ func (s *Impl) PatchRepository(ctx context.Context, key string, repositoryPatchD
 		return result, err
 	}
 
-	if err := validateRepositoryPatchDto(ctx, key, repositoryPatchDto, result); err != nil {
+	if err := s.validateRepositoryPatchDto(ctx, key, repositoryPatchDto, result); err != nil {
 		return result, err
 	}
 
@@ -254,12 +262,15 @@ func (s *Impl) PatchRepository(ctx context.Context, key string, repositoryPatchD
 
 		_, err = s.Cache.GetOwner(subCtx, repositoryDto.Owner)
 		if err != nil {
-			return nosuchownererror.New(ctx, repositoryDto.Owner)
+			details := fmt.Sprintf("no such owner: %s", repositoryDto.Owner)
+			s.Logging.Logger().Ctx(ctx).Info().Printf(details)
+			return apierrors.NewBadRequestError("repository.invalid.missing.owner", details, err, s.Now())
 		}
 
 		if current.TimeStamp != repositoryPatchDto.TimeStamp || current.CommitHash != repositoryPatchDto.CommitHash {
 			result = current
-			return concurrencyerror.New(ctx, "this repository was concurrently updated")
+			s.Logging.Logger().Ctx(ctx).Info().Printf("repository %v was concurrently updated", key)
+			return apierrors.NewConflictErrorWithResponse("repository.conflict.concurrentlyupdated", fmt.Sprintf("repository %v was concurrently updated", key), nil, result, s.Now())
 		}
 
 		repositoryWritten, err := s.Updater.WriteRepository(subCtx, key, repositoryDto)
@@ -273,7 +284,7 @@ func (s *Impl) PatchRepository(ctx context.Context, key string, repositoryPatchD
 	return result, err
 }
 
-func validateRepositoryPatchDto(ctx context.Context, key string, patchDto openapi.RepositoryPatchDto, current openapi.RepositoryDto) error {
+func (s *Impl) validateRepositoryPatchDto(ctx context.Context, key string, patchDto openapi.RepositoryPatchDto, current openapi.RepositoryDto) error {
 	messages := make([]string, 0)
 
 	dto := patchRepository(current, patchDto)
@@ -292,7 +303,9 @@ func validateRepositoryPatchDto(ctx context.Context, key string, patchDto openap
 		messages = append(messages, "field jiraIssue is mandatory for patching")
 	}
 	if len(messages) > 0 {
-		return validationerror.New(ctx, strings.Join(messages, ", "))
+		details := strings.Join(messages, ", ")
+		s.Logging.Logger().Ctx(ctx).Info().Printf("repository values invalid: %s", details)
+		return apierrors.NewBadRequestError("repository.invalid.values", fmt.Sprintf("validation error: %s", details), nil, s.Now())
 	}
 	return nil
 }
@@ -439,12 +452,13 @@ func (s *Impl) DeleteRepository(ctx context.Context, key string, deletionInfo op
 
 		_, err = s.Cache.GetRepository(subCtx, key)
 		if err != nil {
-			return nosuchrepoerror.New(ctx, key)
+			return err
 		}
 
 		allowed := s.Updater.CanMoveOrDeleteRepository(subCtx, key)
 		if !allowed {
-			return referencederror.New(ctx, "this repository is still referenced by its service and cannot be deleted")
+			s.Logging.Logger().Ctx(ctx).Info().Printf("tried to delete repository %v, which is still referenced by its service", key)
+			return apierrors.NewConflictError("repository.conflict.referenced", "this repository is still being referenced by a service and cannot be deleted", nil, s.Now())
 		}
 
 		err = s.Updater.DeleteRepository(subCtx, key, deletionInfo)
@@ -462,7 +476,9 @@ func (s *Impl) validateDeletionDto(ctx context.Context, deletionInfo openapi.Del
 		messages = append(messages, "field jiraIssue is mandatory for deletion")
 	}
 	if len(messages) > 0 {
-		return validationerror.New(ctx, strings.Join(messages, ", "))
+		details := strings.Join(messages, ", ")
+		s.Logging.Logger().Ctx(ctx).Info().Printf("deletion info values invalid: %s", details)
+		return apierrors.NewBadRequestError("deletion.invalid.values", fmt.Sprintf("validation error: %s", details), nil, s.Now())
 	}
 	return nil
 }

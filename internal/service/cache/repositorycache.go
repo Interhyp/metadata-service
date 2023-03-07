@@ -2,8 +2,9 @@ package cache
 
 import (
 	"context"
-	"github.com/Interhyp/metadata-service/acorns/errors/nosuchrepoerror"
+	"fmt"
 	openapi "github.com/Interhyp/metadata-service/api/v1"
+	"github.com/StephanHCB/go-backend-service-common/api/apierrors"
 )
 
 func (s *Impl) SetRepositoryListTimestamp(_ context.Context, timestamp string) {
@@ -22,7 +23,8 @@ func (s *Impl) GetSortedRepositoryKeys(_ context.Context) []string {
 func (s *Impl) GetRepository(ctx context.Context, key string) (openapi.RepositoryDto, error) {
 	immutableRepositoryPtr := s.RepositoryCache.GetEntryRef(key)
 	if immutableRepositoryPtr == nil {
-		return openapi.RepositoryDto{}, nosuchrepoerror.New(ctx, key)
+		s.Logging.Logger().Ctx(ctx).Info().Printf("repository %v not found", key)
+		return openapi.RepositoryDto{}, apierrors.NewNotFoundError("repository.notfound", fmt.Sprintf("repository %s not found", key), nil, s.Now())
 	} else {
 		return deepCopyRepository(immutableRepositoryPtr), nil
 	}

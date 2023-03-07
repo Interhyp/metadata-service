@@ -2,8 +2,9 @@ package cache
 
 import (
 	"context"
-	"github.com/Interhyp/metadata-service/acorns/errors/nosuchownererror"
+	"fmt"
 	openapi "github.com/Interhyp/metadata-service/api/v1"
+	"github.com/StephanHCB/go-backend-service-common/api/apierrors"
 )
 
 func (s *Impl) SetOwnerListTimestamp(_ context.Context, timestamp string) {
@@ -22,7 +23,8 @@ func (s *Impl) GetSortedOwnerAliases(_ context.Context) []string {
 func (s *Impl) GetOwner(ctx context.Context, alias string) (openapi.OwnerDto, error) {
 	immutableOwnerPtr := s.OwnerCache.GetEntryRef(alias)
 	if immutableOwnerPtr == nil {
-		return openapi.OwnerDto{}, nosuchownererror.New(ctx, alias)
+		s.Logging.Logger().Ctx(ctx).Info().Printf("owner %v not found", alias)
+		return openapi.OwnerDto{}, apierrors.NewNotFoundError("owner.notfound", fmt.Sprintf("owner %s not found", alias), nil, s.Now())
 	} else {
 		return deepCopyOwner(immutableOwnerPtr), nil
 	}
