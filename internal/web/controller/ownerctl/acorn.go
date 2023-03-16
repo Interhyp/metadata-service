@@ -6,7 +6,6 @@ import (
 	"github.com/Interhyp/metadata-service/acorns/service"
 	"github.com/StephanHCB/go-autumn-acorn-registry/api"
 	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
-	"time"
 )
 
 // --- implementing Acorn ---
@@ -30,7 +29,7 @@ func (c *Impl) AssembleAcorn(registry auacornapi.AcornRegistry) error {
 
 	c.CustomConfiguration = config.Custom(c.Configuration)
 
-	c.Now = time.Now
+	c.Timestamp = registry.GetAcornByName(librepo.TimestampAcornName).(librepo.Timestamp)
 
 	return nil
 }

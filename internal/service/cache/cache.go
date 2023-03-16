@@ -4,7 +4,6 @@ import (
 	"context"
 	"github.com/Interhyp/metadata-service/internal/service/cache/cacheable"
 	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
-	"time"
 )
 
 type Impl struct {
@@ -15,7 +14,7 @@ type Impl struct {
 	ServiceCache    cacheable.Cacheable
 	RepositoryCache cacheable.Cacheable
 
-	Now func() time.Time
+	Timestamp librepo.Timestamp
 }
 
 func (s *Impl) Setup(_ context.Context) error {

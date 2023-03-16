@@ -23,6 +23,7 @@ import (
 	"github.com/Interhyp/metadata-service/internal/web/server"
 	auacorn "github.com/StephanHCB/go-autumn-acorn-registry"
 	"github.com/StephanHCB/go-backend-service-common/repository/logging"
+	"github.com/StephanHCB/go-backend-service-common/repository/timestamp"
 	"github.com/StephanHCB/go-backend-service-common/web/controller/healthctl"
 	"github.com/StephanHCB/go-backend-service-common/web/controller/swaggerctl"
 )
@@ -53,6 +54,7 @@ func (a *ApplicationImpl) Register() {
 		auacorn.Registry.Register(idp.New)
 		auacorn.Registry.Register(hostip.New)
 		auacorn.Registry.Register(bitbucket.New)
+		auacorn.Registry.Register(timestamp.New)
 		// services
 		auacorn.Registry.Register(mapper.New)
 		auacorn.Registry.Register(trigger.New)

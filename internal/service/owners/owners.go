@@ -9,7 +9,6 @@ import (
 	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
 	"github.com/StephanHCB/go-backend-service-common/api/apierrors"
 	"strings"
-	"time"
 )
 
 type Impl struct {
@@ -18,7 +17,7 @@ type Impl struct {
 	Cache         service.Cache
 	Updater       service.Updater
 
-	Now func() time.Time
+	Timestamp librepo.Timestamp
 }
 
 func (s *Impl) GetOwners(ctx context.Context) (openapi.OwnerListDto, error) {
@@ -97,7 +96,7 @@ func (s *Impl) CreateOwner(ctx context.Context, ownerAlias string, ownerCreateDt
 		if err == nil {
 			result = current
 			s.Logging.Logger().Ctx(ctx).Info().Printf("owner %v already exists", ownerAlias)
-			return apierrors.NewConflictErrorWithResponse("owner.conflict.alreadyexists", fmt.Sprintf("owner %s already exists - cannot create", ownerAlias), nil, result, s.Now())
+			return apierrors.NewConflictErrorWithResponse("owner.conflict.alreadyexists", fmt.Sprintf("owner %s already exists - cannot create", ownerAlias), nil, result, s.Timestamp.Now())
 		}
 
 		ownerWritten, err := s.Updater.WriteOwner(subCtx, ownerAlias, ownerDto)
@@ -133,7 +132,7 @@ func (s *Impl) validateOwnerCreateDto(ctx context.Context, dto openapi.OwnerCrea
 	if len(messages) > 0 {
 		details := strings.Join(messages, ", ")
 		s.Logging.Logger().Ctx(ctx).Info().Printf("owner values invalid: %s", details)
-		return apierrors.NewBadRequestError("owner.invalid.values", fmt.Sprintf("validation error: %s", details), nil, s.Now())
+		return apierrors.NewBadRequestError("owner.invalid.values", fmt.Sprintf("validation error: %s", details), nil, s.Timestamp.Now())
 	}
 	return nil
 }
@@ -153,13 +152,13 @@ func (s *Impl) UpdateOwner(ctx context.Context, ownerAlias string, ownerDto open
 		current, err := s.Cache.GetOwner(subCtx, ownerAlias)
 		if err != nil {
 			s.Logging.Logger().Ctx(ctx).Info().Printf("owner %v not found", ownerAlias)
-			return apierrors.NewNotFoundError("owner.notfound", fmt.Sprintf("owner %s not found", ownerAlias), nil, s.Now())
+			return apierrors.NewNotFoundError("owner.notfound", fmt.Sprintf("owner %s not found", ownerAlias), nil, s.Timestamp.Now())
 		}
 
 		if current.TimeStamp != ownerDto.TimeStamp || current.CommitHash != ownerDto.CommitHash {
 			result = current
 			s.Logging.Logger().Ctx(ctx).Info().Printf("owner %v was concurrently updated", ownerAlias)
-			return apierrors.NewConflictErrorWithResponse("owner.conflict.concurrentlyupdated", fmt.Sprintf("owner %v was concurrently updated", ownerAlias), nil, result, s.Now())
+			return apierrors.NewConflictErrorWithResponse("owner.conflict.concurrentlyupdated", fmt.Sprintf("owner %v was concurrently updated", ownerAlias), nil, result, s.Timestamp.Now())
 		}
 
 		ownerWritten, err := s.Updater.WriteOwner(subCtx, ownerAlias, ownerDto)
@@ -190,7 +189,7 @@ func (s *Impl) validateExistingOwnerDto(ctx context.Context, dto openapi.OwnerDt
 	if len(messages) > 0 {
 		details := strings.Join(messages, ", ")
 		s.Logging.Logger().Ctx(ctx).Info().Printf("owner values invalid: %s", details)
-		return apierrors.NewBadRequestError("owner.invalid.values", fmt.Sprintf("validation error: %s", details), nil, s.Now())
+		return apierrors.NewBadRequestError("owner.invalid.values", fmt.Sprintf("validation error: %s", details), nil, s.Timestamp.Now())
 	}
 	return nil
 }
@@ -216,7 +215,7 @@ func (s *Impl) PatchOwner(ctx context.Context, ownerAlias string, ownerPatchDto 
 		if current.TimeStamp != ownerPatchDto.TimeStamp || current.CommitHash != ownerPatchDto.CommitHash {
 			result = current
 			s.Logging.Logger().Ctx(ctx).Info().Printf("owner %v was concurrently updated", ownerAlias)
-			return apierrors.NewConflictErrorWithResponse("owner.conflict.concurrentlyupdated", fmt.Sprintf("owner %v was concurrently updated", ownerAlias), nil, result, s.Now())
+			return apierrors.NewConflictErrorWithResponse("owner.conflict.concurrentlyupdated", fmt.Sprintf("owner %v was concurrently updated", ownerAlias), nil, result, s.Timestamp.Now())
 		}
 
 		ownerDto := patchOwner(current, ownerPatchDto)
@@ -249,7 +248,7 @@ func (s *Impl) validateOwnerPatchDto(ctx context.Context, ownerPatchDto openapi.
 	if len(messages) > 0 {
 		details := strings.Join(messages, ", ")
 		s.Logging.Logger().Ctx(ctx).Info().Printf("owner values invalid: %s", details)
-		return apierrors.NewBadRequestError("owner.invalid.values", fmt.Sprintf("validation error: %s", details), nil, s.Now())
+		return apierrors.NewBadRequestError("owner.invalid.values", fmt.Sprintf("validation error: %s", details), nil, s.Timestamp.Now())
 	}
 	return nil
 }
@@ -326,7 +325,7 @@ func (s *Impl) DeleteOwner(ctx context.Context, ownerAlias string, deletionInfo 
 		allowed := s.Updater.CanDeleteOwner(subCtx, ownerAlias)
 		if !allowed {
 			s.Logging.Logger().Ctx(ctx).Info().Printf("tried to delete owner %v, who still owns services or repositories", ownerAlias)
-			return apierrors.NewConflictError("owner.conflict.notempty", "this owner still has services or repositories and cannot be deleted", nil, s.Now())
+			return apierrors.NewConflictError("owner.conflict.notempty", "this owner still has services or repositories and cannot be deleted", nil, s.Timestamp.Now())
 		}
 
 		err = s.Updater.DeleteOwner(subCtx, ownerAlias, deletionInfo)
@@ -346,7 +345,7 @@ func (s *Impl) validateDeletionDto(ctx context.Context, deletionInfo openapi.Del
 	if len(messages) > 0 {
 		details := strings.Join(messages, ", ")
 		s.Logging.Logger().Ctx(ctx).Info().Printf("deletion info values invalid: %s", details)
-		return apierrors.NewBadRequestError("deletion.invalid.values", fmt.Sprintf("validation error: %s", details), nil, s.Now())
+		return apierrors.NewBadRequestError("deletion.invalid.values", fmt.Sprintf("validation error: %s", details), nil, s.Timestamp.Now())
 	}
 	return nil
 }
