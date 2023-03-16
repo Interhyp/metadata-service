@@ -7,6 +7,7 @@ import (
 	"github.com/Interhyp/metadata-service/internal/service/owners"
 	auloggingapi "github.com/StephanHCB/go-autumn-logging/api"
 	"github.com/StephanHCB/go-backend-service-common/api/apierrors"
+	"github.com/StephanHCB/go-backend-service-common/repository/timestamp"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"testing"
@@ -321,12 +322,18 @@ func fakeNow() time.Time {
 
 func tstValidationTestcaseAllOps(t *testing.T, expectedMessage string, data openapi.RepositoryDto, create openapi.RepositoryCreateDto, patch openapi.RepositoryPatchDto) {
 	mockLogging := MockLogging{}
+	fakeNow := func() time.Time {
+		return time.Date(2022, 11, 6, 18, 14, 10, 0, time.UTC)
+	}
+	timestampImpl := timestamp.TimestampImpl{
+		Timestamp: fakeNow,
+	}
 	impl := &Impl{
 		Configuration: nil,
 		Logging:       &mockLogging,
 		Cache:         nil,
 		Updater:       nil,
-		Now:           fakeNow,
+		Timestamp:     &timestampImpl,
 	}
 
 	err := (*Impl).validateRepositoryCreateDto(impl, context.TODO(), "any", create)

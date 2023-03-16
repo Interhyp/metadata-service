@@ -8,14 +8,13 @@ import (
 	"github.com/StephanHCB/go-backend-service-common/api/apierrors"
 	"github.com/go-chi/chi/v5"
 	"net/http"
-	"time"
 )
 
 type Impl struct {
 	Logging librepo.Logging
 	Updater service.Updater
 
-	Now func() time.Time
+	Timestamp librepo.Timestamp
 }
 
 func (c *Impl) WireUp(_ context.Context, router chi.Router) {

@@ -23,7 +23,7 @@ func (s *Impl) GetSortedServiceNames(_ context.Context) []string {
 func (s *Impl) GetService(ctx context.Context, name string) (openapi.ServiceDto, error) {
 	immutableServicePtr := s.ServiceCache.GetEntryRef(name)
 	if immutableServicePtr == nil {
-		return openapi.ServiceDto{}, apierrors.NewNotFoundError("service.notfound", fmt.Sprintf("service %s not found", name), nil, s.Now())
+		return openapi.ServiceDto{}, apierrors.NewNotFoundError("service.notfound", fmt.Sprintf("service %s not found", name), nil, s.Timestamp.Now())
 	} else {
 		return deepCopyService(immutableServicePtr), nil
 	}

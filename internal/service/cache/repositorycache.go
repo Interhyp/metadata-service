@@ -24,7 +24,7 @@ func (s *Impl) GetRepository(ctx context.Context, key string) (openapi.Repositor
 	immutableRepositoryPtr := s.RepositoryCache.GetEntryRef(key)
 	if immutableRepositoryPtr == nil {
 		s.Logging.Logger().Ctx(ctx).Info().Printf("repository %v not found", key)
-		return openapi.RepositoryDto{}, apierrors.NewNotFoundError("repository.notfound", fmt.Sprintf("repository %s not found", key), nil, s.Now())
+		return openapi.RepositoryDto{}, apierrors.NewNotFoundError("repository.notfound", fmt.Sprintf("repository %s not found", key), nil, s.Timestamp.Now())
 	} else {
 		return deepCopyRepository(immutableRepositoryPtr), nil
 	}

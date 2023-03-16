@@ -6,7 +6,6 @@ import (
 	"github.com/StephanHCB/go-autumn-acorn-registry/api"
 	auzerolog "github.com/StephanHCB/go-autumn-logging-zerolog"
 	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
-	"time"
 )
 
 // --- implementing Acorn ---
@@ -29,7 +28,7 @@ func (s *Impl) AssembleAcorn(registry auacornapi.AcornRegistry) error {
 	s.Cache = registry.GetAcornByName(service.CacheAcornName).(service.Cache)
 	s.Updater = registry.GetAcornByName(service.UpdaterAcornName).(service.Updater)
 
-	s.Now = time.Now
+	s.Timestamp = registry.GetAcornByName(librepo.TimestampAcornName).(librepo.Timestamp)
 
 	return nil
 }

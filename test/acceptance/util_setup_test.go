@@ -3,21 +3,13 @@ package acceptance
 import (
 	"context"
 	application2 "github.com/Interhyp/metadata-service/acorns/application"
-	"github.com/Interhyp/metadata-service/acorns/controller"
 	"github.com/Interhyp/metadata-service/acorns/repository"
 	"github.com/Interhyp/metadata-service/acorns/service"
 	"github.com/Interhyp/metadata-service/internal/repository/config"
-	"github.com/Interhyp/metadata-service/internal/service/cache"
 	"github.com/Interhyp/metadata-service/internal/service/mapper"
-	"github.com/Interhyp/metadata-service/internal/service/owners"
-	"github.com/Interhyp/metadata-service/internal/service/repositories"
-	"github.com/Interhyp/metadata-service/internal/service/services"
 	"github.com/Interhyp/metadata-service/internal/service/trigger"
 	"github.com/Interhyp/metadata-service/internal/service/updater"
 	"github.com/Interhyp/metadata-service/internal/web/app"
-	"github.com/Interhyp/metadata-service/internal/web/controller/ownerctl"
-	"github.com/Interhyp/metadata-service/internal/web/controller/repositoryctl"
-	"github.com/Interhyp/metadata-service/internal/web/controller/servicectl"
 	"github.com/Interhyp/metadata-service/internal/web/middleware/jwt"
 	"github.com/Interhyp/metadata-service/internal/web/server"
 	"github.com/Interhyp/metadata-service/test/acceptance/idpmock"
@@ -90,6 +82,9 @@ func tstSetup(configPath string) error {
 
 	// other features that need switching off or changing
 
+	timestamp := registry.GetAcornByName(librepo.TimestampAcornName).(librepo.Timestamp)
+	timestamp.MockResponse(fakeNow)
+
 	triggerImpl := registry.GetAcornByName(service.TriggerAcornName).(*trigger.Impl)
 	triggerImpl.SkipStart = true // do not start cron job
 	triggerImpl.Now = fakeNow
@@ -99,27 +94,6 @@ func tstSetup(configPath string) error {
 
 	updaterImpl := registry.GetAcornByName(service.UpdaterAcornName).(*updater.Impl)
 	updaterImpl.Now = fakeNow
-
-	ownerCtl := registry.GetAcornByName(controller.OwnerControllerAcornName).(*ownerctl.Impl)
-	ownerCtl.Now = fakeNow
-
-	serviceCtl := registry.GetAcornByName(controller.ServiceControllerAcornName).(*servicectl.Impl)
-	serviceCtl.Now = fakeNow
-
-	repositoryCtl := registry.GetAcornByName(controller.RepositoryControllerAcornName).(*repositoryctl.Impl)
-	repositoryCtl.Now = fakeNow
-
-	cacheImpl := registry.GetAcornByName(service.CacheAcornName).(*cache.Impl)
-	cacheImpl.Now = fakeNow
-
-	ownerImpl := registry.GetAcornByName(service.OwnersAcornName).(*owners.Impl)
-	ownerImpl.Now = fakeNow
-
-	repositoryImpl := registry.GetAcornByName(service.RepositoriesAcornName).(*repositories.Impl)
-	repositoryImpl.Now = fakeNow
-
-	serviceImpl := registry.GetAcornByName(service.ServicesAcornName).(*services.Impl)
-	serviceImpl.Now = fakeNow
 
 	metadataImpl.Now = fakeNow
 

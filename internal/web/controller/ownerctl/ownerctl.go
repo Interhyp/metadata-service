@@ -14,7 +14,6 @@ import (
 	"github.com/go-chi/chi/v5"
 	"net/http"
 	"net/url"
-	"time"
 )
 
 type Impl struct {
@@ -23,7 +22,7 @@ type Impl struct {
 	Logging             librepo.Logging
 	Owners              service.Owners
 
-	Now func() time.Time
+	Timestamp librepo.Timestamp
 }
 
 func (c *Impl) WireUp(_ context.Context, router chi.Router) {
@@ -65,11 +64,11 @@ func (c *Impl) GetSingleOwner(w http.ResponseWriter, r *http.Request) {
 
 func (c *Impl) CreateOwner(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	if err := jwt.IsAuthenticated(ctx, "anonymous tried CreateOwner", c.Now()); err != nil {
+	if err := jwt.IsAuthenticated(ctx, "anonymous tried CreateOwner", c.Timestamp.Now()); err != nil {
 		apierrors.HandleError(ctx, w, r, err, apierrors.IsUnauthorisedError)
 		return
 	}
-	if err := jwt.HasGroup(ctx, c.CustomConfiguration.AuthGroupWrite(), fmt.Sprintf("%s tried CreateOwner", jwt.Subject(ctx)), c.Now()); err != nil {
+	if err := jwt.HasGroup(ctx, c.CustomConfiguration.AuthGroupWrite(), fmt.Sprintf("%s tried CreateOwner", jwt.Subject(ctx)), c.Timestamp.Now()); err != nil {
 		apierrors.HandleError(ctx, w, r, err, apierrors.IsForbiddenError)
 		return
 	}
@@ -98,11 +97,11 @@ func (c *Impl) CreateOwner(w http.ResponseWriter, r *http.Request) {
 
 func (c *Impl) UpdateOwner(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	if err := jwt.IsAuthenticated(ctx, "anonymous tried UpdateOwner", c.Now()); err != nil {
+	if err := jwt.IsAuthenticated(ctx, "anonymous tried UpdateOwner", c.Timestamp.Now()); err != nil {
 		apierrors.HandleError(ctx, w, r, err, apierrors.IsUnauthorisedError)
 		return
 	}
-	if err := jwt.HasGroup(ctx, c.CustomConfiguration.AuthGroupWrite(), fmt.Sprintf("%s tried UpdateOwner", jwt.Subject(ctx)), c.Now()); err != nil {
+	if err := jwt.HasGroup(ctx, c.CustomConfiguration.AuthGroupWrite(), fmt.Sprintf("%s tried UpdateOwner", jwt.Subject(ctx)), c.Timestamp.Now()); err != nil {
 		apierrors.HandleError(ctx, w, r, err, apierrors.IsForbiddenError)
 		return
 	}
@@ -128,11 +127,11 @@ func (c *Impl) UpdateOwner(w http.ResponseWriter, r *http.Request) {
 
 func (c *Impl) PatchOwner(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	if err := jwt.IsAuthenticated(ctx, "anonymous tried PatchOwner", c.Now()); err != nil {
+	if err := jwt.IsAuthenticated(ctx, "anonymous tried PatchOwner", c.Timestamp.Now()); err != nil {
 		apierrors.HandleError(ctx, w, r, err, apierrors.IsUnauthorisedError)
 		return
 	}
-	if err := jwt.HasGroup(ctx, c.CustomConfiguration.AuthGroupWrite(), fmt.Sprintf("%s tried PatchOwner", jwt.Subject(ctx)), c.Now()); err != nil {
+	if err := jwt.HasGroup(ctx, c.CustomConfiguration.AuthGroupWrite(), fmt.Sprintf("%s tried PatchOwner", jwt.Subject(ctx)), c.Timestamp.Now()); err != nil {
 		apierrors.HandleError(ctx, w, r, err, apierrors.IsForbiddenError)
 		return
 	}
@@ -158,17 +157,17 @@ func (c *Impl) PatchOwner(w http.ResponseWriter, r *http.Request) {
 
 func (c *Impl) DeleteOwner(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	if err := jwt.IsAuthenticated(ctx, "anonymous tried DeleteOwner", c.Now()); err != nil {
+	if err := jwt.IsAuthenticated(ctx, "anonymous tried DeleteOwner", c.Timestamp.Now()); err != nil {
 		apierrors.HandleError(ctx, w, r, err, apierrors.IsUnauthorisedError)
 		return
 	}
-	if err := jwt.HasGroup(ctx, c.CustomConfiguration.AuthGroupWrite(), fmt.Sprintf("%s tried DeleteOwner", jwt.Subject(ctx)), c.Now()); err != nil {
+	if err := jwt.HasGroup(ctx, c.CustomConfiguration.AuthGroupWrite(), fmt.Sprintf("%s tried DeleteOwner", jwt.Subject(ctx)), c.Timestamp.Now()); err != nil {
 		apierrors.HandleError(ctx, w, r, err, apierrors.IsForbiddenError)
 		return
 	}
 
 	alias := util.StringPathParam(r, "owner")
-	info, err := util.ParseBodyToDeletionDto(ctx, r, c.Now())
+	info, err := util.ParseBodyToDeletionDto(ctx, r, c.Timestamp.Now())
 	if err != nil {
 		apierrors.HandleError(ctx, w, r, err, apierrors.IsBadRequestError)
 		return
@@ -199,7 +198,7 @@ func (c *Impl) validOwnerAlias(ctx context.Context, owner string) apierrors.Anno
 	permitted := c.CustomConfiguration.OwnerAliasPermittedRegex().String()
 	prohibited := c.CustomConfiguration.OwnerAliasProhibitedRegex().String()
 	max := c.CustomConfiguration.OwnerAliasMaxLength()
-	return apierrors.NewBadRequestError("owner.invalid.alias", fmt.Sprintf("owner alias must match %s, is not allowed to match %s and may have up to %d characters", permitted, prohibited, max), nil, c.Now())
+	return apierrors.NewBadRequestError("owner.invalid.alias", fmt.Sprintf("owner alias must match %s, is not allowed to match %s and may have up to %d characters", permitted, prohibited, max), nil, c.Timestamp.Now())
 }
 
 func (c *Impl) parseBodyToOwnerDto(ctx context.Context, r *http.Request) (openapi.OwnerDto, error) {
@@ -208,7 +207,7 @@ func (c *Impl) parseBodyToOwnerDto(ctx context.Context, r *http.Request) (openap
 	err := decoder.Decode(&dto)
 	if err != nil {
 		c.Logging.Logger().Ctx(ctx).Info().Printf("owner body invalid: %s", err.Error())
-		return openapi.OwnerDto{}, apierrors.NewBadRequestError("owner.invalid.body", "body failed to parse", err, c.Now())
+		return openapi.OwnerDto{}, apierrors.NewBadRequestError("owner.invalid.body", "body failed to parse", err, c.Timestamp.Now())
 	}
 	return dto, nil
 }
@@ -219,7 +218,7 @@ func (c *Impl) parseBodyToOwnerCreateDto(ctx context.Context, r *http.Request) (
 	err := decoder.Decode(&dto)
 	if err != nil {
 		c.Logging.Logger().Ctx(ctx).Info().Printf("owner body invalid: %s", err.Error())
-		return openapi.OwnerCreateDto{}, apierrors.NewBadRequestError("owner.invalid.body", "body failed to parse", err, c.Now())
+		return openapi.OwnerCreateDto{}, apierrors.NewBadRequestError("owner.invalid.body", "body failed to parse", err, c.Timestamp.Now())
 	}
 	return dto, nil
 }
@@ -230,7 +229,7 @@ func (c *Impl) parseBodyToOwnerPatchDto(ctx context.Context, r *http.Request) (o
 	err := decoder.Decode(&dto)
 	if err != nil {
 		c.Logging.Logger().Ctx(ctx).Info().Printf("owner body invalid: %s", err.Error())
-		return openapi.OwnerPatchDto{}, apierrors.NewBadRequestError("owner.invalid.body", "body failed to parse", err, c.Now())
+		return openapi.OwnerPatchDto{}, apierrors.NewBadRequestError("owner.invalid.body", "body failed to parse", err, c.Timestamp.Now())
 	}
 	return dto, nil
 }

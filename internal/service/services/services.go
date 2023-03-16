@@ -10,7 +10,6 @@ import (
 	"github.com/StephanHCB/go-backend-service-common/api/apierrors"
 	"sort"
 	"strings"
-	"time"
 )
 
 type Impl struct {
@@ -21,7 +20,7 @@ type Impl struct {
 	Updater             service.Updater
 	Owner               service.Owners
 
-	Now func() time.Time
+	Timestamp librepo.Timestamp
 }
 
 func (s *Impl) GetServices(ctx context.Context, ownerAliasFilter string) (openapi.ServiceListDto, error) {
@@ -68,21 +67,21 @@ func (s *Impl) CreateService(ctx context.Context, serviceName string, serviceCre
 		if err == nil {
 			result = current
 			s.Logging.Logger().Ctx(ctx).Info().Printf("service %v already exists", serviceName)
-			return apierrors.NewConflictErrorWithResponse("owner.conflict.alreadyexists", fmt.Sprintf("service %s already exists - cannot create", serviceName), nil, result, s.Now())
+			return apierrors.NewConflictErrorWithResponse("owner.conflict.alreadyexists", fmt.Sprintf("service %s already exists - cannot create", serviceName), nil, result, s.Timestamp.Now())
 		}
 
 		_, err = s.Cache.GetOwner(subCtx, serviceDto.Owner)
 		if err != nil {
 			details := fmt.Sprintf("no such owner: %s", serviceDto.Owner)
 			s.Logging.Logger().Ctx(ctx).Info().Printf(details)
-			return apierrors.NewBadRequestError("service.invalid.missing.owner", details, err, s.Now())
+			return apierrors.NewBadRequestError("service.invalid.missing.owner", details, err, s.Timestamp.Now())
 		}
 
 		for _, repoKey := range serviceDto.Repositories {
 			_, err = s.Cache.GetRepository(subCtx, repoKey)
 			if err != nil {
 				s.Logging.Logger().Ctx(ctx).Info().Printf("service values invalid: %s", repoKey)
-				return apierrors.NewBadRequestError("service.invalid.missing.repository", "validation error: you referenced a repository that does not exist: no such instance: "+repoKey, nil, s.Now())
+				return apierrors.NewBadRequestError("service.invalid.missing.repository", "validation error: you referenced a repository that does not exist: no such instance: "+repoKey, nil, s.Timestamp.Now())
 			}
 		}
 
@@ -128,7 +127,7 @@ func (s *Impl) validateNewServiceDto(ctx context.Context, serviceName string, dt
 	if len(messages) > 0 {
 		details := strings.Join(messages, ", ")
 		s.Logging.Logger().Ctx(ctx).Info().Printf("service values invalid: %s", details)
-		return apierrors.NewBadRequestError("service.invalid.values", fmt.Sprintf("validation error: %s", details), nil, s.Now())
+		return apierrors.NewBadRequestError("service.invalid.values", fmt.Sprintf("validation error: %s", details), nil, s.Timestamp.Now())
 	}
 	return nil
 }
@@ -148,27 +147,27 @@ func (s *Impl) UpdateService(ctx context.Context, serviceName string, serviceDto
 		current, err := s.Cache.GetService(subCtx, serviceName)
 		if err != nil {
 			s.Logging.Logger().Ctx(ctx).Info().Printf("service %v not found", serviceName)
-			return apierrors.NewNotFoundError("service.notfound", fmt.Sprintf("service %s not found", serviceName), nil, s.Now())
+			return apierrors.NewNotFoundError("service.notfound", fmt.Sprintf("service %s not found", serviceName), nil, s.Timestamp.Now())
 		}
 
 		_, err = s.Cache.GetOwner(subCtx, serviceDto.Owner)
 		if err != nil {
 			s.Logging.Logger().Ctx(ctx).Info().Printf("owner %v not found", serviceDto.Owner)
-			return apierrors.NewBadRequestError("service.invalid.missing.owner", fmt.Sprintf("no such owner: %s", serviceDto.Owner), nil, s.Now())
+			return apierrors.NewBadRequestError("service.invalid.missing.owner", fmt.Sprintf("no such owner: %s", serviceDto.Owner), nil, s.Timestamp.Now())
 		}
 
 		for _, repoKey := range serviceDto.Repositories {
 			_, err = s.Cache.GetRepository(subCtx, repoKey)
 			if err != nil {
 				s.Logging.Logger().Ctx(ctx).Info().Printf("service values invalid: %s", repoKey)
-				return apierrors.NewBadRequestError("service.invalid.missing.repository", "validation error: you referenced a repository that does not exist: no such instance: "+repoKey, err, s.Now())
+				return apierrors.NewBadRequestError("service.invalid.missing.repository", "validation error: you referenced a repository that does not exist: no such instance: "+repoKey, err, s.Timestamp.Now())
 			}
 		}
 
 		if current.TimeStamp != serviceDto.TimeStamp || current.CommitHash != serviceDto.CommitHash {
 			result = current
 			s.Logging.Logger().Ctx(ctx).Info().Printf("service %v was concurrently updated", serviceName)
-			return apierrors.NewConflictErrorWithResponse("service.conflict.concurrentlyupdated", fmt.Sprintf("service %v was concurrently updated", serviceName), nil, result, s.Now())
+			return apierrors.NewConflictErrorWithResponse("service.conflict.concurrentlyupdated", fmt.Sprintf("service %v was concurrently updated", serviceName), nil, result, s.Timestamp.Now())
 		}
 
 		serviceWritten, err := s.Updater.WriteService(subCtx, serviceName, serviceDto)
@@ -205,7 +204,7 @@ func (s *Impl) validateExistingServiceDto(ctx context.Context, serviceName strin
 	if len(messages) > 0 {
 		details := strings.Join(messages, ", ")
 		s.Logging.Logger().Ctx(ctx).Info().Printf("service values invalid: %s", details)
-		return apierrors.NewBadRequestError("service.invalid.values", fmt.Sprintf("validation error: %s", details), nil, s.Now())
+		return apierrors.NewBadRequestError("service.invalid.values", fmt.Sprintf("validation error: %s", details), nil, s.Timestamp.Now())
 	}
 	return nil
 }
@@ -237,7 +236,7 @@ func (s *Impl) PatchService(ctx context.Context, serviceName string, servicePatc
 		if err != nil {
 			details := fmt.Sprintf("no such owner: %s", serviceDto.Owner)
 			s.Logging.Logger().Ctx(ctx).Info().Printf(details)
-			return apierrors.NewBadRequestError("service.invalid.missing.owner", details, err, s.Now())
+			return apierrors.NewBadRequestError("service.invalid.missing.owner", details, err, s.Timestamp.Now())
 		}
 
 		for _, repoKey := range serviceDto.Repositories {
@@ -245,14 +244,14 @@ func (s *Impl) PatchService(ctx context.Context, serviceName string, servicePatc
 			if err != nil {
 				details := fmt.Sprintf("validation error: you referenced a repository that does not exist: no such instance: %s", repoKey)
 				s.Logging.Logger().Ctx(ctx).Info().Printf(details)
-				return apierrors.NewBadRequestError("service.invalid.missing.repository", details, err, s.Now())
+				return apierrors.NewBadRequestError("service.invalid.missing.repository", details, err, s.Timestamp.Now())
 			}
 		}
 
 		if current.TimeStamp != servicePatchDto.TimeStamp || current.CommitHash != servicePatchDto.CommitHash {
 			result = current
 			s.Logging.Logger().Ctx(ctx).Info().Printf("service %v was concurrently updated", serviceName)
-			return apierrors.NewConflictErrorWithResponse("service.conflict.concurrentlyupdated", fmt.Sprintf("service %v was concurrently updated", serviceName), nil, result, s.Now())
+			return apierrors.NewConflictErrorWithResponse("service.conflict.concurrentlyupdated", fmt.Sprintf("service %v was concurrently updated", serviceName), nil, result, s.Timestamp.Now())
 		}
 
 		serviceWritten, err := s.Updater.WriteService(subCtx, serviceName, serviceDto)
@@ -290,7 +289,7 @@ func (s *Impl) validateServicePatchDto(ctx context.Context, serviceName string, 
 	if len(messages) > 0 {
 		details := strings.Join(messages, ", ")
 		s.Logging.Logger().Ctx(ctx).Info().Printf("service values invalid: %s", details)
-		return apierrors.NewBadRequestError("service.invalid.values", fmt.Sprintf("validation error: %s", details), nil, s.Now())
+		return apierrors.NewBadRequestError("service.invalid.values", fmt.Sprintf("validation error: %s", details), nil, s.Timestamp.Now())
 	}
 	return nil
 }
@@ -404,7 +403,7 @@ func (s *Impl) validateDeletionDto(ctx context.Context, deletionInfo openapi.Del
 	if len(messages) > 0 {
 		details := strings.Join(messages, ", ")
 		s.Logging.Logger().Ctx(ctx).Info().Printf("deletion info values invalid: %s", details)
-		return apierrors.NewBadRequestError("deletion.invalid.values", fmt.Sprintf("validation error: %s", details), nil, s.Now())
+		return apierrors.NewBadRequestError("deletion.invalid.values", fmt.Sprintf("validation error: %s", details), nil, s.Timestamp.Now())
 	}
 	return nil
 }

@@ -15,7 +15,6 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
-	"time"
 )
 
 const ownerParam = "owner"
@@ -29,7 +28,7 @@ type Impl struct {
 	Logging             librepo.Logging
 	Repositories        service.Repositories
 
-	Now func() time.Time
+	Timestamp librepo.Timestamp
 }
 
 func (c *Impl) WireUp(_ context.Context, router chi.Router) {
@@ -82,11 +81,11 @@ func (c *Impl) GetSingleRepository(w http.ResponseWriter, r *http.Request) {
 
 func (c *Impl) CreateRepository(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	if err := jwt.IsAuthenticated(ctx, "anonymous tried CreateRepository", c.Now()); err != nil {
+	if err := jwt.IsAuthenticated(ctx, "anonymous tried CreateRepository", c.Timestamp.Now()); err != nil {
 		apierrors.HandleError(ctx, w, r, err, apierrors.IsUnauthorisedError)
 		return
 	}
-	if err := jwt.HasGroup(ctx, c.CustomConfiguration.AuthGroupWrite(), fmt.Sprintf("%s tried CreateRepository", jwt.Subject(ctx)), c.Now()); err != nil {
+	if err := jwt.HasGroup(ctx, c.CustomConfiguration.AuthGroupWrite(), fmt.Sprintf("%s tried CreateRepository", jwt.Subject(ctx)), c.Timestamp.Now()); err != nil {
 		apierrors.HandleError(ctx, w, r, err, apierrors.IsForbiddenError)
 		return
 	}
@@ -115,11 +114,11 @@ func (c *Impl) CreateRepository(w http.ResponseWriter, r *http.Request) {
 
 func (c *Impl) UpdateRepository(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	if err := jwt.IsAuthenticated(ctx, "anonymous tried UpdateRepository", c.Now()); err != nil {
+	if err := jwt.IsAuthenticated(ctx, "anonymous tried UpdateRepository", c.Timestamp.Now()); err != nil {
 		apierrors.HandleError(ctx, w, r, err, apierrors.IsUnauthorisedError)
 		return
 	}
-	if err := jwt.HasGroup(ctx, c.CustomConfiguration.AuthGroupWrite(), fmt.Sprintf("%s tried UpdateRepository", jwt.Subject(ctx)), c.Now()); err != nil {
+	if err := jwt.HasGroup(ctx, c.CustomConfiguration.AuthGroupWrite(), fmt.Sprintf("%s tried UpdateRepository", jwt.Subject(ctx)), c.Timestamp.Now()); err != nil {
 		apierrors.HandleError(ctx, w, r, err, apierrors.IsForbiddenError)
 		return
 	}
@@ -145,11 +144,11 @@ func (c *Impl) UpdateRepository(w http.ResponseWriter, r *http.Request) {
 
 func (c *Impl) PatchRepository(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	if err := jwt.IsAuthenticated(ctx, "anonymous tried PatchRepository", c.Now()); err != nil {
+	if err := jwt.IsAuthenticated(ctx, "anonymous tried PatchRepository", c.Timestamp.Now()); err != nil {
 		apierrors.HandleError(ctx, w, r, err, apierrors.IsUnauthorisedError)
 		return
 	}
-	if err := jwt.HasGroup(ctx, c.CustomConfiguration.AuthGroupWrite(), fmt.Sprintf("%s tried PatchRepository", jwt.Subject(ctx)), c.Now()); err != nil {
+	if err := jwt.HasGroup(ctx, c.CustomConfiguration.AuthGroupWrite(), fmt.Sprintf("%s tried PatchRepository", jwt.Subject(ctx)), c.Timestamp.Now()); err != nil {
 		apierrors.HandleError(ctx, w, r, err, apierrors.IsForbiddenError)
 		return
 	}
@@ -175,17 +174,17 @@ func (c *Impl) PatchRepository(w http.ResponseWriter, r *http.Request) {
 
 func (c *Impl) DeleteRepository(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	if err := jwt.IsAuthenticated(ctx, "anonymous tried DeleteRepository", c.Now()); err != nil {
+	if err := jwt.IsAuthenticated(ctx, "anonymous tried DeleteRepository", c.Timestamp.Now()); err != nil {
 		apierrors.HandleError(ctx, w, r, err, apierrors.IsUnauthorisedError)
 		return
 	}
-	if err := jwt.HasGroup(ctx, c.CustomConfiguration.AuthGroupWrite(), fmt.Sprintf("%s tried DeleteRepository", jwt.Subject(ctx)), c.Now()); err != nil {
+	if err := jwt.HasGroup(ctx, c.CustomConfiguration.AuthGroupWrite(), fmt.Sprintf("%s tried DeleteRepository", jwt.Subject(ctx)), c.Timestamp.Now()); err != nil {
 		apierrors.HandleError(ctx, w, r, err, apierrors.IsForbiddenError)
 		return
 	}
 
 	key := util.StringPathParam(r, "repository")
-	info, err := util.ParseBodyToDeletionDto(ctx, r, c.Now())
+	info, err := util.ParseBodyToDeletionDto(ctx, r, c.Timestamp.Now())
 	if err != nil {
 		apierrors.HandleError(ctx, w, r, err, apierrors.IsBadRequestError)
 		return
@@ -218,7 +217,7 @@ func (c *Impl) validRepositoryKey(ctx context.Context, key string) apierrors.Ann
 	repoTypes := c.CustomConfiguration.RepositoryTypes()
 	separator := c.CustomConfiguration.RepositoryKeySeparator()
 	details := fmt.Sprintf("repository name must match %s, is not allowed to match %s and may have up to %d characters; repository type must be one of %v and name and type must be separated by a %s character", permitted, prohibited, max, repoTypes, separator)
-	return apierrors.NewBadRequestError("repository.invalid", details, nil, c.Now())
+	return apierrors.NewBadRequestError("repository.invalid", details, nil, c.Timestamp.Now())
 }
 
 func (c *Impl) validRepositoryName(name string) bool {
@@ -242,7 +241,7 @@ func (c *Impl) parseBodyToRepositoryDto(ctx context.Context, r *http.Request) (o
 	err := decoder.Decode(&dto)
 	if err != nil {
 		c.Logging.Logger().Ctx(ctx).Info().Printf("repository body invalid: %s", err.Error())
-		return openapi.RepositoryDto{}, apierrors.NewBadRequestError("repository.invalid.body", "body failed to parse", err, c.Now())
+		return openapi.RepositoryDto{}, apierrors.NewBadRequestError("repository.invalid.body", "body failed to parse", err, c.Timestamp.Now())
 	}
 	return dto, nil
 }
@@ -252,7 +251,7 @@ func (c *Impl) parseBodyToRepositoryCreateDto(ctx context.Context, r *http.Reque
 	err := decoder.Decode(&dto)
 	if err != nil {
 		c.Logging.Logger().Ctx(ctx).Info().Printf("repository body invalid: %s", err.Error())
-		return openapi.RepositoryCreateDto{}, apierrors.NewBadRequestError("repository.invalid.body", "body failed to parse", err, c.Now())
+		return openapi.RepositoryCreateDto{}, apierrors.NewBadRequestError("repository.invalid.body", "body failed to parse", err, c.Timestamp.Now())
 	}
 	return dto, nil
 }
@@ -263,7 +262,7 @@ func (c *Impl) parseBodyToRepositoryPatchDto(ctx context.Context, r *http.Reques
 	err := decoder.Decode(&dto)
 	if err != nil {
 		c.Logging.Logger().Ctx(ctx).Info().Printf("repository body invalid: %s", err.Error())
-		return openapi.RepositoryPatchDto{}, apierrors.NewBadRequestError("repository.invalid.body", "body failed to parse", err, c.Now())
+		return openapi.RepositoryPatchDto{}, apierrors.NewBadRequestError("repository.invalid.body", "body failed to parse", err, c.Timestamp.Now())
 	}
 	return dto, nil
 }

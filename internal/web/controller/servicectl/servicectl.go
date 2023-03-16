@@ -13,7 +13,6 @@ import (
 	"github.com/StephanHCB/go-backend-service-common/api/apierrors"
 	"github.com/go-chi/chi/v5"
 	"net/http"
-	"time"
 )
 
 const ownerParam = "owner"
@@ -24,7 +23,7 @@ type Impl struct {
 	Logging             librepo.Logging
 	Services            service.Services
 
-	Now func() time.Time
+	Timestamp librepo.Timestamp
 }
 
 func (c *Impl) WireUp(_ context.Context, router chi.Router) {
@@ -69,11 +68,11 @@ func (c *Impl) GetSingleService(w http.ResponseWriter, r *http.Request) {
 
 func (c *Impl) CreateService(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	if err := jwt.IsAuthenticated(ctx, "anonymous tried CreateService", c.Now()); err != nil {
+	if err := jwt.IsAuthenticated(ctx, "anonymous tried CreateService", c.Timestamp.Now()); err != nil {
 		apierrors.HandleError(ctx, w, r, err, apierrors.IsUnauthorisedError)
 		return
 	}
-	if err := jwt.HasGroup(ctx, c.CustomConfiguration.AuthGroupWrite(), fmt.Sprintf("%s tried CreateService", jwt.Subject(ctx)), c.Now()); err != nil {
+	if err := jwt.HasGroup(ctx, c.CustomConfiguration.AuthGroupWrite(), fmt.Sprintf("%s tried CreateService", jwt.Subject(ctx)), c.Timestamp.Now()); err != nil {
 		apierrors.HandleError(ctx, w, r, err, apierrors.IsForbiddenError)
 		return
 	}
@@ -102,11 +101,11 @@ func (c *Impl) CreateService(w http.ResponseWriter, r *http.Request) {
 
 func (c *Impl) UpdateService(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	if err := jwt.IsAuthenticated(ctx, "anonymous tried UpdateService", c.Now()); err != nil {
+	if err := jwt.IsAuthenticated(ctx, "anonymous tried UpdateService", c.Timestamp.Now()); err != nil {
 		apierrors.HandleError(ctx, w, r, err, apierrors.IsUnauthorisedError)
 		return
 	}
-	if err := jwt.HasGroup(ctx, c.CustomConfiguration.AuthGroupWrite(), fmt.Sprintf("%s tried UpdateService", jwt.Subject(ctx)), c.Now()); err != nil {
+	if err := jwt.HasGroup(ctx, c.CustomConfiguration.AuthGroupWrite(), fmt.Sprintf("%s tried UpdateService", jwt.Subject(ctx)), c.Timestamp.Now()); err != nil {
 		apierrors.HandleError(ctx, w, r, err, apierrors.IsForbiddenError)
 		return
 	}
@@ -132,11 +131,11 @@ func (c *Impl) UpdateService(w http.ResponseWriter, r *http.Request) {
 
 func (c *Impl) PatchService(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	if err := jwt.IsAuthenticated(ctx, "anonymous tried PatchService", c.Now()); err != nil {
+	if err := jwt.IsAuthenticated(ctx, "anonymous tried PatchService", c.Timestamp.Now()); err != nil {
 		apierrors.HandleError(ctx, w, r, err, apierrors.IsUnauthorisedError)
 		return
 	}
-	if err := jwt.HasGroup(ctx, c.CustomConfiguration.AuthGroupWrite(), fmt.Sprintf("%s tried PatchService", jwt.Subject(ctx)), c.Now()); err != nil {
+	if err := jwt.HasGroup(ctx, c.CustomConfiguration.AuthGroupWrite(), fmt.Sprintf("%s tried PatchService", jwt.Subject(ctx)), c.Timestamp.Now()); err != nil {
 		apierrors.HandleError(ctx, w, r, err, apierrors.IsForbiddenError)
 		return
 	}
@@ -162,17 +161,17 @@ func (c *Impl) PatchService(w http.ResponseWriter, r *http.Request) {
 
 func (c *Impl) DeleteService(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	if err := jwt.IsAuthenticated(ctx, "anonymous tried DeleteService", c.Now()); err != nil {
+	if err := jwt.IsAuthenticated(ctx, "anonymous tried DeleteService", c.Timestamp.Now()); err != nil {
 		apierrors.HandleError(ctx, w, r, err, apierrors.IsUnauthorisedError)
 		return
 	}
-	if err := jwt.HasGroup(ctx, c.CustomConfiguration.AuthGroupWrite(), fmt.Sprintf("%s tried DeleteService", jwt.Subject(ctx)), c.Now()); err != nil {
+	if err := jwt.HasGroup(ctx, c.CustomConfiguration.AuthGroupWrite(), fmt.Sprintf("%s tried DeleteService", jwt.Subject(ctx)), c.Timestamp.Now()); err != nil {
 		apierrors.HandleError(ctx, w, r, err, apierrors.IsForbiddenError)
 		return
 	}
 
 	name := util.StringPathParam(r, "service")
-	info, err := util.ParseBodyToDeletionDto(ctx, r, c.Now())
+	info, err := util.ParseBodyToDeletionDto(ctx, r, c.Timestamp.Now())
 	if err != nil {
 		apierrors.HandleError(ctx, w, r, err, apierrors.IsBadRequestError)
 		return
@@ -200,7 +199,7 @@ func (c *Impl) GetServicePromoters(w http.ResponseWriter, r *http.Request) {
 	} else {
 		promotersDto, err := c.Services.GetServicePromoters(ctx, serviceDto.Owner)
 		if err != nil {
-			util.UnexpectedErrorHandler(ctx, w, r, err, c.Now())
+			util.UnexpectedErrorHandler(ctx, w, r, err, c.Timestamp.Now())
 		} else {
 			util.Success(ctx, w, r, promotersDto)
 		}
@@ -220,7 +219,7 @@ func (c *Impl) validServiceName(ctx context.Context, name string) apierrors.Anno
 	permitted := c.CustomConfiguration.ServiceNamePermittedRegex().String()
 	prohibited := c.CustomConfiguration.ServiceNameProhibitedRegex().String()
 	max := c.CustomConfiguration.ServiceNameMaxLength()
-	return apierrors.NewBadRequestError("service.invalid.name", fmt.Sprintf("service name must match %s, is not allowed to match %s and may have up to %d characters", permitted, prohibited, max), nil, c.Now())
+	return apierrors.NewBadRequestError("service.invalid.name", fmt.Sprintf("service name must match %s, is not allowed to match %s and may have up to %d characters", permitted, prohibited, max), nil, c.Timestamp.Now())
 }
 
 func (c *Impl) parseBodyToServiceDto(ctx context.Context, r *http.Request) (openapi.ServiceDto, error) {
@@ -229,7 +228,7 @@ func (c *Impl) parseBodyToServiceDto(ctx context.Context, r *http.Request) (open
 	err := decoder.Decode(&dto)
 	if err != nil {
 		c.Logging.Logger().Ctx(ctx).Info().Printf("service body invalid: %s", err.Error())
-		return openapi.ServiceDto{}, apierrors.NewBadRequestError("service.invalid.body", "body failed to parse", err, c.Now())
+		return openapi.ServiceDto{}, apierrors.NewBadRequestError("service.invalid.body", "body failed to parse", err, c.Timestamp.Now())
 
 	}
 	return dto, nil
@@ -241,7 +240,7 @@ func (c *Impl) parseBodyToServiceCreateDto(ctx context.Context, r *http.Request)
 	err := decoder.Decode(&dto)
 	if err != nil {
 		c.Logging.Logger().Ctx(ctx).Info().Printf("service body invalid: %s", err.Error())
-		return openapi.ServiceCreateDto{}, apierrors.NewBadRequestError("service.invalid.body", "body failed to parse", err, c.Now())
+		return openapi.ServiceCreateDto{}, apierrors.NewBadRequestError("service.invalid.body", "body failed to parse", err, c.Timestamp.Now())
 	}
 	return dto, nil
 }
@@ -252,7 +251,7 @@ func (c *Impl) parseBodyToServicePatchDto(ctx context.Context, r *http.Request) 
 	err := decoder.Decode(&dto)
 	if err != nil {
 		c.Logging.Logger().Ctx(ctx).Info().Printf("service body invalid: %s", err.Error())
-		return openapi.ServicePatchDto{}, apierrors.NewBadRequestError("service.invalid.body", "body failed to parse", err, c.Now())
+		return openapi.ServicePatchDto{}, apierrors.NewBadRequestError("service.invalid.body", "body failed to parse", err, c.Timestamp.Now())
 	}
 	return dto, nil
 }
