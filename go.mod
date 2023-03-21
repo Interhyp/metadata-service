@@ -1,6 +1,6 @@
 module github.com/Interhyp/metadata-service
 
-go 1.19
+go 1.20
 
 // exclude actually unused dependencies (mostly of pact-go, which is testing only anyway)
 // because our scanner fails to understand they are not in use
