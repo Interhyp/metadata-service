@@ -12,6 +12,7 @@ import (
 	"github.com/Interhyp/metadata-service/internal/web/app"
 	"github.com/Interhyp/metadata-service/internal/web/middleware/jwt"
 	"github.com/Interhyp/metadata-service/internal/web/server"
+	"github.com/Interhyp/metadata-service/test/acceptance/bitbucketmock"
 	"github.com/Interhyp/metadata-service/test/acceptance/idpmock"
 	"github.com/Interhyp/metadata-service/test/acceptance/kafkamock"
 	"github.com/Interhyp/metadata-service/test/acceptance/metadatamock"
@@ -37,6 +38,7 @@ var (
 	metadataImpl *metadatamock.Impl
 	kafkaImpl    *kafkamock.Impl
 	idpImpl      *idpmock.Impl
+	bbImpl       *bitbucketmock.BitbucketMock
 
 	application application2.Application
 	appCtx      context.Context
@@ -60,6 +62,7 @@ func tstSetup(configPath string) error {
 	metadataImpl = metadatamock.New().(*metadatamock.Impl)
 	kafkaImpl = kafkamock.New().(*kafkamock.Impl)
 	idpImpl = idpmock.New().(*idpmock.Impl)
+	bbImpl = bitbucketmock.New().(*bitbucketmock.BitbucketMock)
 
 	application.Register()
 
@@ -72,6 +75,7 @@ func tstSetup(configPath string) error {
 	registry.CreateOverride(repository.MetadataAcornName, metadataImpl)
 	registry.CreateOverride(repository.KafkaAcornName, kafkaImpl)
 	registry.CreateOverride(repository.IdentityProviderAcornName, idpImpl)
+	registry.CreateOverride(repository.BitbucketAcornName, bbImpl)
 
 	registry.SkipAssemble(loggingImpl) // already assembled
 	registry.SkipAssemble(configImpl)  // would attempt to read config

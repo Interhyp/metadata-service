@@ -19,4 +19,4 @@ SERVICE_NAME_PROHIBITED_REGEX: "-service$"
 
 OWNER_ALIAS_FILTER_REGEX: .*
 
-REPOSITORY_TYPES: 'implementation,deployment,api,helm-chart'
+REPOSITORY_TYPES: 'implementation,helm-deployment,api,helm-chart'
