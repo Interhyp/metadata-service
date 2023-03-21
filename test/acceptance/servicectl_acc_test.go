@@ -5,6 +5,7 @@ import (
 	"github.com/Interhyp/metadata-service/docs"
 	"github.com/stretchr/testify/require"
 	"net/http"
+	"strings"
 	"testing"
 )
 
@@ -287,6 +288,42 @@ func TestPOSTService_GitServerDown(t *testing.T) {
 	docs.Then("And the local metadata repository clone has been reset to its original state")
 	require.Equal(t, 0, len(metadataImpl.FilesWritten))
 	require.Equal(t, 0, len(metadataImpl.FilesCommitted))
+}
+
+func TestPOSTService_ImplementationCrossrefAllowed(t *testing.T) {
+	tstReset()
+
+	docs.Given("Given an authenticated admin user")
+	token := tstValidAdminToken()
+
+	docs.Given("Given an existing repositories crossref.helm-deployment and not-crossref.implementation")
+	deplRepoBody := tstRepository()
+	deplRepoResponse, err := tstPerformPost("/rest/api/v1/repositories/crossref.helm-deployment", token, &deplRepoBody)
+	require.Nil(t, err)
+	require.Equal(t, http.StatusCreated, deplRepoResponse.status)
+
+	implRepoBody := tstRepository()
+	implRepoResponse, err := tstPerformPost("/rest/api/v1/repositories/not-crossref.implementation", token, &implRepoBody)
+	require.Nil(t, err)
+	require.Equal(t, http.StatusCreated, implRepoResponse.status)
+
+	docs.When("When they request the creation of a new service that references a pre-existing implementation repository with a different primary name")
+	body := tstService("crossref")
+	body.Repositories = []string{
+		"crossref.helm-deployment",
+		"not-crossref.implementation",
+	}
+	response, err := tstPerformPost("/rest/api/v1/services/crossref", token, &body)
+
+	docs.Then("Then the request is successful and the response is as expected")
+	tstAssert(t, response, err, http.StatusCreated, "service-create-crossref.json")
+
+	docs.Then("And the service has been correctly written, committed and pushed")
+	filename := "owners/some-owner/services/crossref.yaml"
+	expectedYaml := strings.ReplaceAll(tstServiceExpectedYaml("crossref"), "crossref/implementation", "not-crossref/implementation")
+	require.Equal(t, expectedYaml, metadataImpl.ReadContents(filename))
+	require.True(t, metadataImpl.FilesCommitted[filename])
+	require.True(t, metadataImpl.Pushed)
 }
 
 // update full service

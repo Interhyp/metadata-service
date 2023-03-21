@@ -3,11 +3,13 @@ package repositories
 import (
 	"context"
 	"fmt"
+	"github.com/Interhyp/metadata-service/acorns/config"
 	"github.com/Interhyp/metadata-service/acorns/service"
 	openapi "github.com/Interhyp/metadata-service/api/v1"
 	"github.com/Interhyp/metadata-service/internal/service/util"
 	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
 	"github.com/StephanHCB/go-backend-service-common/api/apierrors"
+	"net/url"
 	"strings"
 )
 
@@ -18,7 +20,39 @@ type Impl struct {
 	Updater       service.Updater
 	Owners        service.Owners
 
-	Timestamp librepo.Timestamp
+	CustomConfiguration config.CustomConfiguration
+	Timestamp           librepo.Timestamp
+}
+
+func (s *Impl) ValidRepositoryKey(ctx context.Context, key string) apierrors.AnnotatedError {
+	keyParts := strings.Split(key, s.CustomConfiguration.RepositoryKeySeparator())
+	if len(keyParts) == 2 && s.validRepositoryName(keyParts[0]) && s.validRepositoryType(keyParts[1]) {
+		return nil
+	}
+
+	s.Logging.Logger().Ctx(ctx).Info().Printf("repository parameter %v invalid", url.QueryEscape(key))
+	permitted := s.CustomConfiguration.RepositoryNamePermittedRegex().String()
+	prohibited := s.CustomConfiguration.RepositoryNameProhibitedRegex().String()
+	max := s.CustomConfiguration.RepositoryNameMaxLength()
+	repoTypes := s.CustomConfiguration.RepositoryTypes()
+	separator := s.CustomConfiguration.RepositoryKeySeparator()
+	details := fmt.Sprintf("repository name must match %s, is not allowed to match %s and may have up to %d characters; repository type must be one of %v and name and type must be separated by a %s character", permitted, prohibited, max, repoTypes, separator)
+	return apierrors.NewBadRequestError("repository.invalid", details, nil, s.Timestamp.Now())
+}
+
+func (s *Impl) validRepositoryName(name string) bool {
+	return s.CustomConfiguration.RepositoryNamePermittedRegex().MatchString(name) &&
+		!s.CustomConfiguration.RepositoryNameProhibitedRegex().MatchString(name) &&
+		uint16(len(name)) <= s.CustomConfiguration.RepositoryNameMaxLength()
+}
+
+func (s *Impl) validRepositoryType(repoType string) bool {
+	for _, validRepoType := range s.CustomConfiguration.RepositoryTypes() {
+		if validRepoType == repoType {
+			return true
+		}
+	}
+	return false
 }
 
 func (s *Impl) GetRepositories(ctx context.Context,

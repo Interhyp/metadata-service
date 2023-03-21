@@ -13,8 +13,6 @@ import (
 	"github.com/StephanHCB/go-backend-service-common/api/apierrors"
 	"github.com/go-chi/chi/v5"
 	"net/http"
-	"net/url"
-	"strings"
 )
 
 const ownerParam = "owner"
@@ -91,7 +89,7 @@ func (c *Impl) CreateRepository(w http.ResponseWriter, r *http.Request) {
 	}
 
 	key := util.StringPathParam(r, "repository")
-	if err := c.validRepositoryKey(ctx, key); err != nil {
+	if err := c.Repositories.ValidRepositoryKey(ctx, key); err != nil {
 		apierrors.HandleError(ctx, w, r, err, apierrors.IsBadRequestError)
 		return
 	}
@@ -203,37 +201,6 @@ func (c *Impl) DeleteRepository(w http.ResponseWriter, r *http.Request) {
 }
 
 // --- helpers
-
-func (c *Impl) validRepositoryKey(ctx context.Context, key string) apierrors.AnnotatedError {
-	keyParts := strings.Split(key, c.CustomConfiguration.RepositoryKeySeparator())
-	if len(keyParts) == 2 && c.validRepositoryName(keyParts[0]) && c.validRepositoryType(keyParts[1]) {
-		return nil
-	}
-
-	c.Logging.Logger().Ctx(ctx).Info().Printf("repository parameter %v invalid", url.QueryEscape(key))
-	permitted := c.CustomConfiguration.RepositoryNamePermittedRegex().String()
-	prohibited := c.CustomConfiguration.RepositoryNameProhibitedRegex().String()
-	max := c.CustomConfiguration.RepositoryNameMaxLength()
-	repoTypes := c.CustomConfiguration.RepositoryTypes()
-	separator := c.CustomConfiguration.RepositoryKeySeparator()
-	details := fmt.Sprintf("repository name must match %s, is not allowed to match %s and may have up to %d characters; repository type must be one of %v and name and type must be separated by a %s character", permitted, prohibited, max, repoTypes, separator)
-	return apierrors.NewBadRequestError("repository.invalid", details, nil, c.Timestamp.Now())
-}
-
-func (c *Impl) validRepositoryName(name string) bool {
-	return c.CustomConfiguration.RepositoryNamePermittedRegex().MatchString(name) &&
-		!c.CustomConfiguration.RepositoryNameProhibitedRegex().MatchString(name) &&
-		uint16(len(name)) <= c.CustomConfiguration.RepositoryNameMaxLength()
-}
-
-func (c *Impl) validRepositoryType(repoType string) bool {
-	for _, validRepoType := range c.CustomConfiguration.RepositoryTypes() {
-		if validRepoType == repoType {
-			return true
-		}
-	}
-	return false
-}
 
 func (c *Impl) parseBodyToRepositoryDto(ctx context.Context, r *http.Request) (openapi.RepositoryDto, error) {
 	decoder := json.NewDecoder(r.Body)

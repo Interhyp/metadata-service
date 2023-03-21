@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	openapi "github.com/Interhyp/metadata-service/api/v1"
+	"github.com/StephanHCB/go-backend-service-common/api/apierrors"
 )
 
 const RepositoriesAcornName = "repositories"
@@ -10,6 +11,9 @@ const RepositoriesAcornName = "repositories"
 // Repositories provides the business logic for repository metadata.
 type Repositories interface {
 	IsRepositories() bool
+
+	// ValidRepositoryKey checks validity of a repository key and returns an error describing the problem if invalid
+	ValidRepositoryKey(ctx context.Context, repoKey string) apierrors.AnnotatedError
 
 	GetRepositories(ctx context.Context,
 		ownerAliasFilter string, serviceNameFilter string,
