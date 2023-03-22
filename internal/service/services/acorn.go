@@ -29,6 +29,7 @@ func (s *Impl) AssembleAcorn(registry auacornapi.AcornRegistry) error {
 	s.Cache = registry.GetAcornByName(service.CacheAcornName).(service.Cache)
 	s.Updater = registry.GetAcornByName(service.UpdaterAcornName).(service.Updater)
 	s.Owner = registry.GetAcornByName(service.OwnersAcornName).(service.Owners)
+	s.Repositories = registry.GetAcornByName(service.RepositoriesAcornName).(service.Repositories)
 
 	s.CustomConfiguration = config.Custom(s.Configuration)
 
@@ -51,6 +52,14 @@ func (s *Impl) SetupAcorn(registry auacornapi.AcornRegistry) error {
 		return err
 	}
 	err = registry.SetupAfter(s.Updater.(auacornapi.Acorn))
+	if err != nil {
+		return err
+	}
+	err = registry.SetupAfter(s.Owner.(auacornapi.Acorn))
+	if err != nil {
+		return err
+	}
+	err = registry.SetupAfter(s.Repositories.(auacornapi.Acorn))
 	if err != nil {
 		return err
 	}

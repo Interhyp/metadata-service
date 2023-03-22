@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"github.com/Interhyp/metadata-service/acorns/config"
 	"github.com/Interhyp/metadata-service/acorns/service"
@@ -19,6 +20,7 @@ type Impl struct {
 	Cache               service.Cache
 	Updater             service.Updater
 	Owner               service.Owners
+	Repositories        service.Repositories
 
 	Timestamp librepo.Timestamp
 }
@@ -29,15 +31,15 @@ func (s *Impl) GetServices(ctx context.Context, ownerAliasFilter string) (openap
 		TimeStamp: s.Cache.GetServiceListTimestamp(ctx),
 	}
 	for _, name := range s.Cache.GetSortedServiceNames(ctx) {
-		service, err := s.GetService(ctx, name)
+		theService, err := s.GetService(ctx, name)
 		if err != nil {
 			// service not found errors are ok, the cache may have been changed concurrently, just drop the entry
 			if !apierrors.IsNotFoundError(err) {
 				return openapi.ServiceListDto{}, err
 			}
 		} else {
-			if ownerAliasFilter == "" || ownerAliasFilter == service.Owner {
-				result.Services[name] = service
+			if ownerAliasFilter == "" || ownerAliasFilter == theService.Owner {
+				result.Services[name] = theService
 			}
 		}
 	}
@@ -115,7 +117,7 @@ func (s *Impl) validateNewServiceDto(ctx context.Context, serviceName string, dt
 
 	messages = validateOwner(messages, dto.Owner)
 	messages = validateDescription(messages, dto.Description)
-	messages = validateRepositories(messages, serviceName, dto.Repositories)
+	messages = s.validateRepositories(ctx, messages, serviceName, dto.Repositories)
 	messages = s.validateAlertTarget(messages, dto.AlertTarget)
 	messages = validateOperationType(messages, dto.OperationType)
 	messages = validateRequiredScans(messages, dto.RequiredScans)
@@ -186,7 +188,7 @@ func (s *Impl) validateExistingServiceDto(ctx context.Context, serviceName strin
 
 	messages = validateOwner(messages, dto.Owner)
 	messages = validateDescription(messages, dto.Description)
-	messages = validateRepositories(messages, serviceName, dto.Repositories)
+	messages = s.validateRepositories(ctx, messages, serviceName, dto.Repositories)
 	messages = s.validateAlertTarget(messages, dto.AlertTarget)
 	messages = validateOperationType(messages, dto.OperationType)
 	messages = validateRequiredScans(messages, dto.RequiredScans)
@@ -272,7 +274,7 @@ func (s *Impl) validateServicePatchDto(ctx context.Context, serviceName string, 
 
 	messages = validateOwner(messages, dto.Owner)
 	messages = validateDescription(messages, dto.Description)
-	messages = validateRepositories(messages, serviceName, dto.Repositories)
+	messages = s.validateRepositories(ctx, messages, serviceName, dto.Repositories)
 	messages = s.validateAlertTarget(messages, dto.AlertTarget)
 	messages = validateOperationType(messages, dto.OperationType)
 	messages = validateRequiredScans(messages, dto.RequiredScans)
@@ -496,11 +498,11 @@ func validateOwner(messages []string, ownerAlias string) []string {
 	return messages
 }
 
-func validateRepositories(messages []string, serviceName string, repoKeys []string) []string {
+func (s *Impl) validateRepositories(ctx context.Context, messages []string, serviceName string, repoKeys []string) []string {
 	if repoKeys != nil {
 		for _, repo := range repoKeys {
-			if !validRepoKey(repo, serviceName) {
-				messages = append(messages, "repository key must belong to service and have acceptable type")
+			if err := s.validRepoKey(ctx, repo, serviceName); err != nil {
+				messages = append(messages, err.Error())
 			}
 		}
 	}
@@ -546,15 +548,21 @@ func (s *Impl) validAlertTarget(candidate string) bool {
 		strings.HasSuffix(candidate, s.CustomConfiguration.AlertTargetSuffix())
 }
 
-var validRepoTypesForServices = []string{"helm-deployment", "implementation", "api"}
-
-func validRepoKey(candidate string, serviceName string) bool {
-	for _, repoType := range validRepoTypesForServices {
-		if candidate == serviceName+"."+repoType {
-			return true
-		}
+func (s *Impl) validRepoKey(ctx context.Context, candidate string, serviceName string) error {
+	if err := s.Repositories.ValidRepositoryKey(ctx, candidate); err != nil {
+		return err
 	}
-	return false
+
+	if strings.HasSuffix(candidate, ".implementation") {
+		return nil
+	}
+	if strings.HasSuffix(candidate, ".api") {
+		return nil
+	}
+	if candidate == serviceName+".helm-deployment" {
+		return nil
+	}
+	return errors.New("repository key must have acceptable name and type combination (allowed types: api implementation helm-deployment), and for helm-deployment the name must match the service name")
 }
 
 var validOperationTypesForService = []string{"WORKLOAD", "PLATFORM"}

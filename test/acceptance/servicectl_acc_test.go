@@ -2,9 +2,11 @@ package acceptance
 
 import (
 	"encoding/json"
+	openapi "github.com/Interhyp/metadata-service/api/v1"
 	"github.com/Interhyp/metadata-service/docs"
 	"github.com/stretchr/testify/require"
 	"net/http"
+	"strings"
 	"testing"
 )
 
@@ -287,6 +289,42 @@ func TestPOSTService_GitServerDown(t *testing.T) {
 	docs.Then("And the local metadata repository clone has been reset to its original state")
 	require.Equal(t, 0, len(metadataImpl.FilesWritten))
 	require.Equal(t, 0, len(metadataImpl.FilesCommitted))
+}
+
+func TestPOSTService_ImplementationCrossrefAllowed(t *testing.T) {
+	tstReset()
+
+	docs.Given("Given an authenticated admin user")
+	token := tstValidAdminToken()
+
+	docs.Given("Given an existing repositories crossref.helm-deployment and not-crossref.implementation")
+	deplRepoBody := tstRepository()
+	deplRepoResponse, err := tstPerformPost("/rest/api/v1/repositories/crossref.helm-deployment", token, &deplRepoBody)
+	require.Nil(t, err)
+	require.Equal(t, http.StatusCreated, deplRepoResponse.status)
+
+	implRepoBody := tstRepository()
+	implRepoResponse, err := tstPerformPost("/rest/api/v1/repositories/not-crossref.implementation", token, &implRepoBody)
+	require.Nil(t, err)
+	require.Equal(t, http.StatusCreated, implRepoResponse.status)
+
+	docs.When("When they request the creation of a new service that references a pre-existing implementation repository with a different primary name")
+	body := tstService("crossref")
+	body.Repositories = []string{
+		"crossref.helm-deployment",
+		"not-crossref.implementation",
+	}
+	response, err := tstPerformPost("/rest/api/v1/services/crossref", token, &body)
+
+	docs.Then("Then the request is successful and the response is as expected")
+	tstAssert(t, response, err, http.StatusCreated, "service-create-crossref.json")
+
+	docs.Then("And the service has been correctly written, committed and pushed")
+	filename := "owners/some-owner/services/crossref.yaml"
+	expectedYaml := strings.ReplaceAll(tstServiceExpectedYaml("crossref"), "crossref/implementation", "not-crossref/implementation")
+	require.Equal(t, expectedYaml, metadataImpl.ReadContents(filename))
+	require.True(t, metadataImpl.FilesCommitted[filename])
+	require.True(t, metadataImpl.Pushed)
 }
 
 // update full service
@@ -577,6 +615,57 @@ func TestPUTService_ChangeOwner(t *testing.T) {
 	require.Equal(t, tstServiceMovedExpectedKafka("some-service-backend"), string(actual))
 }
 
+func TestPUTService_ImplementationCrossrefAllowed(t *testing.T) {
+	tstReset()
+
+	docs.Given("Given an authenticated admin user")
+	token := tstValidAdminToken()
+
+	docs.Given("Given existing repositories crossref.helm-deployment and not-crossref.implementation")
+	deplRepoBody := tstRepository()
+	deplRepoResponse, err := tstPerformPost("/rest/api/v1/repositories/crossref.helm-deployment", token, &deplRepoBody)
+	require.Nil(t, err)
+	require.Equal(t, http.StatusCreated, deplRepoResponse.status)
+
+	implRepoBody := tstRepository()
+	implRepoResponse, err := tstPerformPost("/rest/api/v1/repositories/not-crossref.implementation", token, &implRepoBody)
+	require.Nil(t, err)
+	require.Equal(t, http.StatusCreated, implRepoResponse.status)
+
+	docs.Given("Given an existing service that references only the helm-deployment repository")
+	createBody := tstService("crossref")
+	createBody.Repositories = []string{
+		"crossref.helm-deployment",
+	}
+	createResponse, err := tstPerformPost("/rest/api/v1/services/crossref", token, &createBody)
+	require.Nil(t, err)
+	require.Equal(t, http.StatusCreated, createResponse.status)
+	// need commit hash from response, so we can perform valid update
+	var tmp openapi.ServiceDto
+	err = json.Unmarshal([]byte(createResponse.body), &tmp)
+	require.Nil(t, err)
+
+	docs.When("When they perform an update of the service, adding a cross-referenced implementation repository")
+	body := tstService("crossref")
+	body.Repositories = []string{
+		"crossref.helm-deployment",
+		"not-crossref.implementation",
+	}
+	body.CommitHash = tmp.CommitHash
+	response, err := tstPerformPut("/rest/api/v1/services/crossref", token, &body)
+
+	docs.Then("Then the request is successful")
+	require.Nil(t, err)
+	require.Equal(t, http.StatusOK, response.status)
+
+	docs.Then("And the service has been correctly written, committed and pushed")
+	filename := "owners/some-owner/services/crossref.yaml"
+	expectedYaml := strings.ReplaceAll(tstServiceExpectedYaml("crossref"), "crossref/implementation", "not-crossref/implementation")
+	require.Equal(t, expectedYaml, metadataImpl.ReadContents(filename))
+	require.True(t, metadataImpl.FilesCommitted[filename])
+	require.True(t, metadataImpl.Pushed)
+}
+
 // patch service
 
 func TestPATCHService_Success(t *testing.T) {
@@ -845,8 +934,8 @@ func TestPATCHService_ChangeOwner(t *testing.T) {
 	filename1 := "owners/deleteme/services/some-service-backend.yaml"
 	filename2old := "owners/some-owner/repositories/some-service-backend.helm-deployment.yaml"
 	filename2 := "owners/deleteme/repositories/some-service-backend.helm-deployment.yaml"
-	filename3old := "owners/some-owner/repositories/some-service-backend.helm-deployment.yaml"
-	filename3 := "owners/deleteme/repositories/some-service-backend.helm-deployment.yaml"
+	filename3old := "owners/some-owner/repositories/some-service-backend.implementation.yaml"
+	filename3 := "owners/deleteme/repositories/some-service-backend.implementation.yaml"
 	require.Equal(t, tstServiceExpectedYaml("some-service-backend"), metadataImpl.ReadContents(filename1))
 	require.True(t, metadataImpl.FilesCommitted[filename1])
 	require.True(t, metadataImpl.FilesCommitted[filename1old])
@@ -864,6 +953,135 @@ func TestPATCHService_ChangeOwner(t *testing.T) {
 	require.Equal(t, 1, len(kafkaImpl.Recording))
 	actual, _ := json.Marshal(kafkaImpl.Recording[0])
 	require.Equal(t, tstServiceMovedExpectedKafka("some-service-backend"), string(actual))
+}
+
+func TestPATCHService_ImplementationCrossrefAllowed(t *testing.T) {
+	tstReset()
+
+	docs.Given("Given an authenticated admin user")
+	token := tstValidAdminToken()
+
+	docs.Given("Given existing repositories crossref.helm-deployment and not-crossref.implementation")
+	deplRepoBody := tstRepository()
+	deplRepoResponse, err := tstPerformPost("/rest/api/v1/repositories/crossref.helm-deployment", token, &deplRepoBody)
+	require.Nil(t, err)
+	require.Equal(t, http.StatusCreated, deplRepoResponse.status)
+
+	implRepoBody := tstRepository()
+	implRepoResponse, err := tstPerformPost("/rest/api/v1/repositories/not-crossref.implementation", token, &implRepoBody)
+	require.Nil(t, err)
+	require.Equal(t, http.StatusCreated, implRepoResponse.status)
+
+	docs.Given("Given an existing service that references only the helm-deployment repository")
+	createBody := tstService("crossref")
+	createBody.Repositories = []string{
+		"crossref.helm-deployment",
+	}
+	createResponse, err := tstPerformPost("/rest/api/v1/services/crossref", token, &createBody)
+	require.Nil(t, err)
+	require.Equal(t, http.StatusCreated, createResponse.status)
+	// need commit hash from response, so we can perform valid update
+	var tmp openapi.ServiceDto
+	err = json.Unmarshal([]byte(createResponse.body), &tmp)
+	require.Nil(t, err)
+
+	docs.When("When they perform a valid patch of the service that adds a crossreferenced repository")
+	body := tstServicePatch()
+	body.Repositories = []string{
+		"crossref.helm-deployment",
+		"not-crossref.implementation",
+	}
+	body.CommitHash = tmp.CommitHash
+	response, err := tstPerformPatch("/rest/api/v1/services/crossref", token, &body)
+
+	docs.Then("Then the request is successful")
+	require.Nil(t, err)
+	require.Equal(t, http.StatusOK, response.status)
+
+	docs.Then("And the service has been correctly written, committed and pushed")
+	filename := "owners/some-owner/services/crossref.yaml"
+	expectedYaml := strings.ReplaceAll(tstServiceExpectedYaml("crossref"), "crossref/implementation", "not-crossref/implementation")
+	require.Equal(t, expectedYaml, metadataImpl.ReadContents(filename))
+	require.True(t, metadataImpl.FilesCommitted[filename])
+	require.True(t, metadataImpl.Pushed)
+
+	docs.Then("And the service has been cached and can be read again, returning the correct information")
+	readAgain, err := tstPerformGet("/rest/api/v1/services/crossref", tstUnauthenticated())
+	tstAssert(t, readAgain, err, http.StatusOK, "service-patch-crossref.json")
+
+	docs.Then("And a kafka message notifying other instances of the update has been sent")
+	require.Equal(t, 4, len(kafkaImpl.Recording)) // the initial inserts also cause kafka messages
+	actual, _ := json.Marshal(kafkaImpl.Recording[3])
+	require.Equal(t, tstServiceExpectedKafka("crossref"), string(actual))
+}
+
+func TestPATCHService_ImplementationCrossref_ChangeOwner(t *testing.T) {
+	tstReset()
+
+	docs.Given("Given an authenticated admin user")
+	token := tstValidAdminToken()
+
+	docs.Given("Given existing repositories crossref.helm-deployment and not-crossref.implementation")
+	deplRepoBody := tstRepository()
+	deplRepoResponse, err := tstPerformPost("/rest/api/v1/repositories/crossref.helm-deployment", token, &deplRepoBody)
+	require.Nil(t, err)
+	require.Equal(t, http.StatusCreated, deplRepoResponse.status)
+
+	implRepoBody := tstRepository()
+	implRepoResponse, err := tstPerformPost("/rest/api/v1/repositories/not-crossref.implementation", token, &implRepoBody)
+	require.Nil(t, err)
+	require.Equal(t, http.StatusCreated, implRepoResponse.status)
+
+	docs.Given("Given an existing service that references both these repositories, one of which is a cross reference")
+	createBody := tstService("crossref")
+	createBody.Repositories = []string{
+		"crossref.helm-deployment",
+		"not-crossref.implementation",
+	}
+	createResponse, err := tstPerformPost("/rest/api/v1/services/crossref", token, &createBody)
+	require.Nil(t, err)
+	require.Equal(t, http.StatusCreated, createResponse.status)
+	// need commit hash from response, so we can perform valid update
+	var tmp openapi.ServiceDto
+	err = json.Unmarshal([]byte(createResponse.body), &tmp)
+	require.Nil(t, err)
+
+	docs.When("When they perform a valid patch of the service that moves it to a new owner")
+	body := tstServicePatch()
+	body.Owner = p("deleteme")
+	body.CommitHash = tmp.CommitHash
+	response, err := tstPerformPatch("/rest/api/v1/services/crossref", token, &body)
+
+	docs.Then("Then the request is successful")
+	require.Nil(t, err)
+	require.Equal(t, http.StatusOK, response.status)
+
+	docs.Then("And the service with its referenced repositories has been correctly moved, committed and pushed, including the cross-referenced repository")
+	filename1old := "owners/some-owner/services/crossref.yaml"
+	filename1 := "owners/deleteme/services/crossref.yaml"
+	filename2old := "owners/some-owner/repositories/crossref.helm-deployment.yaml"
+	filename2 := "owners/deleteme/repositories/crossref.helm-deployment.yaml"
+	filename3old := "owners/some-owner/repositories/not-crossref.implementation.yaml"
+	filename3 := "owners/deleteme/repositories/not-crossref.implementation.yaml"
+	expectedYaml := strings.ReplaceAll(tstServiceExpectedYaml("crossref"), "crossref/implementation", "not-crossref/implementation")
+	require.Equal(t, expectedYaml, metadataImpl.ReadContents(filename1))
+	require.True(t, metadataImpl.FilesCommitted[filename1])
+	require.True(t, metadataImpl.FilesCommitted[filename1old])
+	require.True(t, metadataImpl.FilesCommitted[filename2])
+	require.True(t, metadataImpl.FilesCommitted[filename2old])
+	require.True(t, metadataImpl.FilesCommitted[filename3])
+	require.True(t, metadataImpl.FilesCommitted[filename3old])
+	require.True(t, metadataImpl.Pushed)
+
+	docs.Then("And the service has been cached and can be read again, returning the correct owner")
+	readAgain, err := tstPerformGet("/rest/api/v1/services/crossref", tstUnauthenticated())
+	tstAssert(t, readAgain, err, http.StatusOK, "service-patch-crossref-ownerchange.json")
+
+	docs.Then("And a kafka message notifying other instances of the update has been sent")
+	require.Equal(t, 4, len(kafkaImpl.Recording)) // the initial inserts also cause kafka messages
+	actual, _ := json.Marshal(kafkaImpl.Recording[3])
+	expectedMsg := strings.ReplaceAll(tstServiceMovedExpectedKafka("crossref"), "crossref.implementation", "not-crossref.implementation")
+	require.Equal(t, expectedMsg, string(actual))
 }
 
 // delete service
