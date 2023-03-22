@@ -58,14 +58,6 @@ func (b *BitbucketMock) GetBitbucketUsers(ctx context.Context, usernames []strin
 		})
 	}
 	return result, nil
-	//return []repository.BitbucketUser{
-	//	{
-	//		Name: "reviewer-one",
-	//	},
-	//	{
-	//		Name: "reviewer-two",
-	//	},
-	//}, nil
 }
 
 func (b *BitbucketMock) FilterExistingUsernames(ctx context.Context, usernames []string) ([]string, error) {
@@ -73,5 +65,4 @@ func (b *BitbucketMock) FilterExistingUsernames(ctx context.Context, usernames [
 		return []string{}, errors.New("error")
 	}
 	return usernames, nil
-	// return []string{"approver-one", "approver-two"}, nil
 }
