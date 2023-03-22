@@ -15,7 +15,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v2
       with:
-        go-version: 1.19
+        go-version: 1.20.2
 
     - name: Set up pact-foundation/pact-ruby-standalone
       run: >
@@ -57,7 +57,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-go@v3
         with:
-          go-version: 1.19
+          go-version: 1.20.2
       - run: go build
       - uses: go-semantic-release/action@v1
         with:
