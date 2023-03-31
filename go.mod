@@ -77,7 +77,7 @@ require (
 	github.com/twmb/franz-go v1.13.1
 	go.elastic.co/apm/module/apmchiv5/v2 v2.2.0
 	go.elastic.co/apm/module/apmhttp/v2 v2.2.0
-	go.elastic.co/apm/v2 v2.2.0
+	go.elastic.co/apm/v2 v2.3.0
 	gopkg.in/yaml.v3 v3.0.1
 )
 
@@ -121,7 +121,6 @@ require (
 	github.com/prometheus/client_model v0.3.0 // indirect
 	github.com/prometheus/common v0.37.0 // indirect
 	github.com/prometheus/procfs v0.8.0 // indirect
-	github.com/santhosh-tekuri/jsonschema v1.2.4 // indirect
 	github.com/sergi/go-diff v1.1.0 // indirect
 	github.com/shurcooL/httpfs v0.0.0-20190707220628-8d4bc4ba7749 // indirect
 	github.com/shurcooL/vfsgen v0.0.0-20200824052919-0d455de96546 // indirect
