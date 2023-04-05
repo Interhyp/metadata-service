@@ -142,6 +142,13 @@ var CustomConfigItems = []auconfigapi.ConfigItem{
 		Validate:    auconfigenv.ObtainNotEmptyValidator(),
 	},
 	{
+		Key:         config.KeyMetadataRepoMainline,
+		EnvName:     config.KeyMetadataRepoMainline,
+		Default:     "refs/heads/main",
+		Description: "ref to use as mainline",
+		Validate:    auconfigenv.ObtainNotEmptyValidator(),
+	},
+	{
 		Key:         config.KeyUpdateJobIntervalMinutes,
 		EnvName:     config.KeyUpdateJobIntervalMinutes,
 		Default:     "5",
