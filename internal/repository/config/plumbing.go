@@ -31,6 +31,7 @@ type CustomConfigImpl struct {
 	VAuthGroupWrite                 string
 	VKafkaGroupIdOverride           string
 	VMetadataRepoUrl                string
+	VMetadataRepoMainline           string
 	VUpdateJobIntervalCronPart      string
 	VUpdateJobTimeoutSeconds        uint16
 	VAlertTargetPrefix              string
@@ -80,6 +81,7 @@ func (c *CustomConfigImpl) Obtain(getter func(key string) string) {
 	c.VAuthOidcTokenAudience = getter(config.KeyAuthOidcTokenAudience)
 	c.VAuthGroupWrite = getter(config.KeyAuthGroupWrite)
 	c.VMetadataRepoUrl = getter(config.KeyMetadataRepoUrl)
+	c.VMetadataRepoMainline = getter(config.KeyMetadataRepoMainline)
 	c.VUpdateJobIntervalCronPart = getter(config.KeyUpdateJobIntervalMinutes)
 	c.VUpdateJobTimeoutSeconds = toUint16(getter(config.KeyUpdateJobTimeoutSeconds))
 	c.VAlertTargetPrefix = getter(config.KeyAlertTargetPrefix)

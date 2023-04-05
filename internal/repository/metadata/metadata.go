@@ -11,6 +11,7 @@ import (
 	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
 	"github.com/go-git/go-billy/v5/memfs"
 	"github.com/go-git/go-git/v5"
+	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/go-git/go-git/v5/plumbing/object"
 	"github.com/go-git/go-git/v5/plumbing/storer"
 	"github.com/go-git/go-git/v5/plumbing/transport/http"
@@ -195,6 +196,7 @@ func (r *Impl) Clone(ctx context.Context) error {
 		Progress:        r, // implements io.Writer, sends to Debug logging
 		URL:             r.CustomConfiguration.MetadataRepoUrl(),
 		InsecureSkipTLS: insecureSkipTLS,
+		ReferenceName:   plumbing.ReferenceName(r.CustomConfiguration.MetadataRepoMainline()),
 	})
 	if err != nil {
 		r.Logging.Logger().Ctx(ctx).Warn().Print("git clone failed - console output was: ", r.sanitizedConsoleOutput())
