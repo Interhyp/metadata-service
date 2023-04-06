@@ -26,7 +26,7 @@ func (r *Impl) AcornName() string {
 func (r *Impl) AssembleAcorn(registry auacornapi.AcornRegistry) error {
 	r.Configuration = registry.GetAcornByName(librepo.ConfigurationAcornName).(librepo.Configuration)
 	r.Logging = registry.GetAcornByName(librepo.LoggingAcornName).(librepo.Logging)
-	r.Vault = registry.GetAcornByName(repository.VaultAcornName).(repository.Vault)
+	r.Vault = registry.GetAcornByName(librepo.VaultAcornName).(librepo.Vault)
 
 	r.LowLevel = bbclient.New(r.Configuration, r.Logging, r.Vault)
 

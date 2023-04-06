@@ -8,7 +8,6 @@ import (
 	"github.com/Interhyp/metadata-service/internal/repository/idp"
 	"github.com/Interhyp/metadata-service/internal/repository/kafka"
 	"github.com/Interhyp/metadata-service/internal/repository/metadata"
-	"github.com/Interhyp/metadata-service/internal/repository/vault"
 	"github.com/Interhyp/metadata-service/internal/service/cache"
 	"github.com/Interhyp/metadata-service/internal/service/mapper"
 	"github.com/Interhyp/metadata-service/internal/service/owners"
@@ -24,6 +23,7 @@ import (
 	auacorn "github.com/StephanHCB/go-autumn-acorn-registry"
 	"github.com/StephanHCB/go-backend-service-common/repository/logging"
 	"github.com/StephanHCB/go-backend-service-common/repository/timestamp"
+	"github.com/StephanHCB/go-backend-service-common/repository/vault"
 	"github.com/StephanHCB/go-backend-service-common/web/controller/healthctl"
 	"github.com/StephanHCB/go-backend-service-common/web/controller/swaggerctl"
 )

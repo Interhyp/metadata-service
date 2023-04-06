@@ -24,7 +24,7 @@ func TestStartup_ShouldBeHealthy(t *testing.T) {
 	registry := auacorn.Registry.(*auacorn.AcornRegistryImpl)
 	require.NotNil(t, registry.GetAcornByName(librepo.ConfigurationAcornName).(librepo.Configuration))
 	require.NotNil(t, registry.GetAcornByName(librepo.LoggingAcornName).(librepo.Logging))
-	require.NotNil(t, registry.GetAcornByName(repository.VaultAcornName).(repository.Vault))
+	require.NotNil(t, registry.GetAcornByName(librepo.VaultAcornName).(librepo.Vault))
 	require.NotNil(t, registry.GetAcornByName(repository.KafkaAcornName).(repository.Kafka))
 	require.NotNil(t, registry.GetAcornByName(repository.MetadataAcornName).(repository.Metadata))
 	require.NotNil(t, registry.GetAcornByName(repository.HostIPAcornName).(repository.HostIP))

@@ -71,7 +71,7 @@ func tstSetup(configPath string) error {
 	registry := auacorn.Registry.(*auacorn.AcornRegistryImpl)
 	registry.CreateOverride(librepo.ConfigurationAcornName, configImpl)
 	registry.CreateOverride(librepo.LoggingAcornName, loggingImpl)
-	registry.CreateOverride(repository.VaultAcornName, vaultImpl)
+	registry.CreateOverride(librepo.VaultAcornName, vaultImpl)
 	registry.CreateOverride(repository.MetadataAcornName, metadataImpl)
 	registry.CreateOverride(repository.KafkaAcornName, kafkaImpl)
 	registry.CreateOverride(repository.IdentityProviderAcornName, idpImpl)

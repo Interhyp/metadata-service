@@ -28,7 +28,7 @@ type Impl struct {
 	Configuration       librepo.Configuration
 	CustomConfiguration config.CustomConfiguration
 	Logging             librepo.Logging
-	Vault               repository.Vault
+	Vault               librepo.Vault
 
 	apiBaseUrl string
 
@@ -36,7 +36,7 @@ type Impl struct {
 	NoRetryClient aurestclientapi.Client
 }
 
-func New(configuration librepo.Configuration, logging librepo.Logging, vault repository.Vault) bbclientint.BitbucketClient {
+func New(configuration librepo.Configuration, logging librepo.Logging, vault librepo.Vault) bbclientint.BitbucketClient {
 	return &Impl{
 		Configuration:       configuration,
 		CustomConfiguration: config.Custom(configuration),

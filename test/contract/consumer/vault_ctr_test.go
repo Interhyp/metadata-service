@@ -4,10 +4,10 @@ import (
 	"context"
 	"fmt"
 	"github.com/Interhyp/metadata-service/acorns/config"
-	"github.com/Interhyp/metadata-service/acorns/repository"
-	"github.com/Interhyp/metadata-service/internal/repository/vault"
 	auacorn "github.com/StephanHCB/go-autumn-acorn-registry"
 	auconfigenv "github.com/StephanHCB/go-autumn-config-env"
+	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
+	"github.com/StephanHCB/go-backend-service-common/repository/vault"
 	"github.com/StephanHCB/go-backend-service-common/web/util/media"
 	"github.com/go-http-utils/headers"
 	"github.com/pact-foundation/pact-go/dsl"
@@ -37,7 +37,7 @@ func TestVaultConsumer_LocalToken_Success(t *testing.T) {
 		ctx := log.Logger.WithContext(context.Background())
 
 		registry := auacorn.Registry.(*auacorn.AcornRegistryImpl)
-		vaultImpl := registry.GetAcornByName(repository.VaultAcornName).(*vault.Impl)
+		vaultImpl := registry.GetAcornByName(librepo.VaultAcornName).(*vault.Impl)
 
 		if err := vaultImpl.Validate(ctx); err != nil {
 			return err
