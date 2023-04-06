@@ -1,8 +1,8 @@
 package vaultmock
 
 import (
-	"github.com/Interhyp/metadata-service/acorns/repository"
 	"github.com/StephanHCB/go-autumn-acorn-registry/api"
+	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
 )
 
 // --- implementing Acorn ---
@@ -16,7 +16,7 @@ func (v *VaultImpl) IsVault() bool {
 }
 
 func (v *VaultImpl) AcornName() string {
-	return repository.VaultAcornName
+	return librepo.VaultAcornName
 }
 
 func (v *VaultImpl) AssembleAcorn(registry auacornapi.AcornRegistry) error {

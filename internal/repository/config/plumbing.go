@@ -2,11 +2,11 @@ package config
 
 import (
 	"github.com/Interhyp/metadata-service/acorns/config"
-	"github.com/Interhyp/metadata-service/internal/repository/vault"
 	auacornapi "github.com/StephanHCB/go-autumn-acorn-registry/api"
 	auconfigapi "github.com/StephanHCB/go-autumn-config-api"
 	auconfigenv "github.com/StephanHCB/go-autumn-config-env"
 	libconfig "github.com/StephanHCB/go-backend-service-common/repository/config"
+	"github.com/StephanHCB/go-backend-service-common/repository/vault"
 	"regexp"
 	"strconv"
 )

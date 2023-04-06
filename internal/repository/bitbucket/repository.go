@@ -14,7 +14,7 @@ import (
 type Impl struct {
 	Configuration librepo.Configuration
 	Logging       librepo.Logging
-	Vault         repository.Vault
+	Vault         librepo.Vault
 
 	LowLevel bbclientint.BitbucketClient
 }
