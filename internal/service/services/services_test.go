@@ -328,6 +328,11 @@ func (c *MockConfig) RepositoryKeySeparator() string {
 	panic("implement me")
 }
 
+func (c *MockConfig) MetadataRepoMainline() string {
+	//TODO implement me
+	panic("implement me")
+}
+
 type MockLogging struct {
 }
 
