@@ -2152,11 +2152,12 @@
           },
           "operationType": {
             "type": "string",
-            "description": "The operation type of the service. 'WORKLOAD' follows the default deployment strategy of one instance per environment, 'PLATFORM' one instance per cluster or node.",
+            "description": "The operation type of the service. 'WORKLOAD' follows the default deployment strategy of one instance per environment, 'PLATFORM' one instance per cluster or node and 'APPLICATION' is a standalone application that is not deployed via the common strategies.",
             "default": "WORKLOAD",
             "x-extensible-enum": [
               "WORKLOAD",
-              "PLATFORM"
+              "PLATFORM",
+              "APPLICATION"
             ]
           },
           "requiredScans": {
@@ -2238,11 +2239,12 @@
           },
           "operationType": {
             "type": "string",
-            "description": "The operation type of the service. 'WORKLOAD' follows the default deployment strategy of one instance per environment, 'PLATFORM' one instance per cluster or node.",
+            "description": "The operation type of the service. 'WORKLOAD' follows the default deployment strategy of one instance per environment, 'PLATFORM' one instance per cluster or node and 'APPLICATION' is a standalone application that is not deployed via the common strategies.",
             "default": "WORKLOAD",
             "x-extensible-enum": [
               "WORKLOAD",
-              "PLATFORM"
+              "PLATFORM",
+              "APPLICATION"
             ]
           },
           "requiredScans": {
@@ -2312,11 +2314,12 @@
           },
           "operationType": {
             "type": "string",
-            "description": "The operation type of the service. 'WORKLOAD' follows the default deployment strategy of one instance per environment, 'PLATFORM' one instance per cluster or node.",
+            "description": "The operation type of the service. 'WORKLOAD' follows the default deployment strategy of one instance per environment, 'PLATFORM' one instance per cluster or node and 'APPLICATION' is a standalone application that is not deployed via the common strategies.",
             "default": "WORKLOAD",
             "x-extensible-enum": [
               "WORKLOAD",
-              "PLATFORM"
+              "PLATFORM",
+              "APPLICATION"
             ]
           },
           "requiredScans": {
