@@ -72,7 +72,7 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.15.0
 	github.com/robfig/cron/v3 v3.0.1
-	github.com/rs/zerolog v1.29.0
+	github.com/rs/zerolog v1.29.1
 	github.com/stretchr/testify v1.8.2
 	github.com/twmb/franz-go v1.13.2
 	go.elastic.co/apm/module/apmchiv5/v2 v2.3.0
