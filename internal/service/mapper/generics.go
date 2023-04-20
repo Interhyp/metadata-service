@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"github.com/Interhyp/metadata-service/acorns/errors/nochangeserror"
 	openapi "github.com/Interhyp/metadata-service/api/v1"
+	"github.com/StephanHCB/go-backend-service-common/web/middleware/requestid"
+	"github.com/rs/zerolog/log"
 	"gopkg.in/yaml.v3"
 	"time"
 )
@@ -83,9 +85,18 @@ func GetT[T Dtos](_ context.Context, s *Impl, resultPtr *T, fullPath string) err
 }
 
 func (s *Impl) resetLocalClone(ctx context.Context) {
-	err := s.Metadata.Clone(ctx)
+	reqId := ctx.Value(requestid.RequestIDKey)
+	if reqId == nil {
+		reqId = requestid.NewRequestID()
+	}
+	newCtx := context.WithValue(context.Background(), requestid.RequestIDKey, reqId)
+
+	logger := log.Ctx(ctx)
+	newCtx = logger.WithContext(newCtx)
+
+	err := s.Metadata.Clone(newCtx)
 	if err != nil {
-		s.Logging.Logger().Ctx(ctx).Error().WithErr(err).Print("failed to repair local clone - continuing")
+		s.Logging.Logger().Ctx(newCtx).Error().WithErr(err).Print("failed to repair local clone - continuing")
 	}
 }
 
