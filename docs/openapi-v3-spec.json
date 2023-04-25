@@ -2665,10 +2665,7 @@
           },
           "requireConditions": {
             "type": "object",
-            "description": "Map of string (key name e.g. some-key) of branch references.",
-            "required": [
-              "refMatcher"
-            ],
+            "description": "Configuration of conditional builds as map of structs (key name e.g. some-key) of target references.",
             "example": {
               "some-key": {
                 "refMatcher": "main"
@@ -2732,14 +2729,14 @@
       },
       "ConditionReferenceDto": {
         "type": "object",
-        "description": "References configured to the condition.",
+        "description": "Configuration of conditional build references.",
         "required": [
           "refMatcher"
         ],
         "properties": {
           "refMatcher": {
             "type": "string",
-            "description": "Branch reference."
+            "description": "Reference of a branch."
           }
         }
       },
