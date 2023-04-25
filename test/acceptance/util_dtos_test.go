@@ -219,6 +219,7 @@ func tstRepository() openapi.RepositoryDto {
 			CommitMessageType:       p("SEMANTIC"),
 			RequireIssue:            pb(false),
 			RequireSuccessfulBuilds: pi(1),
+			RequireConditions:       &map[string]openapi.ConditionReferenceDto{"snyk-key": {"master"}},
 			Webhooks: &openapi.RepositoryConfigurationWebhooksDto{
 				PipelineTrigger: pb(false),
 				Additional: []openapi.RepositoryConfigurationWebhookDto{
@@ -276,6 +277,9 @@ configuration:
     commitMessageType: SEMANTIC
     requireIssue: false
     requireSuccessfulBuilds: 1
+    requireConditions:
+        snyk-key:
+            refMatcher: master
     webhooks:
         pipelineTrigger: false
         additional:

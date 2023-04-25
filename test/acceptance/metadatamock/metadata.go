@@ -8,7 +8,7 @@ import (
 	"github.com/StephanHCB/go-backend-service-common/api/apierrors"
 	"github.com/go-git/go-billy/v5"
 	"github.com/go-git/go-billy/v5/memfs"
-	"io/ioutil"
+	"io"
 	"os"
 	"time"
 )
@@ -269,7 +269,7 @@ func (r *Impl) ReadFile(filename string) ([]byte, repository.CommitInfo, error) 
 	}
 	defer fileHandle.Close()
 
-	data, err := ioutil.ReadAll(fileHandle)
+	data, err := io.ReadAll(fileHandle)
 	if err != nil {
 		return nil, commitInfo, err
 	}

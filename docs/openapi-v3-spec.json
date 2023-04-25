@@ -2663,6 +2663,21 @@
             "type": "integer",
             "description": "Set the required successful builds counter."
           },
+          "requireConditions": {
+            "type": "object",
+            "description": "Map of string (key name e.g. some-key) of branch references.",
+            "required": [
+              "refMatcher"
+            ],
+            "example": {
+              "some-key": {
+                "refMatcher": "main"
+              }
+            },
+            "additionalProperties": {
+              "$ref": "#/components/schemas/ConditionReferenceDto"
+            }
+          },
           "webhooks": {
             "$ref": "#/components/schemas/RepositoryConfigurationWebhooksDto"
           },
@@ -2712,6 +2727,19 @@
               "REPO_READ",
               "REPO_WRITE"
             ]
+          }
+        }
+      },
+      "ConditionReferenceDto": {
+        "type": "object",
+        "description": "References configured to the condition.",
+        "required": [
+          "refMatcher"
+        ],
+        "properties": {
+          "refMatcher": {
+            "type": "string",
+            "description": "Branch reference."
           }
         }
       },

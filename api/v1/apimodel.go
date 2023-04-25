@@ -4,6 +4,11 @@ package openapi
 
 import "time"
 
+type ConditionReferenceDto struct {
+	// Branch reference.
+	RefMatcher string `json:"refMatcher" yaml:"refMatcher"`
+}
+
 type DeletionDto struct {
 	// The jira issue to use for committing the deletion.
 	JiraIssue string `json:"jiraIssue"`
@@ -98,8 +103,10 @@ type RepositoryConfigurationDto struct {
 	// Configures JQL matcher with query: issuetype in (Story, Bug) AND 'Risk Level' is not EMPTY
 	RequireIssue *bool `json:"requireIssue,omitempty" yaml:"requireIssue,omitempty"`
 	// Set the required successful builds counter.
-	RequireSuccessfulBuilds *int32                              `json:"requireSuccessfulBuilds,omitempty" yaml:"requireSuccessfulBuilds,omitempty"`
-	Webhooks                *RepositoryConfigurationWebhooksDto `json:"webhooks,omitempty" yaml:"webhooks,omitempty"`
+	RequireSuccessfulBuilds *int32 `json:"requireSuccessfulBuilds,omitempty" yaml:"requireSuccessfulBuilds,omitempty"`
+	// Map of string (key name e.g. some-key) of branch references.
+	RequireConditions *map[string]ConditionReferenceDto   `json:"requireConditions,omitempty" yaml:"requireConditions,omitempty"`
+	Webhooks          *RepositoryConfigurationWebhooksDto `json:"webhooks,omitempty" yaml:"webhooks,omitempty"`
 	// Map of string (group name e.g. some-owner) of strings (list of approvers), one approval for each group is required.
 	Approvers        *map[string][]string `json:"approvers,omitempty" yaml:"approvers,omitempty"`
 	DefaultReviewers []string             `json:"defaultReviewers,omitempty" yaml:"defaultReviewers,omitempty"`
@@ -193,7 +200,7 @@ type ServiceCreateDto struct {
 	AlertTarget string `json:"alertTarget"`
 	// True for services that will be permanently deployed to the Development environment only.
 	DevelopmentOnly *bool `json:"developmentOnly,omitempty"`
-	// The operation type of the service. 'WORKLOAD' follows the default deployment strategy of one instance per environment, 'PLATFORM' one instance per cluster or node.
+	// The operation type of the service. 'WORKLOAD' follows the default deployment strategy of one instance per environment, 'PLATFORM' one instance per cluster or node and 'APPLICATION' is a standalone application that is not deployed via the common strategies.
 	OperationType *string `json:"operationType,omitempty"`
 	// The security scans that are required for this service. Optional, SAST and/or SCA.
 	RequiredScans []string `json:"requiredScans,omitempty"`
@@ -214,7 +221,7 @@ type ServiceDto struct {
 	AlertTarget string `json:"alertTarget" yaml:"alertTarget"`
 	// True for services that will be permanently deployed to the Development environment only.
 	DevelopmentOnly *bool `json:"developmentOnly,omitempty" yaml:"developmentOnly,omitempty"`
-	// The operation type of the service. 'WORKLOAD' follows the default deployment strategy of one instance per environment, 'PLATFORM' one instance per cluster or node.
+	// The operation type of the service. 'WORKLOAD' follows the default deployment strategy of one instance per environment, 'PLATFORM' one instance per cluster or node and 'APPLICATION' is a standalone application that is not deployed via the common strategies.
 	OperationType *string `json:"operationType,omitempty" yaml:"operationType,omitempty"`
 	// The security scans that are required for this service. Optional, SAST and/or SCA.
 	RequiredScans []string `json:"requiredScans,omitempty" yaml:"requiredScans,omitempty"`
@@ -245,7 +252,7 @@ type ServicePatchDto struct {
 	AlertTarget *string `json:"alertTarget,omitempty"`
 	// True for services that will be permanently deployed to the Development environment only.
 	DevelopmentOnly *bool `json:"developmentOnly,omitempty"`
-	// The operation type of the service. 'WORKLOAD' follows the default deployment strategy of one instance per environment, 'PLATFORM' one instance per cluster or node.
+	// The operation type of the service. 'WORKLOAD' follows the default deployment strategy of one instance per environment, 'PLATFORM' one instance per cluster or node and 'APPLICATION' is a standalone application that is not deployed via the common strategies.
 	OperationType *string `json:"operationType,omitempty"`
 	// The security scans that are required for this service. Optional, SAST and/or SCA.
 	RequiredScans []string `json:"requiredScans,omitempty"`

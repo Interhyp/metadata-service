@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"github.com/go-http-utils/headers"
 	"github.com/stretchr/testify/require"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"os"
 	"testing"
@@ -91,7 +91,7 @@ func tstWebResponseFromResponse(response *http.Response) (tstWebResponse, error)
 	if val, ok := response.Header[headers.Location]; ok {
 		loc = val[0]
 	}
-	body, err := ioutil.ReadAll(response.Body)
+	body, err := io.ReadAll(response.Body)
 	if err != nil {
 		return tstWebResponse{}, err
 	}

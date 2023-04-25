@@ -367,10 +367,24 @@ func patchConfiguration(patch *openapi.RepositoryConfigurationDto, original *ope
 			CommitMessageType:       patchStringPtr(patch.CommitMessageType, original.CommitMessageType),
 			RequireIssue:            patchPtr[bool](patch.RequireIssue, original.RequireIssue),
 			RequireSuccessfulBuilds: patchPtr[int32](patch.RequireSuccessfulBuilds, original.RequireSuccessfulBuilds),
+			RequireConditions:       patchConditions(patch.RequireConditions, original.RequireConditions),
 			Webhooks:                patchWebhooks(patch.Webhooks, original.Webhooks),
 			Approvers:               patchApprovers(patch.Approvers, original.Approvers),
 			DefaultReviewers:        patchStringSlice(patch.DefaultReviewers, original.DefaultReviewers),
 			SignedApprovers:         patchStringSlice(patch.SignedApprovers, original.SignedApprovers),
+		}
+	} else {
+		return original
+	}
+}
+
+func patchConditions(patch *map[string]openapi.ConditionReferenceDto, original *map[string]openapi.ConditionReferenceDto) *map[string]openapi.ConditionReferenceDto {
+	if patch != nil {
+		if len(*patch) == 0 {
+			// remove
+			return nil
+		} else {
+			return patch
 		}
 	} else {
 		return original

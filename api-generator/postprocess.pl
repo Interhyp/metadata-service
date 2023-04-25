@@ -21,7 +21,7 @@ while (my $line = <STDIN>) {
         # ignore
     } elsif ($line =~ /^type /) {
         $enabled = 1;
-        if ($line =~ /^type (OwnerDto|Quicklink|RepositoryDto|ServiceDto|RepositoryConfigurationDto|RepositoryConfigurationAccessKeyDto|RepositoryConfigurationWebhooksDto|RepositoryConfigurationWebhookDto) struct/) {
+        if ($line =~ /^type (OwnerDto|Quicklink|RepositoryDto|ServiceDto|RepositoryConfigurationDto|RepositoryConfigurationAccessKeyDto|RepositoryConfigurationWebhooksDto|RepositoryConfigurationWebhookDto|ConditionReferenceDto) struct/) {
             $replaceYaml = 1;
         }
         print $line."\n";
