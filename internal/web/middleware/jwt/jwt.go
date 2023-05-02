@@ -110,8 +110,7 @@ func JwtValidator(next http.Handler) http.Handler {
 					}
 					if err != nil {
 						errorMessage = err.Error()
-					}
-					if !token.Valid {
+					} else if !token.Valid {
 						errorMessage = "token parsed but invalid"
 					}
 				}
