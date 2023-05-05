@@ -44,6 +44,11 @@ type Impl struct {
 	WebhookCtl          controller.WebhookController
 
 	Router chi.Router
+
+	RequestTimeoutSeconds     int
+	ServerReadTimeoutSeconds  int
+	ServerWriteTimeoutSeconds int
+	ServerIdleTimeoutSeconds  int
 }
 
 func (s *Impl) WireUp(ctx context.Context) {
@@ -86,6 +91,7 @@ func (s *Impl) WireUp(ctx context.Context) {
 		_ = jwt.Setup(s.IdentityProvider.GetKeySet(ctx), s.CustomConfiguration)
 		s.Router.Use(jwt.JwtValidator)
 
+		timeout.RequestTimeoutSeconds = s.RequestTimeoutSeconds
 		s.Router.Use(timeout.AddRequestTimeout)
 	}
 
@@ -101,9 +107,9 @@ func (s *Impl) NewServer(ctx context.Context, address string, router http.Handle
 	return &http.Server{
 		Addr:         address,
 		Handler:      router,
-		ReadTimeout:  10 * time.Second,
-		WriteTimeout: 10 * time.Second,
-		IdleTimeout:  10 * time.Second,
+		ReadTimeout:  time.Duration(s.ServerReadTimeoutSeconds) * time.Second,
+		WriteTimeout: time.Duration(s.ServerWriteTimeoutSeconds) * time.Second,
+		IdleTimeout:  time.Duration(s.ServerIdleTimeoutSeconds) * time.Second,
 		BaseContext: func(_ net.Listener) context.Context {
 			return ctx
 		},
