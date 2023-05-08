@@ -15,7 +15,12 @@ import (
 // --- implementing Acorn ---
 
 func New() auacornapi.Acorn {
-	return &Impl{}
+	return &Impl{
+		RequestTimeoutSeconds:     30,
+		ServerWriteTimeoutSeconds: 10,
+		ServerIdleTimeoutSeconds:  10,
+		ServerReadTimeoutSeconds:  10,
+	}
 }
 
 func (s *Impl) IsServer() bool {
@@ -36,7 +41,6 @@ func (s *Impl) AssembleAcorn(registry auacornapi.AcornRegistry) error {
 	s.ServiceCtl = registry.GetAcornByName(controller.ServiceControllerAcornName).(controller.ServiceController)
 	s.RepositoryCtl = registry.GetAcornByName(controller.RepositoryControllerAcornName).(controller.RepositoryController)
 	s.WebhookCtl = registry.GetAcornByName(controller.WebhookControllerAcornName).(controller.WebhookController)
-
 	return nil
 }
 
@@ -68,8 +72,11 @@ func (s *Impl) SetupAcorn(registry auacornapi.AcornRegistry) error {
 	if err := registry.SetupAfter(s.WebhookCtl.(auacornapi.Acorn)); err != nil {
 		return err
 	}
-
 	s.CustomConfiguration = config.Custom(s.Configuration)
+	s.RequestTimeoutSeconds = 60
+	s.ServerReadTimeoutSeconds = 60
+	s.ServerWriteTimeoutSeconds = 60
+	s.ServerIdleTimeoutSeconds = 60
 
 	ctx := auzerolog.AddLoggerToCtx(context.Background())
 
