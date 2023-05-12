@@ -2,15 +2,16 @@ package services
 
 import (
 	"context"
+	"testing"
+	"time"
+
 	openapi "github.com/Interhyp/metadata-service/api/v1"
 	"github.com/Interhyp/metadata-service/docs"
+	"github.com/Interhyp/metadata-service/test/acceptance/configmock"
 	auloggingapi "github.com/StephanHCB/go-autumn-logging/api"
 	"github.com/StephanHCB/go-backend-service-common/api/apierrors"
 	"github.com/StephanHCB/go-backend-service-common/repository/timestamp"
 	"github.com/stretchr/testify/require"
-	"regexp"
-	"testing"
-	"time"
 )
 
 func p(v string) *string {
@@ -139,200 +140,6 @@ func tstCreateValid() openapi.ServiceCreateDto {
 	}
 }
 
-type MockConfig struct {
-}
-
-func (c *MockConfig) BasicAuthUsername() string {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (c *MockConfig) BasicAuthPassword() string {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (c *MockConfig) BitbucketUsername() string {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (c *MockConfig) BitbucketPassword() string {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (c *MockConfig) BitbucketServer() string {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (c *MockConfig) BitbucketCacheSize() int {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (c *MockConfig) BitbucketCacheRetentionSeconds() uint32 {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (c *MockConfig) BitbucketReviewerFallback() string {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (c *MockConfig) GitCommitterName() string {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (c *MockConfig) GitCommitterEmail() string {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (c *MockConfig) KafkaUsername() string {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (c *MockConfig) KafkaPassword() string {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (c *MockConfig) KafkaTopic() string {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (c *MockConfig) KafkaSeedBrokers() string {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (c *MockConfig) KafkaGroupIdOverride() string {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (c *MockConfig) AuthOidcKeySetUrl() string {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (c *MockConfig) AuthOidcTokenAudience() string {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (c *MockConfig) AuthGroupWrite() string {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (c *MockConfig) MetadataRepoUrl() string {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (c *MockConfig) UpdateJobIntervalCronPart() string {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (c *MockConfig) UpdateJobTimeoutSeconds() uint16 {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (c *MockConfig) AlertTargetPrefix() string {
-	return "https://some-domain.com/"
-}
-
-func (c *MockConfig) AlertTargetSuffix() string {
-	return "@some-organisation.com"
-}
-
-func (c *MockConfig) AdditionalPromotersFromOwners() []string {
-	return make([]string, 0)
-}
-
-func (c *MockConfig) AdditionalPromoters() []string {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (c *MockConfig) ElasticApmEnabled() bool {
-	return false
-}
-
-func (c *MockConfig) OwnerAliasPermittedRegex() *regexp.Regexp {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (c *MockConfig) OwnerAliasProhibitedRegex() *regexp.Regexp {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (c *MockConfig) OwnerAliasMaxLength() uint16 {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (c *MockConfig) OwnerFilterAliasRegex() *regexp.Regexp {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (c *MockConfig) ServiceNamePermittedRegex() *regexp.Regexp {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (c *MockConfig) ServiceNameProhibitedRegex() *regexp.Regexp {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (c *MockConfig) ServiceNameMaxLength() uint16 {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (c *MockConfig) RepositoryNamePermittedRegex() *regexp.Regexp {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (c *MockConfig) RepositoryNameProhibitedRegex() *regexp.Regexp {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (c *MockConfig) RepositoryNameMaxLength() uint16 {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (c *MockConfig) RepositoryTypes() []string {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (c *MockConfig) RepositoryKeySeparator() string {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (c *MockConfig) MetadataRepoMainline() string {
-	//TODO implement me
-	panic("implement me")
-}
-
 type MockLogging struct {
 }
 
@@ -420,7 +227,7 @@ func fakeNow() time.Time {
 }
 
 func tstValidationTestcaseAllOps(t *testing.T, expectedMessage string, data openapi.ServiceDto, create openapi.ServiceCreateDto, patch openapi.ServicePatchDto) {
-	mockConfig := MockConfig{}
+	mockConfig := configmock.MockConfig{}
 	mockLogging := MockLogging{}
 	fakeNow := func() time.Time {
 		return time.Date(2022, 11, 6, 18, 14, 10, 0, time.UTC)

@@ -1,8 +1,9 @@
 package config
 
 import (
-	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
 	"regexp"
+
+	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
 )
 
 type CustomConfiguration interface {
@@ -11,6 +12,10 @@ type CustomConfiguration interface {
 
 	BitbucketUsername() string
 	BitbucketPassword() string
+
+	SSHPrivateKey() string
+	SSHPrivateKeyPassword() string
+	SSHMetadataRepositoryUrl() string
 
 	BitbucketServer() string
 	BitbucketCacheSize() int
@@ -30,7 +35,6 @@ type CustomConfiguration interface {
 	AuthOidcTokenAudience() string
 	AuthGroupWrite() string
 
-	MetadataRepoUrl() string
 	MetadataRepoMainline() string
 
 	UpdateJobIntervalCronPart() string
@@ -68,6 +72,9 @@ func Custom(configuration librepo.Configuration) CustomConfiguration {
 const (
 	KeyBasicAuthUsername              = "BASIC_AUTH_USERNAME"
 	KeyBasicAuthPassword              = "BASIC_AUTH_PASSWORD"
+	KeySSHPrivateKey                  = "SSH_PRIVATE_KEY"
+	KeySSHPrivateKeyPassword          = "SSH_PRIVATE_KEY_PASSWORD"
+	KeySSHMetadataRepositoryUrl       = "SSH_METADATA_REPO_URL"
 	KeyBitbucketUsername              = "BITBUCKET_USERNAME"
 	KeyBitbucketPassword              = "BITBUCKET_PASSWORD"
 	KeyBitbucketServer                = "BITBUCKET_SERVER"
@@ -84,7 +91,6 @@ const (
 	KeyAuthOidcKeySetUrl              = "AUTH_OIDC_KEY_SET_URL"
 	KeyAuthOidcTokenAudience          = "AUTH_OIDC_TOKEN_AUDIENCE"
 	KeyAuthGroupWrite                 = "AUTH_GROUP_WRITE"
-	KeyMetadataRepoUrl                = "METADATA_REPO_URL"
 	KeyMetadataRepoMainline           = "METADATA_REPO_MAINLINE"
 	KeyUpdateJobIntervalMinutes       = "UPDATE_JOB_INTERVAL_MINUTES"
 	KeyUpdateJobTimeoutSeconds        = "UPDATE_JOB_TIMEOUT_SECONDS"

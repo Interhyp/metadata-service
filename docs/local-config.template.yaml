@@ -32,7 +32,7 @@ VAULT_SECRETS_CONFIG: >-
 AUTH_OIDC_KEY_SET_URL: https://login.microsoftonline.com/<YOU MUST ADD CLIENT ID HERE>/discovery/v2.0/keys
 AUTH_OIDC_TOKEN_AUDIENCE: <YOU MUST ADD TOKEN AUDIENCE HERE>
 
-METADATA_REPO_URL: https://github.com/Interhyp/service-metadata-example
+SSH_METADATA_REPO_URL: ssh://git@github.com/Interhyp/service-metadata-example.git
 
 UPDATE_JOB_INTERVAL_MINUTES: 15
 UPDATE_JOB_TIMEOUT_SECONDS: 30

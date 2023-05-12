@@ -2,12 +2,13 @@ package metadata
 
 import (
 	"context"
+	"time"
+
 	"github.com/Interhyp/metadata-service/acorns/config"
 	"github.com/Interhyp/metadata-service/acorns/repository"
 	"github.com/StephanHCB/go-autumn-acorn-registry/api"
 	auzerolog "github.com/StephanHCB/go-autumn-logging-zerolog"
 	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
-	"time"
 )
 
 // --- implementing Acorn ---
@@ -33,7 +34,7 @@ func (r *Impl) AcornName() string {
 func (r *Impl) AssembleAcorn(registry auacornapi.AcornRegistry) error {
 	r.Configuration = registry.GetAcornByName(librepo.ConfigurationAcornName).(librepo.Configuration)
 	r.Logging = registry.GetAcornByName(librepo.LoggingAcornName).(librepo.Logging)
-
+	r.SshAuthProvider = registry.GetAcornByName(repository.SshAuthProviderAcornName).(repository.SshAuthProvider)
 	r.CustomConfiguration = config.Custom(r.Configuration)
 
 	return nil
@@ -44,6 +45,9 @@ func (r *Impl) SetupAcorn(registry auacornapi.AcornRegistry) error {
 		return err
 	}
 	if err := registry.SetupAfter(r.Logging.(auacornapi.Acorn)); err != nil {
+		return err
+	}
+	if err := registry.SetupAfter(r.SshAuthProvider.(auacornapi.Acorn)); err != nil {
 		return err
 	}
 
@@ -58,7 +62,7 @@ func (r *Impl) SetupAcorn(registry auacornapi.AcornRegistry) error {
 	return nil
 }
 
-func (r *Impl) TeardownAcorn(registry auacornapi.AcornRegistry) error {
+func (r *Impl) TeardownAcorn(_ auacornapi.AcornRegistry) error {
 	ctx := auzerolog.AddLoggerToCtx(context.Background())
 	r.Discard(ctx)
 	return nil
