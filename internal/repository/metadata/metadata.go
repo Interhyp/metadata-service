@@ -4,6 +4,13 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	"io"
+	"os"
+	"strings"
+	"sync"
+	"time"
+	"unicode"
+
 	"github.com/Interhyp/metadata-service/acorns/config"
 	"github.com/Interhyp/metadata-service/acorns/errors/nochangeserror"
 	"github.com/Interhyp/metadata-service/acorns/repository"
@@ -14,20 +21,15 @@ import (
 	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/go-git/go-git/v5/plumbing/object"
 	"github.com/go-git/go-git/v5/plumbing/storer"
-	"github.com/go-git/go-git/v5/plumbing/transport/http"
 	"github.com/go-git/go-git/v5/storage/memory"
-	"io"
-	"os"
-	"strings"
-	"sync"
-	"time"
-	"unicode"
 )
 
 type Impl struct {
 	Configuration       librepo.Configuration
 	CustomConfiguration config.CustomConfiguration
 	Logging             librepo.Logging
+
+	SshAuthProvider repository.SshAuthProvider
 
 	GitRepo *git.Repository
 
@@ -49,8 +51,6 @@ type Impl struct {
 
 	consoleOutput bytes.Buffer
 }
-
-const insecureSkipTLS = false
 
 func (r *Impl) pathsTouchedInCommit(ctx context.Context, commit *object.Commit) ([]string, error) {
 	result := make([]string, 0)
@@ -187,16 +187,18 @@ func (r *Impl) Clone(ctx context.Context) error {
 	childCtxWithTimeout, cancel := context.WithTimeout(ctx, 1*time.Minute)
 	defer cancel()
 
+	sshAuth, err := r.SshAuthProvider.ProvideSshAuth(ctx)
+	if err != nil {
+		r.Logging.Logger().Ctx(ctx).Warn().Print("providing sshAuth failed")
+		return err
+	}
+
 	repo, err := git.CloneContext(childCtxWithTimeout, memory.NewStorage(), memfs.New(), &git.CloneOptions{
-		Auth: &http.BasicAuth{
-			Username: r.CustomConfiguration.BitbucketUsername(),
-			Password: r.CustomConfiguration.BitbucketPassword(),
-		},
-		NoCheckout:      false,
-		Progress:        r, // implements io.Writer, sends to Debug logging
-		URL:             r.CustomConfiguration.MetadataRepoUrl(),
-		InsecureSkipTLS: insecureSkipTLS,
-		ReferenceName:   plumbing.ReferenceName(r.CustomConfiguration.MetadataRepoMainline()),
+		Auth:          sshAuth,
+		NoCheckout:    false,
+		Progress:      r, // implements io.Writer, sends to Debug logging
+		URL:           r.CustomConfiguration.SSHMetadataRepositoryUrl(),
+		ReferenceName: plumbing.ReferenceName(r.CustomConfiguration.MetadataRepoMainline()),
 	})
 	if err != nil {
 		r.Logging.Logger().Ctx(ctx).Warn().Print("git clone failed - console output was: ", r.sanitizedConsoleOutput())
@@ -229,15 +231,17 @@ func (r *Impl) Pull(ctx context.Context) error {
 	childCtxWithTimeout, cancel := context.WithTimeout(ctx, 30*time.Second)
 	defer cancel()
 
+	sshAuth, err := r.SshAuthProvider.ProvideSshAuth(ctx)
+	if err != nil {
+		r.Logging.Logger().Ctx(ctx).Warn().Print("providing sshAuth failed")
+		return err
+	}
+
 	err = tree.PullContext(childCtxWithTimeout, &git.PullOptions{
-		Auth: &http.BasicAuth{
-			Username: r.CustomConfiguration.BitbucketUsername(),
-			Password: r.CustomConfiguration.BitbucketPassword(),
-		},
-		Progress:        r, // implements io.Writer, sends to Debug logging
-		RemoteName:      "origin",
-		InsecureSkipTLS: insecureSkipTLS,
-		ReferenceName:   plumbing.ReferenceName(r.CustomConfiguration.MetadataRepoMainline()),
+		Auth:          sshAuth,
+		Progress:      r, // implements io.Writer, sends to Debug logging
+		RemoteName:    "origin",
+		ReferenceName: plumbing.ReferenceName(r.CustomConfiguration.MetadataRepoMainline()),
 	})
 	if err != nil && err != git.NoErrAlreadyUpToDate {
 		r.Logging.Logger().Ctx(ctx).Warn().Print("git pull failed - console output was: ", r.sanitizedConsoleOutput())
@@ -317,14 +321,16 @@ func (r *Impl) Push(ctx context.Context) error {
 	childCtxWithTimeout, cancel := context.WithTimeout(ctx, 30*time.Second)
 	defer cancel()
 
-	err := r.GitRepo.PushContext(childCtxWithTimeout, &git.PushOptions{
-		Auth: &http.BasicAuth{
-			Username: r.CustomConfiguration.BitbucketUsername(),
-			Password: r.CustomConfiguration.BitbucketPassword(),
-		},
-		Progress:        r, // implements io.Writer, sends to Debug logging
-		RemoteName:      "origin",
-		InsecureSkipTLS: insecureSkipTLS,
+	sshAuth, err := r.SshAuthProvider.ProvideSshAuth(ctx)
+	if err != nil {
+		r.Logging.Logger().Ctx(ctx).Warn().Print("providing sshAuth failed")
+		return err
+	}
+
+	err = r.GitRepo.PushContext(childCtxWithTimeout, &git.PushOptions{
+		Auth:       sshAuth,
+		Progress:   r, // implements io.Writer, sends to Debug logging
+		RemoteName: "origin",
 	})
 	if err != nil && err != git.NoErrAlreadyUpToDate {
 		r.Logging.Logger().Ctx(ctx).Warn().Print("git push failed - console output was: ", r.sanitizedConsoleOutput())

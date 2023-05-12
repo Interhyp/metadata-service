@@ -1,19 +1,23 @@
 package config
 
 import (
+	"regexp"
+	"strconv"
+
 	"github.com/Interhyp/metadata-service/acorns/config"
 	auacornapi "github.com/StephanHCB/go-autumn-acorn-registry/api"
 	auconfigapi "github.com/StephanHCB/go-autumn-config-api"
 	auconfigenv "github.com/StephanHCB/go-autumn-config-env"
 	libconfig "github.com/StephanHCB/go-backend-service-common/repository/config"
 	"github.com/StephanHCB/go-backend-service-common/repository/vault"
-	"regexp"
-	"strconv"
 )
 
 type CustomConfigImpl struct {
 	VBasicAuthUsername              string
 	VBasicAuthPassword              string
+	VSSHPrivateKey                  string
+	VSSHPrivateKeyPassword          string
+	VSSHMetadataRepoUrl             string
 	VBitbucketUsername              string
 	VBitbucketPassword              string
 	VBitbucketServer                string
@@ -30,7 +34,6 @@ type CustomConfigImpl struct {
 	VAuthOidcTokenAudience          string
 	VAuthGroupWrite                 string
 	VKafkaGroupIdOverride           string
-	VMetadataRepoUrl                string
 	VMetadataRepoMainline           string
 	VUpdateJobIntervalCronPart      string
 	VUpdateJobTimeoutSeconds        uint16
@@ -64,6 +67,9 @@ func New() auacornapi.Acorn {
 func (c *CustomConfigImpl) Obtain(getter func(key string) string) {
 	c.VBasicAuthUsername = getter(config.KeyBasicAuthUsername)
 	c.VBasicAuthPassword = getter(config.KeyBasicAuthPassword)
+	c.VSSHPrivateKey = getter(config.KeySSHPrivateKey)
+	c.VSSHPrivateKeyPassword = getter(config.KeySSHPrivateKeyPassword)
+	c.VSSHMetadataRepoUrl = getter(config.KeySSHMetadataRepositoryUrl)
 	c.VBitbucketUsername = getter(config.KeyBitbucketUsername)
 	c.VBitbucketPassword = getter(config.KeyBitbucketPassword)
 	c.VBitbucketServer = getter(config.KeyBitbucketServer)
@@ -80,7 +86,6 @@ func (c *CustomConfigImpl) Obtain(getter func(key string) string) {
 	c.VAuthOidcKeySetUrl = getter(config.KeyAuthOidcKeySetUrl)
 	c.VAuthOidcTokenAudience = getter(config.KeyAuthOidcTokenAudience)
 	c.VAuthGroupWrite = getter(config.KeyAuthGroupWrite)
-	c.VMetadataRepoUrl = getter(config.KeyMetadataRepoUrl)
 	c.VMetadataRepoMainline = getter(config.KeyMetadataRepoMainline)
 	c.VUpdateJobIntervalCronPart = getter(config.KeyUpdateJobIntervalMinutes)
 	c.VUpdateJobTimeoutSeconds = toUint16(getter(config.KeyUpdateJobTimeoutSeconds))

@@ -3,6 +3,8 @@ package config
 import (
 	"bytes"
 	"context"
+	"testing"
+
 	"github.com/Interhyp/metadata-service/acorns/config"
 	"github.com/Interhyp/metadata-service/docs"
 	auconfigenv "github.com/StephanHCB/go-autumn-config-env"
@@ -12,7 +14,6 @@ import (
 	"github.com/StephanHCB/go-backend-service-common/repository/logging"
 	"github.com/rs/zerolog/log"
 	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 const basedir = "../../../test/resources/"
@@ -72,7 +73,7 @@ func TestValidate_LotsOfErrors(t *testing.T) {
 	_, err := tstSetupCutAndLogRecorder(t, "invalid-config-values.yaml")
 
 	require.NotNil(t, err)
-	require.Contains(t, err.Error(), "some configuration values failed to validate or parse. There were 25 error(s). See details above")
+	require.Contains(t, err.Error(), "some configuration values failed to validate or parse. There were 26 error(s). See details above")
 
 	actualLog := goauzerolog.RecordedLogForTesting.String()
 
@@ -127,7 +128,7 @@ func TestAccessors(t *testing.T) {
 	require.Equal(t, "http://keyset", config.Custom(cut).AuthOidcKeySetUrl())
 	require.Equal(t, "some-audience", config.Custom(cut).AuthOidcTokenAudience())
 	require.Equal(t, "admin", config.Custom(cut).AuthGroupWrite())
-	require.Equal(t, "http://metadata", config.Custom(cut).MetadataRepoUrl())
+	require.Equal(t, "git://metadata", config.Custom(cut).SSHMetadataRepositoryUrl())
 	require.Equal(t, "5", config.Custom(cut).UpdateJobIntervalCronPart())
 	require.Equal(t, uint16(30), config.Custom(cut).UpdateJobTimeoutSeconds())
 	require.Equal(t, "https://some-domain.com/", config.Custom(cut).AlertTargetPrefix())

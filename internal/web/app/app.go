@@ -8,6 +8,7 @@ import (
 	"github.com/Interhyp/metadata-service/internal/repository/idp"
 	"github.com/Interhyp/metadata-service/internal/repository/kafka"
 	"github.com/Interhyp/metadata-service/internal/repository/metadata"
+	"github.com/Interhyp/metadata-service/internal/repository/sshAuthProvider"
 	"github.com/Interhyp/metadata-service/internal/service/cache"
 	"github.com/Interhyp/metadata-service/internal/service/mapper"
 	"github.com/Interhyp/metadata-service/internal/service/owners"
@@ -55,6 +56,7 @@ func (a *ApplicationImpl) Register() {
 		auacorn.Registry.Register(hostip.New)
 		auacorn.Registry.Register(bitbucket.New)
 		auacorn.Registry.Register(timestamp.New)
+		auacorn.Registry.Register(sshAuthProvider.New)
 		// services
 		auacorn.Registry.Register(mapper.New)
 		auacorn.Registry.Register(trigger.New)

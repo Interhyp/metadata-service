@@ -14,6 +14,18 @@ func (c *CustomConfigImpl) BasicAuthPassword() string {
 	return c.VBasicAuthPassword
 }
 
+func (c *CustomConfigImpl) SSHPrivateKey() string {
+	return c.VSSHPrivateKey
+}
+
+func (c *CustomConfigImpl) SSHPrivateKeyPassword() string {
+	return c.VSSHPrivateKeyPassword
+}
+
+func (c *CustomConfigImpl) SSHMetadataRepositoryUrl() string {
+	return c.VSSHMetadataRepoUrl
+}
+
 func (c *CustomConfigImpl) BitbucketUsername() string {
 	return c.VBitbucketUsername
 }
@@ -76,10 +88,6 @@ func (c *CustomConfigImpl) AuthGroupWrite() string {
 
 func (c *CustomConfigImpl) KafkaGroupIdOverride() string {
 	return c.VKafkaGroupIdOverride
-}
-
-func (c *CustomConfigImpl) MetadataRepoUrl() string {
-	return c.VMetadataRepoUrl
 }
 
 func (c *CustomConfigImpl) MetadataRepoMainline() string {
