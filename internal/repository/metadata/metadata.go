@@ -334,6 +334,21 @@ func (r *Impl) Push(ctx context.Context) error {
 	})
 	if err != nil && err != git.NoErrAlreadyUpToDate {
 		r.Logging.Logger().Ctx(ctx).Warn().Print("git push failed - console output was: ", r.sanitizedConsoleOutput())
+
+		r.Logging.Logger().Ctx(ctx).Warn().WithErr(err).Printf("git push failed - push returned error: %s", err.Error())
+		childCause := context.Cause(childCtxWithTimeout)
+		if childCause != nil {
+			r.Logging.Logger().Ctx(ctx).Warn().WithErr(childCause).Printf("git push failed - child cancellation cause: %s", childCause.Error())
+		} else {
+			r.Logging.Logger().Ctx(ctx).Warn().Print("git push failed - child context not cancelled")
+		}
+		ctxCause := context.Cause(ctx)
+		if ctxCause != nil {
+			r.Logging.Logger().Ctx(ctx).Warn().WithErr(ctxCause).Printf("git push failed - ctx cancellation cause: %s", ctxCause.Error())
+		} else {
+			r.Logging.Logger().Ctx(ctx).Warn().Print("git push failed - ctx not cancelled")
+		}
+
 		return err
 	}
 
