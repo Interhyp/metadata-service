@@ -55,6 +55,7 @@ func (s *Impl) WireUp(ctx context.Context) {
 	if s.Router == nil {
 		s.Logging.Logger().Ctx(ctx).Info().Print("creating router and setting up filter chain")
 		s.Router = chi.NewRouter()
+		s.Router.Use(middleware.ConstructContextCancellationLoggerMiddleware("Top"))
 
 		requestid.RequestIDHeader = apmhttp.W3CTraceparentHeader
 		loggermiddleware.RequestIdFieldName = "trace.id"
@@ -69,30 +70,39 @@ func (s *Impl) WireUp(ctx context.Context) {
 			middleware.TraceContextFetcherForResponseHeaders = middleware.RestoreOrCreateTraceContextWithoutAPM
 			s.Logging.Logger().NoCtx().Warn().Printf("Elastic APM not configured or disabled, skipping middleware.")
 		}
+		s.Router.Use(middleware.ConstructContextCancellationLoggerMiddleware("ElasticApm"))
 
 		// build a request specific logger (includes request id and some fields) and add it to the request context
 		s.Router.Use(loggermiddleware.AddZerologLoggerToContext)
+		s.Router.Use(middleware.ConstructContextCancellationLoggerMiddleware("AddZerologLoggerToContext"))
 
 		// request logging
 		requestlogging.Setup()
 		s.Router.Use(chimiddleware.Logger)
+		s.Router.Use(middleware.ConstructContextCancellationLoggerMiddleware("Logger"))
 
 		// trap panics in requests and log stack trace
 		s.Router.Use(middleware.PanicRecoverer)
+		s.Router.Use(middleware.ConstructContextCancellationLoggerMiddleware("PanicRecoverer"))
 
 		// add request id to response, so it can be found in header
 		s.Router.Use(requestidinresponse.AddRequestIdHeaderToResponse)
+		s.Router.Use(middleware.ConstructContextCancellationLoggerMiddleware("AddRequestIdHeaderToResponse"))
 
 		s.Router.Use(corsheader.CorsHandling)
+		s.Router.Use(middleware.ConstructContextCancellationLoggerMiddleware("CorsHandling"))
 
 		requestmetrics.Setup()
 		s.Router.Use(requestmetrics.RecordRequestMetrics)
+		s.Router.Use(middleware.ConstructContextCancellationLoggerMiddleware("RecordRequestMetrics"))
 
 		_ = jwt.Setup(s.IdentityProvider.GetKeySet(ctx), s.CustomConfiguration)
 		s.Router.Use(jwt.JwtValidator)
+		s.Router.Use(middleware.ConstructContextCancellationLoggerMiddleware("JwtValidator"))
 
 		timeout.RequestTimeoutSeconds = s.RequestTimeoutSeconds
 		s.Router.Use(timeout.AddRequestTimeout)
+		s.Router.Use(middleware.ConstructContextCancellationLoggerMiddleware("AddRequestTimeout"))
 	}
 
 	s.HealthCtl.WireUp(ctx, s.Router)
