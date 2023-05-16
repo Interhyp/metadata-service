@@ -78,6 +78,11 @@ func (c *MockConfig) SSHMetadataRepositoryUrl() string {
 	panic("implement me")
 }
 
+func (c *MockConfig) MetadataRepoUrl() string {
+	//TODO implement me
+	panic("implement me")
+}
+
 func (c *MockConfig) BitbucketUsername() string {
 	//TODO implement me
 	panic("implement me")

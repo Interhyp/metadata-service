@@ -90,6 +90,10 @@ func (c *CustomConfigImpl) KafkaGroupIdOverride() string {
 	return c.VKafkaGroupIdOverride
 }
 
+func (c *CustomConfigImpl) MetadataRepoUrl() string {
+	return c.VMetadataRepoUrl
+}
+
 func (c *CustomConfigImpl) MetadataRepoMainline() string {
 	return c.VMetadataRepoMainline
 }
