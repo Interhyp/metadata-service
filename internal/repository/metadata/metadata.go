@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	"github.com/go-git/go-git/v5/plumbing/transport/http"
 	"io"
 	"os"
 	"strings"
@@ -51,6 +52,10 @@ type Impl struct {
 
 	consoleOutput bytes.Buffer
 }
+
+const insecureSkipTLS = false
+
+var UseHTTP = true
 
 func (r *Impl) pathsTouchedInCommit(ctx context.Context, commit *object.Commit) ([]string, error) {
 	result := make([]string, 0)
@@ -193,15 +198,31 @@ func (r *Impl) Clone(ctx context.Context) error {
 		return err
 	}
 
-	repo, err := git.CloneContext(childCtxWithTimeout, memory.NewStorage(), memfs.New(), &git.CloneOptions{
+	cloneOpts := git.CloneOptions{
 		Auth:          sshAuth,
 		NoCheckout:    false,
 		Progress:      r, // implements io.Writer, sends to Debug logging
 		URL:           r.CustomConfiguration.SSHMetadataRepositoryUrl(),
 		ReferenceName: plumbing.ReferenceName(r.CustomConfiguration.MetadataRepoMainline()),
-	})
+	}
+
+	if UseHTTP {
+		cloneOpts.Auth = &http.BasicAuth{
+			Username: r.CustomConfiguration.BitbucketUsername(),
+			Password: r.CustomConfiguration.BitbucketPassword(),
+		}
+		cloneOpts.URL = r.CustomConfiguration.MetadataRepoUrl()
+		cloneOpts.InsecureSkipTLS = insecureSkipTLS
+	}
+
+	repo, err := git.CloneContext(childCtxWithTimeout, memory.NewStorage(), memfs.New(), &cloneOpts)
 	if err != nil {
 		r.Logging.Logger().Ctx(ctx).Warn().Print("git clone failed - console output was: ", r.sanitizedConsoleOutput())
+		r.Logging.Logger().Ctx(ctx).Warn().WithErr(err).Printf("git clone failed - returned error: %s", err.Error())
+
+		r.logContextErrorDetails(childCtxWithTimeout, "git clone", "childCtxWithTimeout")
+		r.logContextErrorDetails(ctx, "git clone", "ctx")
+
 		return err
 	}
 	r.GitRepo = repo
@@ -237,14 +258,29 @@ func (r *Impl) Pull(ctx context.Context) error {
 		return err
 	}
 
-	err = tree.PullContext(childCtxWithTimeout, &git.PullOptions{
+	pullOpts := git.PullOptions{
 		Auth:          sshAuth,
 		Progress:      r, // implements io.Writer, sends to Debug logging
 		RemoteName:    "origin",
 		ReferenceName: plumbing.ReferenceName(r.CustomConfiguration.MetadataRepoMainline()),
-	})
+	}
+
+	if UseHTTP {
+		pullOpts.Auth = &http.BasicAuth{
+			Username: r.CustomConfiguration.BitbucketUsername(),
+			Password: r.CustomConfiguration.BitbucketPassword(),
+		}
+		pullOpts.InsecureSkipTLS = insecureSkipTLS
+	}
+
+	err = tree.PullContext(childCtxWithTimeout, &pullOpts)
 	if err != nil && err != git.NoErrAlreadyUpToDate {
 		r.Logging.Logger().Ctx(ctx).Warn().Print("git pull failed - console output was: ", r.sanitizedConsoleOutput())
+		r.Logging.Logger().Ctx(ctx).Warn().WithErr(err).Printf("git pull failed - returned error: %s", err.Error())
+
+		r.logContextErrorDetails(childCtxWithTimeout, "git pull", "childCtxWithTimeout")
+		r.logContextErrorDetails(ctx, "git pull", "ctx")
+
 		return err
 	}
 
@@ -327,27 +363,27 @@ func (r *Impl) Push(ctx context.Context) error {
 		return err
 	}
 
-	err = r.GitRepo.PushContext(childCtxWithTimeout, &git.PushOptions{
+	pushOpts := git.PushOptions{
 		Auth:       sshAuth,
 		Progress:   r, // implements io.Writer, sends to Debug logging
 		RemoteName: "origin",
-	})
+	}
+
+	if UseHTTP {
+		pushOpts.Auth = &http.BasicAuth{
+			Username: r.CustomConfiguration.BitbucketUsername(),
+			Password: r.CustomConfiguration.BitbucketPassword(),
+		}
+		pushOpts.InsecureSkipTLS = insecureSkipTLS
+	}
+
+	err = r.GitRepo.PushContext(childCtxWithTimeout, &pushOpts)
 	if err != nil && err != git.NoErrAlreadyUpToDate {
 		r.Logging.Logger().Ctx(ctx).Warn().Print("git push failed - console output was: ", r.sanitizedConsoleOutput())
+		r.Logging.Logger().Ctx(ctx).Warn().WithErr(err).Printf("git push failed - returned error: %s", err.Error())
 
-		r.Logging.Logger().Ctx(ctx).Warn().WithErr(err).Printf("git push failed - push returned error: %s", err.Error())
-		childCause := context.Cause(childCtxWithTimeout)
-		if childCause != nil {
-			r.Logging.Logger().Ctx(ctx).Warn().WithErr(childCause).Printf("git push failed - child cancellation cause: %s", childCause.Error())
-		} else {
-			r.Logging.Logger().Ctx(ctx).Warn().Print("git push failed - child context not cancelled")
-		}
-		ctxCause := context.Cause(ctx)
-		if ctxCause != nil {
-			r.Logging.Logger().Ctx(ctx).Warn().WithErr(ctxCause).Printf("git push failed - ctx cancellation cause: %s", ctxCause.Error())
-		} else {
-			r.Logging.Logger().Ctx(ctx).Warn().Print("git push failed - ctx not cancelled")
-		}
+		r.logContextErrorDetails(childCtxWithTimeout, "git push", "childCtxWithTimeout")
+		r.logContextErrorDetails(ctx, "git push", "ctx")
 
 		return err
 	}
@@ -369,6 +405,15 @@ func (r *Impl) Discard(ctx context.Context) {
 	r.CommitCacheByFilePath = make(map[string]repository.CommitInfo)
 	r.NewCommits = make([]repository.CommitInfo, 0)
 	r.KnownCommits = make(map[string]bool)
+}
+
+func (r *Impl) logContextErrorDetails(ctx context.Context, operation string, contextName string) {
+	ctxCause := context.Cause(ctx)
+	if ctxCause != nil {
+		r.Logging.Logger().Ctx(ctx).Warn().WithErr(ctxCause).Printf("%s failed - %s cancellation cause: %s", operation, contextName, ctxCause.Error())
+	} else {
+		r.Logging.Logger().Ctx(ctx).Warn().Printf("%s failed - %s not cancelled", operation, contextName)
+	}
 }
 
 func (r *Impl) LastUpdated() time.Time {

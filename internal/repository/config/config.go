@@ -157,6 +157,13 @@ var CustomConfigItems = []auconfigapi.ConfigItem{
 		Validate:    auconfigapi.ConfigNeedsNoValidation,
 	},
 	{
+		Key:         config.KeyMetadataRepoUrl,
+		EnvName:     config.KeyMetadataRepoUrl,
+		Default:     "",
+		Description: "git clone url for service-metadata repository",
+		Validate:    auconfigenv.ObtainNotEmptyValidator(),
+	},
+	{
 		Key:         config.KeyMetadataRepoMainline,
 		EnvName:     config.KeyMetadataRepoMainline,
 		Default:     "refs/heads/main",

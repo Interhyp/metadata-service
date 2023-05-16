@@ -35,6 +35,7 @@ type CustomConfiguration interface {
 	AuthOidcTokenAudience() string
 	AuthGroupWrite() string
 
+	MetadataRepoUrl() string
 	MetadataRepoMainline() string
 
 	UpdateJobIntervalCronPart() string
@@ -91,6 +92,7 @@ const (
 	KeyAuthOidcKeySetUrl              = "AUTH_OIDC_KEY_SET_URL"
 	KeyAuthOidcTokenAudience          = "AUTH_OIDC_TOKEN_AUDIENCE"
 	KeyAuthGroupWrite                 = "AUTH_GROUP_WRITE"
+	KeyMetadataRepoUrl                = "METADATA_REPO_URL"
 	KeyMetadataRepoMainline           = "METADATA_REPO_MAINLINE"
 	KeyUpdateJobIntervalMinutes       = "UPDATE_JOB_INTERVAL_MINUTES"
 	KeyUpdateJobTimeoutSeconds        = "UPDATE_JOB_TIMEOUT_SECONDS"

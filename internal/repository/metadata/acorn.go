@@ -62,7 +62,7 @@ func (r *Impl) SetupAcorn(registry auacornapi.AcornRegistry) error {
 	return nil
 }
 
-func (r *Impl) TeardownAcorn(_ auacornapi.AcornRegistry) error {
+func (r *Impl) TeardownAcorn(registry auacornapi.AcornRegistry) error {
 	ctx := auzerolog.AddLoggerToCtx(context.Background())
 	r.Discard(ctx)
 	return nil
