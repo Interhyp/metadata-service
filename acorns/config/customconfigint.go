@@ -44,9 +44,6 @@ type CustomConfiguration interface {
 	AlertTargetPrefix() string
 	AlertTargetSuffix() string
 
-	AdditionalPromoters() []string
-	AdditionalPromotersFromOwners() []string
-
 	ElasticApmEnabled() bool
 
 	OwnerAliasPermittedRegex() *regexp.Regexp
@@ -98,8 +95,6 @@ const (
 	KeyUpdateJobTimeoutSeconds        = "UPDATE_JOB_TIMEOUT_SECONDS"
 	KeyAlertTargetPrefix              = "ALERT_TARGET_PREFIX"
 	KeyAlertTargetSuffix              = "ALERT_TARGET_SUFFIX"
-	KeyAdditionalPromoters            = "ADDITIONAL_PROMOTERS"
-	KeyAdditionalPromotersFromOwners  = "ADDITIONAL_PROMOTERS_FROM_OWNERS"
 	KeyElasticApmDisabled             = "ELASTIC_APM_DISABLED"
 	KeyOwnerAliasPermittedRegex       = "OWNER_ALIAS_PERMITTED_REGEX"
 	KeyOwnerAliasProhibitedRegex      = "OWNER_ALIAS_PROHIBITED_REGEX"

@@ -4,13 +4,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
+
 	"github.com/Interhyp/metadata-service/acorns/config"
 	"github.com/Interhyp/metadata-service/acorns/service"
 	openapi "github.com/Interhyp/metadata-service/api/v1"
 	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
 	"github.com/StephanHCB/go-backend-service-common/api/apierrors"
-	"sort"
-	"strings"
 )
 
 type Impl struct {
@@ -406,68 +406,6 @@ func (s *Impl) validateDeletionDto(ctx context.Context, deletionInfo openapi.Del
 		details := strings.Join(messages, ", ")
 		s.Logging.Logger().Ctx(ctx).Info().Printf("deletion info values invalid: %s", details)
 		return apierrors.NewBadRequestError("deletion.invalid.values", fmt.Sprintf("validation error: %s", details), nil, s.Timestamp.Now())
-	}
-	return nil
-}
-
-func (s *Impl) GetServicePromoters(ctx context.Context, serviceOwnerAlias string) (openapi.ServicePromotersDto, error) {
-	resultSet := make(map[string]bool)
-
-	// add default promoters
-	err := s.addDefaultPromoters(ctx, resultSet)
-	if err != nil {
-		return openapi.ServicePromotersDto{}, err
-	}
-
-	// add the promoters for the given ownerAlias
-	err = s.addPromotersForOwner(ctx, serviceOwnerAlias, resultSet)
-	if err != nil {
-		return openapi.ServicePromotersDto{}, err
-	}
-
-	// add any extra promoters according to configuration
-	for _, additionalOwnerAlias := range s.CustomConfiguration.AdditionalPromotersFromOwners() {
-		err := s.addPromotersForOwner(ctx, additionalOwnerAlias, resultSet)
-		if err != nil {
-			return openapi.ServicePromotersDto{}, err
-		}
-	}
-
-	// add all product owners from all owners
-	err = s.addAllProductOwners(ctx, resultSet)
-	if err != nil {
-		return openapi.ServicePromotersDto{}, err
-	}
-
-	// sorted unique user list
-	result := make([]string, 0)
-	for user := range resultSet {
-		result = append(result, user)
-	}
-	sort.Strings(result)
-
-	return openapi.ServicePromotersDto{Promoters: result}, nil
-}
-
-func (s *Impl) addDefaultPromoters(ctx context.Context, resultSet map[string]bool) error {
-	for _, user := range s.CustomConfiguration.AdditionalPromoters() {
-		resultSet[user] = true
-	}
-	return nil
-}
-
-func (s *Impl) addPromotersForOwner(ctx context.Context, ownerAlias string, resultSet map[string]bool) error {
-	serviceOwner, err := s.Cache.GetOwner(ctx, ownerAlias)
-	if err != nil {
-		if !apierrors.IsNotFoundError(err) {
-			// concurrent cache update -> ok
-			return err
-		}
-	} else {
-		s.Owner.RebuildPromoters(ctx, &serviceOwner)
-		for _, user := range serviceOwner.Promoters {
-			resultSet[user] = true
-		}
 	}
 	return nil
 }

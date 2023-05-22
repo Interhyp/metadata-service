@@ -197,20 +197,6 @@ var CustomConfigItems = []auconfigapi.ConfigItem{
 		Validate: auconfigenv.ObtainPatternValidator("^@[a-z0-9-]+.[a-z]{2,3}$"),
 	},
 	{
-		Key:         config.KeyAdditionalPromoters,
-		EnvName:     config.KeyAdditionalPromoters,
-		Default:     "",
-		Description: "promoters to be added for all services. Can be left empty, or contain a comma separated list of usernames",
-		Validate:    auconfigenv.ObtainPatternValidator("^|[a-z](-?[a-z0-9]+)*(,[a-z](-?[a-z0-9]+)*)*$"),
-	},
-	{
-		Key:         config.KeyAdditionalPromotersFromOwners,
-		EnvName:     config.KeyAdditionalPromotersFromOwners,
-		Default:     "",
-		Description: "owner aliases from which to get additional promoters to be added for all services. Can be left empty, or contain a comma separated list of owner aliases",
-		Validate:    auconfigenv.ObtainPatternValidator("^|[a-z](-?[a-z0-9]+)*(,[a-z](-?[a-z0-9]+)*)*$"),
-	},
-	{
 		Key:         config.KeyElasticApmDisabled,
 		EnvName:     config.KeyElasticApmDisabled,
 		Default:     "false",

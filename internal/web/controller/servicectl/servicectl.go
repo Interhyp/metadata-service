@@ -4,6 +4,8 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"net/http"
+
 	"github.com/Interhyp/metadata-service/acorns/config"
 	"github.com/Interhyp/metadata-service/acorns/service"
 	openapi "github.com/Interhyp/metadata-service/api/v1"
@@ -12,7 +14,6 @@ import (
 	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
 	"github.com/StephanHCB/go-backend-service-common/api/apierrors"
 	"github.com/go-chi/chi/v5"
-	"net/http"
 )
 
 const ownerParam = "owner"
@@ -193,16 +194,11 @@ func (c *Impl) GetServicePromoters(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	serviceName := util.StringPathParam(r, "service")
 
-	serviceDto, err := c.Services.GetService(ctx, serviceName)
+	_, err := c.Services.GetService(ctx, serviceName)
 	if err != nil {
 		apierrors.HandleError(ctx, w, r, err, apierrors.IsNotFoundError)
 	} else {
-		promotersDto, err := c.Services.GetServicePromoters(ctx, serviceDto.Owner)
-		if err != nil {
-			util.UnexpectedErrorHandler(ctx, w, r, err, c.Timestamp.Now())
-		} else {
-			util.Success(ctx, w, r, promotersDto)
-		}
+		util.Success(ctx, w, r, openapi.ServicePromotersDto{Promoters: []string{}})
 	}
 }
 

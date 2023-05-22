@@ -32,9 +32,6 @@ UPDATE_JOB_TIMEOUT_SECONDS: 30
 ALERT_TARGET_PREFIX: https://some-domain.com/
 ALERT_TARGET_SUFFIX: '@some-domain.com'
 
-ADDITIONAL_PROMOTERS: 'someguy'
-ADDITIONAL_PROMOTERS_FROM_OWNERS: 'add-my-promoters-to-every-service,also-add-my-promoters'
-
 OWNER_ALIAS_PERMITTED_REGEX: '[a-z][0-1]+'
 OWNER_ALIAS_PROHIBITED_REGEX: '[a-z][0-2]+'
 OWNER_ALIAS_MAX_LENGTH: '1'

@@ -181,15 +181,6 @@ func (c *MockConfig) AlertTargetSuffix() string {
 	return "@some-organisation.com"
 }
 
-func (c *MockConfig) AdditionalPromotersFromOwners() []string {
-	return make([]string, 0)
-}
-
-func (c *MockConfig) AdditionalPromoters() []string {
-	//TODO implement me
-	panic("implement me")
-}
-
 func (c *MockConfig) ElasticApmEnabled() bool {
 	return false
 }

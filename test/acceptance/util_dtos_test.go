@@ -20,7 +20,6 @@ func tstOwner() openapi.OwnerDto {
 	return openapi.OwnerDto{
 		Contact:            "somebody@some-organisation.com",
 		ProductOwner:       p("kschlangenheld"),
-		Promoters:          []string{"someone", "else", "entirely"},
 		DefaultJiraProject: p("JIRA"),
 		TimeStamp:          "2022-11-06T18:14:10Z",
 		CommitHash:         "6c8ac2c35791edf9979623c717a243fc53400000",
@@ -31,7 +30,6 @@ func tstOwner() openapi.OwnerDto {
 func tstOwnerPatch() openapi.OwnerPatchDto {
 	return openapi.OwnerPatchDto{
 		Contact:    p("somebody@some-organisation.com"),
-		Promoters:  []string{"someone", "else", "entirely"},
 		TimeStamp:  "2022-11-06T18:14:10Z",
 		CommitHash: "6c8ac2c35791edf9979623c717a243fc53400000",
 		JiraIssue:  "ISSUE-2345",
@@ -42,7 +40,6 @@ func tstOwnerUnchanged() openapi.OwnerDto {
 	return openapi.OwnerDto{
 		Contact:            "somebody@some-organisation.com",
 		ProductOwner:       p("kschlangenheldt"),
-		Promoters:          []string{"someone", "else"},
 		DefaultJiraProject: p("ISSUE"),
 		TimeStamp:          "2022-11-06T18:14:10Z",
 		CommitHash:         "6c8ac2c35791edf9979623c717a243fc53400000",
@@ -62,10 +59,6 @@ func tstOwnerUnchangedPatch() openapi.OwnerPatchDto {
 func tstOwnerExpectedYaml() string {
 	return `contact: somebody@some-organisation.com
 productOwner: kschlangenheld
-promoters:
-    - someone
-    - else
-    - entirely
 defaultJiraProject: JIRA
 `
 }
@@ -73,9 +66,6 @@ defaultJiraProject: JIRA
 func tstOwnerUnchangedExpectedYaml() string {
 	return `contact: somebody@some-organisation.com
 productOwner: kschlangenheldt
-promoters:
-    - someone
-    - else
 defaultJiraProject: ISSUE
 `
 }
@@ -83,10 +73,6 @@ defaultJiraProject: ISSUE
 func tstOwnerPatchExpectedYaml() string {
 	return `contact: somebody@some-organisation.com
 productOwner: kschlangenheldt
-promoters:
-    - someone
-    - else
-    - entirely
 defaultJiraProject: ISSUE
 `
 }

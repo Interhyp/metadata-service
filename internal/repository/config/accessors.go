@@ -114,14 +114,6 @@ func (c *CustomConfigImpl) AlertTargetSuffix() string {
 	return c.VAlertTargetSuffix
 }
 
-func (c *CustomConfigImpl) AdditionalPromoters() []string {
-	return strings.Split(c.VAdditionalPromoters, ",")
-}
-
-func (c *CustomConfigImpl) AdditionalPromotersFromOwners() []string {
-	return strings.Split(c.VAdditionalPromotersFromOwners, ",")
-}
-
 func (c *CustomConfigImpl) ElasticApmEnabled() bool {
 	return !c.VElasticApmDisabled &&
 		os.Getenv("ELASTIC_APM_SERVER_URL") != "" &&

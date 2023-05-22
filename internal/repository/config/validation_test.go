@@ -134,8 +134,6 @@ func TestAccessors(t *testing.T) {
 	require.Equal(t, uint16(30), config.Custom(cut).UpdateJobTimeoutSeconds())
 	require.Equal(t, "https://some-domain.com/", config.Custom(cut).AlertTargetPrefix())
 	require.Equal(t, "@some-domain.com", config.Custom(cut).AlertTargetSuffix())
-	require.EqualValues(t, []string{"someguy"}, config.Custom(cut).AdditionalPromoters())
-	require.EqualValues(t, []string{"add-my-promoters-to-every-service", "also-add-my-promoters"}, config.Custom(cut).AdditionalPromotersFromOwners())
 	require.Equal(t, "[a-z][0-1]+", config.Custom(cut).OwnerAliasPermittedRegex().String())
 	require.Equal(t, "[a-z][0-2]+", config.Custom(cut).OwnerAliasProhibitedRegex().String())
 	require.Equal(t, uint16(1), config.Custom(cut).OwnerAliasMaxLength())
