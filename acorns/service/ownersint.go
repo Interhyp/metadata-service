@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+
 	openapi "github.com/Interhyp/metadata-service/api/v1"
 )
 
@@ -14,7 +15,6 @@ type Owners interface {
 	GetOwners(ctx context.Context) (openapi.OwnerListDto, error)
 	GetOwner(ctx context.Context, ownerAlias string) (openapi.OwnerDto, error)
 
-	RebuildPromoters(ctx context.Context, result *openapi.OwnerDto)
 	GetAllGroupMembers(ctx context.Context, groupOwner string, groupName string) []string
 
 	// CreateOwner returns the owner as it was created, with commit hash and timestamp filled in.

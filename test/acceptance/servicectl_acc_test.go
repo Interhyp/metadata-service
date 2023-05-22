@@ -2,12 +2,13 @@ package acceptance
 
 import (
 	"encoding/json"
-	openapi "github.com/Interhyp/metadata-service/api/v1"
-	"github.com/Interhyp/metadata-service/docs"
-	"github.com/stretchr/testify/require"
 	"net/http"
 	"strings"
 	"testing"
+
+	openapi "github.com/Interhyp/metadata-service/api/v1"
+	"github.com/Interhyp/metadata-service/docs"
+	"github.com/stretchr/testify/require"
 )
 
 // get services
@@ -1260,23 +1261,4 @@ func TestGETServicePromoters_NotFound(t *testing.T) {
 
 	docs.Then("Then the request fails and the error response is as expected")
 	tstAssert(t, response, err, http.StatusNotFound, "service-notfound.json")
-}
-
-func TestGETServicePromoters_Success_WithAdditionals(t *testing.T) {
-	tstReset()
-
-	docs.Given("Given extra promoters have been added to the owner configured as additional promoters source")
-	body := tstOwnerPatch()
-	ownerPatchResponse, err := tstPerformPatch("/rest/api/v1/owners/deleteme", tstValidAdminToken(), &body)
-	require.Nil(t, err)
-	require.Equal(t, http.StatusOK, ownerPatchResponse.status)
-
-	docs.Given("Given an unauthenticated user")
-	token := tstUnauthenticated()
-
-	docs.When("When they request the promoters for an existing service")
-	response, err := tstPerformGet("/rest/api/v1/services/some-service-backend/promoters", token)
-
-	docs.Then("Then the request is successful and the response is as expected")
-	tstAssert(t, response, err, http.StatusOK, "service-promoters-with-additionals.json")
 }

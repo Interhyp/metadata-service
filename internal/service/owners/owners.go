@@ -3,12 +3,12 @@ package owners
 import (
 	"context"
 	"fmt"
+	"strings"
+
 	"github.com/Interhyp/metadata-service/acorns/service"
 	openapi "github.com/Interhyp/metadata-service/api/v1"
-	"github.com/Interhyp/metadata-service/internal/service/util"
 	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
 	"github.com/StephanHCB/go-backend-service-common/api/apierrors"
-	"strings"
 )
 
 type Impl struct {
@@ -40,30 +40,7 @@ func (s *Impl) GetOwners(ctx context.Context) (openapi.OwnerListDto, error) {
 }
 
 func (s *Impl) GetOwner(ctx context.Context, ownerAlias string) (openapi.OwnerDto, error) {
-	owner, err := s.Cache.GetOwner(ctx, ownerAlias)
-
-	if err == nil {
-		s.RebuildPromoters(ctx, &owner)
-	}
-
-	return owner, err
-}
-
-func (s *Impl) RebuildPromoters(ctx context.Context, result *openapi.OwnerDto) {
-	if result == nil {
-		return
-	}
-	filteredPromoters := make([]string, 0)
-	for _, promoter := range result.Promoters {
-		isGroup, groupOwner, groupName := util.ParseGroupOwnerAndGroupName(promoter)
-		if isGroup {
-			groupMembers := s.GetAllGroupMembers(ctx, groupOwner, groupName)
-			filteredPromoters = append(filteredPromoters, groupMembers...)
-		} else {
-			filteredPromoters = append(filteredPromoters, promoter)
-		}
-	}
-	result.Promoters = util.RemoveDuplicateStr(filteredPromoters)
+	return s.Cache.GetOwner(ctx, ownerAlias)
 }
 
 func (s *Impl) GetAllGroupMembers(ctx context.Context, groupOwner string, groupName string) []string {
@@ -116,7 +93,6 @@ func (s *Impl) mapOwnerCreateDtoToOwnerDto(ownerCreateDto openapi.OwnerCreateDto
 		ProductOwner:       ownerCreateDto.ProductOwner,
 		JiraIssue:          ownerCreateDto.JiraIssue,
 		DefaultJiraProject: ownerCreateDto.DefaultJiraProject,
-		Promoters:          ownerCreateDto.Promoters,
 		Groups:             ownerCreateDto.Groups,
 	}
 }
@@ -258,7 +234,6 @@ func patchOwner(current openapi.OwnerDto, patch openapi.OwnerPatchDto) openapi.O
 		Contact:            patchString(patch.Contact, current.Contact),
 		ProductOwner:       patchStringPtr(patch.ProductOwner, current.ProductOwner),
 		DefaultJiraProject: patchStringPtr(patch.DefaultJiraProject, current.DefaultJiraProject),
-		Promoters:          patchStringArray(patch.Promoters, current.Promoters),
 		Groups:             patchStringToStringArrayMapPtr(patch.Groups, current.Groups),
 		TimeStamp:          patch.TimeStamp,
 		CommitHash:         patch.CommitHash,
@@ -284,14 +259,6 @@ func patchString(patch *string, original string) string {
 		return *patch
 	} else {
 		return original
-	}
-}
-
-func patchStringArray(patch []string, original []string) []string {
-	if len(patch) == 0 {
-		return original
-	} else {
-		return patch
 	}
 }
 

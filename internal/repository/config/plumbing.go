@@ -40,8 +40,6 @@ type CustomConfigImpl struct {
 	VUpdateJobTimeoutSeconds        uint16
 	VAlertTargetPrefix              string
 	VAlertTargetSuffix              string
-	VAdditionalPromoters            string
-	VAdditionalPromotersFromOwners  string
 	VElasticApmDisabled             bool
 	VOwnerAliasPermittedRegex       *regexp.Regexp
 	VOwnerAliasProhibitedRegex      *regexp.Regexp
@@ -93,8 +91,6 @@ func (c *CustomConfigImpl) Obtain(getter func(key string) string) {
 	c.VUpdateJobTimeoutSeconds = toUint16(getter(config.KeyUpdateJobTimeoutSeconds))
 	c.VAlertTargetPrefix = getter(config.KeyAlertTargetPrefix)
 	c.VAlertTargetSuffix = getter(config.KeyAlertTargetSuffix)
-	c.VAdditionalPromoters = getter(config.KeyAdditionalPromoters)
-	c.VAdditionalPromotersFromOwners = getter(config.KeyAdditionalPromotersFromOwners)
 	c.VElasticApmDisabled, _ = strconv.ParseBool(getter(config.KeyElasticApmDisabled))
 	c.VOwnerAliasPermittedRegex, _ = regexp.Compile(getter(config.KeyOwnerAliasPermittedRegex))
 	c.VOwnerAliasProhibitedRegex, _ = regexp.Compile(getter(config.KeyOwnerAliasProhibitedRegex))

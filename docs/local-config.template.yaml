@@ -25,7 +25,9 @@ VAULT_SECRETS_CONFIG: >-
       {"vaultKey": "BASIC_AUTH_USERNAME"},
       {"vaultKey": "BASIC_AUTH_PASSWORD"},
       {"vaultKey": "BITBUCKET_PASSWORD"},
-      {"vaultKey": "KAFKA_PASSWORD"}
+      {"vaultKey": "KAFKA_PASSWORD"},
+      {"vaultKey": "SSH_PRIVATE_KEY"},
+      {"vaultKey": "SSH_PRIVATE_KEY_PASSWORD"}
     ]
   }
 
