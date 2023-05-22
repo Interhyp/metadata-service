@@ -74,7 +74,7 @@ require (
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/rs/zerolog v1.29.1
 	github.com/stretchr/testify v1.8.3
-	github.com/twmb/franz-go v1.13.3
+	github.com/twmb/franz-go v1.13.4
 	go.elastic.co/apm/module/apmchiv5/v2 v2.4.1
 	go.elastic.co/apm/module/apmhttp/v2 v2.4.1
 	go.elastic.co/apm/v2 v2.4.1
