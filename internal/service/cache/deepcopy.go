@@ -65,7 +65,7 @@ func deepCopyRepositoryConfiguration(original *openapi.RepositoryConfigurationDt
 		return nil
 	}
 
-	firstLevelCopy := original
+	firstLevelCopy := *original
 
 	if firstLevelCopy.Approvers != nil {
 		approversCopy := make(map[string][]string)
@@ -75,7 +75,7 @@ func deepCopyRepositoryConfiguration(original *openapi.RepositoryConfigurationDt
 		firstLevelCopy.Approvers = &approversCopy
 	}
 
-	return firstLevelCopy
+	return &firstLevelCopy
 }
 
 // --- helpers ---
