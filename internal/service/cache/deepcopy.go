@@ -40,6 +40,8 @@ func deepCopyRepository(immutableRepositoryPtrNonNil *interface{}) openapi.Repos
 	firstLevelCopy := (*immutableRepositoryPtrNonNil).(openapi.RepositoryDto)
 	// Note: strings are immutable in Go, so we don't need to duplicate *string either
 
+	firstLevelCopy.Configuration = deepCopyRepositoryConfiguration(firstLevelCopy.Configuration)
+
 	return firstLevelCopy
 }
 
@@ -56,6 +58,24 @@ func deepCopyQuicklinkSlice(original []openapi.Quicklink) []openapi.Quicklink {
 		result[i] = deepCopyQuicklink(v)
 	}
 	return result
+}
+
+func deepCopyRepositoryConfiguration(original *openapi.RepositoryConfigurationDto) *openapi.RepositoryConfigurationDto {
+	if original == nil {
+		return nil
+	}
+
+	firstLevelCopy := original
+
+	if firstLevelCopy.Approvers != nil {
+		approversCopy := make(map[string][]string)
+		for key, value := range *firstLevelCopy.Approvers {
+			approversCopy[key] = deepCopyStringSlice(value)
+		}
+		firstLevelCopy.Approvers = &approversCopy
+	}
+
+	return firstLevelCopy
 }
 
 // --- helpers ---
