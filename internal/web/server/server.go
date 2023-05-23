@@ -9,8 +9,10 @@ import (
 	"github.com/Interhyp/metadata-service/acorns/repository"
 	"github.com/Interhyp/metadata-service/internal/web/middleware"
 	"github.com/Interhyp/metadata-service/internal/web/middleware/jwt"
+	aulogging "github.com/StephanHCB/go-autumn-logging"
 	auzerolog "github.com/StephanHCB/go-autumn-logging-zerolog"
 	"github.com/StephanHCB/go-autumn-logging-zerolog/loggermiddleware"
+	auapmlogging "github.com/StephanHCB/go-autumn-restclient-apm/implementation/logging"
 	libcontroller "github.com/StephanHCB/go-backend-service-common/acorns/controller"
 	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
 	"github.com/StephanHCB/go-backend-service-common/web/middleware/corsheader"
@@ -22,7 +24,8 @@ import (
 	"github.com/go-chi/chi/v5"
 	chimiddleware "github.com/go-chi/chi/v5/middleware"
 	"go.elastic.co/apm/module/apmchiv5/v2"
-	"go.elastic.co/apm/module/apmhttp/v2"
+	"go.elastic.co/apm/v2"
+	"go.elastic.co/apm/v2/transport"
 	"net"
 	"net/http"
 	"os"
@@ -57,19 +60,19 @@ func (s *Impl) WireUp(ctx context.Context) {
 		s.Router = chi.NewRouter()
 		s.Router.Use(middleware.ConstructContextCancellationLoggerMiddleware("Top"))
 
-		requestid.RequestIDHeader = apmhttp.W3CTraceparentHeader
-		loggermiddleware.RequestIdFieldName = "trace.id"
 		loggermiddleware.MethodFieldName = "http.request.method"
 		loggermiddleware.PathFieldName = "url.path"
 
-		if s.CustomConfiguration.ElasticApmEnabled() {
-			middleware.TraceContextFetcherForResponseHeaders = middleware.UseElasticApmTraceContext
-			//TODO disable panic propagation (?)
-			s.Router.Use(apmchiv5.Middleware())
-		} else {
-			middleware.TraceContextFetcherForResponseHeaders = middleware.RestoreOrCreateTraceContextWithoutAPM
-			s.Logging.Logger().NoCtx().Warn().Printf("Elastic APM not configured or disabled, skipping middleware.")
-		}
+		// auzerolog.RequestIdFieldName changes depending on Json or Plaintext logging
+		// auzerolog.RequestIdFieldName is the name used in the logger format
+		// loggermiddleware.RequestIdFieldName is the name used to build the request logger
+		// if they do not match, the default request id shows in the logs
+		loggermiddleware.RequestIdFieldName = auzerolog.RequestIdFieldName
+
+		s.Router.Use(requestid.RequestID)
+
+		s.configureApmMiddleware(ctx)
+
 		s.Router.Use(middleware.ConstructContextCancellationLoggerMiddleware("ElasticApm"))
 
 		// build a request specific logger (includes request id and some fields) and add it to the request context
@@ -111,6 +114,44 @@ func (s *Impl) WireUp(ctx context.Context) {
 	s.ServiceCtl.WireUp(ctx, s.Router)
 	s.RepositoryCtl.WireUp(ctx, s.Router)
 	s.WebhookCtl.WireUp(ctx, s.Router)
+}
+
+func (s *Impl) configureApmMiddleware(ctx context.Context) {
+	// add apm middleware, because we rely on having a trace context in the context for trace logging and trace propagation to work.
+	// Maybe this should be wrapped in the go-autumn-restclient-apm
+	if !s.CustomConfiguration.ElasticApmEnabled() {
+		// if apm is not configured, we use a discardTracer that does not send any traces
+		discardTracer, err := apm.NewTracerOptions(apm.TracerOptions{Transport: transport.Discard})
+		if err == nil {
+			s.Logging.Logger().Ctx(ctx).Warn().Print("use discard tracer because Elastic APM is not configured")
+			// Set defaultTracer as is also used when starting independent transactions (see scheduler)
+			//
+			apm.SetDefaultTracer(discardTracer)
+		}
+		// if there was an error creating the discardTracer we stick with the defaultTracer as a crude backup.
+		// The default tracer sends its traces to localhost if it is not configured.
+	}
+
+	s.Router.Use(apmchiv5.Middleware())
+
+	if s.Configuration.PlainLogging() {
+		// set requestIdRetriever to see trace ids in plain logging.
+		// skipping it for json logging, because we do not want to interfere with the existing request id middleware
+		// and its logging. See else case
+
+		aulogging.RequestIdRetriever = auapmlogging.ExtractTraceId
+	} else {
+		// we add all the apm specific json log fields as custom fields for json logging
+		loggermiddleware.AddCustomJsonLogField(auapmlogging.TraceIdLogFieldName, func(r *http.Request) string {
+			return auapmlogging.ExtractTraceId(r.Context())
+		})
+		loggermiddleware.AddCustomJsonLogField(auapmlogging.TransactionIdLogFieldName, func(r *http.Request) string {
+			return auapmlogging.ExtractTransactionId(r.Context())
+		})
+		loggermiddleware.AddCustomJsonLogField(auapmlogging.SpanIdLogFieldName, func(r *http.Request) string {
+			return auapmlogging.ExtractSpanId(r.Context())
+		})
+	}
 }
 
 func (s *Impl) NewServer(ctx context.Context, address string, router http.Handler) *http.Server {

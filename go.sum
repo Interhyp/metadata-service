@@ -16,6 +16,8 @@ github.com/StephanHCB/go-autumn-logging-zerolog v0.4.0 h1:KLvVCUBxa62BoUQu9+DDya
 github.com/StephanHCB/go-autumn-logging-zerolog v0.4.0/go.mod h1:Hspu94dHAKtgjMAkqtjMDZJnVv0VjVjyq6uKHI0Q4R8=
 github.com/StephanHCB/go-autumn-restclient v0.5.0 h1:UadP+Tj8NShkaVPZWEVarYIyUeSYalZvEVi0znd9Dqo=
 github.com/StephanHCB/go-autumn-restclient v0.5.0/go.mod h1:cvpDXD4WxJuhJxJ0HIMep+teDYdRw4wakln0bFxVK0c=
+github.com/StephanHCB/go-autumn-restclient-apm v0.0.0-20230512122437-2da0d2707889 h1:dETtXlDctldCFh0OPg4UvBW96uQg+L/bYM4l7nx5/Go=
+github.com/StephanHCB/go-autumn-restclient-apm v0.0.0-20230512122437-2da0d2707889/go.mod h1:DifnN7pnTSEaPWXjg9LkWynPRlrTAjnsBAu2Rud7enQ=
 github.com/StephanHCB/go-autumn-restclient-circuitbreaker v0.4.1 h1:aRs7bVnENGiKsWyvz6d5jAb2LuRkM1AUIzMoOgjzRLs=
 github.com/StephanHCB/go-autumn-restclient-circuitbreaker v0.4.1/go.mod h1:ICUphrYTDMZ3HYZ8mEuFe0dZB163LBsmo1HtXaN10As=
 github.com/StephanHCB/go-autumn-restclient-circuitbreaker-prometheus v0.1.0 h1:e/URQHOH0SMTPwK6JGbt1DeGS4QFUtBDky0wadMlieQ=
@@ -26,6 +28,8 @@ github.com/StephanHCB/go-autumn-web-swagger-ui v0.2.3 h1:aC/rTlw9pBPCWYH46KGzSB9
 github.com/StephanHCB/go-autumn-web-swagger-ui v0.2.3/go.mod h1:EBtCQXF8JhoADnadezundz2xWEdFPmx2NUTgZYtUE0M=
 github.com/StephanHCB/go-backend-service-common v0.2.1 h1:JyX9ThNm/wUMnNdfKzRbfz1erWiX5jRNuxCqQWtBLgg=
 github.com/StephanHCB/go-backend-service-common v0.2.1/go.mod h1:GuoiJAWPTBLFH30gjTQA69cXBD6lmRLUKPdSfdJ1tdM=
+github.com/StephanHCB/go-backend-service-common v0.2.2-0.20230512114936-c51c431fc2f2 h1:HkKxv1mr+d/+PvXjAKOmI4JJHVpwjUHVj80TuQ4dVrc=
+github.com/StephanHCB/go-backend-service-common v0.2.2-0.20230512114936-c51c431fc2f2/go.mod h1:GuoiJAWPTBLFH30gjTQA69cXBD6lmRLUKPdSfdJ1tdM=
 github.com/acomagu/bufpipe v1.0.4 h1:e3H4WUzM3npvo5uv95QuJM3cQspFNtFBzvJ2oNjKIDQ=
 github.com/acomagu/bufpipe v1.0.4/go.mod h1:mxdxdup/WdsKVreO5GpW4+M/1CE2sMG4jeGJ2sYmHc4=
 github.com/anmitsu/go-shlex v0.0.0-20200514113438-38f4b401e2be h1:9AeTilPcZAjCFIImctFaOjnTIavg87rW78vTPkQqLI8=
@@ -246,10 +250,16 @@ github.com/yuin/goldmark v1.4.1/go.mod h1:mwnBkeHKe2W/ZEtQ+71ViKU8L12m81fl3OWwC1
 github.com/yuin/goldmark v1.4.13/go.mod h1:6yULJ656Px+3vBD8DxQVa3kxgyrAnzto9xy5taEt/CY=
 go.elastic.co/apm/module/apmchiv5/v2 v2.4.1 h1:w9+AG5AiyydRDbHMq6cwDqisTHsN5nExzShFmyH6RaA=
 go.elastic.co/apm/module/apmchiv5/v2 v2.4.1/go.mod h1:utS84R/kgzktd6nzDikQXI02m4p+Ffst13//id6yYJQ=
+go.elastic.co/apm/module/apmchiv5/v2 v2.4.2 h1:tPcSOOqIVzdFwEEnpt8CC+alYgEdCU1BK5Im6xRio8Q=
+go.elastic.co/apm/module/apmchiv5/v2 v2.4.2/go.mod h1:gwz68xTiQoP/gWEwNk86t/2mqzCHmT1p+n8S/eDRBzo=
 go.elastic.co/apm/module/apmhttp/v2 v2.4.1 h1:4jIuTNh14opEIwf+zMru1jGW3MuNj6vtI0dsx+6QMt0=
 go.elastic.co/apm/module/apmhttp/v2 v2.4.1/go.mod h1:pJ2sd5b4YCX1YX9VzhvFO6AXpqCPiP3dP5U9qBD4s+8=
+go.elastic.co/apm/module/apmhttp/v2 v2.4.2 h1:j/2yXHJLvrqsjrQaOU2IBHrYUxxrQoxqNXGqrNdcIfw=
+go.elastic.co/apm/module/apmhttp/v2 v2.4.2/go.mod h1:yRsWS4VMDbSW14LvyuC4D+/vrY9Fkcutg+NISr8cM5I=
 go.elastic.co/apm/v2 v2.4.1 h1:tMxAtHh5TXTYdFG0pTmmUOn/PTI3k/1T1ptb+3O+hYI=
 go.elastic.co/apm/v2 v2.4.1/go.mod h1:HdwVuAeoJMmoqAZZBNN2YVzj3UVLebtqoRCCydyCP+Q=
+go.elastic.co/apm/v2 v2.4.2 h1:FGaeqW24D36E/flrimKL3u95MV17/H/FXSDVFLNXtuY=
+go.elastic.co/apm/v2 v2.4.2/go.mod h1:TrRTYhkYSg4K0GfxuOtxLMGqtcJBUMHLFgG/E5UbJoY=
 go.elastic.co/fastjson v1.1.0 h1:3MrGBWWVIxe/xvsbpghtkFoPciPhOCmjsR/HfwEeQR4=
 go.elastic.co/fastjson v1.1.0/go.mod h1:boNGISWMjQsUPy/t6yqt2/1Wx4YNPSe+mZjlyw9vKKI=
 golang.org/x/arch v0.1.0/go.mod h1:5om86z9Hs0C8fWVUuoMHwpExlXzs5Tkyp9hOrfG7pp8=
