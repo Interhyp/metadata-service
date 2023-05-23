@@ -7,6 +7,7 @@ import (
 	"github.com/Interhyp/metadata-service/acorns/errors/httperror"
 	"github.com/Interhyp/metadata-service/acorns/repository"
 	"github.com/Interhyp/metadata-service/internal/repository/bitbucket/bbclientint"
+	auapmclient "github.com/StephanHCB/go-autumn-restclient-apm/implementation/clientwrapper"
 	aurestbreakerprometheus "github.com/StephanHCB/go-autumn-restclient-circuitbreaker-prometheus"
 	aurestbreaker "github.com/StephanHCB/go-autumn-restclient-circuitbreaker/implementation/breaker"
 	aurestclientprometheus "github.com/StephanHCB/go-autumn-restclient-prometheus"
@@ -74,8 +75,10 @@ func (c *Impl) Setup() error {
 		c.NoRetryClient = circuitBreakerWrapper
 	}
 
+	apmClientWrapper := auapmclient.New(circuitBreakerWrapper)
+
 	retryWrapper := aurestretry.New(
-		circuitBreakerWrapper,
+		apmClientWrapper,
 		3,
 		c.retryCondition(),
 		c.betweenFailureAndRetry(),

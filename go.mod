@@ -58,10 +58,11 @@ require (
 	github.com/StephanHCB/go-autumn-logging v0.3.0
 	github.com/StephanHCB/go-autumn-logging-zerolog v0.4.0
 	github.com/StephanHCB/go-autumn-restclient v0.5.0
+	github.com/StephanHCB/go-autumn-restclient-apm v0.0.0-20230512122437-2da0d2707889
 	github.com/StephanHCB/go-autumn-restclient-circuitbreaker v0.4.1
 	github.com/StephanHCB/go-autumn-restclient-circuitbreaker-prometheus v0.1.0
 	github.com/StephanHCB/go-autumn-restclient-prometheus v0.1.2
-	github.com/StephanHCB/go-backend-service-common v0.2.1
+	github.com/StephanHCB/go-backend-service-common v0.2.2-0.20230512114936-c51c431fc2f2
 	github.com/go-chi/chi/v5 v5.0.8
 	github.com/go-git/go-billy/v5 v5.4.1
 	github.com/go-git/go-git/v5 v5.6.1
@@ -75,9 +76,9 @@ require (
 	github.com/rs/zerolog v1.29.1
 	github.com/stretchr/testify v1.8.3
 	github.com/twmb/franz-go v1.13.4
-	go.elastic.co/apm/module/apmchiv5/v2 v2.4.1
-	go.elastic.co/apm/module/apmhttp/v2 v2.4.1
-	go.elastic.co/apm/v2 v2.4.1
+	go.elastic.co/apm/module/apmchiv5/v2 v2.4.2
+	go.elastic.co/apm/module/apmhttp/v2 v2.4.2
+	go.elastic.co/apm/v2 v2.4.2
 	gopkg.in/yaml.v3 v3.0.1
 )
 
