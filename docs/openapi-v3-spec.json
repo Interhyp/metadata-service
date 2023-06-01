@@ -2692,6 +2692,18 @@
               }
             }
           },
+          "watchers": {
+            "type": "array",
+            "description": "List of strings (list of watchers, either usernames or group identifier), which are added as reviewers but require no approval.",
+            "items": {
+              "type": "string"
+            },
+            "example": [
+              "someUser",
+              "anotherUser",
+              "@owner.users"
+            ]
+          },
           "defaultReviewers": {
             "type": "array",
             "items": {

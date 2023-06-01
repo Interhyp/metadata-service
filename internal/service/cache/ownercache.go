@@ -26,7 +26,10 @@ func (s *Impl) GetOwner(ctx context.Context, alias string) (openapi.OwnerDto, er
 		s.Logging.Logger().Ctx(ctx).Info().Printf("owner %v not found", alias)
 		return openapi.OwnerDto{}, apierrors.NewNotFoundError("owner.notfound", fmt.Sprintf("owner %s not found", alias), nil, s.Timestamp.Now())
 	} else {
-		return deepCopyOwner(immutableOwnerPtr), nil
+		ownerCopy := openapi.OwnerDto{}
+		owner := (*immutableOwnerPtr).(openapi.OwnerDto)
+		err := deepCopyStruct(owner, &ownerCopy)
+		return ownerCopy, err
 	}
 }
 

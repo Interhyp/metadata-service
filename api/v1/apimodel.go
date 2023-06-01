@@ -5,7 +5,7 @@ package openapi
 import "time"
 
 type ConditionReferenceDto struct {
-	// Branch reference.
+	// Reference of a branch.
 	RefMatcher string `json:"refMatcher" yaml:"refMatcher"`
 }
 
@@ -104,12 +104,14 @@ type RepositoryConfigurationDto struct {
 	RequireIssue *bool `json:"requireIssue,omitempty" yaml:"requireIssue,omitempty"`
 	// Set the required successful builds counter.
 	RequireSuccessfulBuilds *int32 `json:"requireSuccessfulBuilds,omitempty" yaml:"requireSuccessfulBuilds,omitempty"`
-	// Map of string (key name e.g. some-key) of branch references.
+	// Configuration of conditional builds as map of structs (key name e.g. some-key) of target references.
 	RequireConditions *map[string]ConditionReferenceDto   `json:"requireConditions,omitempty" yaml:"requireConditions,omitempty"`
 	Webhooks          *RepositoryConfigurationWebhooksDto `json:"webhooks,omitempty" yaml:"webhooks,omitempty"`
 	// Map of string (group name e.g. some-owner) of strings (list of approvers), one approval for each group is required.
-	Approvers        *map[string][]string `json:"approvers,omitempty" yaml:"approvers,omitempty"`
-	DefaultReviewers []string             `json:"defaultReviewers,omitempty" yaml:"defaultReviewers,omitempty"`
+	Approvers *map[string][]string `json:"approvers,omitempty" yaml:"approvers,omitempty"`
+	// List of strings (list of watchers, either usernames or group identifier), which are added as reviewers but require no approval.
+	Watchers         []string `json:"watchers,omitempty" yaml:"watchers,omitempty"`
+	DefaultReviewers []string `json:"defaultReviewers,omitempty" yaml:"defaultReviewers,omitempty"`
 	// List of users, who can sign a pull request.
 	SignedApprovers []string `json:"signedApprovers,omitempty" yaml:"signedApprovers,omitempty"`
 }

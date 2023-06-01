@@ -55,7 +55,7 @@ func (s *Impl) processGroupMap(ctx context.Context, groupsMap *map[string][]stri
 			if err2 == nil {
 				userDifference := util.Difference(users, filteredExistingUsers)
 				if len(userDifference) > 0 {
-					s.Logging.Logger().Ctx(ctx).Error().Printf("Found unknown users in configuration: %v", userDifference)
+					s.Logging.Logger().Ctx(ctx).Warn().Printf("Found unknown users in configuration: %v", userDifference)
 				}
 				(*groupsMap)[groupName] = append(filteredExistingUsers, groups...)
 			} else {

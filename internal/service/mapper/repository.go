@@ -90,7 +90,7 @@ func (s *Impl) GetRepository(ctx context.Context, repoKey string) (openapi.Repos
 				if err2 == nil {
 					userDifference := util.Difference(users, filteredExistingUsers)
 					if len(userDifference) > 0 {
-						s.Logging.Logger().Ctx(ctx).Error().Printf("Found unknown users in configuration: %v", userDifference)
+						s.Logging.Logger().Ctx(ctx).Warn().Printf("Found unknown users in configuration: %v", userDifference)
 					}
 					(*approversGroupsMap)[approversGroupName] = append(filteredExistingUsers, groups...)
 				} else {

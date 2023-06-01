@@ -405,7 +405,7 @@ func TestRebuildApprovers_DuplicatesAndMultipleGroups(t *testing.T) {
 	testApprovers["two"] = []string{"z", "o", "v", "v"}
 	configDto := createRepositoryConfigDto(&testApprovers)
 
-	instance.rebuildApprovers(context.TODO(), configDto)
+	instance.expandApprovers(context.TODO(), *configDto)
 
 	require.Equal(t, 2, len(*configDto.Approvers))
 	require.Exactly(t, (*configDto.Approvers)["one"], []string{"x", "y", "z"})
@@ -436,6 +436,7 @@ func createRepositoryConfigDto(testApprovers *map[string][]string) *openapi.Repo
 		RequireSuccessfulBuilds: nil,
 		Webhooks:                nil,
 		Approvers:               testApprovers,
+		Watchers:                nil,
 		DefaultReviewers:        nil,
 		SignedApprovers:         nil,
 	}

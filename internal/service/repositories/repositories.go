@@ -111,28 +111,38 @@ func (s *Impl) GetRepository(ctx context.Context, repoKey string) (openapi.Repos
 	repositoryDto, err := s.Cache.GetRepository(ctx, repoKey)
 
 	if err == nil && repositoryDto.Configuration != nil {
-		s.rebuildApprovers(ctx, repositoryDto.Configuration)
+		repoConfig := *repositoryDto.Configuration
+		s.expandApprovers(ctx, repoConfig)
+		if repoConfig.Watchers != nil {
+			repoConfig.Watchers = s.expandUserGroups(ctx, repoConfig.Watchers)
+		}
 	}
 
 	return repositoryDto, err
 }
 
-func (s *Impl) rebuildApprovers(ctx context.Context, result *openapi.RepositoryConfigurationDto) {
-	if result != nil && result.Approvers != nil {
-		for approversGroupName, approversGroup := range *result.Approvers {
-			filteredApprovers := make([]string, 0)
-			for _, approver := range approversGroup {
-				isGroup, groupOwner, groupName := util.ParseGroupOwnerAndGroupName(approver)
-				if isGroup {
-					groupMembers := s.Owners.GetAllGroupMembers(ctx, groupOwner, groupName)
-					filteredApprovers = append(filteredApprovers, groupMembers...)
-				} else {
-					filteredApprovers = append(filteredApprovers, approver)
-				}
-			}
-			(*result.Approvers)[approversGroupName] = util.RemoveDuplicateStr(filteredApprovers)
+func (s *Impl) expandApprovers(ctx context.Context, result openapi.RepositoryConfigurationDto) {
+	if result.Approvers != nil {
+		for name, approverList := range *result.Approvers {
+			(*result.Approvers)[name] = s.expandUserGroups(ctx, approverList)
 		}
 	}
+}
+
+// expandUserGroups replaces all occurrences of "@owner.group" in the given list with the members of the respective
+// group.
+func (s *Impl) expandUserGroups(ctx context.Context, userList []string) []string {
+	filteredApprovers := make([]string, 0)
+	for _, approver := range userList {
+		isGroup, groupOwner, groupName := util.ParseGroupOwnerAndGroupName(approver)
+		if isGroup {
+			groupMembers := s.Owners.GetAllGroupMembers(ctx, groupOwner, groupName)
+			filteredApprovers = append(filteredApprovers, groupMembers...)
+		} else {
+			filteredApprovers = append(filteredApprovers, approver)
+		}
+	}
+	return util.RemoveDuplicateStr(filteredApprovers)
 }
 
 func (s *Impl) CreateRepository(ctx context.Context, key string, repositoryCreateDto openapi.RepositoryCreateDto) (openapi.RepositoryDto, error) {
@@ -370,6 +380,7 @@ func patchConfiguration(patch *openapi.RepositoryConfigurationDto, original *ope
 			RequireConditions:       patchConditions(patch.RequireConditions, original.RequireConditions),
 			Webhooks:                patchWebhooks(patch.Webhooks, original.Webhooks),
 			Approvers:               patchApprovers(patch.Approvers, original.Approvers),
+			Watchers:                patchStringSlice(patch.Watchers, original.Watchers),
 			DefaultReviewers:        patchStringSlice(patch.DefaultReviewers, original.DefaultReviewers),
 			SignedApprovers:         patchStringSlice(patch.SignedApprovers, original.SignedApprovers),
 		}
