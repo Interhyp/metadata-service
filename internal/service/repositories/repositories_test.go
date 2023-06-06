@@ -406,7 +406,7 @@ func TestRebuildApprovers_DuplicatesAndMultipleGroups(t *testing.T) {
 	testApprovers["two"] = []string{"z", "o", "v", "v"}
 	configDto := createRepositoryConfigDto(&testApprovers)
 
-	instance.expandApprovers(context.TODO(), *configDto)
+	instance.expandApprovers(context.TODO(), configDto.Approvers)
 
 	require.Equal(t, 2, len(*configDto.Approvers))
 	require.Exactly(t, (*configDto.Approvers)["one"], []string{"x", "y", "z"})
