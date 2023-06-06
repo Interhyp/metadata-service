@@ -25,7 +25,10 @@ func (s *Impl) GetService(ctx context.Context, name string) (openapi.ServiceDto,
 	if immutableServicePtr == nil {
 		return openapi.ServiceDto{}, apierrors.NewNotFoundError("service.notfound", fmt.Sprintf("service %s not found", name), nil, s.Timestamp.Now())
 	} else {
-		return deepCopyService(immutableServicePtr), nil
+		serviceCopy := openapi.ServiceDto{}
+		service := (*immutableServicePtr).(openapi.ServiceDto)
+		err := deepCopyStruct(service, &serviceCopy)
+		return serviceCopy, err
 	}
 }
 

@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"context"
+	"github.com/Interhyp/metadata-service/acorns/service"
 	openapi "github.com/Interhyp/metadata-service/api/v1"
 	"github.com/Interhyp/metadata-service/docs"
 	"github.com/Interhyp/metadata-service/internal/service/owners"
@@ -405,25 +406,40 @@ func TestRebuildApprovers_DuplicatesAndMultipleGroups(t *testing.T) {
 	testApprovers["two"] = []string{"z", "o", "v", "v"}
 	configDto := createRepositoryConfigDto(&testApprovers)
 
-	instance.rebuildApprovers(context.TODO(), configDto)
+	instance.expandApprovers(context.TODO(), *configDto)
 
 	require.Equal(t, 2, len(*configDto.Approvers))
 	require.Exactly(t, (*configDto.Approvers)["one"], []string{"x", "y", "z"})
 	require.Exactly(t, (*configDto.Approvers)["two"], []string{"z", "o", "v"})
 }
 
+func TestExpandWatchers(t *testing.T) {
+
+	instance := createInstance()
+
+	testWatchers := []string{"x", "y", "z", "z"}
+
+	result := instance.expandUserGroups(context.TODO(), testWatchers)
+
+	require.Exactly(t, result, []string{"x", "y", "z"})
+}
+
 func createInstance() Impl {
+	return createInstanceWithOwners(&owners.Impl{
+		Configuration: nil,
+		Logging:       nil,
+		Cache:         nil,
+		Updater:       nil,
+	})
+}
+
+func createInstanceWithOwners(ownersImpl service.Owners) Impl {
 	instance := Impl{
 		Configuration: nil,
 		Logging:       nil,
 		Cache:         nil,
 		Updater:       nil,
-		Owners: &owners.Impl{
-			Configuration: nil,
-			Logging:       nil,
-			Cache:         nil,
-			Updater:       nil,
-		},
+		Owners:        ownersImpl,
 	}
 	return instance
 }
@@ -436,6 +452,7 @@ func createRepositoryConfigDto(testApprovers *map[string][]string) *openapi.Repo
 		RequireSuccessfulBuilds: nil,
 		Webhooks:                nil,
 		Approvers:               testApprovers,
+		Watchers:                nil,
 		DefaultReviewers:        nil,
 		SignedApprovers:         nil,
 	}
