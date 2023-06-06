@@ -112,19 +112,20 @@ func (s *Impl) GetRepository(ctx context.Context, repoKey string) (openapi.Repos
 
 	if err == nil && repositoryDto.Configuration != nil {
 		repoConfig := *repositoryDto.Configuration
-		s.expandApprovers(ctx, repoConfig)
+		s.expandApprovers(ctx, repoConfig.Approvers)
 		if repoConfig.Watchers != nil {
 			repoConfig.Watchers = s.expandUserGroups(ctx, repoConfig.Watchers)
+			repositoryDto.Configuration = &repoConfig
 		}
 	}
 
 	return repositoryDto, err
 }
 
-func (s *Impl) expandApprovers(ctx context.Context, result openapi.RepositoryConfigurationDto) {
-	if result.Approvers != nil {
-		for name, approverList := range *result.Approvers {
-			(*result.Approvers)[name] = s.expandUserGroups(ctx, approverList)
+func (s *Impl) expandApprovers(ctx context.Context, approvers *map[string][]string) {
+	if approvers != nil {
+		for name, approverList := range *approvers {
+			(*approvers)[name] = s.expandUserGroups(ctx, approverList)
 		}
 	}
 }
