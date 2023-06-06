@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 )
 
+// deepCopyStruct creates a copy of a struct by serializing and deserializing to JSON.
+// Beware: Unexported fields are not copied.
 func deepCopyStruct[T any](source T, targetPointer *T) error {
 	jsonBytes, err := json.Marshal(source)
 	if err != nil {
