@@ -39,6 +39,7 @@ func tstCurrent() openapi.ServiceDto {
 		RequiredScans:   []string{"SAST", "SCA"},
 		TimeStamp:       "ts",
 		CommitHash:      "hash",
+		Lifecycle:       p("experimental"),
 	}
 }
 
@@ -76,6 +77,7 @@ func TestPatchService_ReplaceAll(t *testing.T) {
 		RequiredScans:   []string{"SAST"},
 		TimeStamp:       "newts",
 		CommitHash:      "newhash",
+		Lifecycle:       p("deprecated"),
 	}, openapi.ServiceDto{
 		Owner: "newowner",
 		Quicklinks: []openapi.Quicklink{
@@ -92,6 +94,7 @@ func TestPatchService_ReplaceAll(t *testing.T) {
 		RequiredScans:   []string{"SAST"},
 		TimeStamp:       "newts",
 		CommitHash:      "newhash",
+		Lifecycle:       p("deprecated"),
 	})
 }
 
@@ -107,6 +110,7 @@ func TestPatchService_ClearFields(t *testing.T) {
 		RequiredScans: []string{},
 		TimeStamp:     "",
 		CommitHash:    "",
+		Lifecycle:     p(""),
 	}, openapi.ServiceDto{
 		Owner:           "",
 		Description:     nil,
@@ -115,6 +119,7 @@ func TestPatchService_ClearFields(t *testing.T) {
 		OperationType:   nil,
 		TimeStamp:       "",
 		CommitHash:      "",
+		Lifecycle:       nil,
 	})
 }
 

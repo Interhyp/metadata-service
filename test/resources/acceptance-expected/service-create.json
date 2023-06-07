@@ -3,6 +3,7 @@
   "commitHash": "6c8ac2c35791edf9979623c717a2430000000000",
   "developmentOnly": false,
   "jiraIssue": "ISSUE-2345",
+  "lifecycle": "experimental",
   "owner": "some-owner",
   "quicklinks": [
     {

@@ -25,6 +25,8 @@ type Impl struct {
 	Timestamp librepo.Timestamp
 }
 
+var initialServiceLifecycle = "experimental"
+
 func (s *Impl) GetServices(ctx context.Context, ownerAliasFilter string) (openapi.ServiceListDto, error) {
 	result := openapi.ServiceListDto{
 		Services:  make(map[string]openapi.ServiceDto),
@@ -109,6 +111,7 @@ func (s *Impl) mapServiceCreateDtoToServiceDto(serviceCreateDto openapi.ServiceC
 		DevelopmentOnly: serviceCreateDto.DevelopmentOnly,
 		Quicklinks:      serviceCreateDto.Quicklinks,
 		Description:     serviceCreateDto.Description,
+		Lifecycle:       &initialServiceLifecycle,
 	}
 }
 
@@ -309,6 +312,7 @@ func patchService(current openapi.ServiceDto, patch openapi.ServicePatchDto) ope
 		CommitHash:      patch.CommitHash,
 		JiraIssue:       patch.JiraIssue,
 		Description:     patchStringPtr(patch.Description, current.Description),
+		Lifecycle:       patchStringPtr(patch.Lifecycle, current.Lifecycle),
 	}
 }
 

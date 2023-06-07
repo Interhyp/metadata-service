@@ -94,6 +94,7 @@ func (s *Impl) mapOwnerCreateDtoToOwnerDto(ownerCreateDto openapi.OwnerCreateDto
 		JiraIssue:          ownerCreateDto.JiraIssue,
 		DefaultJiraProject: ownerCreateDto.DefaultJiraProject,
 		Groups:             ownerCreateDto.Groups,
+		DisplayName:        ownerCreateDto.DisplayName,
 	}
 }
 
@@ -238,6 +239,7 @@ func patchOwner(current openapi.OwnerDto, patch openapi.OwnerPatchDto) openapi.O
 		TimeStamp:          patch.TimeStamp,
 		CommitHash:         patch.CommitHash,
 		JiraIssue:          patch.JiraIssue,
+		DisplayName:        patch.DisplayName,
 	}
 }
 

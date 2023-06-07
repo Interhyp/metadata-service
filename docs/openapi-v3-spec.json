@@ -1943,6 +1943,11 @@
             "type": "string",
             "description": "The jira issue to use for committing a change, or the last jira issue used.",
             "example": "ISSUE-0000"
+          },
+          "displayName": {
+            "type": "string",
+            "description": "A display name of the owner, to be presented in user interfaces instead of the owner's name, when available",
+            "example": "Owner Display Name"
           }
         }
       },
@@ -1999,6 +2004,11 @@
             "type": "string",
             "description": "The jira issue to use for committing a change, or the last jira issue used.",
             "example": "ISSUE-0000"
+          },
+          "displayName": {
+            "type": "string",
+            "description": "A display name of the owner, to be presented in user interfaces instead of the owner's name, when available",
+            "example": "Owner Display Name"
           }
         }
       },
@@ -2066,6 +2076,11 @@
             "type": "string",
             "description": "The jira issue to use for committing a change, or the last jira issue used.",
             "example": "ISSUE-0000"
+          },
+          "displayName": {
+            "type": "string",
+            "description": "A display name of the owner, to be presented in user interfaces instead of the owner's name, when available",
+            "example": "Owner Display Name"
           }
         }
       },
@@ -2183,6 +2198,16 @@
             "type": "string",
             "description": "The jira issue to use for committing a change, or the last jira issue used.",
             "example": "ISSUE-0000"
+          },
+          "lifecycle": {
+            "type": "string",
+            "description": "The current phase of the service's development. A service usually starts off as 'experimental', then becomes 'operational' (i. e. can be reliably used and/or consumed). Once 'deprecated', the service doesn’t guarantee reliable use/consumption any longer.",
+            "enum": [
+              "experimental",
+              "operational",
+              "deprecated"
+            ],
+            "example": "operational"
           }
         }
       },
@@ -2345,6 +2370,16 @@
             "type": "string",
             "description": "The jira issue to use for committing a change, or the last jira issue used.",
             "example": "ISSUE-0000"
+          },
+          "lifecycle": {
+            "type": "string",
+            "description": "The current phase of the service's development. A service usually starts off as 'experimental', then becomes 'operational' (i. e. can be reliably used and/or consumed). Once 'deprecated', the service doesn’t guarantee reliable use/consumption any longer.",
+            "enum": [
+              "experimental",
+              "operational",
+              "deprecated"
+            ],
+            "example": "operational"
           }
         }
       },
