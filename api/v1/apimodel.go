@@ -38,6 +38,8 @@ type OwnerCreateDto struct {
 	DefaultJiraProject *string `json:"defaultJiraProject,omitempty"`
 	// The jira issue to use for committing a change, or the last jira issue used.
 	JiraIssue string `json:"jiraIssue"`
+	// A display name of the owner, to be presented in user interfaces instead of the owner's name, when available
+	DisplayName *string `json:"displayName,omitempty"`
 }
 
 type OwnerDto struct {
@@ -57,6 +59,8 @@ type OwnerDto struct {
 	CommitHash string `json:"commitHash" yaml:"-"`
 	// The jira issue to use for committing a change, or the last jira issue used.
 	JiraIssue string `json:"jiraIssue" yaml:"-"`
+	// A display name of the owner, to be presented in user interfaces instead of the owner's name, when available
+	DisplayName *string `json:"displayName,omitempty" yaml:"displayName,omitempty"`
 }
 
 type OwnerListDto struct {
@@ -82,6 +86,8 @@ type OwnerPatchDto struct {
 	CommitHash string `json:"commitHash"`
 	// The jira issue to use for committing a change, or the last jira issue used.
 	JiraIssue string `json:"jiraIssue"`
+	// A display name of the owner, to be presented in user interfaces instead of the owner's name, when available
+	DisplayName *string `json:"displayName,omitempty"`
 }
 
 type Quicklink struct {
@@ -233,6 +239,8 @@ type ServiceDto struct {
 	CommitHash string `json:"commitHash" yaml:"-"`
 	// The jira issue to use for committing a change, or the last jira issue used.
 	JiraIssue string `json:"jiraIssue" yaml:"-"`
+	// The current phase of the service's development. A service usually starts off as 'experimental', then becomes 'operational' (i. e. can be reliably used and/or consumed). Once 'deprecated', the service doesn’t guarantee reliable use/consumption any longer.
+	Lifecycle *string `json:"lifecycle,omitempty" yaml:"lifecycle,omitempty"`
 }
 
 type ServiceListDto struct {
@@ -264,6 +272,8 @@ type ServicePatchDto struct {
 	CommitHash string `json:"commitHash"`
 	// The jira issue to use for committing a change, or the last jira issue used.
 	JiraIssue string `json:"jiraIssue"`
+	// The current phase of the service's development. A service usually starts off as 'experimental', then becomes 'operational' (i. e. can be reliably used and/or consumed). Once 'deprecated', the service doesn’t guarantee reliable use/consumption any longer.
+	Lifecycle *string `json:"lifecycle,omitempty"`
 }
 
 type ServicePromotersDto struct {

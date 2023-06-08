@@ -103,6 +103,7 @@ func tstService(name string) openapi.ServiceDto {
 		TimeStamp:       "2022-11-06T18:14:10Z",
 		CommitHash:      "6c8ac2c35791edf9979623c717a243fc53400000",
 		JiraIssue:       "ISSUE-2345",
+		Lifecycle:       p("experimental"),
 	}
 }
 
@@ -133,6 +134,7 @@ func tstServicePatch() openapi.ServicePatchDto {
 		TimeStamp:   "2022-11-06T18:14:10Z",
 		CommitHash:  "6c8ac2c35791edf9979623c717a243fc53400000",
 		JiraIssue:   "ISSUE-2345",
+		Lifecycle:   p("experimental"),
 	}
 }
 
@@ -156,6 +158,7 @@ developmentOnly: false
 requiredScans:
     - SAST
     - SCA
+lifecycle: experimental
 `
 }
 
