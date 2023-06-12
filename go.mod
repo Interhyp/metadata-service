@@ -57,7 +57,7 @@ require (
 	github.com/StephanHCB/go-autumn-config-env v0.2.2
 	github.com/StephanHCB/go-autumn-logging v0.3.0
 	github.com/StephanHCB/go-autumn-logging-zerolog v0.4.0
-	github.com/StephanHCB/go-autumn-restclient v0.5.0
+	github.com/StephanHCB/go-autumn-restclient v0.6.0
 	github.com/StephanHCB/go-autumn-restclient-apm v0.0.0-20230512122437-2da0d2707889
 	github.com/StephanHCB/go-autumn-restclient-circuitbreaker v0.4.1
 	github.com/StephanHCB/go-autumn-restclient-circuitbreaker-prometheus v0.1.0
@@ -127,7 +127,7 @@ require (
 	github.com/shurcooL/vfsgen v0.0.0-20200824052919-0d455de96546 // indirect
 	github.com/skeema/knownhosts v1.1.1 // indirect
 	github.com/sony/gobreaker v0.5.0 // indirect
-	github.com/tidwall/tinylru v1.1.0 // indirect
+	github.com/tidwall/tinylru v1.2.1 // indirect
 	github.com/twmb/franz-go/pkg/kmsg v1.4.0 // indirect
 	github.com/xanzy/ssh-agent v0.3.3 // indirect
 	go.elastic.co/fastjson v1.1.0 // indirect
