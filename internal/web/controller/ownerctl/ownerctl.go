@@ -7,10 +7,10 @@ import (
 	"github.com/Interhyp/metadata-service/acorns/config"
 	"github.com/Interhyp/metadata-service/acorns/service"
 	openapi "github.com/Interhyp/metadata-service/api/v1"
-	"github.com/Interhyp/metadata-service/internal/web/middleware/jwt"
 	"github.com/Interhyp/metadata-service/internal/web/util"
 	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
 	"github.com/StephanHCB/go-backend-service-common/api/apierrors"
+	"github.com/StephanHCB/go-backend-service-common/web/middleware/security"
 	"github.com/go-chi/chi/v5"
 	"net/http"
 	"net/url"
@@ -64,11 +64,11 @@ func (c *Impl) GetSingleOwner(w http.ResponseWriter, r *http.Request) {
 
 func (c *Impl) CreateOwner(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	if err := jwt.IsAuthenticated(ctx, "anonymous tried CreateOwner", c.Timestamp.Now()); err != nil {
+	if err := security.IsAuthenticated(ctx, "anonymous tried CreateOwner", c.Timestamp.Now()); err != nil {
 		apierrors.HandleError(ctx, w, r, err, apierrors.IsUnauthorisedError)
 		return
 	}
-	if err := jwt.HasGroup(ctx, c.CustomConfiguration.AuthGroupWrite(), fmt.Sprintf("%s tried CreateOwner", jwt.Subject(ctx)), c.Timestamp.Now()); err != nil {
+	if err := security.HasGroup(ctx, c.CustomConfiguration.AuthGroupWrite(), fmt.Sprintf("%s tried CreateOwner", security.Subject(ctx)), c.Timestamp.Now()); err != nil {
 		apierrors.HandleError(ctx, w, r, err, apierrors.IsForbiddenError)
 		return
 	}
@@ -97,11 +97,11 @@ func (c *Impl) CreateOwner(w http.ResponseWriter, r *http.Request) {
 
 func (c *Impl) UpdateOwner(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	if err := jwt.IsAuthenticated(ctx, "anonymous tried UpdateOwner", c.Timestamp.Now()); err != nil {
+	if err := security.IsAuthenticated(ctx, "anonymous tried UpdateOwner", c.Timestamp.Now()); err != nil {
 		apierrors.HandleError(ctx, w, r, err, apierrors.IsUnauthorisedError)
 		return
 	}
-	if err := jwt.HasGroup(ctx, c.CustomConfiguration.AuthGroupWrite(), fmt.Sprintf("%s tried UpdateOwner", jwt.Subject(ctx)), c.Timestamp.Now()); err != nil {
+	if err := security.HasGroup(ctx, c.CustomConfiguration.AuthGroupWrite(), fmt.Sprintf("%s tried UpdateOwner", security.Subject(ctx)), c.Timestamp.Now()); err != nil {
 		apierrors.HandleError(ctx, w, r, err, apierrors.IsForbiddenError)
 		return
 	}
@@ -127,11 +127,11 @@ func (c *Impl) UpdateOwner(w http.ResponseWriter, r *http.Request) {
 
 func (c *Impl) PatchOwner(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	if err := jwt.IsAuthenticated(ctx, "anonymous tried PatchOwner", c.Timestamp.Now()); err != nil {
+	if err := security.IsAuthenticated(ctx, "anonymous tried PatchOwner", c.Timestamp.Now()); err != nil {
 		apierrors.HandleError(ctx, w, r, err, apierrors.IsUnauthorisedError)
 		return
 	}
-	if err := jwt.HasGroup(ctx, c.CustomConfiguration.AuthGroupWrite(), fmt.Sprintf("%s tried PatchOwner", jwt.Subject(ctx)), c.Timestamp.Now()); err != nil {
+	if err := security.HasGroup(ctx, c.CustomConfiguration.AuthGroupWrite(), fmt.Sprintf("%s tried PatchOwner", security.Subject(ctx)), c.Timestamp.Now()); err != nil {
 		apierrors.HandleError(ctx, w, r, err, apierrors.IsForbiddenError)
 		return
 	}
@@ -157,11 +157,11 @@ func (c *Impl) PatchOwner(w http.ResponseWriter, r *http.Request) {
 
 func (c *Impl) DeleteOwner(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	if err := jwt.IsAuthenticated(ctx, "anonymous tried DeleteOwner", c.Timestamp.Now()); err != nil {
+	if err := security.IsAuthenticated(ctx, "anonymous tried DeleteOwner", c.Timestamp.Now()); err != nil {
 		apierrors.HandleError(ctx, w, r, err, apierrors.IsUnauthorisedError)
 		return
 	}
-	if err := jwt.HasGroup(ctx, c.CustomConfiguration.AuthGroupWrite(), fmt.Sprintf("%s tried DeleteOwner", jwt.Subject(ctx)), c.Timestamp.Now()); err != nil {
+	if err := security.HasGroup(ctx, c.CustomConfiguration.AuthGroupWrite(), fmt.Sprintf("%s tried DeleteOwner", security.Subject(ctx)), c.Timestamp.Now()); err != nil {
 		apierrors.HandleError(ctx, w, r, err, apierrors.IsForbiddenError)
 		return
 	}

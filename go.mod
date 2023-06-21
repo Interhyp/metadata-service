@@ -56,29 +56,25 @@ require (
 	github.com/StephanHCB/go-autumn-config-api v0.2.1
 	github.com/StephanHCB/go-autumn-config-env v0.2.2
 	github.com/StephanHCB/go-autumn-logging v0.3.0
-	github.com/StephanHCB/go-autumn-logging-zerolog v0.4.0
+	github.com/StephanHCB/go-autumn-logging-zerolog v0.5.0
 	github.com/StephanHCB/go-autumn-restclient v0.6.0
-	github.com/StephanHCB/go-autumn-restclient-apm v0.0.0-20230512122437-2da0d2707889
+	github.com/StephanHCB/go-autumn-restclient-apm v0.1.0
 	github.com/StephanHCB/go-autumn-restclient-circuitbreaker v0.4.1
 	github.com/StephanHCB/go-autumn-restclient-circuitbreaker-prometheus v0.1.0
 	github.com/StephanHCB/go-autumn-restclient-prometheus v0.1.2
-	github.com/StephanHCB/go-backend-service-common v0.2.2
+	github.com/StephanHCB/go-backend-service-common v0.3.0
 	github.com/go-chi/chi/v5 v5.0.8
 	github.com/go-git/go-billy/v5 v5.4.1
 	github.com/go-git/go-git/v5 v5.7.0
 	github.com/go-http-utils/headers v0.0.0-20181008091004-fed159eddc2a
-	github.com/golang-jwt/jwt/v4 v4.5.0
 	github.com/lestrrat-go/jwx/v2 v2.0.11
 	github.com/pact-foundation/pact-go v1.7.0
 	github.com/pkg/errors v0.9.1
-	github.com/prometheus/client_golang v1.15.1
+	github.com/prometheus/client_golang v1.16.0
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/rs/zerolog v1.29.1
 	github.com/stretchr/testify v1.8.4
 	github.com/twmb/franz-go v1.13.5
-	go.elastic.co/apm/module/apmchiv5/v2 v2.4.2
-	go.elastic.co/apm/module/apmhttp/v2 v2.4.2
-	go.elastic.co/apm/v2 v2.4.2
 	gopkg.in/yaml.v3 v3.0.1
 )
 
@@ -98,6 +94,7 @@ require (
 	github.com/emirpasic/gods v1.18.1 // indirect
 	github.com/go-git/gcfg v1.5.1-0.20230307220236-3a3c6141e376 // indirect
 	github.com/goccy/go-json v0.10.2 // indirect
+	github.com/golang-jwt/jwt/v4 v4.5.0 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/hashicorp/go-version v1.5.0 // indirect
@@ -120,8 +117,7 @@ require (
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/prometheus/client_model v0.3.0 // indirect
 	github.com/prometheus/common v0.42.0 // indirect
-	github.com/prometheus/procfs v0.9.0 // indirect
-	github.com/rogpeppe/go-internal v1.10.0 // indirect
+	github.com/prometheus/procfs v0.10.1 // indirect
 	github.com/segmentio/asm v1.2.0 // indirect
 	github.com/sergi/go-diff v1.1.0 // indirect
 	github.com/shurcooL/httpfs v0.0.0-20190707220628-8d4bc4ba7749 // indirect
@@ -131,6 +127,9 @@ require (
 	github.com/tidwall/tinylru v1.2.1 // indirect
 	github.com/twmb/franz-go/pkg/kmsg v1.4.0 // indirect
 	github.com/xanzy/ssh-agent v0.3.3 // indirect
+	go.elastic.co/apm/module/apmchiv5/v2 v2.4.2 // indirect
+	go.elastic.co/apm/module/apmhttp/v2 v2.4.2 // indirect
+	go.elastic.co/apm/v2 v2.4.2 // indirect
 	go.elastic.co/fastjson v1.1.0 // indirect
 	golang.org/x/crypto v0.9.0 // indirect
 	golang.org/x/net v0.10.0 // indirect

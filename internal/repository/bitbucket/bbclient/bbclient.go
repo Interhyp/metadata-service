@@ -7,7 +7,7 @@ import (
 	"github.com/Interhyp/metadata-service/acorns/errors/httperror"
 	"github.com/Interhyp/metadata-service/acorns/repository"
 	"github.com/Interhyp/metadata-service/internal/repository/bitbucket/bbclientint"
-	auapmclient "github.com/StephanHCB/go-autumn-restclient-apm/implementation/clientwrapper"
+	auapmclient "github.com/StephanHCB/go-autumn-restclient-apm/implementation/client"
 	aurestbreakerprometheus "github.com/StephanHCB/go-autumn-restclient-circuitbreaker-prometheus"
 	aurestbreaker "github.com/StephanHCB/go-autumn-restclient-circuitbreaker/implementation/breaker"
 	aurestclientprometheus "github.com/StephanHCB/go-autumn-restclient-prometheus"
