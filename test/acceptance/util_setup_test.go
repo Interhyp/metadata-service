@@ -10,7 +10,6 @@ import (
 	"github.com/Interhyp/metadata-service/internal/service/trigger"
 	"github.com/Interhyp/metadata-service/internal/service/updater"
 	"github.com/Interhyp/metadata-service/internal/web/app"
-	"github.com/Interhyp/metadata-service/internal/web/middleware/jwt"
 	"github.com/Interhyp/metadata-service/internal/web/server"
 	"github.com/Interhyp/metadata-service/test/acceptance/bitbucketmock"
 	"github.com/Interhyp/metadata-service/test/acceptance/idpmock"
@@ -22,6 +21,7 @@ import (
 	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
 	libconfig "github.com/StephanHCB/go-backend-service-common/repository/config"
 	"github.com/StephanHCB/go-backend-service-common/repository/logging"
+	"github.com/StephanHCB/go-backend-service-common/web/middleware/security"
 	"github.com/rs/zerolog/log"
 	"net/http/httptest"
 	"time"
@@ -101,7 +101,7 @@ func tstSetup(configPath string) error {
 
 	metadataImpl.Now = fakeNow
 
-	jwt.Now = fakeNow
+	security.Now = fakeNow
 
 	registry.SkipSetup(loggingImpl)
 	registry.SkipSetup(configImpl)

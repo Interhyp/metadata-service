@@ -9,10 +9,10 @@ import (
 	"github.com/Interhyp/metadata-service/acorns/config"
 	"github.com/Interhyp/metadata-service/acorns/service"
 	openapi "github.com/Interhyp/metadata-service/api/v1"
-	"github.com/Interhyp/metadata-service/internal/web/middleware/jwt"
 	"github.com/Interhyp/metadata-service/internal/web/util"
 	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
 	"github.com/StephanHCB/go-backend-service-common/api/apierrors"
+	"github.com/StephanHCB/go-backend-service-common/web/middleware/security"
 	"github.com/go-chi/chi/v5"
 )
 
@@ -69,11 +69,11 @@ func (c *Impl) GetSingleService(w http.ResponseWriter, r *http.Request) {
 
 func (c *Impl) CreateService(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	if err := jwt.IsAuthenticated(ctx, "anonymous tried CreateService", c.Timestamp.Now()); err != nil {
+	if err := security.IsAuthenticated(ctx, "anonymous tried CreateService", c.Timestamp.Now()); err != nil {
 		apierrors.HandleError(ctx, w, r, err, apierrors.IsUnauthorisedError)
 		return
 	}
-	if err := jwt.HasGroup(ctx, c.CustomConfiguration.AuthGroupWrite(), fmt.Sprintf("%s tried CreateService", jwt.Subject(ctx)), c.Timestamp.Now()); err != nil {
+	if err := security.HasGroup(ctx, c.CustomConfiguration.AuthGroupWrite(), fmt.Sprintf("%s tried CreateService", security.Subject(ctx)), c.Timestamp.Now()); err != nil {
 		apierrors.HandleError(ctx, w, r, err, apierrors.IsForbiddenError)
 		return
 	}
@@ -102,11 +102,11 @@ func (c *Impl) CreateService(w http.ResponseWriter, r *http.Request) {
 
 func (c *Impl) UpdateService(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	if err := jwt.IsAuthenticated(ctx, "anonymous tried UpdateService", c.Timestamp.Now()); err != nil {
+	if err := security.IsAuthenticated(ctx, "anonymous tried UpdateService", c.Timestamp.Now()); err != nil {
 		apierrors.HandleError(ctx, w, r, err, apierrors.IsUnauthorisedError)
 		return
 	}
-	if err := jwt.HasGroup(ctx, c.CustomConfiguration.AuthGroupWrite(), fmt.Sprintf("%s tried UpdateService", jwt.Subject(ctx)), c.Timestamp.Now()); err != nil {
+	if err := security.HasGroup(ctx, c.CustomConfiguration.AuthGroupWrite(), fmt.Sprintf("%s tried UpdateService", security.Subject(ctx)), c.Timestamp.Now()); err != nil {
 		apierrors.HandleError(ctx, w, r, err, apierrors.IsForbiddenError)
 		return
 	}
@@ -132,11 +132,11 @@ func (c *Impl) UpdateService(w http.ResponseWriter, r *http.Request) {
 
 func (c *Impl) PatchService(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	if err := jwt.IsAuthenticated(ctx, "anonymous tried PatchService", c.Timestamp.Now()); err != nil {
+	if err := security.IsAuthenticated(ctx, "anonymous tried PatchService", c.Timestamp.Now()); err != nil {
 		apierrors.HandleError(ctx, w, r, err, apierrors.IsUnauthorisedError)
 		return
 	}
-	if err := jwt.HasGroup(ctx, c.CustomConfiguration.AuthGroupWrite(), fmt.Sprintf("%s tried PatchService", jwt.Subject(ctx)), c.Timestamp.Now()); err != nil {
+	if err := security.HasGroup(ctx, c.CustomConfiguration.AuthGroupWrite(), fmt.Sprintf("%s tried PatchService", security.Subject(ctx)), c.Timestamp.Now()); err != nil {
 		apierrors.HandleError(ctx, w, r, err, apierrors.IsForbiddenError)
 		return
 	}
@@ -162,11 +162,11 @@ func (c *Impl) PatchService(w http.ResponseWriter, r *http.Request) {
 
 func (c *Impl) DeleteService(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	if err := jwt.IsAuthenticated(ctx, "anonymous tried DeleteService", c.Timestamp.Now()); err != nil {
+	if err := security.IsAuthenticated(ctx, "anonymous tried DeleteService", c.Timestamp.Now()); err != nil {
 		apierrors.HandleError(ctx, w, r, err, apierrors.IsUnauthorisedError)
 		return
 	}
-	if err := jwt.HasGroup(ctx, c.CustomConfiguration.AuthGroupWrite(), fmt.Sprintf("%s tried DeleteService", jwt.Subject(ctx)), c.Timestamp.Now()); err != nil {
+	if err := security.HasGroup(ctx, c.CustomConfiguration.AuthGroupWrite(), fmt.Sprintf("%s tried DeleteService", security.Subject(ctx)), c.Timestamp.Now()); err != nil {
 		apierrors.HandleError(ctx, w, r, err, apierrors.IsForbiddenError)
 		return
 	}

@@ -7,10 +7,10 @@ import (
 	"github.com/Interhyp/metadata-service/acorns/config"
 	"github.com/Interhyp/metadata-service/acorns/service"
 	openapi "github.com/Interhyp/metadata-service/api/v1"
-	"github.com/Interhyp/metadata-service/internal/web/middleware/jwt"
 	"github.com/Interhyp/metadata-service/internal/web/util"
 	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
 	"github.com/StephanHCB/go-backend-service-common/api/apierrors"
+	"github.com/StephanHCB/go-backend-service-common/web/middleware/security"
 	"github.com/go-chi/chi/v5"
 	"net/http"
 )
@@ -79,11 +79,11 @@ func (c *Impl) GetSingleRepository(w http.ResponseWriter, r *http.Request) {
 
 func (c *Impl) CreateRepository(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	if err := jwt.IsAuthenticated(ctx, "anonymous tried CreateRepository", c.Timestamp.Now()); err != nil {
+	if err := security.IsAuthenticated(ctx, "anonymous tried CreateRepository", c.Timestamp.Now()); err != nil {
 		apierrors.HandleError(ctx, w, r, err, apierrors.IsUnauthorisedError)
 		return
 	}
-	if err := jwt.HasGroup(ctx, c.CustomConfiguration.AuthGroupWrite(), fmt.Sprintf("%s tried CreateRepository", jwt.Subject(ctx)), c.Timestamp.Now()); err != nil {
+	if err := security.HasGroup(ctx, c.CustomConfiguration.AuthGroupWrite(), fmt.Sprintf("%s tried CreateRepository", security.Subject(ctx)), c.Timestamp.Now()); err != nil {
 		apierrors.HandleError(ctx, w, r, err, apierrors.IsForbiddenError)
 		return
 	}
@@ -112,11 +112,11 @@ func (c *Impl) CreateRepository(w http.ResponseWriter, r *http.Request) {
 
 func (c *Impl) UpdateRepository(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	if err := jwt.IsAuthenticated(ctx, "anonymous tried UpdateRepository", c.Timestamp.Now()); err != nil {
+	if err := security.IsAuthenticated(ctx, "anonymous tried UpdateRepository", c.Timestamp.Now()); err != nil {
 		apierrors.HandleError(ctx, w, r, err, apierrors.IsUnauthorisedError)
 		return
 	}
-	if err := jwt.HasGroup(ctx, c.CustomConfiguration.AuthGroupWrite(), fmt.Sprintf("%s tried UpdateRepository", jwt.Subject(ctx)), c.Timestamp.Now()); err != nil {
+	if err := security.HasGroup(ctx, c.CustomConfiguration.AuthGroupWrite(), fmt.Sprintf("%s tried UpdateRepository", security.Subject(ctx)), c.Timestamp.Now()); err != nil {
 		apierrors.HandleError(ctx, w, r, err, apierrors.IsForbiddenError)
 		return
 	}
@@ -142,11 +142,11 @@ func (c *Impl) UpdateRepository(w http.ResponseWriter, r *http.Request) {
 
 func (c *Impl) PatchRepository(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	if err := jwt.IsAuthenticated(ctx, "anonymous tried PatchRepository", c.Timestamp.Now()); err != nil {
+	if err := security.IsAuthenticated(ctx, "anonymous tried PatchRepository", c.Timestamp.Now()); err != nil {
 		apierrors.HandleError(ctx, w, r, err, apierrors.IsUnauthorisedError)
 		return
 	}
-	if err := jwt.HasGroup(ctx, c.CustomConfiguration.AuthGroupWrite(), fmt.Sprintf("%s tried PatchRepository", jwt.Subject(ctx)), c.Timestamp.Now()); err != nil {
+	if err := security.HasGroup(ctx, c.CustomConfiguration.AuthGroupWrite(), fmt.Sprintf("%s tried PatchRepository", security.Subject(ctx)), c.Timestamp.Now()); err != nil {
 		apierrors.HandleError(ctx, w, r, err, apierrors.IsForbiddenError)
 		return
 	}
@@ -172,11 +172,11 @@ func (c *Impl) PatchRepository(w http.ResponseWriter, r *http.Request) {
 
 func (c *Impl) DeleteRepository(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	if err := jwt.IsAuthenticated(ctx, "anonymous tried DeleteRepository", c.Timestamp.Now()); err != nil {
+	if err := security.IsAuthenticated(ctx, "anonymous tried DeleteRepository", c.Timestamp.Now()); err != nil {
 		apierrors.HandleError(ctx, w, r, err, apierrors.IsUnauthorisedError)
 		return
 	}
-	if err := jwt.HasGroup(ctx, c.CustomConfiguration.AuthGroupWrite(), fmt.Sprintf("%s tried DeleteRepository", jwt.Subject(ctx)), c.Timestamp.Now()); err != nil {
+	if err := security.HasGroup(ctx, c.CustomConfiguration.AuthGroupWrite(), fmt.Sprintf("%s tried DeleteRepository", security.Subject(ctx)), c.Timestamp.Now()); err != nil {
 		apierrors.HandleError(ctx, w, r, err, apierrors.IsForbiddenError)
 		return
 	}
