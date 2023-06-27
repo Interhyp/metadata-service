@@ -2175,6 +2175,10 @@
               "APPLICATION"
             ]
           },
+          "internetExposed": {
+            "type": "boolean",
+            "description": "The value defines if the service is available from the internet and the time period in which security holes must be processed."
+          },
           "requiredScans": {
             "type": "array",
             "description": "The security scans that are required for this service. Optional, SAST and/or SCA.",
@@ -2272,6 +2276,10 @@
               "APPLICATION"
             ]
           },
+          "internetExposed": {
+            "type": "boolean",
+            "description": "The value defines if the service is available from the internet and the time period in which security holes must be processed."
+          },
           "requiredScans": {
             "type": "array",
             "description": "The security scans that are required for this service. Optional, SAST and/or SCA.",
@@ -2346,6 +2354,10 @@
               "PLATFORM",
               "APPLICATION"
             ]
+          },
+          "internetExposed": {
+            "type": "boolean",
+            "description": "The value defines if the service is available from the internet and the time period in which security holes must be processed."
           },
           "requiredScans": {
             "type": "array",
