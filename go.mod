@@ -128,8 +128,8 @@ require (
 	github.com/twmb/franz-go/pkg/kmsg v1.4.0 // indirect
 	github.com/xanzy/ssh-agent v0.3.3 // indirect
 	go.elastic.co/apm/module/apmchiv5/v2 v2.4.2 // indirect
-	go.elastic.co/apm/module/apmhttp/v2 v2.4.2 // indirect
-	go.elastic.co/apm/v2 v2.4.2 // indirect
+	go.elastic.co/apm/module/apmhttp/v2 v2.4.3 // indirect
+	go.elastic.co/apm/v2 v2.4.3 // indirect
 	go.elastic.co/fastjson v1.1.0 // indirect
 	golang.org/x/crypto v0.9.0 // indirect
 	golang.org/x/net v0.10.0 // indirect
