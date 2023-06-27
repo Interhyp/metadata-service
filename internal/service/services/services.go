@@ -112,6 +112,7 @@ func (s *Impl) mapServiceCreateDtoToServiceDto(serviceCreateDto openapi.ServiceC
 		Quicklinks:      serviceCreateDto.Quicklinks,
 		Description:     serviceCreateDto.Description,
 		Lifecycle:       &initialServiceLifecycle,
+		InternetExposed: serviceCreateDto.InternetExposed,
 	}
 }
 
@@ -313,6 +314,7 @@ func patchService(current openapi.ServiceDto, patch openapi.ServicePatchDto) ope
 		JiraIssue:       patch.JiraIssue,
 		Description:     patchStringPtr(patch.Description, current.Description),
 		Lifecycle:       patchStringPtr(patch.Lifecycle, current.Lifecycle),
+		InternetExposed: patchPtr[bool](patch.InternetExposed, current.InternetExposed),
 	}
 }
 

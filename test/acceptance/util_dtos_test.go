@@ -104,6 +104,7 @@ func tstService(name string) openapi.ServiceDto {
 		CommitHash:      "6c8ac2c35791edf9979623c717a243fc53400000",
 		JiraIssue:       "ISSUE-2345",
 		Lifecycle:       p("experimental"),
+		InternetExposed: pb(true),
 	}
 }
 
@@ -130,11 +131,12 @@ func tstServiceUnchanged(name string) openapi.ServiceDto {
 
 func tstServicePatch() openapi.ServicePatchDto {
 	return openapi.ServicePatchDto{
-		AlertTarget: p("squad_nothing@some-organisation.com"),
-		TimeStamp:   "2022-11-06T18:14:10Z",
-		CommitHash:  "6c8ac2c35791edf9979623c717a243fc53400000",
-		JiraIssue:   "ISSUE-2345",
-		Lifecycle:   p("experimental"),
+		AlertTarget:     p("squad_nothing@some-organisation.com"),
+		TimeStamp:       "2022-11-06T18:14:10Z",
+		CommitHash:      "6c8ac2c35791edf9979623c717a243fc53400000",
+		JiraIssue:       "ISSUE-2345",
+		Lifecycle:       p("experimental"),
+		InternetExposed: pb(true),
 	}
 }
 
@@ -155,6 +157,7 @@ repositories:
     - ` + name + `/implementation
 alertTarget: squad_nothing@some-organisation.com
 developmentOnly: false
+internetExposed: true
 requiredScans:
     - SAST
     - SCA

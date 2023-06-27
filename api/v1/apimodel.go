@@ -210,6 +210,8 @@ type ServiceCreateDto struct {
 	DevelopmentOnly *bool `json:"developmentOnly,omitempty"`
 	// The operation type of the service. 'WORKLOAD' follows the default deployment strategy of one instance per environment, 'PLATFORM' one instance per cluster or node and 'APPLICATION' is a standalone application that is not deployed via the common strategies.
 	OperationType *string `json:"operationType,omitempty"`
+	// The value defines if the service is available from the internet and the time period in which security holes must be processed.
+	InternetExposed *bool `json:"internetExposed,omitempty"`
 	// The security scans that are required for this service. Optional, SAST and/or SCA.
 	RequiredScans []string `json:"requiredScans,omitempty"`
 	// The jira issue to use for committing a change, or the last jira issue used.
@@ -231,6 +233,8 @@ type ServiceDto struct {
 	DevelopmentOnly *bool `json:"developmentOnly,omitempty" yaml:"developmentOnly,omitempty"`
 	// The operation type of the service. 'WORKLOAD' follows the default deployment strategy of one instance per environment, 'PLATFORM' one instance per cluster or node and 'APPLICATION' is a standalone application that is not deployed via the common strategies.
 	OperationType *string `json:"operationType,omitempty" yaml:"operationType,omitempty"`
+	// The value defines if the service is available from the internet and the time period in which security holes must be processed.
+	InternetExposed *bool `json:"internetExposed,omitempty" yaml:"internetExposed,omitempty"`
 	// The security scans that are required for this service. Optional, SAST and/or SCA.
 	RequiredScans []string `json:"requiredScans,omitempty" yaml:"requiredScans,omitempty"`
 	// ISO-8601 UTC date time at which this information was originally committed. When sending an update, include the original timestamp you got so we can detect concurrent updates.
@@ -264,6 +268,8 @@ type ServicePatchDto struct {
 	DevelopmentOnly *bool `json:"developmentOnly,omitempty"`
 	// The operation type of the service. 'WORKLOAD' follows the default deployment strategy of one instance per environment, 'PLATFORM' one instance per cluster or node and 'APPLICATION' is a standalone application that is not deployed via the common strategies.
 	OperationType *string `json:"operationType,omitempty"`
+	// The value defines if the service is available from the internet and the time period in which security holes must be processed.
+	InternetExposed *bool `json:"internetExposed,omitempty"`
 	// The security scans that are required for this service. Optional, SAST and/or SCA.
 	RequiredScans []string `json:"requiredScans,omitempty"`
 	// ISO-8601 UTC date time at which this information was originally committed. When sending an update, include the original timestamp you got so we can detect concurrent updates.
