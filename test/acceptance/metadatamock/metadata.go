@@ -3,12 +3,12 @@ package metadatamock
 import (
 	"context"
 	"errors"
+	"github.com/Interhyp/metadata-service/internal/acorn/errors/nochangeserror"
+	"github.com/Interhyp/metadata-service/internal/acorn/repository"
 	"io"
 	"os"
 	"time"
 
-	"github.com/Interhyp/metadata-service/acorns/errors/nochangeserror"
-	"github.com/Interhyp/metadata-service/acorns/repository"
 	"github.com/StephanHCB/go-backend-service-common/api/apierrors"
 	"github.com/go-git/go-billy/v5"
 	"github.com/go-git/go-billy/v5/memfs"

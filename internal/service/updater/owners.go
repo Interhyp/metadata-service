@@ -3,9 +3,9 @@ package updater
 import (
 	"context"
 	"errors"
-	"github.com/Interhyp/metadata-service/acorns/errors/nochangeserror"
-	"github.com/Interhyp/metadata-service/acorns/repository"
 	openapi "github.com/Interhyp/metadata-service/api/v1"
+	"github.com/Interhyp/metadata-service/internal/acorn/errors/nochangeserror"
+	"github.com/Interhyp/metadata-service/internal/acorn/repository"
 )
 
 // --- business logic ---

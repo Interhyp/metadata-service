@@ -3,8 +3,8 @@ package trigger
 import (
 	"context"
 	"fmt"
-	"github.com/Interhyp/metadata-service/acorns/config"
-	"github.com/Interhyp/metadata-service/acorns/service"
+	"github.com/Interhyp/metadata-service/internal/acorn/config"
+	"github.com/Interhyp/metadata-service/internal/acorn/service"
 	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
 	"github.com/StephanHCB/go-backend-service-common/web/middleware/requestid"
 	"github.com/robfig/cron/v3"

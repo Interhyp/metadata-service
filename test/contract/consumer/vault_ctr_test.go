@@ -3,7 +3,7 @@ package consumer
 import (
 	"context"
 	"fmt"
-	"github.com/Interhyp/metadata-service/acorns/config"
+	"github.com/Interhyp/metadata-service/internal/acorn/config"
 	auacorn "github.com/StephanHCB/go-autumn-acorn-registry"
 	auconfigenv "github.com/StephanHCB/go-autumn-config-env"
 	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"

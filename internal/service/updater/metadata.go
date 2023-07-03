@@ -3,7 +3,7 @@ package updater
 import (
 	"context"
 	"errors"
-	"github.com/Interhyp/metadata-service/acorns/repository"
+	"github.com/Interhyp/metadata-service/internal/acorn/repository"
 )
 
 func (s *Impl) updateMetadata(ctx context.Context) ([]repository.UpdateEvent, error) {

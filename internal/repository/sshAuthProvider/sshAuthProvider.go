@@ -2,8 +2,8 @@ package sshAuthProvider
 
 import (
 	"context"
+	"github.com/Interhyp/metadata-service/internal/acorn/config"
 
-	"github.com/Interhyp/metadata-service/acorns/config"
 	aulogging "github.com/StephanHCB/go-autumn-logging"
 	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
 	"github.com/go-git/go-git/v5/plumbing/transport/ssh"

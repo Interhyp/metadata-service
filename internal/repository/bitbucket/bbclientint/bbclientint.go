@@ -2,7 +2,7 @@ package bbclientint
 
 import (
 	"context"
-	"github.com/Interhyp/metadata-service/acorns/repository"
+	"github.com/Interhyp/metadata-service/internal/acorn/repository"
 )
 
 type BitbucketClient interface {

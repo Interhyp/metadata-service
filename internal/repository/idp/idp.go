@@ -9,7 +9,7 @@ import (
 	"encoding/pem"
 	"errors"
 	"fmt"
-	"github.com/Interhyp/metadata-service/acorns/config"
+	"github.com/Interhyp/metadata-service/internal/acorn/config"
 	aurestclientprometheus "github.com/StephanHCB/go-autumn-restclient-prometheus"
 	aurestclientapi "github.com/StephanHCB/go-autumn-restclient/api"
 	auresthttpclient "github.com/StephanHCB/go-autumn-restclient/implementation/httpclient"

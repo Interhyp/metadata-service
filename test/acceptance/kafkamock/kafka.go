@@ -2,7 +2,7 @@ package kafkamock
 
 import (
 	"context"
-	"github.com/Interhyp/metadata-service/acorns/repository"
+	"github.com/Interhyp/metadata-service/internal/acorn/repository"
 )
 import _ "github.com/go-git/go-git/v5"
 

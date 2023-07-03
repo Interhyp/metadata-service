@@ -3,9 +3,9 @@ package config
 import (
 	"bytes"
 	"context"
+	"github.com/Interhyp/metadata-service/internal/acorn/config"
 	"testing"
 
-	"github.com/Interhyp/metadata-service/acorns/config"
 	"github.com/Interhyp/metadata-service/docs"
 	auconfigenv "github.com/StephanHCB/go-autumn-config-env"
 	goauzerolog "github.com/StephanHCB/go-autumn-logging-zerolog"

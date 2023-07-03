@@ -2,9 +2,9 @@ package acceptance
 
 import (
 	"context"
-	application2 "github.com/Interhyp/metadata-service/acorns/application"
-	"github.com/Interhyp/metadata-service/acorns/repository"
-	"github.com/Interhyp/metadata-service/acorns/service"
+	application2 "github.com/Interhyp/metadata-service/internal/acorn/application"
+	"github.com/Interhyp/metadata-service/internal/acorn/repository"
+	"github.com/Interhyp/metadata-service/internal/acorn/service"
 	"github.com/Interhyp/metadata-service/internal/repository/config"
 	"github.com/Interhyp/metadata-service/internal/service/mapper"
 	"github.com/Interhyp/metadata-service/internal/service/trigger"

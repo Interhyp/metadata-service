@@ -4,7 +4,7 @@ import (
 	"regexp"
 	"strconv"
 
-	"github.com/Interhyp/metadata-service/acorns/config"
+	"github.com/Interhyp/metadata-service/internal/acorn/config"
 	auacornapi "github.com/StephanHCB/go-autumn-acorn-registry/api"
 	auconfigapi "github.com/StephanHCB/go-autumn-config-api"
 	auconfigenv "github.com/StephanHCB/go-autumn-config-env"

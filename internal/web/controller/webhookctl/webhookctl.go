@@ -2,9 +2,9 @@ package webhookctl
 
 import (
 	"context"
+	"github.com/Interhyp/metadata-service/internal/acorn/service"
 	"net/http"
 
-	"github.com/Interhyp/metadata-service/acorns/service"
 	"github.com/Interhyp/metadata-service/internal/web/util"
 	aulogging "github.com/StephanHCB/go-autumn-logging"
 	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"

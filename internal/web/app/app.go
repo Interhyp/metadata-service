@@ -1,7 +1,7 @@
 package app
 
 import (
-	"github.com/Interhyp/metadata-service/acorns/application"
+	"github.com/Interhyp/metadata-service/internal/acorn/application"
 	"github.com/Interhyp/metadata-service/internal/repository/bitbucket"
 	"github.com/Interhyp/metadata-service/internal/repository/config"
 	"github.com/Interhyp/metadata-service/internal/repository/hostip"

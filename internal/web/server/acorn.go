@@ -2,10 +2,10 @@ package server
 
 import (
 	"context"
-	"github.com/Interhyp/metadata-service/acorns/application"
-	"github.com/Interhyp/metadata-service/acorns/config"
-	"github.com/Interhyp/metadata-service/acorns/controller"
-	"github.com/Interhyp/metadata-service/acorns/repository"
+	"github.com/Interhyp/metadata-service/internal/acorn/application"
+	"github.com/Interhyp/metadata-service/internal/acorn/config"
+	"github.com/Interhyp/metadata-service/internal/acorn/controller"
+	"github.com/Interhyp/metadata-service/internal/acorn/repository"
 	"github.com/StephanHCB/go-autumn-acorn-registry/api"
 	auzerolog "github.com/StephanHCB/go-autumn-logging-zerolog"
 	libcontroller "github.com/StephanHCB/go-backend-service-common/acorns/controller"

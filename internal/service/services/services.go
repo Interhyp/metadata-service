@@ -4,10 +4,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/Interhyp/metadata-service/internal/acorn/config"
+	"github.com/Interhyp/metadata-service/internal/acorn/service"
 	"strings"
 
-	"github.com/Interhyp/metadata-service/acorns/config"
-	"github.com/Interhyp/metadata-service/acorns/service"
 	openapi "github.com/Interhyp/metadata-service/api/v1"
 	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
 	"github.com/StephanHCB/go-backend-service-common/api/apierrors"
