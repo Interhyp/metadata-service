@@ -3,8 +3,8 @@ package owners
 import (
 	"context"
 	"github.com/Interhyp/metadata-service/api"
-	"github.com/Interhyp/metadata-service/docs"
 	"github.com/Interhyp/metadata-service/test/mock/cachemock"
+	"github.com/StephanHCB/go-backend-service-common/docs"
 	"github.com/stretchr/testify/require"
 	"testing"
 )

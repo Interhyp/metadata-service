@@ -2,7 +2,7 @@ package ownersmock
 
 import (
 	"context"
-	openapi "github.com/Interhyp/metadata-service/api"
+	"github.com/Interhyp/metadata-service/api"
 )
 
 type Mock struct {

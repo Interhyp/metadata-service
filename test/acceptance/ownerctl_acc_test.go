@@ -2,7 +2,7 @@ package acceptance
 
 import (
 	"encoding/json"
-	"github.com/Interhyp/metadata-service/docs"
+	"github.com/StephanHCB/go-backend-service-common/docs"
 	"github.com/stretchr/testify/require"
 	"net/http"
 	"testing"

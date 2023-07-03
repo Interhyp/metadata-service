@@ -1,7 +1,7 @@
 package acceptance
 
 import (
-	openapi "github.com/Interhyp/metadata-service/api"
+	"github.com/Interhyp/metadata-service/api"
 )
 
 func p(v string) *string {

@@ -7,9 +7,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Interhyp/metadata-service/docs"
 	auloggingapi "github.com/StephanHCB/go-autumn-logging/api"
 	"github.com/StephanHCB/go-backend-service-common/api/apierrors"
+	"github.com/StephanHCB/go-backend-service-common/docs"
 	"github.com/StephanHCB/go-backend-service-common/repository/timestamp"
 	"github.com/stretchr/testify/require"
 )
