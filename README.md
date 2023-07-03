@@ -18,7 +18,7 @@ the [![Use Template](https://img.shields.io/badge/use%20-template-blue?TODO?logo
 > the [metadata-repository][template].
 
 1. Download the [latest release][release] or clone the repository to build a local [Docker image][docker].
-2. Copy the config from [`docs/local-config.template.yaml`][config] as `local-config.yaml`
+2. Copy the config from [`local-config.template.yaml`][config] as `local-config.yaml`
 3. Adjust the config and fill in all required values (see below for details)
 4. Create a copy of the [template repository][template] and set it in the `local-config.yaml`
 5. Run the server by starting the binary
@@ -199,7 +199,7 @@ All singletons refer to each other by references to their interface. This allows
 
 ### initial setup
 
-Clone this outside of your GOPATH (on linux, defaults to ~/go)
+Clone this outside your GOPATH (on linux, defaults to ~/go)
 
 _Tip: On Windows, you should NOT place the GOPATH in your profile, because a large body of source code goes there._
 
@@ -231,10 +231,10 @@ We have _given-when-then_ style acceptance tests.
 
 Run all tests, including the acceptance and contract tests (will need to have pact installed):
 
-`go test -coverpkg='./internal/...,./web/...' -v './...'`
+`go test -coverpkg='./internal/...' -v './...'`
 
 In IntelliJ/GoLand, if you want to check code coverage, you must set Go Tool Arguments to
-`-coverpkg='./internal/...,./web/...'`,
+`-coverpkg='./internal/...'`,
 so cross-package coverage from the acceptance tests is considered. You may wish to set this under
 Edit Configuration - Edit Configuration Templates, so it will be set on all new test run configurations.
 
@@ -256,7 +256,7 @@ All configuration is normally read from **environment variables**, but for local
 optional flat yaml file called `local-config.yaml`, which is ignored by git.
 If present, it is read BEFORE any environment variables are interpreted.
 
-Copy the [`docs/local-config.template.yaml`](docs/local-config.template.yaml) and replace `LOCAL_VAULT_TOKEN` with your
+Copy the [`local-config.template.yaml`](local-config.template.yaml) and replace `LOCAL_VAULT_TOKEN` with your
 Vault token.
 
 To obtain your personal vault token, log into vault, and use "Copy token" from the
