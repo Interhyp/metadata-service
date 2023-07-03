@@ -2,7 +2,7 @@ package owners
 
 import (
 	"context"
-	openapi "github.com/Interhyp/metadata-service/api/v1"
+	"github.com/Interhyp/metadata-service/api"
 	"github.com/Interhyp/metadata-service/docs"
 	"github.com/Interhyp/metadata-service/test/mock/cachemock"
 	"github.com/stretchr/testify/require"

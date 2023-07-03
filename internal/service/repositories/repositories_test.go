@@ -2,7 +2,7 @@ package repositories
 
 import (
 	"context"
-	openapi "github.com/Interhyp/metadata-service/api/v1"
+	"github.com/Interhyp/metadata-service/api"
 	"github.com/Interhyp/metadata-service/docs"
 	"github.com/Interhyp/metadata-service/internal/acorn/service"
 	"github.com/Interhyp/metadata-service/internal/service/owners"

@@ -16,12 +16,12 @@ fi
 API_MODEL_PACKAGE_NAME=openapi
 
 java -jar $GENERATOR generate \
-  -i ../docs/openapi-v3-spec.json \
+  -i ../api/openapi-v3-spec.json \
   -o tmp/$API_MODEL_PACKAGE_NAME \
   --package-name $API_MODEL_PACKAGE_NAME \
   --global-property models,modelTests=false,modelDocs=false \
   -g go
 
-(cat tmp/$API_MODEL_PACKAGE_NAME/model_*.go | perl postprocess.pl $API_MODEL_PACKAGE_NAME > ../api/v1/apimodel.go || (rm -rf tmp && exit 1)); rm -rf tmp
+(cat tmp/$API_MODEL_PACKAGE_NAME/model_*.go | perl postprocess.pl $API_MODEL_PACKAGE_NAME > ../api/generated_apimodel.go || (rm -rf tmp && exit 1)); rm -rf tmp
 
-gofmt -w ../api/v1/apimodel.go
+gofmt -w ../api/generated_apimodel.go

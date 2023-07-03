@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	openapi "github.com/Interhyp/metadata-service/api/v1"
+	"github.com/Interhyp/metadata-service/api"
 	"github.com/Interhyp/metadata-service/internal/acorn/errors/nochangeserror"
 	"github.com/Interhyp/metadata-service/internal/service/util"
 	"github.com/StephanHCB/go-backend-service-common/api/apierrors"

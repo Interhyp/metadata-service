@@ -2,11 +2,11 @@ package acceptance
 
 import (
 	"encoding/json"
+	openapi "github.com/Interhyp/metadata-service/api"
 	"net/http"
 	"strings"
 	"testing"
 
-	openapi "github.com/Interhyp/metadata-service/api/v1"
 	"github.com/Interhyp/metadata-service/docs"
 	"github.com/stretchr/testify/require"
 )

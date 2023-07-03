@@ -2,11 +2,11 @@ package services
 
 import (
 	"context"
+	"github.com/Interhyp/metadata-service/api"
 	"github.com/Interhyp/metadata-service/test/mock/configmock"
 	"testing"
 	"time"
 
-	openapi "github.com/Interhyp/metadata-service/api/v1"
 	"github.com/Interhyp/metadata-service/docs"
 	auloggingapi "github.com/StephanHCB/go-autumn-logging/api"
 	"github.com/StephanHCB/go-backend-service-common/api/apierrors"

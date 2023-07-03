@@ -1,6 +1,8 @@
 package acceptance
 
-import openapi "github.com/Interhyp/metadata-service/api/v1"
+import (
+	openapi "github.com/Interhyp/metadata-service/api"
+)
 
 func p(v string) *string {
 	return &v

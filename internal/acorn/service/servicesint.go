@@ -2,8 +2,7 @@ package service
 
 import (
 	"context"
-
-	openapi "github.com/Interhyp/metadata-service/api/v1"
+	"github.com/Interhyp/metadata-service/api"
 )
 
 const ServicesAcornName = "services"
