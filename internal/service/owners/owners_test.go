@@ -4,7 +4,7 @@ import (
 	"context"
 	openapi "github.com/Interhyp/metadata-service/api/v1"
 	"github.com/Interhyp/metadata-service/docs"
-	ownersmock "github.com/Interhyp/metadata-service/test/mocks"
+	"github.com/Interhyp/metadata-service/test/mock/cachemock"
 	"github.com/stretchr/testify/require"
 	"testing"
 )
