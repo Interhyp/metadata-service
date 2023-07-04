@@ -18,7 +18,7 @@ jobs:
         uses: Legion2/swagger-ui-action@v1
         with:
           output: swagger-ui
-          spec-file: docs/openapi-v3-spec.json
+          spec-file: api/openapi-v3-spec.json
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@v4
         with:
