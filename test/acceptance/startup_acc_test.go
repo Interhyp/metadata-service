@@ -1,14 +1,14 @@
 package acceptance
 
 import (
-	"github.com/Interhyp/metadata-service/acorns/controller"
-	"github.com/Interhyp/metadata-service/acorns/repository"
-	"github.com/Interhyp/metadata-service/acorns/service"
-	"github.com/Interhyp/metadata-service/docs"
+	"github.com/Interhyp/metadata-service/internal/acorn/controller"
+	"github.com/Interhyp/metadata-service/internal/acorn/repository"
+	"github.com/Interhyp/metadata-service/internal/acorn/service"
 	"github.com/Interhyp/metadata-service/internal/web/app"
 	auacorn "github.com/StephanHCB/go-autumn-acorn-registry"
 	libcontroller "github.com/StephanHCB/go-backend-service-common/acorns/controller"
 	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
+	"github.com/StephanHCB/go-backend-service-common/docs"
 	"github.com/stretchr/testify/require"
 	"net/http"
 	"testing"

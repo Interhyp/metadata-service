@@ -2,14 +2,14 @@ package services
 
 import (
 	"context"
+	"github.com/Interhyp/metadata-service/api"
+	"github.com/Interhyp/metadata-service/test/mock/configmock"
 	"testing"
 	"time"
 
-	openapi "github.com/Interhyp/metadata-service/api/v1"
-	"github.com/Interhyp/metadata-service/docs"
-	"github.com/Interhyp/metadata-service/test/acceptance/configmock"
 	auloggingapi "github.com/StephanHCB/go-autumn-logging/api"
 	"github.com/StephanHCB/go-backend-service-common/api/apierrors"
+	"github.com/StephanHCB/go-backend-service-common/docs"
 	"github.com/StephanHCB/go-backend-service-common/repository/timestamp"
 	"github.com/stretchr/testify/require"
 )

@@ -3,8 +3,8 @@ package bbclientmock
 import (
 	"context"
 	"errors"
-	"github.com/Interhyp/metadata-service/acorns/errors/httperror"
-	"github.com/Interhyp/metadata-service/acorns/repository"
+	"github.com/Interhyp/metadata-service/internal/acorn/errors/httperror"
+	"github.com/Interhyp/metadata-service/internal/acorn/repository"
 	"strings"
 )
 

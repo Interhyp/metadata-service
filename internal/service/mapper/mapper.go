@@ -2,8 +2,8 @@ package mapper
 
 import (
 	"context"
-	"github.com/Interhyp/metadata-service/acorns/config"
-	"github.com/Interhyp/metadata-service/acorns/repository"
+	"github.com/Interhyp/metadata-service/internal/acorn/config"
+	"github.com/Interhyp/metadata-service/internal/acorn/repository"
 	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
 	"strings"
 	"sync"

@@ -2,9 +2,9 @@ package owners
 
 import (
 	"context"
-	openapi "github.com/Interhyp/metadata-service/api/v1"
-	"github.com/Interhyp/metadata-service/docs"
-	ownersmock "github.com/Interhyp/metadata-service/test/mocks"
+	"github.com/Interhyp/metadata-service/api"
+	"github.com/Interhyp/metadata-service/test/mock/cachemock"
+	"github.com/StephanHCB/go-backend-service-common/docs"
 	"github.com/stretchr/testify/require"
 	"testing"
 )

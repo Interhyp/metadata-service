@@ -2,9 +2,9 @@ package mapper
 
 import (
 	"context"
+	"github.com/Interhyp/metadata-service/api"
 	"sort"
 
-	openapi "github.com/Interhyp/metadata-service/api/v1"
 	"github.com/Interhyp/metadata-service/internal/service/util"
 )
 

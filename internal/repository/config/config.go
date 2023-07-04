@@ -3,7 +3,7 @@ package config
 import (
 	"math"
 
-	"github.com/Interhyp/metadata-service/acorns/config"
+	"github.com/Interhyp/metadata-service/internal/acorn/config"
 	auconfigapi "github.com/StephanHCB/go-autumn-config-api"
 	auconfigenv "github.com/StephanHCB/go-autumn-config-env"
 )

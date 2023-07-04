@@ -2,8 +2,8 @@ package service
 
 import (
 	"context"
-	"github.com/Interhyp/metadata-service/acorns/repository"
-	openapi "github.com/Interhyp/metadata-service/api/v1"
+	"github.com/Interhyp/metadata-service/api"
+	"github.com/Interhyp/metadata-service/internal/acorn/repository"
 )
 
 const MapperAcornName = "mapper"

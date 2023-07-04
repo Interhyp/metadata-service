@@ -2,7 +2,7 @@ package service
 
 import (
 	"context"
-	openapi "github.com/Interhyp/metadata-service/api/v1"
+	"github.com/Interhyp/metadata-service/api"
 	"github.com/StephanHCB/go-backend-service-common/api/apierrors"
 )
 

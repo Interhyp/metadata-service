@@ -1,27 +1,22 @@
-package metadatamock
+package idpmock
 
 import (
-	"context"
-	"github.com/Interhyp/metadata-service/acorns/repository"
+	"github.com/Interhyp/metadata-service/internal/acorn/repository"
 	"github.com/StephanHCB/go-autumn-acorn-registry/api"
-	auzerolog "github.com/StephanHCB/go-autumn-logging-zerolog"
-	"time"
 )
 
 // --- implementing Acorn ---
 
 func New() auacornapi.Acorn {
-	return &Impl{
-		Now: time.Now,
-	}
+	return &Impl{}
 }
 
-func (r *Impl) IsMetadata() bool {
+func (r *Impl) IsIdentityProvider() bool {
 	return true
 }
 
 func (r *Impl) AcornName() string {
-	return repository.MetadataAcornName
+	return repository.IdentityProviderAcornName
 }
 
 func (r *Impl) AssembleAcorn(registry auacornapi.AcornRegistry) error {
@@ -29,11 +24,6 @@ func (r *Impl) AssembleAcorn(registry auacornapi.AcornRegistry) error {
 }
 
 func (r *Impl) SetupAcorn(registry auacornapi.AcornRegistry) error {
-	ctx := auzerolog.AddLoggerToCtx(context.Background())
-
-	if err := r.Clone(ctx); err != nil {
-		return err
-	}
 	return nil
 }
 

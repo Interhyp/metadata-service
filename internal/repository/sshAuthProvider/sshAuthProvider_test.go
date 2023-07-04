@@ -2,9 +2,9 @@ package sshAuthProvider
 
 import (
 	"context"
+	"github.com/Interhyp/metadata-service/test/mock/configmock"
 	"testing"
 
-	"github.com/Interhyp/metadata-service/test/acceptance/configmock"
 	"github.com/StephanHCB/go-backend-service-common/docs"
 	"github.com/stretchr/testify/require"
 )

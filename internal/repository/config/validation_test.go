@@ -3,13 +3,13 @@ package config
 import (
 	"bytes"
 	"context"
+	"github.com/Interhyp/metadata-service/internal/acorn/config"
 	"testing"
 
-	"github.com/Interhyp/metadata-service/acorns/config"
-	"github.com/Interhyp/metadata-service/docs"
 	auconfigenv "github.com/StephanHCB/go-autumn-config-env"
 	goauzerolog "github.com/StephanHCB/go-autumn-logging-zerolog"
 	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
+	"github.com/StephanHCB/go-backend-service-common/docs"
 	libconfig "github.com/StephanHCB/go-backend-service-common/repository/config"
 	"github.com/StephanHCB/go-backend-service-common/repository/logging"
 	"github.com/rs/zerolog/log"

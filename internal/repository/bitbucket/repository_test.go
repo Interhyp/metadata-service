@@ -2,10 +2,10 @@ package bitbucket
 
 import (
 	"context"
-	"github.com/Interhyp/metadata-service/acorns/errors/httperror"
-	"github.com/Interhyp/metadata-service/acorns/repository"
-	"github.com/Interhyp/metadata-service/test/acceptance/bbclientmock"
-	"github.com/Interhyp/metadata-service/test/acceptance/vaultmock"
+	"github.com/Interhyp/metadata-service/internal/acorn/errors/httperror"
+	"github.com/Interhyp/metadata-service/internal/acorn/repository"
+	"github.com/Interhyp/metadata-service/test/mock/bbclientmock"
+	"github.com/Interhyp/metadata-service/test/mock/vaultmock"
 	"github.com/StephanHCB/go-backend-service-common/repository/logging"
 	"github.com/stretchr/testify/require"
 	"testing"

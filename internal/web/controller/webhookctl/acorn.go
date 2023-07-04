@@ -1,8 +1,8 @@
 package webhookctl
 
 import (
-	"github.com/Interhyp/metadata-service/acorns/controller"
-	"github.com/Interhyp/metadata-service/acorns/service"
+	"github.com/Interhyp/metadata-service/internal/acorn/controller"
+	"github.com/Interhyp/metadata-service/internal/acorn/service"
 	"github.com/StephanHCB/go-autumn-acorn-registry/api"
 	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
 )

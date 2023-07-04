@@ -2,7 +2,7 @@ package bitbucketmock
 
 import (
 	"context"
-	"github.com/Interhyp/metadata-service/acorns/repository"
+	"github.com/Interhyp/metadata-service/internal/acorn/repository"
 	auacornapi "github.com/StephanHCB/go-autumn-acorn-registry/api"
 	"github.com/pkg/errors"
 )
