@@ -74,7 +74,7 @@ require (
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/rs/zerolog v1.29.1
 	github.com/stretchr/testify v1.8.4
-	github.com/twmb/franz-go v1.13.6
+	github.com/twmb/franz-go v1.14.1
 	gopkg.in/yaml.v3 v3.0.1
 )
 
@@ -103,7 +103,7 @@ require (
 	github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99 // indirect
 	github.com/joeshaw/multierror v0.0.0-20140124173710-69b34d4ec901 // indirect
 	github.com/kevinburke/ssh_config v1.2.0 // indirect
-	github.com/klauspost/compress v1.16.3 // indirect
+	github.com/klauspost/compress v1.16.7 // indirect
 	github.com/lestrrat-go/blackmagic v1.0.1 // indirect
 	github.com/lestrrat-go/httpcc v1.0.1 // indirect
 	github.com/lestrrat-go/httprc v1.0.4 // indirect
@@ -112,7 +112,7 @@ require (
 	github.com/mattn/go-colorable v0.1.12 // indirect
 	github.com/mattn/go-isatty v0.0.14 // indirect
 	github.com/matttproud/golang_protobuf_extensions v1.0.4 // indirect
-	github.com/pierrec/lz4/v4 v4.1.17 // indirect
+	github.com/pierrec/lz4/v4 v4.1.18 // indirect
 	github.com/pjbgf/sha1cd v0.3.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/prometheus/client_model v0.3.0 // indirect
@@ -125,15 +125,15 @@ require (
 	github.com/skeema/knownhosts v1.1.1 // indirect
 	github.com/sony/gobreaker v0.5.0 // indirect
 	github.com/tidwall/tinylru v1.2.1 // indirect
-	github.com/twmb/franz-go/pkg/kmsg v1.4.0 // indirect
+	github.com/twmb/franz-go/pkg/kmsg v1.6.1 // indirect
 	github.com/xanzy/ssh-agent v0.3.3 // indirect
 	go.elastic.co/apm/module/apmchiv5/v2 v2.4.3 // indirect
 	go.elastic.co/apm/module/apmhttp/v2 v2.4.3 // indirect
 	go.elastic.co/apm/v2 v2.4.3 // indirect
 	go.elastic.co/fastjson v1.1.0 // indirect
-	golang.org/x/crypto v0.9.0 // indirect
+	golang.org/x/crypto v0.11.0 // indirect
 	golang.org/x/net v0.10.0 // indirect
-	golang.org/x/sys v0.8.0 // indirect
+	golang.org/x/sys v0.10.0 // indirect
 	google.golang.org/protobuf v1.30.0 // indirect
 	gopkg.in/warnings.v0 v0.1.2 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
