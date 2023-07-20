@@ -17,26 +17,6 @@ jobs:
       with:
         go-version: '1.20'
 
-    - name: Set up pact-foundation/pact-ruby-standalone
-      run: >
-        curl -L https://raw.githubusercontent.com/pact-foundation/pact-ruby-standalone/master/install.sh -o ./install-pact.sh &&
-        cat ./install-pact.sh &&
-        chmod u+x ./install-pact.sh &&
-        ./install-pact.sh &&
-        rm ./install-pact.sh &&
-        echo "$(pwd)/pact/bin" >> $GITHUB_PATH
-      shell: bash
-
-    - name: Print pact CLI versions
-      run: |-
-        echo "PATH=$PATH
-        pact-broker: $(pact-broker version)
-        pact-message: $(pact-message version)
-        pact-mock-service: $(pact-mock-service version)
-        pact-provider-verifier: $(pact-provider-verifier version)
-        pact-stub-service: $(pact-stub-service version)"
-      shell: bash
-
     - name: Build
       run: go build
 
