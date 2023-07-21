@@ -24,8 +24,6 @@ github.com/StephanHCB/go-autumn-restclient-prometheus v0.1.2 h1:xsTZdR9WlSaoeUc3
 github.com/StephanHCB/go-autumn-restclient-prometheus v0.1.2/go.mod h1:74X7ghxTOjj6Tl0lvVJXOQHz+3RbKvGirvF5l82XDwk=
 github.com/StephanHCB/go-autumn-web-swagger-ui v0.2.3 h1:aC/rTlw9pBPCWYH46KGzSB942sTALIcIsZi0piVUuEo=
 github.com/StephanHCB/go-autumn-web-swagger-ui v0.2.3/go.mod h1:EBtCQXF8JhoADnadezundz2xWEdFPmx2NUTgZYtUE0M=
-github.com/StephanHCB/go-backend-service-common v0.3.2 h1:T/7UjPtuBbA8pREVPgxxufmswQRl34sq0T6ZuFd/bV8=
-github.com/StephanHCB/go-backend-service-common v0.3.2/go.mod h1:4sZ2t+Pt3cmtBNjtouZofUoUKQR3l/RltKOUk+QGoNM=
 github.com/StephanHCB/go-backend-service-common v0.4.1 h1:oJGW9xfTLHPIs9x2JFyp/7s38Or6pRtt443EATnAhEU=
 github.com/StephanHCB/go-backend-service-common v0.4.1/go.mod h1:wu59F7UC/T85LBDsVFol+aZIS4Qqg2hDkpa/W3RhgBk=
 github.com/acomagu/bufpipe v1.0.4 h1:e3H4WUzM3npvo5uv95QuJM3cQspFNtFBzvJ2oNjKIDQ=
@@ -66,8 +64,8 @@ github.com/go-git/gcfg v1.5.1-0.20230307220236-3a3c6141e376/go.mod h1:an3vInlBmS
 github.com/go-git/go-billy/v5 v5.4.1 h1:Uwp5tDRkPr+l/TnbHOQzp+tmJfLceOlbVucgpTz8ix4=
 github.com/go-git/go-billy/v5 v5.4.1/go.mod h1:vjbugF6Fz7JIflbVpl1hJsGjSHNltrSw45YK/ukIvQg=
 github.com/go-git/go-git-fixtures/v4 v4.3.2-0.20230305113008-0c11038e723f h1:Pz0DHeFij3XFhoBRGUDPzSJ+w2UcK5/0JvF8DRI58r8=
-github.com/go-git/go-git/v5 v5.7.0 h1:t9AudWVLmqzlo+4bqdf7GY+46SUuRsx59SboFxkq2aE=
-github.com/go-git/go-git/v5 v5.7.0/go.mod h1:coJHKEOk5kUClpsNlXrUvPrDxY3w3gjHvhcZd8Fodw8=
+github.com/go-git/go-git/v5 v5.8.0 h1:Rc543s6Tyq+YcyPwZRvU4jzZGM8rB/wWu94TnTIYALQ=
+github.com/go-git/go-git/v5 v5.8.0/go.mod h1:coJHKEOk5kUClpsNlXrUvPrDxY3w3gjHvhcZd8Fodw8=
 github.com/go-http-utils/headers v0.0.0-20181008091004-fed159eddc2a h1:v6zMvHuY9yue4+QkG/HQ/W67wvtQmWJ4SDo9aK/GIno=
 github.com/go-http-utils/headers v0.0.0-20181008091004-fed159eddc2a/go.mod h1:I79BieaU4fxrw4LMXby6q5OS9XnoR9UIKLOzDFjUmuw=
 github.com/goccy/go-json v0.10.2 h1:CrxCmQqYDkv1z7lO7Wbh2HN93uovUHgrECaO5ZrCXAU=
