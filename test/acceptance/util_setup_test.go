@@ -6,6 +6,7 @@ import (
 	"github.com/Interhyp/metadata-service/internal/acorn/repository"
 	"github.com/Interhyp/metadata-service/internal/acorn/service"
 	"github.com/Interhyp/metadata-service/internal/repository/config"
+	"github.com/Interhyp/metadata-service/internal/repository/notifier"
 	"github.com/Interhyp/metadata-service/internal/service/mapper"
 	"github.com/Interhyp/metadata-service/internal/service/trigger"
 	"github.com/Interhyp/metadata-service/internal/service/updater"
@@ -15,6 +16,7 @@ import (
 	"github.com/Interhyp/metadata-service/test/mock/idpmock"
 	"github.com/Interhyp/metadata-service/test/mock/kafkamock"
 	"github.com/Interhyp/metadata-service/test/mock/metadatamock"
+	"github.com/Interhyp/metadata-service/test/mock/notifiermock"
 	"github.com/Interhyp/metadata-service/test/mock/vaultmock"
 	auacorn "github.com/StephanHCB/go-autumn-acorn-registry"
 	auconfigenv "github.com/StephanHCB/go-autumn-config-env"
@@ -39,6 +41,7 @@ var (
 	kafkaImpl    *kafkamock.Impl
 	idpImpl      *idpmock.Impl
 	bbImpl       *bitbucketmock.BitbucketMock
+	notifierImpl *notifier.Impl
 
 	application application2.Application
 	appCtx      context.Context
@@ -99,6 +102,9 @@ func tstSetup(configPath string) error {
 	updaterImpl := registry.GetAcornByName(service.UpdaterAcornName).(*updater.Impl)
 	updaterImpl.Now = fakeNow
 
+	notifierImpl = registry.GetAcornByName(repository.NotifierAcornName).(*notifier.Impl)
+	notifierImpl.SkipAsync = true
+
 	metadataImpl.Now = fakeNow
 
 	security.Now = fakeNow
@@ -106,6 +112,10 @@ func tstSetup(configPath string) error {
 	registry.SkipSetup(loggingImpl)
 	registry.SkipSetup(configImpl)
 	registry.Setup()
+
+	for identifier, _ := range notifierImpl.Clients {
+		notifierImpl.Clients[identifier] = &notifiermock.NotifierClientMock{}
+	}
 
 	tstSetupHttpTestServer()
 	return nil
@@ -148,4 +158,7 @@ func tstShutdown() {
 func tstReset() {
 	metadataImpl.Reset()
 	kafkaImpl.Reset()
+	for _, client := range notifierImpl.Clients {
+		client.(*notifiermock.NotifierClientMock).Reset()
+	}
 }

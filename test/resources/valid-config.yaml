@@ -21,18 +21,46 @@ REPOSITORY_TYPES: 'implementation,helm-deployment,api,helm-chart'
 
 NOTIFICATION_CONSUMER_CONFIGS: >-
   {
-    "consumerName": {
+    "receivesDelete": {
       "types": {
-        "Owner": ["CREATED", "MODIFIED", "DELETED"],
-        "Service": ["CREATED", "MODIFIED", "DELETED"],
+        "Owner": ["DELETED"],
+        "Service": ["DELETED"],
         "Repository": ["DELETED"]
       },
       "url": "https://some.url.com/for/the/webhook"
     },
-    "anotherConsumer": {
+    "receivesModified": {
       "types": {
         "Owner": ["MODIFIED"],
+        "Service": ["MODIFIED"],
+        "Repository": ["MODIFIED"]
       },
-      "url": "https://another.url.com/for/another/webhook"
+      "url": "https://some.url.com/for/the/webhook"
     },
+    "receivesCreate": {
+      "types": {
+        "Owner": ["CREATED"],
+        "Service": ["CREATED"],
+        "Repository": ["CREATED"]
+      },
+      "url": "https://some.url.com/for/the/webhook"
+    },
+    "receivesOwner": {
+      "types": {
+        "Owner": ["CREATED", "MODIFIED", "DELETED"]
+      },
+      "url": "https://some.url.com/for/the/webhook"
+    },
+    "receivesService": {
+      "types": {
+        "Service": ["CREATED", "MODIFIED", "DELETED"]
+      },
+      "url": "https://some.url.com/for/the/webhook"
+    },
+    "receivesRepository": {
+      "types": {
+        "Repository": ["CREATED", "MODIFIED", "DELETED"]
+      },
+      "url": "https://some.url.com/for/the/webhook"
+    }
   }

@@ -3,6 +3,7 @@ package acceptance
 import (
 	"encoding/json"
 	"github.com/Interhyp/metadata-service/api"
+	"github.com/Interhyp/metadata-service/internal/types"
 	"net/http"
 	"strings"
 	"testing"
@@ -83,6 +84,11 @@ func TestPOSTService_Success(t *testing.T) {
 	require.Equal(t, 1, len(kafkaImpl.Recording))
 	actual, _ := json.Marshal(kafkaImpl.Recording[0])
 	require.Equal(t, tstServiceExpectedKafka("whatever"), string(actual))
+
+	docs.Then("And a notification has been sent to all matching owners")
+	payload := tstPostServicePayload("whatever")
+	hasSentNotification(t, "receivesCreate", "whatever", types.CreatedEvent, types.ServicePayload, &payload)
+	hasSentNotification(t, "receivesService", "whatever", types.CreatedEvent, types.ServicePayload, &payload)
 }
 
 func TestPOSTService_InvalidName(t *testing.T) {
@@ -357,6 +363,11 @@ func TestPUTService_Success(t *testing.T) {
 	require.Equal(t, 1, len(kafkaImpl.Recording))
 	actual, _ := json.Marshal(kafkaImpl.Recording[0])
 	require.Equal(t, tstServiceExpectedKafka("some-service-backend"), string(actual))
+
+	docs.Then("And a notification has been sent to all matching owners")
+	payload := tstPutServicePayload("some-service-backend")
+	hasSentNotification(t, "receivesModified", "some-service-backend", types.ModifiedEvent, types.ServicePayload, &payload)
+	hasSentNotification(t, "receivesService", "some-service-backend", types.ModifiedEvent, types.ServicePayload, &payload)
 }
 
 func TestPUTService_NoChangeSuccess(t *testing.T) {
@@ -696,6 +707,11 @@ func TestPATCHService_Success(t *testing.T) {
 	require.Equal(t, 1, len(kafkaImpl.Recording))
 	actual, _ := json.Marshal(kafkaImpl.Recording[0])
 	require.Equal(t, tstServiceExpectedKafka("some-service-backend"), string(actual))
+
+	docs.Then("And a notification has been sent to all matching owners")
+	payload := tstPatchServicePayload("some-service-backend")
+	hasSentNotification(t, "receivesModified", "some-service-backend", types.ModifiedEvent, types.ServicePayload, &payload)
+	hasSentNotification(t, "receivesService", "some-service-backend", types.ModifiedEvent, types.ServicePayload, &payload)
 }
 
 func TestPATCHService_NoChangeSuccess(t *testing.T) {
@@ -1120,6 +1136,10 @@ func TestDELETEService_Success(t *testing.T) {
 	require.Equal(t, 1, len(kafkaImpl.Recording))
 	actual, _ := json.Marshal(kafkaImpl.Recording[0])
 	require.Equal(t, tstServiceExpectedKafka("some-service-backend"), string(actual))
+
+	docs.Then("And a notification has been sent to all matching owners")
+	hasSentNotification(t, "receivesDelete", "some-service-backend", types.DeletedEvent, types.ServicePayload, nil)
+	hasSentNotification(t, "receivesService", "some-service-backend", types.DeletedEvent, types.ServicePayload, nil)
 }
 
 func TestDELETEService_DoesNotExist(t *testing.T) {
