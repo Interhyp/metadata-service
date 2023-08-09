@@ -1,6 +1,7 @@
 package config
 
 import (
+	"github.com/Interhyp/metadata-service/internal/types"
 	"regexp"
 
 	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
@@ -60,6 +61,13 @@ type CustomConfiguration interface {
 	RepositoryNameMaxLength() uint16
 	RepositoryTypes() []string
 	RepositoryKeySeparator() string
+
+	NotificationConsumerConfigs() map[string]NotificationConsumerConfig
+}
+
+type NotificationConsumerConfig struct {
+	Subscribed  map[types.NotificationPayloadType]map[types.NotificationEventType]struct{}
+	ConsumerURL string
 }
 
 // Custom is a type casting helper that gets you from the configuration acorn to your CustomConfiguration
@@ -108,4 +116,5 @@ const (
 	KeyRepositoryNameMaxLength        = "REPOSITORY_NAME_MAX_LENGTH"
 	KeyRepositoryKeySeparator         = "REPOSITORY_KEY_SEPARATOR"
 	KeyRepositoryTypes                = "REPOSITORY_TYPES"
+	KeyNotificationConsumerConfigs    = "NOTIFICATION_CONSUMER_CONFIGS"
 )

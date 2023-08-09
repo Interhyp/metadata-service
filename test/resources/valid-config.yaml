@@ -18,3 +18,49 @@ SERVICE_NAME_PROHIBITED_REGEX: "-service$"
 OWNER_ALIAS_FILTER_REGEX: .*
 
 REPOSITORY_TYPES: 'implementation,helm-deployment,api,helm-chart'
+
+NOTIFICATION_CONSUMER_CONFIGS: >-
+  {
+    "receivesDelete": {
+      "types": {
+        "Owner": ["DELETED"],
+        "Service": ["DELETED"],
+        "Repository": ["DELETED"]
+      },
+      "url": "https://some.url.com/for/the/webhook"
+    },
+    "receivesModified": {
+      "types": {
+        "Owner": ["MODIFIED"],
+        "Service": ["MODIFIED"],
+        "Repository": ["MODIFIED"]
+      },
+      "url": "https://some.url.com/for/the/webhook"
+    },
+    "receivesCreate": {
+      "types": {
+        "Owner": ["CREATED"],
+        "Service": ["CREATED"],
+        "Repository": ["CREATED"]
+      },
+      "url": "https://some.url.com/for/the/webhook"
+    },
+    "receivesOwner": {
+      "types": {
+        "Owner": ["CREATED", "MODIFIED", "DELETED"]
+      },
+      "url": "https://some.url.com/for/the/webhook"
+    },
+    "receivesService": {
+      "types": {
+        "Service": ["CREATED", "MODIFIED", "DELETED"]
+      },
+      "url": "https://some.url.com/for/the/webhook"
+    },
+    "receivesRepository": {
+      "types": {
+        "Repository": ["CREATED", "MODIFIED", "DELETED"]
+      },
+      "url": "https://some.url.com/for/the/webhook"
+    }
+  }

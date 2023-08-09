@@ -44,3 +44,23 @@ ALERT_TARGET_PREFIX: https://domain.com/
 ALERT_TARGET_SUFFIX: '@domain.com'
 
 OWNER_ALIAS_FILTER_REGEX: '.*'
+
+# The NOTIFICATION_CONSUMER_CONFIGS env below is an example:
+
+#NOTIFICATION_CONSUMER_CONFIGS: >-
+#  {
+#    "consumerName": {
+#      "types": {
+#        "Owner": ["CREATED", "MODIFIED", "DELETED"],
+#        "Service": ["CREATED", "MODIFIED", "DELETED"],
+#        "Repository": ["DELETED"]
+#      },
+#      "url": "https://some.url.com/for/the/webhook"
+#    },
+#    "anotherConsumer": {
+#      "types": {
+#        "Owner": ["MODIFIED"],
+#      },
+#      "url": "https://another.url.com/for/another/webhook"
+#    }
+#  }

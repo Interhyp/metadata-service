@@ -21,3 +21,38 @@ KAFKA_USERNAME: 'WeirdÄÄÄÄ'
 KAFKA_TOPIC: 'CRAZY/äöü'
 KAFKA_SEED_BROKERS: 'external.url:443'
 KAFKA_GROUP_ID_OVERRIDE: 'no banana, no spaces'
+
+NOTIFICATION_CONSUMER_CONFIGS: >-
+  {
+    "caseMissingUrl": {
+      "types": {
+        "Owner": ["CREATED", "MODIFIED", "DELETED"]
+      }
+    },
+    "caseInvalidUrl": {
+      "types": {
+        "Owner": ["CREATED", "MODIFIED", "DELETED"]
+      },
+      "url": "this-is-invalid"
+    },
+    "caseInvalidTypes": {
+      "types": {
+        "invalid": ["CREATED", "MODIFIED", "DELETED"],
+        "alsoInvalid": ["CREATED"]
+      },
+      "url": "https://some.url.com/for/the/webhook"
+    },
+    "caseInvalidEvents": {
+      "types": {
+        "Owner": ["INVALID", "ALSO_INVALID"],
+        "Service": ["CREATED", "AGAIN_INVALID"]
+      },
+      "url": "https://another.url.com/for/another/webhook"
+    },
+    "allValid": {
+      "types": {
+        "Owner": ["CREATED", "DELETED"]
+      },
+      "url": "https://valid.url.com/for/a/webhook"
+    }
+  }

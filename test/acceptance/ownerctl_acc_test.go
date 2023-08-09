@@ -2,6 +2,7 @@ package acceptance
 
 import (
 	"encoding/json"
+	"github.com/Interhyp/metadata-service/internal/types"
 	"github.com/StephanHCB/go-backend-service-common/docs"
 	"github.com/stretchr/testify/require"
 	"net/http"
@@ -80,6 +81,11 @@ func TestPOSTOwner_Success(t *testing.T) {
 	require.Equal(t, 1, len(kafkaImpl.Recording))
 	actual, _ := json.Marshal(kafkaImpl.Recording[0])
 	require.Equal(t, tstOwnerExpectedKafka("post-owner-success"), string(actual))
+
+	docs.Then("And a notification has been sent to all matching consumers")
+	payload := tstCreateOwnerPayload()
+	hasSentNotification(t, "receivesCreate", "post-owner-success", types.CreatedEvent, types.OwnerPayload, &payload)
+	hasSentNotification(t, "receivesOwner", "post-owner-success", types.CreatedEvent, types.OwnerPayload, &payload)
 }
 
 func TestPOSTOwner_InvalidAlias(t *testing.T) {
@@ -278,6 +284,11 @@ func TestPUTOwner_Success(t *testing.T) {
 	require.Equal(t, 1, len(kafkaImpl.Recording))
 	actual, _ := json.Marshal(kafkaImpl.Recording[0])
 	require.Equal(t, tstOwnerExpectedKafka("some-owner"), string(actual))
+
+	docs.Then("And a notification has been sent to all matching consumers")
+	payload := tstPutOwnerPayload()
+	hasSentNotification(t, "receivesModified", "some-owner", types.ModifiedEvent, types.OwnerPayload, &payload)
+	hasSentNotification(t, "receivesOwner", "some-owner", types.ModifiedEvent, types.OwnerPayload, &payload)
 }
 
 func TestPUTOwner_NoChangeSuccess(t *testing.T) {
@@ -506,6 +517,11 @@ func TestPATCHOwner_Success(t *testing.T) {
 	require.Equal(t, 1, len(kafkaImpl.Recording))
 	actual, _ := json.Marshal(kafkaImpl.Recording[0])
 	require.Equal(t, tstOwnerExpectedKafka("some-owner"), string(actual))
+
+	docs.Then("And a notification has been sent to all matching consumers")
+	payload := tstPatchOwnerPayload()
+	hasSentNotification(t, "receivesModified", "some-owner", types.ModifiedEvent, types.OwnerPayload, &payload)
+	hasSentNotification(t, "receivesOwner", "some-owner", types.ModifiedEvent, types.OwnerPayload, &payload)
 }
 
 func TestPATCHOwner_NoChangeSuccess(t *testing.T) {
@@ -716,6 +732,10 @@ func TestDELETEOwner_Success(t *testing.T) {
 	require.Equal(t, 1, len(kafkaImpl.Recording))
 	actual, _ := json.Marshal(kafkaImpl.Recording[0])
 	require.Equal(t, tstOwnerExpectedKafka("deleteme"), string(actual))
+
+	docs.Then("And a notification has been sent to all matching owners")
+	hasSentNotification(t, "receivesDelete", "deleteme", types.DeletedEvent, types.OwnerPayload, nil)
+	hasSentNotification(t, "receivesOwner", "deleteme", types.DeletedEvent, types.OwnerPayload, nil)
 }
 
 func TestDELETEOwner_DoesNotExist(t *testing.T) {

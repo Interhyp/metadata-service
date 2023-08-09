@@ -1,6 +1,9 @@
 package configmock
 
-import "regexp"
+import (
+	"github.com/Interhyp/metadata-service/internal/acorn/config"
+	"regexp"
+)
 
 type MockConfig struct {
 }
@@ -246,6 +249,11 @@ func (c *MockConfig) RepositoryKeySeparator() string {
 }
 
 func (c *MockConfig) MetadataRepoMainline() string {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (c *MockConfig) NotificationConsumerConfigs() map[string]config.NotificationConsumerConfig {
 	//TODO implement me
 	panic("implement me")
 }

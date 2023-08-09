@@ -2,6 +2,7 @@ package acceptance
 
 import (
 	"encoding/json"
+	"github.com/Interhyp/metadata-service/internal/types"
 	"github.com/StephanHCB/go-backend-service-common/docs"
 	"github.com/stretchr/testify/require"
 	"net/http"
@@ -132,6 +133,11 @@ func TestPOSTRepository_Success(t *testing.T) {
 	require.Equal(t, 1, len(kafkaImpl.Recording))
 	actual, _ := json.Marshal(kafkaImpl.Recording[0])
 	require.Equal(t, tstRepositoryExpectedKafka("new-repository.api"), string(actual))
+
+	docs.Then("And a notification has been sent to all matching owners")
+	payload := tstPostRepositoryPayload()
+	hasSentNotification(t, "receivesCreate", "new-repository.api", types.CreatedEvent, types.RepositoryPayload, &payload)
+	hasSentNotification(t, "receivesRepository", "new-repository.api", types.CreatedEvent, types.RepositoryPayload, &payload)
 }
 
 func TestPOSTRepository_InvalidKey(t *testing.T) {
@@ -331,6 +337,11 @@ func TestPUTRepository_Success(t *testing.T) {
 	require.Equal(t, 1, len(kafkaImpl.Recording))
 	actual, _ := json.Marshal(kafkaImpl.Recording[0])
 	require.Equal(t, tstRepositoryExpectedKafka("karma-wrapper.helm-chart"), string(actual))
+
+	docs.Then("And a notification has been sent to all matching owners")
+	payload := tstPutRepositoryPayload()
+	hasSentNotification(t, "receivesModified", "karma-wrapper.helm-chart", types.ModifiedEvent, types.RepositoryPayload, &payload)
+	hasSentNotification(t, "receivesRepository", "karma-wrapper.helm-chart", types.ModifiedEvent, types.RepositoryPayload, &payload)
 }
 
 func TestPUTRepository_NoChangeSuccess(t *testing.T) {
@@ -614,6 +625,11 @@ func TestPATCHRepository_Success(t *testing.T) {
 	require.Equal(t, 1, len(kafkaImpl.Recording))
 	actual, _ := json.Marshal(kafkaImpl.Recording[0])
 	require.Equal(t, tstRepositoryExpectedKafka("karma-wrapper.helm-chart"), string(actual))
+
+	docs.Then("And a notification has been sent to all matching owners")
+	payload := tstPatchRepositoryPayload()
+	hasSentNotification(t, "receivesModified", "karma-wrapper.helm-chart", types.ModifiedEvent, types.RepositoryPayload, &payload)
+	hasSentNotification(t, "receivesRepository", "karma-wrapper.helm-chart", types.ModifiedEvent, types.RepositoryPayload, &payload)
 }
 
 func TestPATCHRepository_NoChangeSuccess(t *testing.T) {
@@ -897,6 +913,10 @@ func TestDELETERepository_Success(t *testing.T) {
 	require.Equal(t, 1, len(kafkaImpl.Recording))
 	actual, _ := json.Marshal(kafkaImpl.Recording[0])
 	require.Equal(t, tstRepositoryExpectedKafka("karma-wrapper.helm-chart"), string(actual))
+
+	docs.Then("And a notification has been sent to all matching owners")
+	hasSentNotification(t, "receivesDelete", "karma-wrapper.helm-chart", types.DeletedEvent, types.RepositoryPayload, nil)
+	hasSentNotification(t, "receivesRepository", "karma-wrapper.helm-chart", types.DeletedEvent, types.RepositoryPayload, nil)
 }
 
 func TestDELETERepository_DoesNotExist(t *testing.T) {

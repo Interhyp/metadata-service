@@ -2,6 +2,7 @@ package acceptance
 
 import (
 	"github.com/Interhyp/metadata-service/api"
+	"github.com/Interhyp/metadata-service/internal/repository/notifier"
 )
 
 func p(v string) *string {
@@ -56,6 +57,29 @@ func tstOwnerUnchangedPatch() openapi.OwnerPatchDto {
 		CommitHash: "6c8ac2c35791edf9979623c717a243fc53400000",
 		JiraIssue:  "ISSUE-2345",
 	}
+}
+
+func tstCreateOwnerPayload() openapi.NotificationPayload {
+	return notifier.AsPayload(openapi.OwnerDto{
+		Contact:            "somebody@some-organisation.com",
+		ProductOwner:       p("kschlangenheld"),
+		DefaultJiraProject: p("JIRA"),
+		JiraIssue:          "ISSUE-2345",
+	})
+}
+func tstPutOwnerPayload() openapi.NotificationPayload {
+	return notifier.AsPayload(tstOwner())
+}
+
+func tstPatchOwnerPayload() openapi.NotificationPayload {
+	return notifier.AsPayload(openapi.OwnerDto{
+		Contact:            "somebody@some-organisation.com",
+		ProductOwner:       p("kschlangenheldt"),
+		DefaultJiraProject: p("ISSUE"),
+		JiraIssue:          "ISSUE-2345",
+		TimeStamp:          "2022-11-06T18:14:10Z",
+		CommitHash:         "6c8ac2c35791edf9979623c717a243fc53400000",
+	})
 }
 
 func tstOwnerExpectedYaml() string {
@@ -195,6 +219,21 @@ func tstServiceMovedExpectedKafka(name string) string {
 		`"commitHash":"6c8ac2c35791edf9979623c717a2430000000000"}`
 }
 
+func tstPostServicePayload(name string) openapi.NotificationPayload {
+	repo := tstService(name)
+	repo.CommitHash = ""
+	repo.TimeStamp = ""
+	return notifier.AsPayload(repo)
+}
+
+func tstPutServicePayload(name string) openapi.NotificationPayload {
+	return notifier.AsPayload(tstService(name))
+}
+
+func tstPatchServicePayload(name string) openapi.NotificationPayload {
+	return notifier.AsPayload(tstService(name))
+}
+
 // repository
 
 func tstRepository() openapi.RepositoryDto {
@@ -311,4 +350,19 @@ func tstDelete() openapi.DeletionDto {
 	return openapi.DeletionDto{
 		JiraIssue: "ISSUE-2345",
 	}
+}
+
+func tstPostRepositoryPayload() openapi.NotificationPayload {
+	repo := tstRepository()
+	repo.CommitHash = ""
+	repo.TimeStamp = ""
+	return notifier.AsPayload(repo)
+}
+
+func tstPutRepositoryPayload() openapi.NotificationPayload {
+	return notifier.AsPayload(tstRepository())
+}
+
+func tstPatchRepositoryPayload() openapi.NotificationPayload {
+	return notifier.AsPayload(tstRepositoryUnchanged())
 }
