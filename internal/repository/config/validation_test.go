@@ -73,7 +73,7 @@ func TestValidate_LotsOfErrors(t *testing.T) {
 	_, err := tstSetupCutAndLogRecorder(t, "invalid-config-values.yaml")
 
 	require.NotNil(t, err)
-	require.Contains(t, err.Error(), "some configuration values failed to validate or parse. There were 27 error(s). See details above")
+	require.Contains(t, err.Error(), "some configuration values failed to validate or parse. There were 28 error(s). See details above")
 
 	actualLog := goauzerolog.RecordedLogForTesting.String()
 
@@ -100,6 +100,15 @@ func TestValidate_LotsOfErrors(t *testing.T) {
 
 	expectedPart8 := "failed to validate configuration field VAULT_SECRETS_CONFIG: invalid character '}' after top-level value"
 	require.Contains(t, actualLog, expectedPart8)
+
+	require.Contains(t, actualLog, "failed to validate configuration field NOTIFICATION_CONSUMER_CONFIGS:")
+	require.Contains(t, actualLog, "Notification consumer config 'caseInvalidTypes' contains invalid type 'invalid'.")
+	require.Contains(t, actualLog, "Notification consumer config 'caseInvalidTypes' contains invalid type 'alsoInvalid'.")
+	require.Contains(t, actualLog, "Notification consumer config 'caseInvalidEvents' contains invalid event type 'INVALID'.")
+	require.Contains(t, actualLog, "Notification consumer config 'caseInvalidEvents' contains invalid event type 'ALSO_INVALID'.")
+	require.Contains(t, actualLog, "Notification consumer config 'caseInvalidEvents' contains invalid event type 'AGAIN_INVALID'.")
+	require.Contains(t, actualLog, "Notification consumer config 'caseMissingUrl' is missing url.")
+	require.Contains(t, actualLog, "Notification consumer config 'caseInvalidUrl' contains invalid url 'this-is-invalid'.")
 }
 
 func TestAccessors(t *testing.T) {
@@ -145,5 +154,6 @@ func TestAccessors(t *testing.T) {
 	require.Equal(t, "[a-z][0-7]+", config.Custom(cut).RepositoryNameProhibitedRegex().String())
 	require.Equal(t, uint16(3), config.Custom(cut).RepositoryNameMaxLength())
 	require.Equal(t, ";", config.Custom(cut).RepositoryKeySeparator())
+	require.Equal(t, []string{"some-type", "some-other-type"}, config.Custom(cut).RepositoryTypes())
 	require.Equal(t, []string{"some-type", "some-other-type"}, config.Custom(cut).RepositoryTypes())
 }

@@ -2443,6 +2443,41 @@
           }
         }
       },
+      "Notification": {
+        "type": "object",
+        "description": "Schema of the Dto sent to all configured downstreams upon a change of service.",
+        "required": ["name", "type", "event"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "name of the service that was updated"
+          },
+          "event": {
+            "type": "string",
+            "enum": ["CREATED", "MODIFIED", "DELETED"]
+          },
+          "type": {
+            "type": "string",
+            "enum": ["Owner", "Service", "Repository"]
+          },
+          "payload": {
+            "type": "object",
+            "minProperties": 1,
+            "maxProperties": 1,
+            "properties": {
+              "Owner": {
+                "$ref": "#/components/schemas/OwnerDto"
+              },
+              "Service": {
+                "$ref": "#/components/schemas/ServiceDto"
+              },
+              "Repository": {
+                "$ref": "#/components/schemas/RepositoryDto"
+              }
+            }
+          }
+        }
+      },
       "Quicklink": {
         "type": "object",
         "properties": {

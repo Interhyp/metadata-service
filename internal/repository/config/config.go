@@ -1,11 +1,10 @@
 package config
 
 import (
-	"math"
-
 	"github.com/Interhyp/metadata-service/internal/acorn/config"
 	auconfigapi "github.com/StephanHCB/go-autumn-config-api"
 	auconfigenv "github.com/StephanHCB/go-autumn-config-env"
+	"math"
 )
 
 var CustomConfigItems = []auconfigapi.ConfigItem{
@@ -286,5 +285,16 @@ var CustomConfigItems = []auconfigapi.ConfigItem{
 		Default:     ".",
 		Description: "single character used to separate repository name from repository type. repository name and repository type must not contain separator.",
 		Validate:    auconfigenv.ObtainSingleCharacterValidator(),
+	},
+	{
+		Key:         config.KeyNotificationConsumerConfigs,
+		EnvName:     config.KeyNotificationConsumerConfigs,
+		Default:     "",
+		Description: "configurations for consumers of change notifications.",
+		Validate: func(key string) error {
+			value := auconfigenv.Get(key)
+			_, err := parseNotificationConsumerConfigs(value)
+			return err
+		},
 	},
 }

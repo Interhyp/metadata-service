@@ -18,3 +18,21 @@ SERVICE_NAME_PROHIBITED_REGEX: "-service$"
 OWNER_ALIAS_FILTER_REGEX: .*
 
 REPOSITORY_TYPES: 'implementation,helm-deployment,api,helm-chart'
+
+NOTIFICATION_CONSUMER_CONFIGS: >-
+  {
+    "consumerName": {
+      "types": {
+        "Owner": ["CREATED", "MODIFIED", "DELETED"],
+        "Service": ["CREATED", "MODIFIED", "DELETED"],
+        "Repository": ["DELETED"]
+      },
+      "url": "https://some.url.com/for/the/webhook"
+    },
+    "anotherConsumer": {
+      "types": {
+        "Owner": ["MODIFIED"],
+      },
+      "url": "https://another.url.com/for/another/webhook"
+    },
+  }

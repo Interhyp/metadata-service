@@ -1,15 +1,24 @@
 package config
 
 import (
-	"regexp"
-	"strconv"
-
+	"encoding/json"
+	"fmt"
 	"github.com/Interhyp/metadata-service/internal/acorn/config"
+	openapi "github.com/Interhyp/metadata-service/internal/types"
 	auacornapi "github.com/StephanHCB/go-autumn-acorn-registry/api"
 	auconfigapi "github.com/StephanHCB/go-autumn-config-api"
 	auconfigenv "github.com/StephanHCB/go-autumn-config-env"
 	libconfig "github.com/StephanHCB/go-backend-service-common/repository/config"
 	"github.com/StephanHCB/go-backend-service-common/repository/vault"
+	"regexp"
+	"strconv"
+	"strings"
+)
+
+const (
+	allowedNotificationTypeService    = "Service"
+	allowedNotificationTypeOwner      = "Owner"
+	allowedNotificationTypeRepository = "Repository"
 )
 
 type CustomConfigImpl struct {
@@ -53,6 +62,7 @@ type CustomConfigImpl struct {
 	VRepositoryNameMaxLength        uint16
 	VRepositoryTypes                string
 	VRepositoryKeySeparator         string
+	VNotificationConsumerConfigs    map[string]config.NotificationConsumerConfig
 }
 
 func New() auacornapi.Acorn {
@@ -104,6 +114,7 @@ func (c *CustomConfigImpl) Obtain(getter func(key string) string) {
 	c.VRepositoryNameMaxLength = toUint16(getter(config.KeyRepositoryNameMaxLength))
 	c.VRepositoryTypes = getter(config.KeyRepositoryTypes)
 	c.VRepositoryKeySeparator = getter(config.KeyRepositoryKeySeparator)
+	c.VNotificationConsumerConfigs, _ = parseNotificationConsumerConfigs(getter(config.KeyNotificationConsumerConfigs))
 }
 
 // used after validation, so known safe
@@ -121,4 +132,79 @@ func toUint16(s string) uint16 {
 func toUint32(s string) uint32 {
 	val, _ := auconfigenv.AToUint(s)
 	return uint32(val)
+}
+
+func parseNotificationConsumerConfigs(rawJson string) (map[string]config.NotificationConsumerConfig, error) {
+	result := make(map[string]config.NotificationConsumerConfig)
+	if rawJson == "" {
+		return result, nil
+	}
+
+	type StringBasedConfig struct {
+		SubscribedTypes map[string][]string `json:"types"`
+		ConsumerURL     *string             `json:"url"`
+	}
+	parsedConfig := make(map[string]StringBasedConfig)
+	if err := json.Unmarshal([]byte(rawJson), &parsedConfig); err != nil {
+		return nil, err
+	}
+
+	errors := make([]string, 0)
+	for configIdentifier, stringConfig := range parsedConfig {
+		if stringConfig.ConsumerURL == nil {
+			errors = append(errors, fmt.Sprintf("Notification consumer config '%s' is missing url.", configIdentifier))
+			continue
+		}
+		consumerUrl := *stringConfig.ConsumerURL
+		if consumerUrl == "" || !strings.HasPrefix(consumerUrl, "http") {
+			errors = append(errors, fmt.Sprintf("Notification consumer config '%s' contains invalid url '%s'.", configIdentifier, consumerUrl))
+		}
+
+		types := make(map[openapi.NotificationPayloadType]map[openapi.NotificationEventType]struct{})
+		for typeCandidate, eventCandidates := range stringConfig.SubscribedTypes {
+			var key openapi.NotificationPayloadType
+
+			switch typeCandidate {
+			case openapi.OwnerPayload.String():
+				key = openapi.OwnerPayload
+				break
+			case openapi.ServicePayload.String():
+				key = openapi.ServicePayload
+				break
+			case openapi.RepositoryPayload.String():
+				key = openapi.RepositoryPayload
+				break
+			default:
+				errors = append(errors, fmt.Sprintf("Notification consumer config '%s' contains invalid type '%s'.", configIdentifier, typeCandidate))
+				continue
+			}
+
+			types[key] = make(map[openapi.NotificationEventType]struct{})
+			for _, eventCandidate := range eventCandidates {
+				switch eventCandidate {
+				case openapi.CreatedEvent.String():
+					types[key][openapi.CreatedEvent] = struct{}{}
+					break
+				case openapi.ModifiedEvent.String():
+					types[key][openapi.ModifiedEvent] = struct{}{}
+					break
+				case openapi.DeletedEvent.String():
+					types[key][openapi.DeletedEvent] = struct{}{}
+					break
+				default:
+					errors = append(errors, fmt.Sprintf("Notification consumer config '%s' contains invalid event type '%s'.", configIdentifier, eventCandidate))
+					continue
+				}
+			}
+		}
+
+		result[configIdentifier] = config.NotificationConsumerConfig{
+			ConsumerURL: consumerUrl,
+			Subscribed:  types,
+		}
+	}
+	if len(errors) > 0 {
+		return nil, fmt.Errorf(strings.Join(errors, " "))
+	}
+	return result, nil
 }

@@ -2,7 +2,13 @@
 
 package openapi
 
-import "time"
+import (
+	"time"
+)
+
+type _dummyTime struct {
+	Timestamp *time.Time
+}
 
 type ConditionReferenceDto struct {
 	// Reference of a branch.
@@ -23,6 +29,20 @@ type ErrorDto struct {
 type HealthComponent struct {
 	Description *string `yaml:"description,omitempty" json:"description,omitempty"`
 	Status      *string `yaml:"status,omitempty" json:"status,omitempty"`
+}
+
+type Notification struct {
+	// name of the service that was updated
+	Name    string               `yaml:"name" json:"name"`
+	Event   string               `yaml:"event" json:"event"`
+	Type    string               `yaml:"type" json:"type"`
+	Payload *NotificationPayload `yaml:"payload,omitempty" json:"payload,omitempty"`
+}
+
+type NotificationPayload struct {
+	Owner      *OwnerDto      `yaml:"Owner,omitempty" json:"Owner,omitempty"`
+	Service    *ServiceDto    `yaml:"Service,omitempty" json:"Service,omitempty"`
+	Repository *RepositoryDto `yaml:"Repository,omitempty" json:"Repository,omitempty"`
 }
 
 type OwnerCreateDto struct {

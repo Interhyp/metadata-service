@@ -1,6 +1,7 @@
 package config
 
 import (
+	"github.com/Interhyp/metadata-service/internal/acorn/config"
 	"os"
 	"regexp"
 	"strings"
@@ -167,4 +168,8 @@ func (c *CustomConfigImpl) RepositoryTypes() []string {
 
 func (c *CustomConfigImpl) RepositoryKeySeparator() string {
 	return c.VRepositoryKeySeparator
+}
+
+func (c *CustomConfigImpl) NotificationConsumerConfigs() map[string]config.NotificationConsumerConfig {
+	return c.VNotificationConsumerConfigs
 }

@@ -3,6 +3,7 @@ package services
 import (
 	"context"
 	"github.com/Interhyp/metadata-service/internal/acorn/config"
+	"github.com/Interhyp/metadata-service/internal/acorn/repository"
 	"github.com/Interhyp/metadata-service/internal/acorn/service"
 	"github.com/StephanHCB/go-autumn-acorn-registry/api"
 	auzerolog "github.com/StephanHCB/go-autumn-logging-zerolog"
@@ -30,6 +31,7 @@ func (s *Impl) AssembleAcorn(registry auacornapi.AcornRegistry) error {
 	s.Updater = registry.GetAcornByName(service.UpdaterAcornName).(service.Updater)
 	s.Owner = registry.GetAcornByName(service.OwnersAcornName).(service.Owners)
 	s.Repositories = registry.GetAcornByName(service.RepositoriesAcornName).(service.Repositories)
+	s.Notifier = registry.GetAcornByName(repository.NotifierAcornName).(repository.Notifier)
 
 	s.CustomConfiguration = config.Custom(s.Configuration)
 
@@ -60,6 +62,10 @@ func (s *Impl) SetupAcorn(registry auacornapi.AcornRegistry) error {
 		return err
 	}
 	err = registry.SetupAfter(s.Repositories.(auacornapi.Acorn))
+	if err != nil {
+		return err
+	}
+	err = registry.SetupAfter(s.Notifier.(auacornapi.Acorn))
 	if err != nil {
 		return err
 	}
