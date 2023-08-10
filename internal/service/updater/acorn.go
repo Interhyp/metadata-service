@@ -31,6 +31,7 @@ func (s *Impl) AssembleAcorn(registry auacornapi.AcornRegistry) error {
 	s.Configuration = registry.GetAcornByName(librepo.ConfigurationAcornName).(librepo.Configuration)
 	s.Logging = registry.GetAcornByName(librepo.LoggingAcornName).(librepo.Logging)
 	s.Kafka = registry.GetAcornByName(repository.KafkaAcornName).(repository.Kafka)
+	s.Notifier = registry.GetAcornByName(repository.NotifierAcornName).(repository.Notifier)
 	s.Mapper = registry.GetAcornByName(service.MapperAcornName).(service.Mapper)
 	s.Cache = registry.GetAcornByName(service.CacheAcornName).(service.Cache)
 
@@ -49,6 +50,10 @@ func (s *Impl) SetupAcorn(registry auacornapi.AcornRegistry) error {
 		return err
 	}
 	err = registry.SetupAfter(s.Kafka.(auacornapi.Acorn))
+	if err != nil {
+		return err
+	}
+	err = registry.SetupAfter(s.Notifier.(auacornapi.Acorn))
 	if err != nil {
 		return err
 	}

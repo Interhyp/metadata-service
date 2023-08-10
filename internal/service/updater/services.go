@@ -6,6 +6,8 @@ import (
 	"github.com/Interhyp/metadata-service/api"
 	"github.com/Interhyp/metadata-service/internal/acorn/errors/nochangeserror"
 	"github.com/Interhyp/metadata-service/internal/acorn/repository"
+	"github.com/Interhyp/metadata-service/internal/repository/notifier"
+	"github.com/Interhyp/metadata-service/internal/types"
 )
 
 // --- business logic ---
@@ -172,6 +174,7 @@ func (s *Impl) updateIndividualServices(ctx context.Context, serviceNamesMap map
 		if activity == removeExisting {
 			s.Logging.Logger().Ctx(ctx).Info().Printf("service %s is no longer current, removing it from the cache", name)
 			s.Cache.DeleteService(ctx, name)
+			s.Notifier.PublishDeletion(ctx, name, types.ServicePayload)
 		} else {
 			isNew := activity == addNew
 			err := s.updateIndividualService(ctx, name, isNew)
@@ -211,8 +214,16 @@ func (s *Impl) updateIndividualService(ctx context.Context, name string, isNew b
 	} else {
 		s.Cache.PutService(ctx, name, service)
 		if isNew {
+			err = s.Notifier.PublishCreation(ctx, name, notifier.AsPayload(service))
+			if err != nil {
+				s.Logging.Logger().Ctx(ctx).Warn().WithErr(err).Printf("error publishing creation of service %s", service)
+			}
 			s.Logging.Logger().Ctx(ctx).Info().Printf("new service %s added to cache", name)
 		} else {
+			err = s.Notifier.PublishModification(ctx, name, notifier.AsPayload(service))
+			if err != nil {
+				s.Logging.Logger().Ctx(ctx).Warn().WithErr(err).Printf("error publishing modification of service %s", service)
+			}
 			s.Logging.Logger().Ctx(ctx).Debug().Printf("service %s updated in cache", name)
 		}
 	}

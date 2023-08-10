@@ -135,7 +135,7 @@ func TestPOSTRepository_Success(t *testing.T) {
 	require.Equal(t, tstRepositoryExpectedKafka("new-repository.api"), string(actual))
 
 	docs.Then("And a notification has been sent to all matching owners")
-	payload := tstPostRepositoryPayload()
+	payload := tstNewRepositoryPayload()
 	hasSentNotification(t, "receivesCreate", "new-repository.api", types.CreatedEvent, types.RepositoryPayload, &payload)
 	hasSentNotification(t, "receivesRepository", "new-repository.api", types.CreatedEvent, types.RepositoryPayload, &payload)
 }
@@ -339,7 +339,7 @@ func TestPUTRepository_Success(t *testing.T) {
 	require.Equal(t, tstRepositoryExpectedKafka("karma-wrapper.helm-chart"), string(actual))
 
 	docs.Then("And a notification has been sent to all matching owners")
-	payload := tstPutRepositoryPayload()
+	payload := tstNewRepositoryPayload()
 	hasSentNotification(t, "receivesModified", "karma-wrapper.helm-chart", types.ModifiedEvent, types.RepositoryPayload, &payload)
 	hasSentNotification(t, "receivesRepository", "karma-wrapper.helm-chart", types.ModifiedEvent, types.RepositoryPayload, &payload)
 }
@@ -627,7 +627,7 @@ func TestPATCHRepository_Success(t *testing.T) {
 	require.Equal(t, tstRepositoryExpectedKafka("karma-wrapper.helm-chart"), string(actual))
 
 	docs.Then("And a notification has been sent to all matching owners")
-	payload := tstPatchRepositoryPayload()
+	payload := tstUpdatedRepositoryPayload()
 	hasSentNotification(t, "receivesModified", "karma-wrapper.helm-chart", types.ModifiedEvent, types.RepositoryPayload, &payload)
 	hasSentNotification(t, "receivesRepository", "karma-wrapper.helm-chart", types.ModifiedEvent, types.RepositoryPayload, &payload)
 }

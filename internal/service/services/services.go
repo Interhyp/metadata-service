@@ -6,10 +6,7 @@ import (
 	"fmt"
 	"github.com/Interhyp/metadata-service/api"
 	"github.com/Interhyp/metadata-service/internal/acorn/config"
-	"github.com/Interhyp/metadata-service/internal/acorn/repository"
 	"github.com/Interhyp/metadata-service/internal/acorn/service"
-	"github.com/Interhyp/metadata-service/internal/repository/notifier"
-	"github.com/Interhyp/metadata-service/internal/types"
 	"strings"
 
 	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
@@ -24,7 +21,6 @@ type Impl struct {
 	Updater             service.Updater
 	Owner               service.Owners
 	Repositories        service.Repositories
-	Notifier            repository.Notifier
 
 	Timestamp librepo.Timestamp
 }
@@ -97,10 +93,7 @@ func (s *Impl) CreateService(ctx context.Context, serviceName string, serviceCre
 		if err != nil {
 			return err
 		}
-		err = s.Notifier.PublishCreation(ctx, serviceName, notifier.AsPayload(serviceDto))
-		if err != nil {
-			s.Logging.Logger().Ctx(ctx).Warn().WithErr(err).Printf("error publishing creation of service %s", serviceName)
-		}
+
 		result = serviceWritten
 		return nil
 	})
@@ -187,10 +180,7 @@ func (s *Impl) UpdateService(ctx context.Context, serviceName string, serviceDto
 		if err != nil {
 			return err
 		}
-		err = s.Notifier.PublishModification(ctx, serviceName, notifier.AsPayload(serviceDto))
-		if err != nil {
-			s.Logging.Logger().Ctx(ctx).Warn().WithErr(err).Printf("error publishing modification of service %s", serviceName)
-		}
+
 		result = serviceWritten
 		return nil
 	})
@@ -274,10 +264,7 @@ func (s *Impl) PatchService(ctx context.Context, serviceName string, servicePatc
 		if err != nil {
 			return err
 		}
-		err = s.Notifier.PublishModification(ctx, serviceName, notifier.AsPayload(serviceDto))
-		if err != nil {
-			s.Logging.Logger().Ctx(ctx).Warn().WithErr(err).Printf("error publishing modification of service %s", serviceName)
-		}
+
 		result = serviceWritten
 		return nil
 	})
@@ -411,8 +398,6 @@ func (s *Impl) DeleteService(ctx context.Context, serviceName string, deletionIn
 		if err != nil {
 			return err
 		}
-
-		s.Notifier.PublishDeletion(ctx, serviceName, types.ServicePayload)
 
 		return nil
 	})

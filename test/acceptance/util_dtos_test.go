@@ -59,27 +59,16 @@ func tstOwnerUnchangedPatch() openapi.OwnerPatchDto {
 	}
 }
 
-func tstCreateOwnerPayload() openapi.NotificationPayload {
-	return notifier.AsPayload(openapi.OwnerDto{
-		Contact:            "somebody@some-organisation.com",
-		ProductOwner:       p("kschlangenheld"),
-		DefaultJiraProject: p("JIRA"),
-		JiraIssue:          "ISSUE-2345",
-	})
-}
-func tstPutOwnerPayload() openapi.NotificationPayload {
-	return notifier.AsPayload(tstOwner())
+func tstNewOwnerPayload() openapi.NotificationPayload {
+	owner := tstOwner()
+	owner.CommitHash = "6c8ac2c35791edf9979623c717a2430000000000"
+	return notifier.AsPayload(owner)
 }
 
-func tstPatchOwnerPayload() openapi.NotificationPayload {
-	return notifier.AsPayload(openapi.OwnerDto{
-		Contact:            "somebody@some-organisation.com",
-		ProductOwner:       p("kschlangenheldt"),
-		DefaultJiraProject: p("ISSUE"),
-		JiraIssue:          "ISSUE-2345",
-		TimeStamp:          "2022-11-06T18:14:10Z",
-		CommitHash:         "6c8ac2c35791edf9979623c717a243fc53400000",
-	})
+func tstUpdatedOwnerPayload() openapi.NotificationPayload {
+	owner := tstOwnerUnchanged()
+	owner.CommitHash = "6c8ac2c35791edf9979623c717a2430000000000"
+	return notifier.AsPayload(owner)
 }
 
 func tstOwnerExpectedYaml() string {
@@ -219,19 +208,16 @@ func tstServiceMovedExpectedKafka(name string) string {
 		`"commitHash":"6c8ac2c35791edf9979623c717a2430000000000"}`
 }
 
-func tstPostServicePayload(name string) openapi.NotificationPayload {
-	repo := tstService(name)
-	repo.CommitHash = ""
-	repo.TimeStamp = ""
-	return notifier.AsPayload(repo)
+func tstNewServicePayload(name string) openapi.NotificationPayload {
+	service := tstService(name)
+	service.CommitHash = "6c8ac2c35791edf9979623c717a2430000000000"
+	return notifier.AsPayload(service)
 }
 
-func tstPutServicePayload(name string) openapi.NotificationPayload {
-	return notifier.AsPayload(tstService(name))
-}
-
-func tstPatchServicePayload(name string) openapi.NotificationPayload {
-	return notifier.AsPayload(tstService(name))
+func tstUpdatedServicePayload(name string) openapi.NotificationPayload {
+	service := tstService(name)
+	service.CommitHash = "6c8ac2c35791edf9979623c717a2430000000000"
+	return notifier.AsPayload(service)
 }
 
 // repository
@@ -352,17 +338,14 @@ func tstDelete() openapi.DeletionDto {
 	}
 }
 
-func tstPostRepositoryPayload() openapi.NotificationPayload {
+func tstNewRepositoryPayload() openapi.NotificationPayload {
 	repo := tstRepository()
-	repo.CommitHash = ""
-	repo.TimeStamp = ""
+	repo.CommitHash = "6c8ac2c35791edf9979623c717a2430000000000"
 	return notifier.AsPayload(repo)
 }
 
-func tstPutRepositoryPayload() openapi.NotificationPayload {
-	return notifier.AsPayload(tstRepository())
-}
-
-func tstPatchRepositoryPayload() openapi.NotificationPayload {
-	return notifier.AsPayload(tstRepositoryUnchanged())
+func tstUpdatedRepositoryPayload() openapi.NotificationPayload {
+	repo := tstRepositoryUnchanged()
+	repo.CommitHash = "6c8ac2c35791edf9979623c717a2430000000000"
+	return notifier.AsPayload(repo)
 }

@@ -4,10 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/Interhyp/metadata-service/api"
-	"github.com/Interhyp/metadata-service/internal/acorn/repository"
 	"github.com/Interhyp/metadata-service/internal/acorn/service"
-	"github.com/Interhyp/metadata-service/internal/repository/notifier"
-	"github.com/Interhyp/metadata-service/internal/types"
 	"strings"
 
 	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
@@ -19,7 +16,6 @@ type Impl struct {
 	Logging       librepo.Logging
 	Cache         service.Cache
 	Updater       service.Updater
-	Notifier      repository.Notifier
 
 	Timestamp librepo.Timestamp
 }
@@ -84,7 +80,6 @@ func (s *Impl) CreateOwner(ctx context.Context, ownerAlias string, ownerCreateDt
 		if err != nil {
 			return err
 		}
-		err = s.Notifier.PublishCreation(ctx, ownerAlias, notifier.AsPayload(ownerDto))
 		if err != nil {
 			s.Logging.Logger().Ctx(ctx).Warn().WithErr(err).Printf("error publishing creation of owner %s", ownerAlias)
 		}
@@ -149,10 +144,6 @@ func (s *Impl) UpdateOwner(ctx context.Context, ownerAlias string, ownerDto open
 		if err != nil {
 			return err
 		}
-		err = s.Notifier.PublishModification(ctx, ownerAlias, notifier.AsPayload(ownerDto))
-		if err != nil {
-			s.Logging.Logger().Ctx(ctx).Warn().WithErr(err).Printf("error publishing modification of owner %s", ownerAlias)
-		}
 		result = ownerWritten
 		return nil
 	})
@@ -210,10 +201,6 @@ func (s *Impl) PatchOwner(ctx context.Context, ownerAlias string, ownerPatchDto 
 		ownerWritten, err := s.Updater.WriteOwner(subCtx, ownerAlias, ownerDto)
 		if err != nil {
 			return err
-		}
-		err = s.Notifier.PublishModification(ctx, ownerAlias, notifier.AsPayload(ownerDto))
-		if err != nil {
-			s.Logging.Logger().Ctx(ctx).Warn().WithErr(err).Printf("error publishing modification of owner %s", ownerAlias)
 		}
 
 		result = ownerWritten
@@ -315,7 +302,6 @@ func (s *Impl) DeleteOwner(ctx context.Context, ownerAlias string, deletionInfo 
 		if err != nil {
 			return err
 		}
-		s.Notifier.PublishDeletion(ctx, ownerAlias, types.OwnerPayload)
 
 		return nil
 	})

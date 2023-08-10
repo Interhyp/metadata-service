@@ -86,7 +86,7 @@ func TestPOSTService_Success(t *testing.T) {
 	require.Equal(t, tstServiceExpectedKafka("whatever"), string(actual))
 
 	docs.Then("And a notification has been sent to all matching owners")
-	payload := tstPostServicePayload("whatever")
+	payload := tstNewServicePayload("whatever")
 	hasSentNotification(t, "receivesCreate", "whatever", types.CreatedEvent, types.ServicePayload, &payload)
 	hasSentNotification(t, "receivesService", "whatever", types.CreatedEvent, types.ServicePayload, &payload)
 }
@@ -365,7 +365,7 @@ func TestPUTService_Success(t *testing.T) {
 	require.Equal(t, tstServiceExpectedKafka("some-service-backend"), string(actual))
 
 	docs.Then("And a notification has been sent to all matching owners")
-	payload := tstPutServicePayload("some-service-backend")
+	payload := tstNewServicePayload("some-service-backend")
 	hasSentNotification(t, "receivesModified", "some-service-backend", types.ModifiedEvent, types.ServicePayload, &payload)
 	hasSentNotification(t, "receivesService", "some-service-backend", types.ModifiedEvent, types.ServicePayload, &payload)
 }
@@ -709,7 +709,7 @@ func TestPATCHService_Success(t *testing.T) {
 	require.Equal(t, tstServiceExpectedKafka("some-service-backend"), string(actual))
 
 	docs.Then("And a notification has been sent to all matching owners")
-	payload := tstPatchServicePayload("some-service-backend")
+	payload := tstUpdatedServicePayload("some-service-backend")
 	hasSentNotification(t, "receivesModified", "some-service-backend", types.ModifiedEvent, types.ServicePayload, &payload)
 	hasSentNotification(t, "receivesService", "some-service-backend", types.ModifiedEvent, types.ServicePayload, &payload)
 }

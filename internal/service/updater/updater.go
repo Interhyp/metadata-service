@@ -18,6 +18,7 @@ type Impl struct {
 	CustomConfiguration config.CustomConfiguration
 	Logging             librepo.Logging
 	Kafka               repository.Kafka
+	Notifier            repository.Notifier
 	Mapper              service.Mapper
 	Cache               service.Cache
 

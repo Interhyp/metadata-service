@@ -6,6 +6,8 @@ import (
 	"github.com/Interhyp/metadata-service/api"
 	"github.com/Interhyp/metadata-service/internal/acorn/errors/nochangeserror"
 	"github.com/Interhyp/metadata-service/internal/acorn/repository"
+	"github.com/Interhyp/metadata-service/internal/repository/notifier"
+	"github.com/Interhyp/metadata-service/internal/types"
 )
 
 // --- business logic ---
@@ -135,6 +137,7 @@ func (s *Impl) updateIndividualOwners(ctx context.Context, ownerAliasesMap map[s
 		if activity == removeExisting {
 			s.Logging.Logger().Ctx(ctx).Info().Printf("owner %s is no longer current, removing it from the cache", alias)
 			s.Cache.DeleteOwner(ctx, alias)
+			s.Notifier.PublishDeletion(ctx, alias, types.OwnerPayload)
 		} else if activity == addNew {
 			owner, err := s.Mapper.GetOwner(ctx, alias)
 			if err != nil {
@@ -145,6 +148,10 @@ func (s *Impl) updateIndividualOwners(ctx context.Context, ownerAliasesMap map[s
 				s.totalErrorCounter.Inc()
 			} else {
 				s.Cache.PutOwner(ctx, alias, owner)
+				err = s.Notifier.PublishCreation(ctx, alias, notifier.AsPayload(owner))
+				if err != nil {
+					s.Logging.Logger().Ctx(ctx).Warn().WithErr(err).Printf("error publishing creation of owner %s", alias)
+				}
 				s.Logging.Logger().Ctx(ctx).Info().Printf("new owner %s added to cache", alias)
 			}
 		} else {
@@ -157,6 +164,10 @@ func (s *Impl) updateIndividualOwners(ctx context.Context, ownerAliasesMap map[s
 				s.totalErrorCounter.Inc()
 			} else {
 				s.Cache.PutOwner(ctx, alias, owner)
+				err = s.Notifier.PublishModification(ctx, alias, notifier.AsPayload(owner))
+				if err != nil {
+					s.Logging.Logger().Ctx(ctx).Warn().WithErr(err).Printf("error publishing modification of owner %s", alias)
+				}
 				s.Logging.Logger().Ctx(ctx).Debug().Printf("owner %s updated in cache", alias)
 			}
 		}
