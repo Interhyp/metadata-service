@@ -2,6 +2,7 @@ package acceptance
 
 import (
 	"context"
+	"github.com/Interhyp/metadata-service/api"
 	application2 "github.com/Interhyp/metadata-service/internal/acorn/application"
 	"github.com/Interhyp/metadata-service/internal/acorn/repository"
 	"github.com/Interhyp/metadata-service/internal/acorn/service"
@@ -114,7 +115,7 @@ func tstSetup(configPath string) error {
 	registry.Setup()
 
 	for identifier, _ := range notifierImpl.Clients {
-		notifierImpl.Clients[identifier] = &notifiermock.NotifierClientMock{}
+		notifierImpl.Clients[identifier] = &notifiermock.NotifierClientMock{SentNotifications: make([]openapi.Notification, 0)}
 	}
 
 	tstSetupHttpTestServer()

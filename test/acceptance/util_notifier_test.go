@@ -11,11 +11,12 @@ import (
 func hasSentNotification(t *testing.T, clientIdentifier string, name string, event types.NotificationEventType, payloadType types.NotificationPayloadType, payload *openapi.NotificationPayload) {
 	client := notifierImpl.Clients[clientIdentifier]
 	mockClient := client.(*notifiermock.NotifierClientMock)
-
-	require.NotNil(t, mockClient.SentNotification)
-	sent := *mockClient.SentNotification
-	require.Equal(t, name, sent.Name)
-	require.Equal(t, event.String(), sent.Event)
-	require.Equal(t, payloadType.String(), sent.Type)
-	require.Equal(t, payload, sent.Payload)
+	expected := openapi.Notification{
+		Name:    name,
+		Event:   event.String(),
+		Type:    payloadType.String(),
+		Payload: payload,
+	}
+	notifications := mockClient.SentNotifications
+	require.Contains(t, notifications, expected)
 }

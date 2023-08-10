@@ -83,7 +83,7 @@ func TestPOSTOwner_Success(t *testing.T) {
 	require.Equal(t, tstOwnerExpectedKafka("post-owner-success"), string(actual))
 
 	docs.Then("And a notification has been sent to all matching consumers")
-	payload := tstCreateOwnerPayload()
+	payload := tstNewOwnerPayload()
 	hasSentNotification(t, "receivesCreate", "post-owner-success", types.CreatedEvent, types.OwnerPayload, &payload)
 	hasSentNotification(t, "receivesOwner", "post-owner-success", types.CreatedEvent, types.OwnerPayload, &payload)
 }
@@ -286,7 +286,7 @@ func TestPUTOwner_Success(t *testing.T) {
 	require.Equal(t, tstOwnerExpectedKafka("some-owner"), string(actual))
 
 	docs.Then("And a notification has been sent to all matching consumers")
-	payload := tstPutOwnerPayload()
+	payload := tstNewOwnerPayload()
 	hasSentNotification(t, "receivesModified", "some-owner", types.ModifiedEvent, types.OwnerPayload, &payload)
 	hasSentNotification(t, "receivesOwner", "some-owner", types.ModifiedEvent, types.OwnerPayload, &payload)
 }
@@ -519,7 +519,7 @@ func TestPATCHOwner_Success(t *testing.T) {
 	require.Equal(t, tstOwnerExpectedKafka("some-owner"), string(actual))
 
 	docs.Then("And a notification has been sent to all matching consumers")
-	payload := tstPatchOwnerPayload()
+	payload := tstUpdatedOwnerPayload()
 	hasSentNotification(t, "receivesModified", "some-owner", types.ModifiedEvent, types.OwnerPayload, &payload)
 	hasSentNotification(t, "receivesOwner", "some-owner", types.ModifiedEvent, types.OwnerPayload, &payload)
 }

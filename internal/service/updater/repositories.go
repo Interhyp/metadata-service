@@ -6,6 +6,8 @@ import (
 	"github.com/Interhyp/metadata-service/api"
 	"github.com/Interhyp/metadata-service/internal/acorn/errors/nochangeserror"
 	"github.com/Interhyp/metadata-service/internal/acorn/repository"
+	"github.com/Interhyp/metadata-service/internal/repository/notifier"
+	"github.com/Interhyp/metadata-service/internal/types"
 	"github.com/StephanHCB/go-backend-service-common/api/apierrors"
 )
 
@@ -157,6 +159,7 @@ func (s *Impl) updateIndividualRepositories(ctx context.Context, repositoryKeysM
 		if activity == removeExisting {
 			s.Logging.Logger().Ctx(ctx).Info().Printf("repository %s is no longer current, removing it from the cache", key)
 			s.Cache.DeleteRepository(ctx, key)
+			s.Notifier.PublishDeletion(ctx, key, types.RepositoryPayload)
 		} else {
 			isNew := activity == addNew
 			err := s.updateIndividualRepository(ctx, key, isNew)
@@ -194,10 +197,22 @@ func (s *Impl) updateIndividualRepository(ctx context.Context, key string, isNew
 		s.repoErrorCounter.WithLabelValues(key).Inc()
 		return err
 	} else {
+		cached, cacheErr := s.Cache.GetRepository(ctx, key)
 		s.Cache.PutRepository(ctx, key, repository)
 		if isNew {
+			err = s.Notifier.PublishCreation(ctx, key, notifier.AsPayload(repository))
+			if err != nil {
+				s.Logging.Logger().Ctx(ctx).Warn().WithErr(err).Printf("error publishing creation of repository %s", key)
+			}
 			s.Logging.Logger().Ctx(ctx).Info().Printf("new repository %s added to cache", key)
 		} else {
+			if cacheErr == nil && !equalExceptCacheInfo(cached, repository) {
+				err = s.Notifier.PublishModification(ctx, key, notifier.AsPayload(repository))
+				if err != nil {
+					s.Logging.Logger().Ctx(ctx).Warn().WithErr(err).Printf("error publishing modification of repository %s", key)
+				}
+			}
+
 			s.Logging.Logger().Ctx(ctx).Debug().Printf("repository %s updated in cache", key)
 		}
 	}

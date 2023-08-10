@@ -135,7 +135,7 @@ func TestPOSTRepository_Success(t *testing.T) {
 	require.Equal(t, tstRepositoryExpectedKafka("new-repository.api"), string(actual))
 
 	docs.Then("And a notification has been sent to all matching owners")
-	payload := tstPostRepositoryPayload()
+	payload := tstNewRepositoryPayload()
 	hasSentNotification(t, "receivesCreate", "new-repository.api", types.CreatedEvent, types.RepositoryPayload, &payload)
 	hasSentNotification(t, "receivesRepository", "new-repository.api", types.CreatedEvent, types.RepositoryPayload, &payload)
 }
@@ -339,7 +339,7 @@ func TestPUTRepository_Success(t *testing.T) {
 	require.Equal(t, tstRepositoryExpectedKafka("karma-wrapper.helm-chart"), string(actual))
 
 	docs.Then("And a notification has been sent to all matching owners")
-	payload := tstPutRepositoryPayload()
+	payload := tstNewRepositoryPayload()
 	hasSentNotification(t, "receivesModified", "karma-wrapper.helm-chart", types.ModifiedEvent, types.RepositoryPayload, &payload)
 	hasSentNotification(t, "receivesRepository", "karma-wrapper.helm-chart", types.ModifiedEvent, types.RepositoryPayload, &payload)
 }
@@ -627,7 +627,7 @@ func TestPATCHRepository_Success(t *testing.T) {
 	require.Equal(t, tstRepositoryExpectedKafka("karma-wrapper.helm-chart"), string(actual))
 
 	docs.Then("And a notification has been sent to all matching owners")
-	payload := tstPatchRepositoryPayload()
+	payload := tstUpdatedRepositoryPayload()
 	hasSentNotification(t, "receivesModified", "karma-wrapper.helm-chart", types.ModifiedEvent, types.RepositoryPayload, &payload)
 	hasSentNotification(t, "receivesRepository", "karma-wrapper.helm-chart", types.ModifiedEvent, types.RepositoryPayload, &payload)
 }
@@ -837,7 +837,7 @@ func TestPATCHRepository_ChangeOwner(t *testing.T) {
 	token := tstValidAdminToken()
 
 	docs.When("When they perform a valid patch of an existing repository that changes its owner")
-	body := tstRepositoryPatch()
+	body := tstRepositoryUnchangedPatch()
 	body.Owner = p("deleteme")
 	response, err := tstPerformPatch("/rest/api/v1/repositories/karma-wrapper.helm-chart", token, &body)
 
@@ -847,7 +847,7 @@ func TestPATCHRepository_ChangeOwner(t *testing.T) {
 	docs.Then("And the repository with its repositories has been correctly moved, committed and pushed")
 	filename1old := "owners/some-owner/repositories/karma-wrapper.helm-chart.yaml"
 	filename1 := "owners/deleteme/repositories/karma-wrapper.helm-chart.yaml"
-	require.Equal(t, tstRepositoryExpectedYamlKarmaWrapper(), metadataImpl.ReadContents(filename1))
+	require.Equal(t, tstRepositoryUnchangedExpectedYaml(), metadataImpl.ReadContents(filename1))
 	require.True(t, metadataImpl.FilesCommitted[filename1])
 	require.True(t, metadataImpl.FilesCommitted[filename1old])
 	require.True(t, metadataImpl.Pushed)

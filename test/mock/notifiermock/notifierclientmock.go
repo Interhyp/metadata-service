@@ -6,7 +6,7 @@ import (
 )
 
 type NotifierClientMock struct {
-	SentNotification *openapi.Notification
+	SentNotifications []openapi.Notification
 }
 
 func (n *NotifierClientMock) Setup(clientIdentifier string, url string) error {
@@ -14,9 +14,9 @@ func (n *NotifierClientMock) Setup(clientIdentifier string, url string) error {
 }
 
 func (n *NotifierClientMock) Send(ctx context.Context, notification openapi.Notification) {
-	n.SentNotification = &notification
+	n.SentNotifications = append(n.SentNotifications, notification)
 }
 
 func (n *NotifierClientMock) Reset() {
-	n.SentNotification = nil
+	n.SentNotifications = make([]openapi.Notification, 0)
 }

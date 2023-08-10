@@ -5,11 +5,8 @@ import (
 	"fmt"
 	"github.com/Interhyp/metadata-service/api"
 	"github.com/Interhyp/metadata-service/internal/acorn/config"
-	"github.com/Interhyp/metadata-service/internal/acorn/repository"
 	"github.com/Interhyp/metadata-service/internal/acorn/service"
-	"github.com/Interhyp/metadata-service/internal/repository/notifier"
 	"github.com/Interhyp/metadata-service/internal/service/util"
-	"github.com/Interhyp/metadata-service/internal/types"
 	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
 	"github.com/StephanHCB/go-backend-service-common/api/apierrors"
 	"net/url"
@@ -22,7 +19,6 @@ type Impl struct {
 	Cache         service.Cache
 	Updater       service.Updater
 	Owners        service.Owners
-	Notifier      repository.Notifier
 
 	CustomConfiguration config.CustomConfiguration
 	Timestamp           librepo.Timestamp
@@ -181,10 +177,7 @@ func (s *Impl) CreateRepository(ctx context.Context, key string, repositoryCreat
 		if err != nil {
 			return err
 		}
-		err = s.Notifier.PublishCreation(ctx, key, notifier.AsPayload(repositoryDto))
-		if err != nil {
-			s.Logging.Logger().Ctx(ctx).Warn().WithErr(err).Printf("error publishing creation of repository %s", key)
-		}
+
 		result = repositoryWritten
 		return nil
 	})
@@ -255,10 +248,6 @@ func (s *Impl) UpdateRepository(ctx context.Context, key string, repositoryDto o
 		repositoryWritten, err := s.Updater.WriteRepository(subCtx, key, repositoryDto)
 		if err != nil {
 			return err
-		}
-		err = s.Notifier.PublishModification(ctx, key, notifier.AsPayload(repositoryDto))
-		if err != nil {
-			s.Logging.Logger().Ctx(ctx).Warn().WithErr(err).Printf("error publishing modification of repository %s", key)
 		}
 
 		result = repositoryWritten
@@ -332,10 +321,7 @@ func (s *Impl) PatchRepository(ctx context.Context, key string, repositoryPatchD
 		if err != nil {
 			return err
 		}
-		err = s.Notifier.PublishModification(ctx, key, notifier.AsPayload(repositoryDto))
-		if err != nil {
-			s.Logging.Logger().Ctx(ctx).Warn().WithErr(err).Printf("error publishing modification of repository %s", key)
-		}
+		
 		result = repositoryWritten
 		return nil
 	})
@@ -538,7 +524,6 @@ func (s *Impl) DeleteRepository(ctx context.Context, key string, deletionInfo op
 		if err != nil {
 			return err
 		}
-		s.Notifier.PublishDeletion(ctx, key, types.RepositoryPayload)
 
 		return nil
 	})
