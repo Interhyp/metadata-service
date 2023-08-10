@@ -32,8 +32,8 @@ var (
 	_ repository.Notifier = (*Impl)(nil)
 )
 
-func AsPayload(dto interface{}) openapi.NotificationPayload {
-	switch cast := dto.(type) {
+func AsPayload[T openapi.OwnerDto | openapi.ServiceDto | openapi.RepositoryDto](dto T) openapi.NotificationPayload {
+	switch cast := any(dto).(type) {
 	case openapi.OwnerDto:
 		return openapi.NotificationPayload{
 			Owner: &cast,
@@ -131,9 +131,9 @@ func (r *Impl) publish(ctx context.Context,
 				asyncCtx, timeoutCtxCancel := context.WithTimeout(copyCtx, webhookContextTimeout)
 
 				go func(withClient notifierclient.NotifierClient) {
-					defer r.recoverPanic(asyncCtx)
 					defer cancel()
 					defer timeoutCtxCancel()
+					defer r.recoverPanic(asyncCtx)
 					withClient.Send(asyncCtx, notification)
 				}(client)
 			}
