@@ -163,10 +163,14 @@ func (s *Impl) updateIndividualOwners(ctx context.Context, ownerAliasesMap map[s
 				s.Logging.Logger().Ctx(ctx).Warn().Printf("failed to get updated info for owner %s from metadata - owner may be outdated until next run: %s", alias, err.Error())
 				s.totalErrorCounter.Inc()
 			} else {
+				cached, cacheErr := s.Cache.GetOwner(ctx, alias)
+
 				s.Cache.PutOwner(ctx, alias, owner)
-				err = s.Notifier.PublishModification(ctx, alias, notifier.AsPayload(owner))
-				if err != nil {
-					s.Logging.Logger().Ctx(ctx).Warn().WithErr(err).Printf("error publishing modification of owner %s", alias)
+				if cacheErr == nil && !equalExceptCacheInfo(cached, owner) {
+					err = s.Notifier.PublishModification(ctx, alias, notifier.AsPayload(owner))
+					if err != nil {
+						s.Logging.Logger().Ctx(ctx).Warn().WithErr(err).Printf("error publishing modification of owner %s", alias)
+					}
 				}
 				s.Logging.Logger().Ctx(ctx).Debug().Printf("owner %s updated in cache", alias)
 			}

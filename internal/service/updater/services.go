@@ -212,6 +212,7 @@ func (s *Impl) updateIndividualService(ctx context.Context, name string, isNew b
 		s.serviceErrorCounter.WithLabelValues(name).Inc()
 		return err
 	} else {
+		cached, cacheErr := s.Cache.GetService(ctx, name)
 		s.Cache.PutService(ctx, name, service)
 		if isNew {
 			err = s.Notifier.PublishCreation(ctx, name, notifier.AsPayload(service))
@@ -220,10 +221,13 @@ func (s *Impl) updateIndividualService(ctx context.Context, name string, isNew b
 			}
 			s.Logging.Logger().Ctx(ctx).Info().Printf("new service %s added to cache", name)
 		} else {
-			err = s.Notifier.PublishModification(ctx, name, notifier.AsPayload(service))
-			if err != nil {
-				s.Logging.Logger().Ctx(ctx).Warn().WithErr(err).Printf("error publishing modification of service %s", service)
+			if cacheErr == nil && !equalExceptCacheInfo(cached, service) {
+				err = s.Notifier.PublishModification(ctx, name, notifier.AsPayload(service))
+				if err != nil {
+					s.Logging.Logger().Ctx(ctx).Warn().WithErr(err).Printf("error publishing modification of service %s", service)
+				}
 			}
+
 			s.Logging.Logger().Ctx(ctx).Debug().Printf("service %s updated in cache", name)
 		}
 	}

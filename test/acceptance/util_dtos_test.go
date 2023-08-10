@@ -32,7 +32,7 @@ func tstOwner() openapi.OwnerDto {
 
 func tstOwnerPatch() openapi.OwnerPatchDto {
 	return openapi.OwnerPatchDto{
-		Contact:    p("somebody@some-organisation.com"),
+		Contact:    p("changed@some-organisation.com"),
 		TimeStamp:  "2022-11-06T18:14:10Z",
 		CommitHash: "6c8ac2c35791edf9979623c717a243fc53400000",
 		JiraIssue:  "ISSUE-2345",
@@ -68,6 +68,7 @@ func tstNewOwnerPayload() openapi.NotificationPayload {
 func tstUpdatedOwnerPayload() openapi.NotificationPayload {
 	owner := tstOwnerUnchanged()
 	owner.CommitHash = "6c8ac2c35791edf9979623c717a2430000000000"
+	owner.Contact = "changed@some-organisation.com"
 	return notifier.AsPayload(owner)
 }
 
@@ -86,7 +87,7 @@ defaultJiraProject: ISSUE
 }
 
 func tstOwnerPatchExpectedYaml() string {
-	return `contact: somebody@some-organisation.com
+	return `contact: changed@some-organisation.com
 productOwner: kschlangenheldt
 defaultJiraProject: ISSUE
 `
@@ -271,6 +272,7 @@ func tstRepositoryUnchanged() openapi.RepositoryDto {
 
 func tstRepositoryPatch() openapi.RepositoryPatchDto {
 	return openapi.RepositoryPatchDto{
+		Mainline:   p("main"),
 		TimeStamp:  "2022-11-06T18:14:10Z",
 		CommitHash: "6c8ac2c35791edf9979623c717a243fc53400000",
 		JiraIssue:  "ISSUE-2345",
@@ -314,7 +316,7 @@ configuration:
 
 func tstRepositoryExpectedYamlKarmaWrapper() string {
 	return `url: ssh://git@bitbucket.some-organisation.com:7999/helm/karma-wrapper.git
-mainline: master
+mainline: main
 unittest: false
 `
 }
@@ -346,6 +348,7 @@ func tstNewRepositoryPayload() openapi.NotificationPayload {
 
 func tstUpdatedRepositoryPayload() openapi.NotificationPayload {
 	repo := tstRepositoryUnchanged()
+	repo.Mainline = "main"
 	repo.CommitHash = "6c8ac2c35791edf9979623c717a2430000000000"
 	return notifier.AsPayload(repo)
 }

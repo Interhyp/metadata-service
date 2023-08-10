@@ -1,6 +1,6 @@
 {
   "commitHash": "6c8ac2c35791edf9979623c717a2430000000000",
-  "contact": "somebody@some-organisation.com",
+  "contact": "changed@some-organisation.com",
   "defaultJiraProject": "ISSUE",
   "jiraIssue": "ISSUE-2345",
   "productOwner": "kschlangenheldt",

@@ -1,7 +1,7 @@
 {
   "commitHash": "6c8ac2c35791edf9979623c717a2430000000000",
   "jiraIssue": "ISSUE-2345",
-  "mainline": "master",
+  "mainline": "main",
   "owner": "some-owner",
   "timeStamp": "2022-11-06T18:14:10Z",
   "unittest": false,

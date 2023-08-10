@@ -2,6 +2,7 @@ package updater
 
 import (
 	"context"
+	"github.com/Interhyp/metadata-service/api"
 	"github.com/Interhyp/metadata-service/internal/acorn/config"
 	"github.com/Interhyp/metadata-service/internal/acorn/repository"
 	"github.com/Interhyp/metadata-service/internal/acorn/service"
@@ -9,6 +10,7 @@ import (
 	"github.com/StephanHCB/go-backend-service-common/web/middleware/requestid"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/rs/zerolog/log"
+	"reflect"
 	"sync"
 	"time"
 )
@@ -214,4 +216,17 @@ func (s *Impl) kafkaReceiverCallback(event repository.UpdateEvent) {
 		// TODO react to timeout and log that it was a timeout
 		s.Logging.Logger().Ctx(ctx).Warn().WithErr(err).Print("failed to process incoming kafka event")
 	}
+}
+
+func equalExceptCacheInfo[T openapi.ServiceDto | openapi.OwnerDto | openapi.RepositoryDto](first T, second T) bool {
+	clean := func(in *T) T {
+		cleaned := new(T)
+		*cleaned = *in
+		valueOfCleaned := reflect.ValueOf(cleaned).Elem()
+		valueOfCleaned.FieldByName("TimeStamp").SetString("")
+		valueOfCleaned.FieldByName("CommitHash").SetString("")
+		valueOfCleaned.FieldByName("JiraIssue").SetString("")
+		return *cleaned
+	}
+	return reflect.DeepEqual(clean(&first), clean(&second))
 }

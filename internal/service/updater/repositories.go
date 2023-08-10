@@ -197,6 +197,7 @@ func (s *Impl) updateIndividualRepository(ctx context.Context, key string, isNew
 		s.repoErrorCounter.WithLabelValues(key).Inc()
 		return err
 	} else {
+		cached, cacheErr := s.Cache.GetRepository(ctx, key)
 		s.Cache.PutRepository(ctx, key, repository)
 		if isNew {
 			err = s.Notifier.PublishCreation(ctx, key, notifier.AsPayload(repository))
@@ -205,10 +206,13 @@ func (s *Impl) updateIndividualRepository(ctx context.Context, key string, isNew
 			}
 			s.Logging.Logger().Ctx(ctx).Info().Printf("new repository %s added to cache", key)
 		} else {
-			err = s.Notifier.PublishModification(ctx, key, notifier.AsPayload(repository))
-			if err != nil {
-				s.Logging.Logger().Ctx(ctx).Warn().WithErr(err).Printf("error publishing modification of repository %s", key)
+			if cacheErr == nil && !equalExceptCacheInfo(cached, repository) {
+				err = s.Notifier.PublishModification(ctx, key, notifier.AsPayload(repository))
+				if err != nil {
+					s.Logging.Logger().Ctx(ctx).Warn().WithErr(err).Printf("error publishing modification of repository %s", key)
+				}
 			}
+
 			s.Logging.Logger().Ctx(ctx).Debug().Printf("repository %s updated in cache", key)
 		}
 	}
