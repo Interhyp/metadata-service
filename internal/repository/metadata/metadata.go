@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	"github.com/StephanHCB/go-backend-service-common/web/middleware/security"
 	"io"
 	"os"
 	"strings"
@@ -15,7 +16,6 @@ import (
 	"github.com/Interhyp/metadata-service/internal/acorn/errors/nochangeserror"
 	"github.com/Interhyp/metadata-service/internal/acorn/repository"
 	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
-	"github.com/StephanHCB/go-backend-service-common/web/middleware/security"
 	"github.com/go-git/go-billy/v5/memfs"
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
@@ -328,6 +328,11 @@ func (r *Impl) Commit(ctx context.Context, message string) (repository.CommitInf
 
 	commitTimestamp := r.Now()
 	commit, err := tree.Commit(message, &git.CommitOptions{
+		Committer: &object.Signature{
+			Name:  r.CustomConfiguration.GitCommitterName(),
+			Email: r.CustomConfiguration.GitCommitterEmail(),
+			When:  commitTimestamp,
+		},
 		Author: &object.Signature{
 			Name:  security.Name(ctx),
 			Email: security.Email(ctx),
