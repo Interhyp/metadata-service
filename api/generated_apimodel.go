@@ -232,8 +232,6 @@ type ServiceCreateDto struct {
 	OperationType *string `yaml:"operationType,omitempty" json:"operationType,omitempty"`
 	// The value defines if the service is available from the internet and the time period in which security holes must be processed.
 	InternetExposed *bool `yaml:"internetExposed,omitempty" json:"internetExposed,omitempty"`
-	// The security scans that are required for this service. Optional, SAST and/or SCA.
-	RequiredScans []string `yaml:"requiredScans,omitempty" json:"requiredScans,omitempty"`
 	// The jira issue to use for committing a change, or the last jira issue used.
 	JiraIssue string `yaml:"-" json:"jiraIssue"`
 }
@@ -255,8 +253,6 @@ type ServiceDto struct {
 	OperationType *string `yaml:"operationType,omitempty" json:"operationType,omitempty"`
 	// The value defines if the service is available from the internet and the time period in which security holes must be processed.
 	InternetExposed *bool `yaml:"internetExposed,omitempty" json:"internetExposed,omitempty"`
-	// The security scans that are required for this service. Optional, SAST and/or SCA.
-	RequiredScans []string `yaml:"requiredScans,omitempty" json:"requiredScans,omitempty"`
 	// ISO-8601 UTC date time at which this information was originally committed. When sending an update, include the original timestamp you got so we can detect concurrent updates.
 	TimeStamp string `yaml:"-" json:"timeStamp"`
 	// The git commit hash this information was originally committed under. When sending an update, include the original commitHash you got so we can detect concurrent updates.
@@ -290,8 +286,6 @@ type ServicePatchDto struct {
 	OperationType *string `yaml:"operationType,omitempty" json:"operationType,omitempty"`
 	// The value defines if the service is available from the internet and the time period in which security holes must be processed.
 	InternetExposed *bool `yaml:"internetExposed,omitempty" json:"internetExposed,omitempty"`
-	// The security scans that are required for this service. Optional, SAST and/or SCA.
-	RequiredScans []string `yaml:"requiredScans,omitempty" json:"requiredScans,omitempty"`
 	// ISO-8601 UTC date time at which this information was originally committed. When sending an update, include the original timestamp you got so we can detect concurrent updates.
 	TimeStamp string `yaml:"-" json:"timeStamp"`
 	// The git commit hash this information was originally committed under. When sending an update, include the original commitHash you got so we can detect concurrent updates.
