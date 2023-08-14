@@ -3,11 +3,12 @@ package metadatamock
 import (
 	"context"
 	"errors"
-	"github.com/Interhyp/metadata-service/internal/acorn/errors/nochangeserror"
-	"github.com/Interhyp/metadata-service/internal/acorn/repository"
 	"io"
 	"os"
 	"time"
+
+	"github.com/Interhyp/metadata-service/internal/acorn/errors/nochangeserror"
+	"github.com/Interhyp/metadata-service/internal/acorn/repository"
 
 	"github.com/StephanHCB/go-backend-service-common/api/apierrors"
 	"github.com/go-git/go-billy/v5"
@@ -46,9 +47,6 @@ repositories:
 - some-service-backend/implementation
 alertTarget: https://webhook.com/9asdflk29d4m39g
 developmentOnly: false
-requiredScans:
-- SAST
-- SCA
 `
 
 const deployment = `mainline: main

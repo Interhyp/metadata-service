@@ -2,10 +2,11 @@ package services
 
 import (
 	"context"
-	"github.com/Interhyp/metadata-service/api"
-	"github.com/Interhyp/metadata-service/test/mock/configmock"
 	"testing"
 	"time"
+
+	"github.com/Interhyp/metadata-service/api"
+	"github.com/Interhyp/metadata-service/test/mock/configmock"
 
 	auloggingapi "github.com/StephanHCB/go-autumn-logging/api"
 	"github.com/StephanHCB/go-backend-service-common/api/apierrors"
@@ -36,7 +37,6 @@ func tstCurrent() openapi.ServiceDto {
 		AlertTarget:     "target",
 		DevelopmentOnly: b(true),
 		OperationType:   p("PLATFORM"),
-		RequiredScans:   []string{"SAST", "SCA"},
 		TimeStamp:       "ts",
 		CommitHash:      "hash",
 		Lifecycle:       p("experimental"),
@@ -74,7 +74,6 @@ func TestPatchService_ReplaceAll(t *testing.T) {
 		AlertTarget:     p("newtarget"),
 		DevelopmentOnly: b(false),
 		OperationType:   p("WORKLOAD"),
-		RequiredScans:   []string{"SAST"},
 		TimeStamp:       "newts",
 		CommitHash:      "newhash",
 		Lifecycle:       p("deprecated"),
@@ -91,7 +90,6 @@ func TestPatchService_ReplaceAll(t *testing.T) {
 		AlertTarget:     "newtarget",
 		DevelopmentOnly: b(false),
 		OperationType:   p("WORKLOAD"),
-		RequiredScans:   []string{"SAST"},
 		TimeStamp:       "newts",
 		CommitHash:      "newhash",
 		Lifecycle:       p("deprecated"),
@@ -107,7 +105,6 @@ func TestPatchService_ClearFields(t *testing.T) {
 		Repositories:  []string{},
 		AlertTarget:   p(""),
 		OperationType: p(""),
-		RequiredScans: []string{},
 		TimeStamp:     "",
 		CommitHash:    "",
 		Lifecycle:     p(""),
@@ -298,24 +295,6 @@ func TestValidate_OperationType(t *testing.T) {
 	}
 
 	expectedMessage := "validation error: optional field operationType must be WORKLOAD (default if unset), PLATFORM or APPLICATION"
-
-	tstValidationTestcaseAllOps(t, expectedMessage, data, create, patch)
-}
-
-func TestValidate_RequiredScans(t *testing.T) {
-	docs.Description("invalid required scan types are correctly rejected on all operations")
-
-	data := tstValid()
-	data.RequiredScans = []string{"LASER"}
-
-	create := tstCreateValid()
-	create.RequiredScans = []string{"LASER"}
-
-	patch := openapi.ServicePatchDto{
-		RequiredScans: []string{"CUBIC"},
-	}
-
-	expectedMessage := "validation error: field requiredScans can only contain SAST and SCA"
 
 	tstValidationTestcaseAllOps(t, expectedMessage, data, create, patch)
 }

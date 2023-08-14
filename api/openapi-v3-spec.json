@@ -2179,15 +2179,6 @@
             "type": "boolean",
             "description": "The value defines if the service is available from the internet and the time period in which security holes must be processed."
           },
-          "requiredScans": {
-            "type": "array",
-            "description": "The security scans that are required for this service. Optional, SAST and/or SCA.",
-            "items": {
-              "type": "string",
-              "description": "Currently, only 'SAST' and 'SCA' are allowed",
-              "example": "SAST"
-            }
-          },
           "timeStamp": {
             "type": "string",
             "description": "ISO-8601 UTC date time at which this information was originally committed. When sending an update, include the original timestamp you got so we can detect concurrent updates.",
@@ -2280,15 +2271,6 @@
             "type": "boolean",
             "description": "The value defines if the service is available from the internet and the time period in which security holes must be processed."
           },
-          "requiredScans": {
-            "type": "array",
-            "description": "The security scans that are required for this service. Optional, SAST and/or SCA.",
-            "items": {
-              "type": "string",
-              "description": "Currently, only 'SAST' and 'SCA' are allowed",
-              "example": "SAST"
-            }
-          },
           "jiraIssue": {
             "type": "string",
             "description": "The jira issue to use for committing a change, or the last jira issue used.",
@@ -2358,15 +2340,6 @@
           "internetExposed": {
             "type": "boolean",
             "description": "The value defines if the service is available from the internet and the time period in which security holes must be processed."
-          },
-          "requiredScans": {
-            "type": "array",
-            "description": "The security scans that are required for this service. Optional, SAST and/or SCA.",
-            "items": {
-              "type": "string",
-              "description": "Currently, only 'SAST' and 'SCA' are allowed",
-              "example": "SAST"
-            }
           },
           "timeStamp": {
             "type": "string",

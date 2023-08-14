@@ -4,10 +4,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
+
 	"github.com/Interhyp/metadata-service/api"
 	"github.com/Interhyp/metadata-service/internal/acorn/config"
 	"github.com/Interhyp/metadata-service/internal/acorn/service"
-	"strings"
 
 	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
 	"github.com/StephanHCB/go-backend-service-common/api/apierrors"
@@ -105,7 +106,6 @@ func (s *Impl) mapServiceCreateDtoToServiceDto(serviceCreateDto openapi.ServiceC
 		AlertTarget:     serviceCreateDto.AlertTarget,
 		JiraIssue:       serviceCreateDto.JiraIssue,
 		Owner:           serviceCreateDto.Owner,
-		RequiredScans:   serviceCreateDto.RequiredScans,
 		OperationType:   serviceCreateDto.OperationType,
 		Repositories:    serviceCreateDto.Repositories,
 		DevelopmentOnly: serviceCreateDto.DevelopmentOnly,
@@ -124,7 +124,6 @@ func (s *Impl) validateNewServiceDto(ctx context.Context, serviceName string, dt
 	messages = s.validateRepositories(ctx, messages, serviceName, dto.Repositories)
 	messages = s.validateAlertTarget(messages, dto.AlertTarget)
 	messages = validateOperationType(messages, dto.OperationType)
-	messages = validateRequiredScans(messages, dto.RequiredScans)
 
 	if dto.JiraIssue == "" {
 		messages = append(messages, "field jiraIssue is mandatory")
@@ -195,7 +194,6 @@ func (s *Impl) validateExistingServiceDto(ctx context.Context, serviceName strin
 	messages = s.validateRepositories(ctx, messages, serviceName, dto.Repositories)
 	messages = s.validateAlertTarget(messages, dto.AlertTarget)
 	messages = validateOperationType(messages, dto.OperationType)
-	messages = validateRequiredScans(messages, dto.RequiredScans)
 
 	if dto.CommitHash == "" {
 		messages = append(messages, "field commitHash is mandatory for updates")
@@ -281,7 +279,6 @@ func (s *Impl) validateServicePatchDto(ctx context.Context, serviceName string, 
 	messages = s.validateRepositories(ctx, messages, serviceName, dto.Repositories)
 	messages = s.validateAlertTarget(messages, dto.AlertTarget)
 	messages = validateOperationType(messages, dto.OperationType)
-	messages = validateRequiredScans(messages, dto.RequiredScans)
 
 	if patchDto.CommitHash == "" {
 		messages = append(messages, "field commitHash is mandatory for patching")
@@ -308,7 +305,6 @@ func patchService(current openapi.ServiceDto, patch openapi.ServicePatchDto) ope
 		AlertTarget:     patchString(patch.AlertTarget, current.AlertTarget),
 		DevelopmentOnly: patchPtr[bool](patch.DevelopmentOnly, current.DevelopmentOnly),
 		OperationType:   patchStringPtr(patch.OperationType, current.OperationType),
-		RequiredScans:   patchStringSlice(patch.RequiredScans, current.RequiredScans),
 		TimeStamp:       patch.TimeStamp,
 		CommitHash:      patch.CommitHash,
 		JiraIssue:       patch.JiraIssue,
@@ -467,15 +463,6 @@ func (s *Impl) validateAlertTarget(messages []string, alertTarget string) []stri
 func validateOperationType(messages []string, operationType *string) []string {
 	if !validOperationType(operationType) {
 		messages = append(messages, "optional field operationType must be WORKLOAD (default if unset), PLATFORM or APPLICATION")
-	}
-	return messages
-}
-
-func validateRequiredScans(messages []string, requiredScans []string) []string {
-	for _, candidate := range requiredScans {
-		if !validScanType(candidate) {
-			messages = append(messages, "field requiredScans can only contain SAST and SCA")
-		}
 	}
 	return messages
 }
