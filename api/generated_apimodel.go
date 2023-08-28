@@ -45,6 +45,33 @@ type NotificationPayload struct {
 	Repository *RepositoryDto `yaml:"Repository,omitempty" json:"Repository,omitempty"`
 }
 
+type OwnerAllDataDto struct {
+	Owners *map[string]OwnerAllDataDtoOwnersValue `yaml:"owners,omitempty" json:"owners,omitempty"`
+}
+
+type OwnerAllDataDtoOwnersValue struct {
+	// The contact information of the owner
+	Contact string `yaml:"contact" json:"contact"`
+	// The product owner of this owner space
+	ProductOwner *string `yaml:"productOwner,omitempty" json:"productOwner,omitempty"`
+	// Map of string (group name e.g. some-owner) of strings (list of usernames), one username for each group is required.
+	Groups *map[string][]string `yaml:"groups,omitempty" json:"groups,omitempty"`
+	// A list of users that are allowed to promote services in this owner space
+	Promoters []string `yaml:"promoters,omitempty" json:"promoters,omitempty"`
+	// The default jira project that is used by this owner space
+	DefaultJiraProject *string `yaml:"defaultJiraProject,omitempty" json:"defaultJiraProject,omitempty"`
+	// ISO-8601 UTC date time at which the list of repositories was obtained from service-metadata
+	TimeStamp string `yaml:"-" json:"timeStamp"`
+	// The git commit hash this information was originally committed under. When sending an update, include the original commitHash you got so we can detect concurrent updates.
+	CommitHash string `yaml:"-" json:"commitHash"`
+	// The jira issue to use for committing a change, or the last jira issue used.
+	JiraIssue string `yaml:"-" json:"jiraIssue"`
+	// A display name of the owner, to be presented in user interfaces instead of the owner's name, when available
+	DisplayName  *string                  `yaml:"displayName,omitempty" json:"displayName,omitempty"`
+	Services     map[string]ServiceDto    `yaml:"services" json:"services"`
+	Repositories map[string]RepositoryDto `yaml:"repositories" json:"repositories"`
+}
+
 type OwnerCreateDto struct {
 	// The contact information of the owner
 	Contact string `yaml:"contact" json:"contact"`

@@ -17,6 +17,7 @@ import (
 	"github.com/Interhyp/metadata-service/internal/service/services"
 	"github.com/Interhyp/metadata-service/internal/service/trigger"
 	"github.com/Interhyp/metadata-service/internal/service/updater"
+	"github.com/Interhyp/metadata-service/internal/web/controller/datactl"
 	"github.com/Interhyp/metadata-service/internal/web/controller/ownerctl"
 	"github.com/Interhyp/metadata-service/internal/web/controller/repositoryctl"
 	"github.com/Interhyp/metadata-service/internal/web/controller/servicectl"
@@ -73,6 +74,7 @@ func (a *ApplicationImpl) Register() {
 		auacorn.Registry.Register(ownerctl.New)
 		auacorn.Registry.Register(servicectl.New)
 		auacorn.Registry.Register(repositoryctl.New)
+		auacorn.Registry.Register(datactl.New)
 		auacorn.Registry.Register(webhookctl.New)
 		auacorn.Registry.Register(server.New)
 	}

@@ -3,9 +3,10 @@ package owners
 import (
 	"context"
 	"fmt"
+	"strings"
+
 	"github.com/Interhyp/metadata-service/api"
 	"github.com/Interhyp/metadata-service/internal/acorn/service"
-	"strings"
 
 	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
 	"github.com/StephanHCB/go-backend-service-common/api/apierrors"

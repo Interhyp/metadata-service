@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+
 	"github.com/Interhyp/metadata-service/internal/acorn/application"
 	"github.com/Interhyp/metadata-service/internal/acorn/config"
 	"github.com/Interhyp/metadata-service/internal/acorn/controller"
@@ -40,6 +41,7 @@ func (s *Impl) AssembleAcorn(registry auacornapi.AcornRegistry) error {
 	s.OwnerCtl = registry.GetAcornByName(controller.OwnerControllerAcornName).(controller.OwnerController)
 	s.ServiceCtl = registry.GetAcornByName(controller.ServiceControllerAcornName).(controller.ServiceController)
 	s.RepositoryCtl = registry.GetAcornByName(controller.RepositoryControllerAcornName).(controller.RepositoryController)
+	s.DataCtl = registry.GetAcornByName(controller.DataControllerAcornName).(controller.DataController)
 	s.WebhookCtl = registry.GetAcornByName(controller.WebhookControllerAcornName).(controller.WebhookController)
 	return nil
 }
@@ -67,6 +69,9 @@ func (s *Impl) SetupAcorn(registry auacornapi.AcornRegistry) error {
 		return err
 	}
 	if err := registry.SetupAfter(s.RepositoryCtl.(auacornapi.Acorn)); err != nil {
+		return err
+	}
+	if err := registry.SetupAfter(s.DataCtl.(auacornapi.Acorn)); err != nil {
 		return err
 	}
 	if err := registry.SetupAfter(s.WebhookCtl.(auacornapi.Acorn)); err != nil {

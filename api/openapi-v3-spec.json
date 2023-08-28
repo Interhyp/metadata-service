@@ -1798,6 +1798,39 @@
         }
       }
     },
+    "/rest/api/v1/ownersdata": {
+      "get": {
+        "tags": [
+          "/rest/api/v1/data"
+        ],
+        "summary": "get owners with all services and repositories data",
+        "description": "Obtains all owners with data.",
+        "operationId": "getOwnersData",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OwnerAllDataDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/health": {
       "get": {
         "tags": [
@@ -2857,6 +2890,27 @@
             "example": "secret: '<anysecret>'",
             "additionalProperties": {
               "type": "string"
+            }
+          }
+        }
+      },
+      "OwnerAllDataDto": {
+        "type": "object",
+        "properties": {
+          "owners": {
+            "type": "object",
+            "additionalProperties": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/OwnerDto"
+                },
+                {
+                  "$ref": "#/components/schemas/ServiceListDto"
+                },
+                {
+                  "$ref": "#/components/schemas/RepositoryListDto"
+                }
+              ]
             }
           }
         }

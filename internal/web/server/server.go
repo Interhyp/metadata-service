@@ -4,6 +4,14 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"net"
+	"net/http"
+	"os"
+	"os/signal"
+	"strings"
+	"syscall"
+	"time"
+
 	"github.com/Interhyp/metadata-service/internal/acorn/config"
 	"github.com/Interhyp/metadata-service/internal/acorn/controller"
 	"github.com/Interhyp/metadata-service/internal/acorn/repository"
@@ -14,13 +22,6 @@ import (
 	libmiddleware "github.com/StephanHCB/go-backend-service-common/web/middleware"
 	"github.com/StephanHCB/go-backend-service-common/web/middleware/security"
 	"github.com/go-chi/chi/v5"
-	"net"
-	"net/http"
-	"os"
-	"os/signal"
-	"strings"
-	"syscall"
-	"time"
 )
 
 type Impl struct {
@@ -33,6 +34,7 @@ type Impl struct {
 	OwnerCtl            controller.OwnerController
 	ServiceCtl          controller.ServiceController
 	RepositoryCtl       controller.RepositoryController
+	DataCtl             controller.DataController
 	WebhookCtl          controller.WebhookController
 
 	Router chi.Router
@@ -93,6 +95,7 @@ func (s *Impl) WireUp(ctx context.Context) {
 	s.OwnerCtl.WireUp(ctx, s.Router)
 	s.ServiceCtl.WireUp(ctx, s.Router)
 	s.RepositoryCtl.WireUp(ctx, s.Router)
+	s.DataCtl.WireUp(ctx, s.Router)
 	s.WebhookCtl.WireUp(ctx, s.Router)
 }
 

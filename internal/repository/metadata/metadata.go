@@ -4,13 +4,14 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	"github.com/StephanHCB/go-backend-service-common/web/middleware/security"
 	"io"
 	"os"
 	"strings"
 	"sync"
 	"time"
 	"unicode"
+
+	"github.com/StephanHCB/go-backend-service-common/web/middleware/security"
 
 	"github.com/Interhyp/metadata-service/internal/acorn/config"
 	"github.com/Interhyp/metadata-service/internal/acorn/errors/nochangeserror"
@@ -55,7 +56,7 @@ type Impl struct {
 
 const insecureSkipTLS = false
 
-var UseHTTP = true
+var UseHTTP = false
 
 func (r *Impl) pathsTouchedInCommit(ctx context.Context, commit *object.Commit) ([]string, error) {
 	result := make([]string, 0)
