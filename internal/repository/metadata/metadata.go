@@ -56,7 +56,7 @@ type Impl struct {
 
 const insecureSkipTLS = false
 
-var UseHTTP = false
+var UseHTTP = true
 
 func (r *Impl) pathsTouchedInCommit(ctx context.Context, commit *object.Commit) ([]string, error) {
 	result := make([]string, 0)
