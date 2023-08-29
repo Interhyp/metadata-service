@@ -1798,13 +1798,13 @@
         }
       }
     },
-    "/rest/api/v1/ownersdata": {
+    "/rest/api/v1/owned-resources": {
       "get": {
         "tags": [
-          "/rest/api/v1/data"
+          "/rest/api/v1/owned-resources"
         ],
-        "summary": "get owners with all services and repositories data",
-        "description": "Obtains all owners with data.",
+        "summary": "get owners with all services and repositories",
+        "description": "Obtains all owners with owned resources.",
         "operationId": "getOwnersData",
         "parameters": [],
         "responses": {

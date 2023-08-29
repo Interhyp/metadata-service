@@ -26,12 +26,12 @@ type Impl struct {
 }
 
 func (c *Impl) WireUp(_ context.Context, router chi.Router) {
-	router.Get("/rest/api/v1/ownersdata", c.GetOwnersData)
+	router.Get("/rest/api/v1/owned-resources", c.GetOwnedResources)
 }
 
 // --- handlers ---
 
-func (c *Impl) GetOwnersData(w http.ResponseWriter, r *http.Request) {
+func (c *Impl) GetOwnedResources(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	owners, err := c.Owners.GetOwners(ctx)
