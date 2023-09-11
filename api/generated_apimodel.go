@@ -48,6 +48,8 @@ type NotificationPayload struct {
 type OwnerCreateDto struct {
 	// The contact information of the owner
 	Contact string `yaml:"contact" json:"contact"`
+	// The teams channel url information of the owner
+	TeamsChannelURL *string `yaml:"teamsChannelURL,omitempty" json:"teamsChannelURL,omitempty"`
 	// The product owner of this owner space
 	ProductOwner *string `yaml:"productOwner,omitempty" json:"productOwner,omitempty"`
 	// A list of users that are allowed to promote services in this owner space
@@ -65,6 +67,8 @@ type OwnerCreateDto struct {
 type OwnerDto struct {
 	// The contact information of the owner
 	Contact string `yaml:"contact" json:"contact"`
+	// The teams channel url information of the owner
+	TeamsChannelURL *string `yaml:"teamsChannelURL,omitempty" json:"teamsChannelURL,omitempty"`
 	// The product owner of this owner space
 	ProductOwner *string `yaml:"productOwner,omitempty" json:"productOwner,omitempty"`
 	// Map of string (group name e.g. some-owner) of strings (list of usernames), one username for each group is required.
@@ -92,6 +96,8 @@ type OwnerListDto struct {
 type OwnerPatchDto struct {
 	// The contact information of the owner
 	Contact *string `yaml:"contact,omitempty" json:"contact,omitempty"`
+	// The teams channel url information of the owner
+	TeamsChannelURL *string `yaml:"teamsChannelURL,omitempty" json:"teamsChannelURL,omitempty"`
 	// The product owner of this owner space
 	ProductOwner *string `yaml:"productOwner,omitempty" json:"productOwner,omitempty"`
 	// Map of string (group name e.g. some-owner) of strings (list of usernames), one username for each group is required.
