@@ -22,6 +22,7 @@ func pi(v int32) *int32 {
 func tstOwner() openapi.OwnerDto {
 	return openapi.OwnerDto{
 		Contact:            "somebody@some-organisation.com",
+		TeamsChannelURL:    p("https://teams.microsoft.com/l/channel/somechannel"),
 		ProductOwner:       p("kschlangenheld"),
 		DefaultJiraProject: p("JIRA"),
 		TimeStamp:          "2022-11-06T18:14:10Z",
@@ -32,16 +33,18 @@ func tstOwner() openapi.OwnerDto {
 
 func tstOwnerPatch() openapi.OwnerPatchDto {
 	return openapi.OwnerPatchDto{
-		Contact:    p("changed@some-organisation.com"),
-		TimeStamp:  "2022-11-06T18:14:10Z",
-		CommitHash: "6c8ac2c35791edf9979623c717a243fc53400000",
-		JiraIssue:  "ISSUE-2345",
+		Contact:         p("changed@some-organisation.com"),
+		TeamsChannelURL: p("https://teams.microsoft.com/l/channel/somechannel"),
+		TimeStamp:       "2022-11-06T18:14:10Z",
+		CommitHash:      "6c8ac2c35791edf9979623c717a243fc53400000",
+		JiraIssue:       "ISSUE-2345",
 	}
 }
 
 func tstOwnerUnchanged() openapi.OwnerDto {
 	return openapi.OwnerDto{
 		Contact:            "somebody@some-organisation.com",
+		TeamsChannelURL:    p("https://teams.microsoft.com/l/channel/somechannel"),
 		ProductOwner:       p("kschlangenheldt"),
 		DefaultJiraProject: p("ISSUE"),
 		TimeStamp:          "2022-11-06T18:14:10Z",
@@ -52,10 +55,11 @@ func tstOwnerUnchanged() openapi.OwnerDto {
 
 func tstOwnerUnchangedPatch() openapi.OwnerPatchDto {
 	return openapi.OwnerPatchDto{
-		Contact:    p("somebody@some-organisation.com"),
-		TimeStamp:  "2022-11-06T18:14:10Z",
-		CommitHash: "6c8ac2c35791edf9979623c717a243fc53400000",
-		JiraIssue:  "ISSUE-2345",
+		Contact:         p("somebody@some-organisation.com"),
+		TeamsChannelURL: p("https://teams.microsoft.com/l/channel/somechannel"),
+		TimeStamp:       "2022-11-06T18:14:10Z",
+		CommitHash:      "6c8ac2c35791edf9979623c717a243fc53400000",
+		JiraIssue:       "ISSUE-2345",
 	}
 }
 
@@ -74,6 +78,7 @@ func tstUpdatedOwnerPayload() openapi.NotificationPayload {
 
 func tstOwnerExpectedYaml() string {
 	return `contact: somebody@some-organisation.com
+teamsChannelURL: https://teams.microsoft.com/l/channel/somechannel
 productOwner: kschlangenheld
 defaultJiraProject: JIRA
 `
@@ -81,6 +86,7 @@ defaultJiraProject: JIRA
 
 func tstOwnerUnchangedExpectedYaml() string {
 	return `contact: somebody@some-organisation.com
+teamsChannelURL: https://teams.microsoft.com/l/channel/somechannel
 productOwner: kschlangenheldt
 defaultJiraProject: ISSUE
 `
@@ -88,6 +94,7 @@ defaultJiraProject: ISSUE
 
 func tstOwnerPatchExpectedYaml() string {
 	return `contact: changed@some-organisation.com
+teamsChannelURL: https://teams.microsoft.com/l/channel/somechannel
 productOwner: kschlangenheldt
 defaultJiraProject: ISSUE
 `

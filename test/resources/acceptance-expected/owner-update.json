@@ -4,5 +4,6 @@
   "defaultJiraProject": "JIRA",
   "jiraIssue": "ISSUE-2345",
   "productOwner": "kschlangenheld",
+  "teamsChannelURL": "https://teams.microsoft.com/l/channel/somechannel",
   "timeStamp": "2022-11-06T18:14:10Z"
 }

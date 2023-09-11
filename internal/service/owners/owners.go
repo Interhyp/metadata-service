@@ -92,6 +92,7 @@ func (s *Impl) CreateOwner(ctx context.Context, ownerAlias string, ownerCreateDt
 func (s *Impl) mapOwnerCreateDtoToOwnerDto(ownerCreateDto openapi.OwnerCreateDto) openapi.OwnerDto {
 	return openapi.OwnerDto{
 		Contact:            ownerCreateDto.Contact,
+		TeamsChannelURL:    ownerCreateDto.TeamsChannelURL,
 		ProductOwner:       ownerCreateDto.ProductOwner,
 		JiraIssue:          ownerCreateDto.JiraIssue,
 		DefaultJiraProject: ownerCreateDto.DefaultJiraProject,
@@ -234,6 +235,7 @@ func (s *Impl) validateOwnerPatchDto(ctx context.Context, ownerPatchDto openapi.
 func patchOwner(current openapi.OwnerDto, patch openapi.OwnerPatchDto) openapi.OwnerDto {
 	return openapi.OwnerDto{
 		Contact:            patchString(patch.Contact, current.Contact),
+		TeamsChannelURL:    patchStringPtr(patch.TeamsChannelURL, current.TeamsChannelURL),
 		ProductOwner:       patchStringPtr(patch.ProductOwner, current.ProductOwner),
 		DefaultJiraProject: patchStringPtr(patch.DefaultJiraProject, current.DefaultJiraProject),
 		Groups:             patchStringToStringArrayMapPtr(patch.Groups, current.Groups),

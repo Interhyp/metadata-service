@@ -30,11 +30,13 @@ type Impl struct {
 }
 
 const ownerInfo = `contact: somebody@some-organisation.com
+teamsChannelURL: https://teams.microsoft.com/l/channel/somechannel
 productOwner: kschlangenheldt
 defaultJiraProject: ISSUE
 `
 
 const ownerInfoNoPromoters = `contact: somebody@some-organisation.com
+teamsChannelURL: https://teams.microsoft.com/l/channel/somechannel
 productOwner: kschlangenheldt
 defaultJiraProject: ISSUE
 `

@@ -1892,6 +1892,11 @@
             "description": "The contact information of the owner",
             "example": "squad@some-organisation.com"
           },
+          "teamsChannelURL": {
+            "type": "string",
+            "description": "The teams channel url information of the owner",
+            "example": "https://teams.microsoft.com/l/channel/....."
+          },
           "productOwner": {
             "type": "string",
             "description": "The product owner of this owner space",
@@ -1963,6 +1968,11 @@
             "description": "The contact information of the owner",
             "example": "squad@some-organisation.com"
           },
+          "teamsChannelURL": {
+            "type": "string",
+            "description": "The teams channel url information of the owner",
+            "example": "https://teams.microsoft.com/l/channel/....."
+          },
           "productOwner": {
             "type": "string",
             "description": "The product owner of this owner space",
@@ -2024,6 +2034,11 @@
             "type": "string",
             "description": "The contact information of the owner",
             "example": "squad@some-organisation.com"
+          },
+          "teamsChannelURL": {
+            "type": "string",
+            "description": "The teams channel url information of the owner",
+            "example": "https://teams.microsoft.com/l/channel/....."
           },
           "productOwner": {
             "type": "string",
