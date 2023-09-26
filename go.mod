@@ -73,7 +73,7 @@ require (
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/rs/zerolog v1.30.0
 	github.com/stretchr/testify v1.8.4
-	github.com/twmb/franz-go v1.14.4
+	github.com/twmb/franz-go v1.15.0
 	gopkg.in/yaml.v3 v3.0.1
 )
 
