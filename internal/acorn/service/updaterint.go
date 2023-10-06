@@ -5,11 +5,11 @@ import (
 	"github.com/Interhyp/metadata-service/api"
 )
 
-const UpdaterAcornName = "updater"
-
 // Updater is the central orchestrator component that manages information flow.
 type Updater interface {
 	IsUpdater() bool
+
+	Setup() error
 
 	// -- Eventing --
 

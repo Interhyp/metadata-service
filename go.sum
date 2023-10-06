@@ -29,6 +29,10 @@ github.com/StephanHCB/go-autumn-web-swagger-ui v0.2.3 h1:aC/rTlw9pBPCWYH46KGzSB9
 github.com/StephanHCB/go-autumn-web-swagger-ui v0.2.3/go.mod h1:EBtCQXF8JhoADnadezundz2xWEdFPmx2NUTgZYtUE0M=
 github.com/StephanHCB/go-backend-service-common v0.5.1 h1:Ailpaq3PjCKsir79YTubz0lMvLOI2kE38hZPj6snx5Y=
 github.com/StephanHCB/go-backend-service-common v0.5.1/go.mod h1:UBCrmMypKkucU8Upqlej4sUCI4Bn0Xakgv3yT9kSbno=
+github.com/StephanHCB/go-backend-service-common v0.5.2-0.20231006124829-e54605b6bbee h1:xLIAMjoe6yzsVZ7BFx+1BTP3pA/GrhZq4fDh6nyyJ6k=
+github.com/StephanHCB/go-backend-service-common v0.5.2-0.20231006124829-e54605b6bbee/go.mod h1:UBCrmMypKkucU8Upqlej4sUCI4Bn0Xakgv3yT9kSbno=
+github.com/StephanHCB/go-backend-service-common v0.5.2-0.20231006142552-74b094f17b4f h1:ejWnj2aVE2Lg2OcecKfCh8W3xuit3nrAbHdBElY24UU=
+github.com/StephanHCB/go-backend-service-common v0.5.2-0.20231006142552-74b094f17b4f/go.mod h1:UBCrmMypKkucU8Upqlej4sUCI4Bn0Xakgv3yT9kSbno=
 github.com/acomagu/bufpipe v1.0.4 h1:e3H4WUzM3npvo5uv95QuJM3cQspFNtFBzvJ2oNjKIDQ=
 github.com/acomagu/bufpipe v1.0.4/go.mod h1:mxdxdup/WdsKVreO5GpW4+M/1CE2sMG4jeGJ2sYmHc4=
 github.com/anmitsu/go-shlex v0.0.0-20200514113438-38f4b401e2be h1:9AeTilPcZAjCFIImctFaOjnTIavg87rW78vTPkQqLI8=

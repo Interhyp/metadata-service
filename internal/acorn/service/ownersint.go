@@ -5,11 +5,11 @@ import (
 	"github.com/Interhyp/metadata-service/api"
 )
 
-const OwnersAcornName = "owners"
-
 // Owners provides the business logic for owner metadata.
 type Owners interface {
 	IsOwners() bool
+
+	Setup() error
 
 	GetOwners(ctx context.Context) (openapi.OwnerListDto, error)
 	GetOwner(ctx context.Context, ownerAlias string) (openapi.OwnerDto, error)

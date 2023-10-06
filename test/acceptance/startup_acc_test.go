@@ -1,13 +1,6 @@
 package acceptance
 
 import (
-	"github.com/Interhyp/metadata-service/internal/acorn/controller"
-	"github.com/Interhyp/metadata-service/internal/acorn/repository"
-	"github.com/Interhyp/metadata-service/internal/acorn/service"
-	"github.com/Interhyp/metadata-service/internal/web/app"
-	auacorn "github.com/StephanHCB/go-autumn-acorn-registry"
-	libcontroller "github.com/StephanHCB/go-backend-service-common/acorns/controller"
-	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
 	"github.com/StephanHCB/go-backend-service-common/docs"
 	"github.com/stretchr/testify/require"
 	"net/http"
@@ -20,31 +13,30 @@ func TestStartup_ShouldBeHealthy(t *testing.T) {
 	docs.When("When the application is started")
 
 	docs.Then("Then all components are present and of the correct type")
-	appImpl := application.(*app.ApplicationImpl)
-	registry := auacorn.Registry.(*auacorn.AcornRegistryImpl)
-	require.NotNil(t, registry.GetAcornByName(librepo.ConfigurationAcornName).(librepo.Configuration))
-	require.NotNil(t, registry.GetAcornByName(librepo.LoggingAcornName).(librepo.Logging))
-	require.NotNil(t, registry.GetAcornByName(librepo.VaultAcornName).(librepo.Vault))
-	require.NotNil(t, registry.GetAcornByName(repository.KafkaAcornName).(repository.Kafka))
-	require.NotNil(t, registry.GetAcornByName(repository.MetadataAcornName).(repository.Metadata))
-	require.NotNil(t, registry.GetAcornByName(repository.HostIPAcornName).(repository.HostIP))
+	require.NotNil(t, application.Config)
+	require.NotNil(t, application.CustomConfig)
+	require.NotNil(t, application.Logging)
+	require.NotNil(t, application.Vault)
+	require.NotNil(t, application.Kafka)
+	require.NotNil(t, application.Metadata)
+	require.NotNil(t, application.HostIP)
 
-	require.NotNil(t, registry.GetAcornByName(service.CacheAcornName).(service.Cache))
-	require.NotNil(t, registry.GetAcornByName(service.MapperAcornName).(service.Mapper))
-	require.NotNil(t, registry.GetAcornByName(service.TriggerAcornName).(service.Trigger))
-	require.NotNil(t, registry.GetAcornByName(service.UpdaterAcornName).(service.Updater))
-	require.NotNil(t, registry.GetAcornByName(service.OwnersAcornName).(service.Owners))
-	require.NotNil(t, registry.GetAcornByName(service.ServicesAcornName).(service.Services))
-	require.NotNil(t, registry.GetAcornByName(service.RepositoriesAcornName).(service.Repositories))
+	require.NotNil(t, application.Cache)
+	require.NotNil(t, application.Mapper)
+	require.NotNil(t, application.Trigger)
+	require.NotNil(t, application.Updater)
+	require.NotNil(t, application.Owners)
+	require.NotNil(t, application.Services)
+	require.NotNil(t, application.Repositories)
 
-	require.NotNil(t, registry.GetAcornByName(libcontroller.HealthControllerAcornName).(libcontroller.HealthController))
-	require.NotNil(t, registry.GetAcornByName(libcontroller.SwaggerControllerAcornName).(libcontroller.SwaggerController))
-	require.NotNil(t, registry.GetAcornByName(controller.OwnerControllerAcornName).(controller.OwnerController))
-	require.NotNil(t, registry.GetAcornByName(controller.ServiceControllerAcornName).(controller.ServiceController))
-	require.NotNil(t, registry.GetAcornByName(controller.RepositoryControllerAcornName).(controller.RepositoryController))
-	require.NotNil(t, registry.GetAcornByName(controller.WebhookControllerAcornName).(controller.WebhookController))
+	require.NotNil(t, application.HealthCtl)
+	require.NotNil(t, application.SwaggerCtl)
+	require.NotNil(t, application.OwnerCtl)
+	require.NotNil(t, application.ServiceCtl)
+	require.NotNil(t, application.RepositoryCtl)
+	require.NotNil(t, application.WebhookCtl)
 
-	require.NotNil(t, appImpl.Server)
+	require.NotNil(t, application.Server)
 
 	docs.Then("And the application reports as healthy")
 	response, err := tstPerformGet("/management/health", tstUnauthenticated())

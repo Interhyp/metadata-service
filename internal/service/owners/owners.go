@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/Interhyp/metadata-service/api"
 	"github.com/Interhyp/metadata-service/internal/acorn/service"
+	auzerolog "github.com/StephanHCB/go-autumn-logging-zerolog"
 	"strings"
 
 	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
@@ -14,10 +15,38 @@ import (
 type Impl struct {
 	Configuration librepo.Configuration
 	Logging       librepo.Logging
+	Timestamp     librepo.Timestamp
 	Cache         service.Cache
 	Updater       service.Updater
+}
 
-	Timestamp librepo.Timestamp
+func New(
+	configuration librepo.Configuration,
+	logging librepo.Logging,
+	timestamp librepo.Timestamp,
+	cache service.Cache,
+	updater service.Updater,
+) service.Owners {
+	return &Impl{
+		Configuration: configuration,
+		Logging:       logging,
+		Timestamp:     timestamp,
+		Cache:         cache,
+		Updater:       updater,
+	}
+}
+
+func (s *Impl) IsOwners() bool {
+	return true
+}
+
+func (s *Impl) Setup() error {
+	ctx := auzerolog.AddLoggerToCtx(context.Background())
+
+	// nothing to do
+
+	s.Logging.Logger().Ctx(ctx).Info().Print("successfully set up owners business component")
+	return nil
 }
 
 func (s *Impl) GetOwners(ctx context.Context) (openapi.OwnerListDto, error) {

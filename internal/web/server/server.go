@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/Interhyp/metadata-service/internal/acorn/application"
 	"github.com/Interhyp/metadata-service/internal/acorn/config"
 	"github.com/Interhyp/metadata-service/internal/acorn/controller"
 	"github.com/Interhyp/metadata-service/internal/acorn/repository"
@@ -24,9 +25,9 @@ import (
 )
 
 type Impl struct {
-	Logging             librepo.Logging
 	Configuration       librepo.Configuration
 	CustomConfiguration config.CustomConfiguration
+	Logging             librepo.Logging
 	IdentityProvider    repository.IdentityProvider
 	HealthCtl           libcontroller.HealthController
 	SwaggerCtl          libcontroller.SwaggerController
@@ -41,6 +42,50 @@ type Impl struct {
 	ServerReadTimeoutSeconds  int
 	ServerWriteTimeoutSeconds int
 	ServerIdleTimeoutSeconds  int
+}
+
+func New(
+	configuration librepo.Configuration,
+	customConfiguration config.CustomConfiguration,
+	logging librepo.Logging,
+	identityProvider repository.IdentityProvider,
+	healthCtl libcontroller.HealthController,
+	swaggerCtl libcontroller.SwaggerController,
+	ownerCtl controller.OwnerController,
+	serviceCtl controller.ServiceController,
+	repositoryCtl controller.RepositoryController,
+	webhookCtl controller.WebhookController,
+) application.Server {
+	return &Impl{
+		Configuration:       configuration,
+		CustomConfiguration: customConfiguration,
+		Logging:             logging,
+		IdentityProvider:    identityProvider,
+		HealthCtl:           healthCtl,
+		SwaggerCtl:          swaggerCtl,
+		OwnerCtl:            ownerCtl,
+		ServiceCtl:          serviceCtl,
+		RepositoryCtl:       repositoryCtl,
+		WebhookCtl:          webhookCtl,
+
+		RequestTimeoutSeconds:     60,
+		ServerWriteTimeoutSeconds: 60,
+		ServerIdleTimeoutSeconds:  60,
+		ServerReadTimeoutSeconds:  60,
+	}
+}
+
+func (s *Impl) IsServer() bool {
+	return true
+}
+
+func (s *Impl) Setup() error {
+	ctx := auzerolog.AddLoggerToCtx(context.Background())
+
+	s.WireUp(ctx)
+
+	s.Logging.Logger().Ctx(ctx).Info().Print("successfully set up primary web layer")
+	return nil
 }
 
 func (s *Impl) WireUp(ctx context.Context) {

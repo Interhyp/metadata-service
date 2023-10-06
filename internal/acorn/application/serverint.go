@@ -2,10 +2,10 @@ package application
 
 import "context"
 
-const ServerAcornName = "server"
-
 type Server interface {
 	IsServer() bool
+
+	Setup() error
 
 	WireUp(ctx context.Context)
 

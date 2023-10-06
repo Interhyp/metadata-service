@@ -2,11 +2,12 @@ package repository
 
 import "context"
 
-const KafkaAcornName = "kafka"
-
 // Kafka is the central singleton representing the kafka messaging bus.
 type Kafka interface {
 	IsKafka() bool
+
+	Setup() error
+	Teardown()
 
 	// SubscribeIncoming allows you to register a callback that is called whenever a message is received from the Kafka bus.
 	//

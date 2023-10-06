@@ -18,8 +18,13 @@ import (
 
 const basedir = "../../../test/resources/"
 
+func classUnderTest() *libconfig.ConfigImpl {
+	instance, _ := New()
+	return instance.(*libconfig.ConfigImpl)
+}
+
 func tstYamlRead(t *testing.T, filename string, expectedMsgPart string) {
-	cut := New().(*libconfig.ConfigImpl)
+	cut := classUnderTest()
 	auconfigenv.LocalConfigFileName = basedir + filename
 	err := cut.Read()
 	if expectedMsgPart == "" {
@@ -41,7 +46,7 @@ func TestYamlRead_InvalidSyntax(t *testing.T) {
 }
 
 func tstSetupCutAndLogRecorder(t *testing.T, configfile string) (librepo.Configuration, error) {
-	cut := New().(librepo.Configuration)
+	cut := classUnderTest()
 
 	// --- simulate auacornapi.Acorn Assemble phase for just the configuration
 
@@ -56,13 +61,13 @@ func tstSetupCutAndLogRecorder(t *testing.T, configfile string) (librepo.Configu
 	goauzerolog.RecordedLogForTesting = new(bytes.Buffer)
 	logRecorder.(*logging.LoggingImpl).SetupForTesting()
 
-	cut.(*libconfig.ConfigImpl).Logging = logRecorder
+	cut.Logging = logRecorder
 
 	ctx := log.Logger.WithContext(context.Background())
 	err = cut.Validate(ctx)
 
-	cut.(*libconfig.ConfigImpl).ObtainPredefinedValues()
-	cut.(*libconfig.ConfigImpl).CustomConfiguration.Obtain(auconfigenv.Get)
+	cut.ObtainPredefinedValues()
+	cut.CustomConfiguration.Obtain(auconfigenv.Get)
 
 	return cut, err
 }

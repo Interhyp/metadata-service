@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"github.com/Interhyp/metadata-service/internal/acorn/config"
 	openapi "github.com/Interhyp/metadata-service/internal/types"
-	auacornapi "github.com/StephanHCB/go-autumn-acorn-registry/api"
 	auconfigapi "github.com/StephanHCB/go-autumn-config-api"
 	auconfigenv "github.com/StephanHCB/go-autumn-config-env"
+	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
 	libconfig "github.com/StephanHCB/go-backend-service-common/repository/config"
 	"github.com/StephanHCB/go-backend-service-common/repository/vault"
 	"regexp"
@@ -65,12 +65,16 @@ type CustomConfigImpl struct {
 	VNotificationConsumerConfigs    map[string]config.NotificationConsumerConfig
 }
 
-func New() auacornapi.Acorn {
+func New() (librepo.Configuration, config.CustomConfiguration) {
 	instance := &CustomConfigImpl{}
 	configItems := make([]auconfigapi.ConfigItem, 0)
 	configItems = append(configItems, CustomConfigItems...)
 	configItems = append(configItems, vault.ConfigItems...)
-	return libconfig.New(instance, configItems)
+
+	libInstance := libconfig.NewNoAcorn(instance, configItems)
+
+	// perform conversion to CustomConfig here
+	return libInstance, config.Custom(libInstance)
 }
 
 func (c *CustomConfigImpl) Obtain(getter func(key string) string) {

@@ -8,7 +8,7 @@ import (
 	"github.com/Interhyp/metadata-service/internal/acorn/repository"
 	notifierclient "github.com/Interhyp/metadata-service/internal/repository/notifier/client/notifier"
 	"github.com/Interhyp/metadata-service/internal/types"
-	auacornapi "github.com/StephanHCB/go-autumn-acorn-registry/api"
+	auzerolog "github.com/StephanHCB/go-autumn-logging-zerolog"
 	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
 	"github.com/StephanHCB/go-backend-service-common/web/util/contexthelper"
 	"time"
@@ -23,12 +23,39 @@ type Impl struct {
 	SkipAsync bool // for tests
 }
 
+func New(
+	configuration librepo.Configuration,
+	customConfig config.CustomConfiguration,
+	logging librepo.Logging,
+) repository.Notifier {
+	return &Impl{
+		Configuration:       configuration,
+		CustomConfiguration: customConfig,
+		Logging:             logging,
+	}
+}
+
+func (r *Impl) IsNotifier() bool {
+	return true
+}
+
+func (r *Impl) Setup() error {
+	ctx := auzerolog.AddLoggerToCtx(context.Background())
+
+	if err := r.SetupNotifier(ctx); err != nil {
+		r.Logging.Logger().Ctx(ctx).Error().WithErr(err).Print("failed to set up notifier client. BAILING OUT")
+		return err
+	}
+
+	r.Logging.Logger().Ctx(ctx).Info().Print("successfully set up notifier")
+	return nil
+}
+
 const (
 	webhookContextTimeout = 5 * time.Minute
 )
 
 var (
-	_ auacornapi.Acorn    = (*Impl)(nil)
 	_ repository.Notifier = (*Impl)(nil)
 )
 
@@ -51,7 +78,7 @@ func AsPayload[T openapi.OwnerDto | openapi.ServiceDto | openapi.RepositoryDto](
 	}
 }
 
-func (r *Impl) Setup(ctx context.Context) error {
+func (r *Impl) SetupNotifier(ctx context.Context) error {
 	r.Logging.Logger().Ctx(ctx).Info().Print("setting up notifier clients")
 
 	r.Clients = make(map[string]notifierclient.NotifierClient)

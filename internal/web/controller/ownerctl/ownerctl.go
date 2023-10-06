@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/Interhyp/metadata-service/api"
 	"github.com/Interhyp/metadata-service/internal/acorn/config"
+	"github.com/Interhyp/metadata-service/internal/acorn/controller"
 	"github.com/Interhyp/metadata-service/internal/acorn/service"
 	"github.com/Interhyp/metadata-service/internal/web/util"
 	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
@@ -20,9 +21,28 @@ type Impl struct {
 	Configuration       librepo.Configuration
 	CustomConfiguration config.CustomConfiguration
 	Logging             librepo.Logging
+	Timestamp           librepo.Timestamp
 	Owners              service.Owners
+}
 
-	Timestamp librepo.Timestamp
+func New(
+	configuration librepo.Configuration,
+	customConfig config.CustomConfiguration,
+	logging librepo.Logging,
+	timestamp librepo.Timestamp,
+	owners service.Owners,
+) controller.OwnerController {
+	return &Impl{
+		Configuration:       configuration,
+		CustomConfiguration: customConfig,
+		Logging:             logging,
+		Timestamp:           timestamp,
+		Owners:              owners,
+	}
+}
+
+func (c *Impl) IsOwnerController() bool {
+	return true
 }
 
 func (c *Impl) WireUp(_ context.Context, router chi.Router) {

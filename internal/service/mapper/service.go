@@ -63,7 +63,7 @@ func (s *Impl) lookupServiceOwnerWithRefresh(ctx context.Context, serviceName st
 		}
 		ownerAlias, ok = s.lookupInServiceOwnerCache(serviceName)
 		if !ok {
-			return "", apierrors.NewNotFoundError(fmt.Sprintf("service not found %s", serviceName), "service.notfound", nil, s.Now())
+			return "", apierrors.NewNotFoundError(fmt.Sprintf("service not found %s", serviceName), "service.notfound", nil, s.Timestamp.Now())
 		}
 	}
 	return ownerAlias, nil

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/Interhyp/metadata-service/api"
 	"github.com/Interhyp/metadata-service/internal/acorn/config"
+	"github.com/Interhyp/metadata-service/internal/acorn/controller"
 	"github.com/Interhyp/metadata-service/internal/acorn/service"
 	"github.com/Interhyp/metadata-service/internal/web/util"
 	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
@@ -24,9 +25,28 @@ type Impl struct {
 	Configuration       librepo.Configuration
 	CustomConfiguration config.CustomConfiguration
 	Logging             librepo.Logging
+	Timestamp           librepo.Timestamp
 	Repositories        service.Repositories
+}
 
-	Timestamp librepo.Timestamp
+func New(
+	configuration librepo.Configuration,
+	customConfig config.CustomConfiguration,
+	logging librepo.Logging,
+	timestamp librepo.Timestamp,
+	repositories service.Repositories,
+) controller.RepositoryController {
+	return &Impl{
+		Configuration:       configuration,
+		CustomConfiguration: customConfig,
+		Logging:             logging,
+		Timestamp:           timestamp,
+		Repositories:        repositories,
+	}
+}
+
+func (c *Impl) IsRepositoryController() bool {
+	return true
 }
 
 func (c *Impl) WireUp(_ context.Context, router chi.Router) {

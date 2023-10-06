@@ -2,6 +2,7 @@ package webhookctl
 
 import (
 	"context"
+	"github.com/Interhyp/metadata-service/internal/acorn/controller"
 	"github.com/Interhyp/metadata-service/internal/acorn/service"
 	"github.com/StephanHCB/go-backend-service-common/web/util/contexthelper"
 	"net/http"
@@ -13,10 +14,25 @@ import (
 )
 
 type Impl struct {
-	Logging librepo.Logging
-	Updater service.Updater
-
+	Logging   librepo.Logging
 	Timestamp librepo.Timestamp
+	Updater   service.Updater
+}
+
+func New(
+	logging librepo.Logging,
+	timestamp librepo.Timestamp,
+	updater service.Updater,
+) controller.WebhookController {
+	return &Impl{
+		Logging:   logging,
+		Timestamp: timestamp,
+		Updater:   updater,
+	}
+}
+
+func (c *Impl) IsWebhookController() bool {
+	return true
 }
 
 func (c *Impl) WireUp(_ context.Context, router chi.Router) {

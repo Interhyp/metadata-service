@@ -5,8 +5,6 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-const ServiceControllerAcornName = "servicectl"
-
 // ServiceController provides endpoints for managing service information
 type ServiceController interface {
 	IsServiceController() bool

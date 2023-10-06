@@ -189,12 +189,6 @@ correct version. If not, wait a bit and try again, you landed on an instance tha
 
 ![software architecture](docs/architecture-export.png)
 
-### Those aren't Beans, they're Acorns
-
-Our singleton components implement the
-[Acorn interface](https://github.com/StephanHCB/go-autumn-acorn-registry/blob/main/api/interface.go).
-All singletons refer to each other by references to their interface. This allows for easy mocking during tests.
-
 ## development
 
 ### initial setup

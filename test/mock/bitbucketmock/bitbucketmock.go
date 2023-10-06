@@ -3,7 +3,6 @@ package bitbucketmock
 import (
 	"context"
 	"github.com/Interhyp/metadata-service/internal/acorn/repository"
-	auacornapi "github.com/StephanHCB/go-autumn-acorn-registry/api"
 	"github.com/pkg/errors"
 )
 
@@ -12,35 +11,19 @@ const FILTER_FAILED_USERNAME = "filterfailedusername"
 type BitbucketMock struct {
 }
 
-func New() auacornapi.Acorn {
+func New() repository.Bitbucket {
 	return &BitbucketMock{}
 }
-
-// implement acorn
-
-func (b *BitbucketMock) AcornName() string {
-	return repository.BitbucketAcornName
-}
-
-func (b *BitbucketMock) AssembleAcorn(registry auacornapi.AcornRegistry) error {
-	return nil
-}
-
-func (b *BitbucketMock) SetupAcorn(registry auacornapi.AcornRegistry) error {
-	return nil
-}
-
-func (b *BitbucketMock) TeardownAcorn(registry auacornapi.AcornRegistry) error {
-	return nil
-}
-
-// implement bitbucket interface
 
 func (b *BitbucketMock) IsBitbucket() bool {
 	return true
 }
 
-func (b *BitbucketMock) Setup(ctx context.Context) error {
+func (b *BitbucketMock) Setup() error {
+	return nil
+}
+
+func (b *BitbucketMock) SetupClient(ctx context.Context) error {
 	return nil
 }
 

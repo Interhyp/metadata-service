@@ -12,6 +12,10 @@ func (s *Mock) IsCache() bool {
 	return true
 }
 
+func (s *Mock) Setup() error {
+	return nil
+}
+
 func (s *Mock) SetOwnerListTimestamp(ctx context.Context, timestamp string) {
 
 }

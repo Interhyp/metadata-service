@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/Interhyp/metadata-service/internal/acorn/config"
 	"github.com/Interhyp/metadata-service/internal/acorn/service"
+	auzerolog "github.com/StephanHCB/go-autumn-logging-zerolog"
 	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
 	"github.com/StephanHCB/go-backend-service-common/web/middleware/requestid"
 	"github.com/robfig/cron/v3"
@@ -16,13 +17,82 @@ type Impl struct {
 	Configuration       librepo.Configuration
 	CustomConfiguration config.CustomConfiguration
 	Logging             librepo.Logging
+	Timestamp           librepo.Timestamp
 	Updater             service.Updater
 
 	LoggingCtx context.Context
 	Cron       *cron.Cron
 
 	SkipStart bool
-	Now       func() time.Time
+}
+
+func New(
+	configuration librepo.Configuration,
+	customConfig config.CustomConfiguration,
+	logging librepo.Logging,
+	timestamp librepo.Timestamp,
+	updater service.Updater,
+) service.Trigger {
+	return &Impl{
+		Configuration:       configuration,
+		CustomConfiguration: customConfig,
+		Logging:             logging,
+		Timestamp:           timestamp,
+		Updater:             updater,
+	}
+}
+
+func (s *Impl) IsTrigger() bool {
+	return true
+}
+
+func (s *Impl) Setup() error {
+	ctx := auzerolog.AddLoggerToCtx(context.Background())
+
+	if err := s.SetupTriggerCronjob(ctx); err != nil {
+		s.Logging.Logger().Ctx(ctx).Error().WithErr(err).Print("failed to set up trigger. BAILING OUT")
+		return err
+	}
+
+	s.Logging.Logger().Ctx(ctx).Info().Print("performing initial cache population...")
+
+	if err := s.PerformWithCancel(context.Background()); err != nil {
+		s.Logging.Logger().Ctx(ctx).Error().WithErr(err).Print("initial cache population failed. BAILING OUT")
+		return err
+	}
+
+	if !s.SkipStart {
+		s.Logging.Logger().Ctx(ctx).Info().Print("starting event receiver...")
+
+		if err := s.Updater.StartReceivingEvents(ctx); err != nil {
+			s.Logging.Logger().Ctx(ctx).Error().WithErr(err).Print("failed to start event receiver. BAILING OUT")
+			return err
+		}
+
+		s.Logging.Logger().Ctx(ctx).Info().Print("starting cron job...")
+
+		if err := s.StartCronjob(ctx); err != nil {
+			s.Logging.Logger().Ctx(ctx).Error().WithErr(err).Print("failed to start cron job. BAILING OUT")
+			return err
+		}
+	}
+
+	s.Logging.Logger().Ctx(ctx).Info().Print("successfully set up trigger")
+	return nil
+}
+
+func (s *Impl) Teardown() {
+	ctx := auzerolog.AddLoggerToCtx(context.Background())
+
+	s.Logging.Logger().Ctx(ctx).Info().Print("stopping cron job...")
+
+	if err := s.StopCronjob(ctx); err != nil {
+		s.Logging.Logger().Ctx(ctx).Error().WithErr(err).Print("failed to stop cron job. Continuing with teardown.")
+		// do NOT abort tear down cycle
+		return
+	}
+
+	s.Logging.Logger().Ctx(ctx).Info().Print("successfully tore down trigger")
 }
 
 // --- implement cron.Logger ---
@@ -54,7 +124,7 @@ func (s *Impl) Error(err error, msg string, keysAndValues ...interface{}) {
 
 // --- cron job ---
 
-func (s *Impl) Setup(ctx context.Context) error {
+func (s *Impl) SetupTriggerCronjob(ctx context.Context) error {
 	s.LoggingCtx = ctx
 
 	s.Cron = cron.New(

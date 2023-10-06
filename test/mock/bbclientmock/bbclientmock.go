@@ -36,5 +36,5 @@ func (m *BitbucketClientMock) GetBitbucketUser(ctx context.Context, username str
 }
 
 func (m *BitbucketClientMock) Setup() error {
-	panic("implement me")
+	return nil
 }

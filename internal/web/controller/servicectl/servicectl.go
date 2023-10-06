@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/Interhyp/metadata-service/api"
 	"github.com/Interhyp/metadata-service/internal/acorn/config"
+	"github.com/Interhyp/metadata-service/internal/acorn/controller"
 	"github.com/Interhyp/metadata-service/internal/acorn/service"
 	"net/http"
 
@@ -22,9 +23,28 @@ type Impl struct {
 	Configuration       librepo.Configuration
 	CustomConfiguration config.CustomConfiguration
 	Logging             librepo.Logging
+	Timestamp           librepo.Timestamp
 	Services            service.Services
+}
 
-	Timestamp librepo.Timestamp
+func New(
+	configuration librepo.Configuration,
+	customConfig config.CustomConfiguration,
+	logging librepo.Logging,
+	timestamp librepo.Timestamp,
+	services service.Services,
+) controller.ServiceController {
+	return &Impl{
+		Configuration:       configuration,
+		CustomConfiguration: customConfig,
+		Logging:             logging,
+		Timestamp:           timestamp,
+		Services:            services,
+	}
+}
+
+func (c *Impl) IsServiceController() bool {
+	return true
 }
 
 func (c *Impl) WireUp(_ context.Context, router chi.Router) {

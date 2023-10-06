@@ -3,6 +3,8 @@ package sshAuthProvider
 import (
 	"context"
 	"github.com/Interhyp/metadata-service/internal/acorn/config"
+	"github.com/Interhyp/metadata-service/internal/acorn/repository"
+	auzerolog "github.com/StephanHCB/go-autumn-logging-zerolog"
 
 	aulogging "github.com/StephanHCB/go-autumn-logging"
 	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
@@ -16,7 +18,35 @@ type SshAuthProviderImpl struct {
 	CustomConfiguration config.CustomConfiguration
 }
 
-func (s *SshAuthProviderImpl) Setup(ctx context.Context) error {
+func New(
+	configuration librepo.Configuration,
+	customConfig config.CustomConfiguration,
+	logging librepo.Logging,
+) repository.SshAuthProvider {
+	return &SshAuthProviderImpl{
+		Configuration:       configuration,
+		CustomConfiguration: customConfig,
+		Logging:             logging,
+	}
+}
+
+func (s *SshAuthProviderImpl) IsSshAuthProvider() bool {
+	return true
+}
+
+func (s *SshAuthProviderImpl) Setup() error {
+	ctx := auzerolog.AddLoggerToCtx(context.Background())
+
+	if err := s.SetupProvider(ctx); err != nil {
+		s.Logging.Logger().Ctx(ctx).Error().WithErr(err).Print("failed to set up business layer SshAuthProvider. BAILING OUT")
+		return err
+	}
+
+	s.Logging.Logger().Ctx(ctx).Info().Print("successfully set up SshAuthProvider service")
+	return nil
+}
+
+func (s *SshAuthProviderImpl) SetupProvider(ctx context.Context) error {
 	return nil
 }
 

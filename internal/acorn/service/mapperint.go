@@ -6,8 +6,6 @@ import (
 	"github.com/Interhyp/metadata-service/internal/acorn/repository"
 )
 
-const MapperAcornName = "mapper"
-
 // Mapper translates between the git repo representation (yaml) and the business entities.
 //
 // It also performs commit workflows for the metadata repository.
@@ -21,6 +19,8 @@ const MapperAcornName = "mapper"
 // Anyway, Updater should be the only one making calls here, so this should just work.
 type Mapper interface {
 	IsMapper() bool
+
+	Setup() error
 
 	RefreshMetadata(ctx context.Context) ([]repository.UpdateEvent, error)
 	ContainsNewInformation(ctx context.Context, event repository.UpdateEvent) bool

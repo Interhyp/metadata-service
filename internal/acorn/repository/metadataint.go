@@ -6,8 +6,6 @@ import (
 	"time"
 )
 
-const MetadataAcornName = "metadata"
-
 // CommitInfo holds information about a commit.
 type CommitInfo struct {
 	CommitHash   string
@@ -23,6 +21,9 @@ type CommitInfo struct {
 // mutex to avoid inadvertently committing changes made by another goroutine.
 type Metadata interface {
 	IsMetadata() bool
+
+	Setup() error
+	Teardown()
 
 	// Clone performs an initial in-memory clone of the metadata repository on the mainline
 	Clone(ctx context.Context) error

@@ -81,7 +81,7 @@ func (s *Impl) ownerKafkaEvent(ownerAlias string, timeStamp string, commitHash s
 func (s *Impl) updateOwners(ctx context.Context) error {
 	s.Logging.Logger().Ctx(ctx).Info().Print("updating owners")
 
-	ts := timeStamp(s.Now())
+	ts := timeStamp(s.Timestamp.Now())
 
 	ownerAliasesMap, err := s.decideOwnersToAddUpdateOrRemove(ctx)
 	if err != nil {

@@ -6,32 +6,70 @@ import (
 	"github.com/Interhyp/metadata-service/internal/acorn/config"
 	"github.com/Interhyp/metadata-service/internal/acorn/repository"
 	"github.com/Interhyp/metadata-service/internal/acorn/service"
+	auzerolog "github.com/StephanHCB/go-autumn-logging-zerolog"
 	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
 	"github.com/StephanHCB/go-backend-service-common/web/middleware/requestid"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/rs/zerolog/log"
 	"reflect"
 	"sync"
-	"time"
 )
 
 type Impl struct {
 	Configuration       librepo.Configuration
 	CustomConfiguration config.CustomConfiguration
 	Logging             librepo.Logging
+	Timestamp           librepo.Timestamp
 	Kafka               repository.Kafka
 	Notifier            repository.Notifier
 	Mapper              service.Mapper
 	Cache               service.Cache
 
-	mu  sync.Mutex
-	Now func() time.Time
+	mu sync.Mutex
 
 	totalErrorCounter    prometheus.Counter
 	metadataErrorCounter prometheus.Counter
 	ownerErrorCounter    *prometheus.CounterVec
 	serviceErrorCounter  *prometheus.CounterVec
 	repoErrorCounter     *prometheus.CounterVec
+}
+
+func New(
+	configuration librepo.Configuration,
+	customConfig config.CustomConfiguration,
+	logging librepo.Logging,
+	timestamp librepo.Timestamp,
+	kafka repository.Kafka,
+	notifier repository.Notifier,
+	mapper service.Mapper,
+	cache service.Cache,
+) service.Updater {
+	return &Impl{
+		Configuration:       configuration,
+		CustomConfiguration: customConfig,
+		Logging:             logging,
+		Timestamp:           timestamp,
+		Kafka:               kafka,
+		Notifier:            notifier,
+		Mapper:              mapper,
+		Cache:               cache,
+	}
+}
+
+func (s *Impl) IsUpdater() bool {
+	return true
+}
+
+func (s *Impl) Setup() error {
+	ctx := auzerolog.AddLoggerToCtx(context.Background())
+
+	if err := s.SetupUpdater(ctx); err != nil {
+		s.Logging.Logger().Ctx(ctx).Error().WithErr(err).Print("failed to set up updater. BAILING OUT")
+		return err
+	}
+
+	s.Logging.Logger().Ctx(ctx).Info().Print("successfully set up updater")
+	return nil
 }
 
 const (
@@ -50,7 +88,7 @@ var (
 
 // --- metrics ---
 
-func (s *Impl) Setup(ctx context.Context) error {
+func (s *Impl) SetupUpdater(ctx context.Context) error {
 	s.totalErrorCounter = prometheus.NewCounter(
 		prometheus.CounterOpts{
 			Name: TotalErrorCounterName,
