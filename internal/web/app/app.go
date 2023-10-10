@@ -81,15 +81,19 @@ func (a *ApplicationImpl) IsApplication() bool {
 }
 
 func (a *ApplicationImpl) Create() error {
-	// overrides for the components by tests can be done after create
-
-	if err := a.ConstructAndSetup1stConfigLoggingVault(); err != nil {
+	if err := a.ConstructConfigLoggingVaultTimestamp(); err != nil {
 		return err
 	}
 
-	a.ConstructTheRest()
+	if err := a.ConstructRepositories(); err != nil {
+		return err
+	}
 
-	if err := a.SetupTheRest(); err != nil {
+	if err := a.ConstructServices(); err != nil {
+		return err
+	}
+
+	if err := a.ConstructControllers(); err != nil {
 		return err
 	}
 
@@ -120,7 +124,7 @@ func (a *ApplicationImpl) Run() int {
 
 // not part of interface -- exposed for use by tests only
 
-func (a *ApplicationImpl) ConstructAndSetup1stConfigLoggingVault() error {
+func (a *ApplicationImpl) ConstructConfigLoggingVaultTimestamp() error {
 	a.Config, a.CustomConfig = config.New()
 	a.Logging = logging.NewNoAcorn(a.Config)
 	a.Vault = vault.NewNoAcorn(a.Config, a.Logging)
@@ -128,7 +132,7 @@ func (a *ApplicationImpl) ConstructAndSetup1stConfigLoggingVault() error {
 		return err
 	}
 	a.Logging.Setup()
-	if err := a.Vault.Execute(); err != nil {
+	if err := vault.Execute(a.Vault); err != nil {
 		return err
 	}
 	if err := a.Config.Setup(); err != nil {
@@ -138,31 +142,97 @@ func (a *ApplicationImpl) ConstructAndSetup1stConfigLoggingVault() error {
 	return nil
 }
 
-func (a *ApplicationImpl) ConstructTheRest() {
-	// construct the rest (must ensure correct order yourself), allowing for test overrides where needed
+func (a *ApplicationImpl) ConstructRepositories() error {
+	// construct the components that talk to the external world (must ensure correct order yourself), allowing for test overrides where needed
 	a.SshAuthProvider = sshAuthProvider.New(a.Config, a.CustomConfig, a.Logging)
+	if err := a.SshAuthProvider.Setup(); err != nil {
+		return err
+	}
+
 	if a.Metadata == nil {
 		a.Metadata = metadata.New(a.Config, a.CustomConfig, a.Logging, a.Timestamp, a.SshAuthProvider)
 	}
+	if err := a.Metadata.Setup(); err != nil {
+		return err
+	}
+
 	a.HostIP = hostip.New(a.Logging)
+	if err := a.HostIP.Setup(); err != nil {
+		return err
+	}
+
 	if a.Kafka == nil {
 		a.Kafka = kafka.New(a.Config, a.CustomConfig, a.Logging, a.HostIP)
 	}
+	if err := a.Kafka.Setup(); err != nil {
+		return err
+	}
+
 	if a.IdentityProvider == nil {
 		a.IdentityProvider = idp.New(a.Config, a.CustomConfig, a.Logging)
 	}
+	if err := a.IdentityProvider.Setup(); err != nil {
+		return err
+	}
+
 	if a.Bitbucket == nil {
 		a.Bitbucket = bitbucket.New(a.Config, a.Logging, a.Vault)
 	}
+	if err := a.Bitbucket.Setup(); err != nil {
+		return err
+	}
+
 	a.Notifier = notifier.New(a.Config, a.CustomConfig, a.Logging)
+	if err := a.Notifier.Setup(); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (a *ApplicationImpl) ConstructServices() error {
+	// construct the business logic components(must ensure correct order yourself)
 
 	a.Mapper = mapper.New(a.Config, a.CustomConfig, a.Logging, a.Timestamp, a.Metadata, a.Bitbucket)
+	if err := a.Mapper.Setup(); err != nil {
+		return err
+	}
+
 	a.Cache = cache.New(a.Config, a.Logging, a.Timestamp)
+	if err := a.Cache.Setup(); err != nil {
+		return err
+	}
+
 	a.Updater = updater.New(a.Config, a.CustomConfig, a.Logging, a.Timestamp, a.Kafka, a.Notifier, a.Mapper, a.Cache)
+	if err := a.Updater.Setup(); err != nil {
+		return err
+	}
+
 	a.Trigger = trigger.New(a.Config, a.CustomConfig, a.Logging, a.Timestamp, a.Updater)
+	if err := a.Trigger.Setup(); err != nil {
+		return err
+	}
+
 	a.Owners = owners.New(a.Config, a.Logging, a.Timestamp, a.Cache, a.Updater)
+	if err := a.Owners.Setup(); err != nil {
+		return err
+	}
+
 	a.Repositories = repositories.New(a.Config, a.CustomConfig, a.Logging, a.Timestamp, a.Cache, a.Updater, a.Owners)
+	if err := a.Repositories.Setup(); err != nil {
+		return err
+	}
+
 	a.Services = services.New(a.Config, a.CustomConfig, a.Logging, a.Timestamp, a.Cache, a.Updater, a.Repositories)
+	if err := a.Services.Setup(); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (a *ApplicationImpl) ConstructControllers() error {
+	// construct the components that handle incoming requests (must ensure correct order yourself)
 
 	a.HealthCtl = healthctl.NewNoAcorn()
 	a.SwaggerCtl = swaggerctl.NewNoAcorn()
@@ -170,60 +240,12 @@ func (a *ApplicationImpl) ConstructTheRest() {
 	a.ServiceCtl = servicectl.New(a.Config, a.CustomConfig, a.Logging, a.Timestamp, a.Services)
 	a.RepositoryCtl = repositoryctl.New(a.Config, a.CustomConfig, a.Logging, a.Timestamp, a.Repositories)
 	a.WebhookCtl = webhookctl.New(a.Logging, a.Timestamp, a.Updater)
+
 	a.Server = server.New(a.Config, a.CustomConfig, a.Logging, a.IdentityProvider,
 		a.HealthCtl, a.SwaggerCtl, a.OwnerCtl, a.ServiceCtl, a.RepositoryCtl, a.WebhookCtl)
-
-	// ...
-}
-
-func (a *ApplicationImpl) SetupTheRest() error {
-	// set up the rest (must ensure correct order yourself, some components may not have a Setup method)
-	if err := a.SshAuthProvider.Setup(); err != nil {
-		return err
-	}
-	if err := a.Metadata.Setup(); err != nil {
-		return err
-	}
-	if err := a.HostIP.Setup(); err != nil {
-		return err
-	}
-	if err := a.Kafka.Setup(); err != nil {
-		return err
-	}
-	if err := a.IdentityProvider.Setup(); err != nil {
-		return err
-	}
-	if err := a.Bitbucket.Setup(); err != nil {
-		return err
-	}
-	if err := a.Notifier.Setup(); err != nil {
-		return err
-	}
-
-	if err := a.Mapper.Setup(); err != nil {
-		return err
-	}
-	if err := a.Cache.Setup(); err != nil {
-		return err
-	}
-	if err := a.Updater.Setup(); err != nil {
-		return err
-	}
-	if err := a.Trigger.Setup(); err != nil {
-		return err
-	}
-	if err := a.Owners.Setup(); err != nil {
-		return err
-	}
-	if err := a.Repositories.Setup(); err != nil {
-		return err
-	}
-	if err := a.Services.Setup(); err != nil {
-		return err
-	}
-
 	if err := a.Server.Setup(); err != nil {
 		return err
 	}
+
 	return nil
 }

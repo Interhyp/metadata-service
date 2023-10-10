@@ -54,7 +54,7 @@ func fakeNow() time.Time {
 }
 
 func (a *ApplicationWithMocksImpl) Create() error {
-	a.ConstructAndSetup1stConfigLoggingVault()
+	a.ConstructConfigLoggingVaultTimestamp_ForTesting()
 
 	// prefill mocks as overrides
 	a.Metadata = metadataImpl
@@ -62,16 +62,21 @@ func (a *ApplicationWithMocksImpl) Create() error {
 	a.IdentityProvider = idpImpl
 	a.Bitbucket = bbImpl
 
-	a.ConstructTheRest()
-
-	if err := a.SetupTheRest(); err != nil {
+	// now can use normal construct functions, they respect the prefilled mocks
+	if err := a.ConstructRepositories(); err != nil {
+		return err
+	}
+	if err := a.ConstructServices(); err != nil {
+		return err
+	}
+	if err := a.ConstructControllers(); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (a *ApplicationWithMocksImpl) ConstructAndSetup1stConfigLoggingVault() {
+func (a *ApplicationWithMocksImpl) ConstructConfigLoggingVaultTimestamp_ForTesting() {
 	// construct and set up config, logging, vault, timestamp
 	a.Config = configImpl
 	a.CustomConfig = customConfigImpl

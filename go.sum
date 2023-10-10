@@ -33,6 +33,12 @@ github.com/StephanHCB/go-backend-service-common v0.5.2-0.20231006124829-e54605b6
 github.com/StephanHCB/go-backend-service-common v0.5.2-0.20231006124829-e54605b6bbee/go.mod h1:UBCrmMypKkucU8Upqlej4sUCI4Bn0Xakgv3yT9kSbno=
 github.com/StephanHCB/go-backend-service-common v0.5.2-0.20231006142552-74b094f17b4f h1:ejWnj2aVE2Lg2OcecKfCh8W3xuit3nrAbHdBElY24UU=
 github.com/StephanHCB/go-backend-service-common v0.5.2-0.20231006142552-74b094f17b4f/go.mod h1:UBCrmMypKkucU8Upqlej4sUCI4Bn0Xakgv3yT9kSbno=
+github.com/StephanHCB/go-backend-service-common v0.5.2-0.20231010095356-780256ac0447 h1:nhUL9oIvHrYyRDF44o5DwmJ6gFb/bRcYdNR2lqAhgUQ=
+github.com/StephanHCB/go-backend-service-common v0.5.2-0.20231010095356-780256ac0447/go.mod h1:UBCrmMypKkucU8Upqlej4sUCI4Bn0Xakgv3yT9kSbno=
+github.com/StephanHCB/go-backend-service-common v0.5.2-0.20231010100056-3fe0c68e1125 h1:8fMe6sq3C53UDk2jTbOwfSu9aOyFxA97kesFIPsacyk=
+github.com/StephanHCB/go-backend-service-common v0.5.2-0.20231010100056-3fe0c68e1125/go.mod h1:UBCrmMypKkucU8Upqlej4sUCI4Bn0Xakgv3yT9kSbno=
+github.com/StephanHCB/go-backend-service-common v0.5.2-0.20231010100831-78cdd5b843b1 h1:5ab4UqS/p7FnqoDtRyWEHmNdIR86kpSbtDENHFv02Bc=
+github.com/StephanHCB/go-backend-service-common v0.5.2-0.20231010100831-78cdd5b843b1/go.mod h1:UBCrmMypKkucU8Upqlej4sUCI4Bn0Xakgv3yT9kSbno=
 github.com/acomagu/bufpipe v1.0.4 h1:e3H4WUzM3npvo5uv95QuJM3cQspFNtFBzvJ2oNjKIDQ=
 github.com/acomagu/bufpipe v1.0.4/go.mod h1:mxdxdup/WdsKVreO5GpW4+M/1CE2sMG4jeGJ2sYmHc4=
 github.com/anmitsu/go-shlex v0.0.0-20200514113438-38f4b401e2be h1:9AeTilPcZAjCFIImctFaOjnTIavg87rW78vTPkQqLI8=
