@@ -5,11 +5,11 @@ import (
 	"github.com/Interhyp/metadata-service/api"
 )
 
-const CacheAcornName = "cache"
-
 // Cache is the central in-memory metadata cache, present to speed up read access to the current metadata.
 type Cache interface {
 	IsCache() bool
+
+	Setup() error
 
 	// --- owner cache ---
 

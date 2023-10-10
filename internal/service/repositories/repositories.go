@@ -7,6 +7,7 @@ import (
 	"github.com/Interhyp/metadata-service/internal/acorn/config"
 	"github.com/Interhyp/metadata-service/internal/acorn/service"
 	"github.com/Interhyp/metadata-service/internal/service/util"
+	auzerolog "github.com/StephanHCB/go-autumn-logging-zerolog"
 	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
 	"github.com/StephanHCB/go-backend-service-common/api/apierrors"
 	"net/url"
@@ -14,14 +15,46 @@ import (
 )
 
 type Impl struct {
-	Configuration librepo.Configuration
-	Logging       librepo.Logging
-	Cache         service.Cache
-	Updater       service.Updater
-	Owners        service.Owners
-
+	Configuration       librepo.Configuration
 	CustomConfiguration config.CustomConfiguration
+	Logging             librepo.Logging
 	Timestamp           librepo.Timestamp
+	Cache               service.Cache
+	Updater             service.Updater
+	Owners              service.Owners
+}
+
+func New(
+	configuration librepo.Configuration,
+	customConfig config.CustomConfiguration,
+	logging librepo.Logging,
+	timestamp librepo.Timestamp,
+	cache service.Cache,
+	updater service.Updater,
+	owners service.Owners,
+) service.Repositories {
+	return &Impl{
+		Configuration:       configuration,
+		CustomConfiguration: customConfig,
+		Logging:             logging,
+		Timestamp:           timestamp,
+		Cache:               cache,
+		Updater:             updater,
+		Owners:              owners,
+	}
+}
+
+func (s *Impl) IsRepositories() bool {
+	return true
+}
+
+func (s *Impl) Setup() error {
+	ctx := auzerolog.AddLoggerToCtx(context.Background())
+
+	// nothing to do
+
+	s.Logging.Logger().Ctx(ctx).Info().Print("successfully set up repositories business component")
+	return nil
 }
 
 func (s *Impl) ValidRepositoryKey(ctx context.Context, key string) apierrors.AnnotatedError {
@@ -321,7 +354,7 @@ func (s *Impl) PatchRepository(ctx context.Context, key string, repositoryPatchD
 		if err != nil {
 			return err
 		}
-		
+
 		result = repositoryWritten
 		return nil
 	})

@@ -52,7 +52,6 @@ exclude (
 )
 
 require (
-	github.com/StephanHCB/go-autumn-acorn-registry v0.3.1
 	github.com/StephanHCB/go-autumn-config-api v0.2.1
 	github.com/StephanHCB/go-autumn-config-env v0.2.2
 	github.com/StephanHCB/go-autumn-logging v0.3.0
@@ -62,7 +61,7 @@ require (
 	github.com/StephanHCB/go-autumn-restclient-circuitbreaker v0.4.1
 	github.com/StephanHCB/go-autumn-restclient-circuitbreaker-prometheus v0.1.0
 	github.com/StephanHCB/go-autumn-restclient-prometheus v0.1.2
-	github.com/StephanHCB/go-backend-service-common v0.5.1
+	github.com/StephanHCB/go-backend-service-common v0.6.0
 	github.com/go-chi/chi/v5 v5.0.10
 	github.com/go-git/go-billy/v5 v5.5.0
 	github.com/go-git/go-git/v5 v5.9.0
@@ -81,6 +80,7 @@ require (
 	dario.cat/mergo v1.0.0 // indirect
 	github.com/Microsoft/go-winio v0.6.1 // indirect
 	github.com/ProtonMail/go-crypto v0.0.0-20230828082145-3c4c8a2d2371 // indirect
+	github.com/StephanHCB/go-autumn-acorn-registry v0.3.1 // indirect
 	github.com/StephanHCB/go-autumn-web-swagger-ui v0.2.3 // indirect
 	github.com/acomagu/bufpipe v1.0.4 // indirect
 	github.com/armon/go-radix v1.0.0 // indirect
@@ -125,9 +125,9 @@ require (
 	github.com/tidwall/tinylru v1.2.1 // indirect
 	github.com/twmb/franz-go/pkg/kmsg v1.6.1 // indirect
 	github.com/xanzy/ssh-agent v0.3.3 // indirect
-	go.elastic.co/apm/module/apmchiv5/v2 v2.4.3 // indirect
-	go.elastic.co/apm/module/apmhttp/v2 v2.4.3 // indirect
-	go.elastic.co/apm/v2 v2.4.3 // indirect
+	go.elastic.co/apm/module/apmchiv5/v2 v2.4.4 // indirect
+	go.elastic.co/apm/module/apmhttp/v2 v2.4.4 // indirect
+	go.elastic.co/apm/v2 v2.4.4 // indirect
 	go.elastic.co/fastjson v1.1.0 // indirect
 	golang.org/x/crypto v0.13.0 // indirect
 	golang.org/x/mod v0.12.0 // indirect

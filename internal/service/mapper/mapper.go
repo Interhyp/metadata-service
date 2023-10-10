@@ -4,10 +4,11 @@ import (
 	"context"
 	"github.com/Interhyp/metadata-service/internal/acorn/config"
 	"github.com/Interhyp/metadata-service/internal/acorn/repository"
+	"github.com/Interhyp/metadata-service/internal/acorn/service"
+	auzerolog "github.com/StephanHCB/go-autumn-logging-zerolog"
 	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
 	"strings"
 	"sync"
-	"time"
 )
 
 type Impl struct {
@@ -16,15 +17,49 @@ type Impl struct {
 	Logging             librepo.Logging
 	Metadata            repository.Metadata
 	Bitbucket           repository.Bitbucket
+	Timestamp           librepo.Timestamp
 
 	muOwnerCaches        sync.Mutex
 	serviceOwnerCache    map[string]string
 	repositoryOwnerCache map[string]string
-
-	Now func() time.Time
 }
 
-func (s *Impl) Setup(_ context.Context) error {
+func New(
+	configuration librepo.Configuration,
+	customConfig config.CustomConfiguration,
+	logging librepo.Logging,
+	timestamp librepo.Timestamp,
+	metadata repository.Metadata,
+	bitbucket repository.Bitbucket,
+) service.Mapper {
+	return &Impl{
+		Configuration:       configuration,
+		CustomConfiguration: customConfig,
+		Logging:             logging,
+		Timestamp:           timestamp,
+		Metadata:            metadata,
+		Bitbucket:           bitbucket,
+	}
+}
+
+func (s *Impl) IsMapper() bool {
+	return true
+}
+
+func (s *Impl) Setup() error {
+	ctx := auzerolog.AddLoggerToCtx(context.Background())
+
+	err := s.SetupMapper(ctx)
+	if err != nil {
+		s.Logging.Logger().Ctx(ctx).Error().WithErr(err).Print("failed to set up mapper. BAILING OUT.")
+		return err
+	}
+
+	s.Logging.Logger().Ctx(ctx).Info().Print("successfully set up mapper")
+	return nil
+}
+
+func (s *Impl) SetupMapper(_ context.Context) error {
 	s.serviceOwnerCache = make(map[string]string)
 	s.repositoryOwnerCache = make(map[string]string)
 

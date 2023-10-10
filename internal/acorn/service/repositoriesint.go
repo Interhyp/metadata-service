@@ -6,11 +6,10 @@ import (
 	"github.com/StephanHCB/go-backend-service-common/api/apierrors"
 )
 
-const RepositoriesAcornName = "repositories"
-
 // Repositories provides the business logic for repository metadata.
 type Repositories interface {
 	IsRepositories() bool
+	Setup() error
 
 	// ValidRepositoryKey checks validity of a repository key and returns an error describing the problem if invalid
 	ValidRepositoryKey(ctx context.Context, repoKey string) apierrors.AnnotatedError

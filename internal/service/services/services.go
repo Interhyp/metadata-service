@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	auzerolog "github.com/StephanHCB/go-autumn-logging-zerolog"
 	"strings"
 
 	"github.com/Interhyp/metadata-service/api"
@@ -18,12 +19,43 @@ type Impl struct {
 	Configuration       librepo.Configuration
 	CustomConfiguration config.CustomConfiguration
 	Logging             librepo.Logging
+	Timestamp           librepo.Timestamp
 	Cache               service.Cache
 	Updater             service.Updater
-	Owner               service.Owners
 	Repositories        service.Repositories
+}
 
-	Timestamp librepo.Timestamp
+func New(
+	configuration librepo.Configuration,
+	customConfig config.CustomConfiguration,
+	logging librepo.Logging,
+	timestamp librepo.Timestamp,
+	cache service.Cache,
+	updater service.Updater,
+	repositories service.Repositories,
+) service.Services {
+	return &Impl{
+		Configuration:       configuration,
+		CustomConfiguration: customConfig,
+		Logging:             logging,
+		Timestamp:           timestamp,
+		Cache:               cache,
+		Updater:             updater,
+		Repositories:        repositories,
+	}
+}
+
+func (s *Impl) IsServices() bool {
+	return true
+}
+
+func (s *Impl) Setup() error {
+	ctx := auzerolog.AddLoggerToCtx(context.Background())
+
+	// nothing to do
+
+	s.Logging.Logger().Ctx(ctx).Info().Print("successfully set up services business component")
+	return nil
 }
 
 var initialServiceLifecycle = "experimental"

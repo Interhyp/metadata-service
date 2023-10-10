@@ -3,6 +3,7 @@ package metadatamock
 import (
 	"context"
 	"errors"
+	auzerolog "github.com/StephanHCB/go-autumn-logging-zerolog"
 	"io"
 	"os"
 	"time"
@@ -27,6 +28,28 @@ type Impl struct {
 	SimulateRemoteFailure      bool
 	SimulateConcurrencyFailure bool
 	SimulateUnchangedFailure   bool
+}
+
+func New() repository.Metadata {
+	return &Impl{
+		Now: time.Now,
+	}
+}
+
+func (r *Impl) Setup() error {
+	ctx := auzerolog.AddLoggerToCtx(context.Background())
+
+	if err := r.Clone(ctx); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (r *Impl) Teardown() {
+}
+
+func (r *Impl) IsMetadata() bool {
+	return true
 }
 
 const ownerInfo = `contact: somebody@some-organisation.com

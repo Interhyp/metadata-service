@@ -64,7 +64,7 @@ func (s *Impl) lookupRepositoryOwnerWithRefresh(ctx context.Context, repoKey str
 		}
 		ownerAlias, ok = s.lookupInRepositoryOwnerCache(repoKey)
 		if !ok {
-			return "", apierrors.NewNotFoundError(fmt.Sprintf("repository not found %s", repoKey), "repository.notfound", nil, s.Now())
+			return "", apierrors.NewNotFoundError(fmt.Sprintf("repository not found %s", repoKey), "repository.notfound", nil, s.Timestamp.Now())
 		}
 	}
 	return ownerAlias, nil

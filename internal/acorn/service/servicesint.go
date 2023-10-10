@@ -5,11 +5,11 @@ import (
 	"github.com/Interhyp/metadata-service/api"
 )
 
-const ServicesAcornName = "services"
-
 // Services provides the business logic for service metadata.
 type Services interface {
 	IsServices() bool
+
+	Setup() error
 
 	GetServices(ctx context.Context, ownerAliasFilter string) (openapi.ServiceListDto, error)
 	GetService(ctx context.Context, serviceName string) (openapi.ServiceDto, error)

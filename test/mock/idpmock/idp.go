@@ -2,10 +2,19 @@ package idpmock
 
 import (
 	"context"
+	"github.com/Interhyp/metadata-service/internal/acorn/repository"
 )
 import _ "github.com/go-git/go-git/v5"
 
 type Impl struct{}
+
+func New() repository.IdentityProvider {
+	return &Impl{}
+}
+
+func (r *Impl) IsIdentityProvider() bool {
+	return true
+}
 
 // We created a keyset and some tokens using jwt.io. Use this keyset ONLY for automated tests!
 
@@ -33,7 +42,11 @@ mwIDAQXX
 -----END PUBLIC KEY-----
 `
 
-func (r *Impl) Setup(ctx context.Context) error {
+func (r *Impl) Setup() error {
+	return nil
+}
+
+func (r *Impl) SetupConnector(ctx context.Context) error {
 	return nil
 }
 

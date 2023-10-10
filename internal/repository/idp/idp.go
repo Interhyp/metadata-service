@@ -10,6 +10,8 @@ import (
 	"errors"
 	"fmt"
 	"github.com/Interhyp/metadata-service/internal/acorn/config"
+	"github.com/Interhyp/metadata-service/internal/acorn/repository"
+	auzerolog "github.com/StephanHCB/go-autumn-logging-zerolog"
 	aurestclientprometheus "github.com/StephanHCB/go-autumn-restclient-prometheus"
 	aurestclientapi "github.com/StephanHCB/go-autumn-restclient/api"
 	auresthttpclient "github.com/StephanHCB/go-autumn-restclient/implementation/httpclient"
@@ -30,7 +32,40 @@ type Impl struct {
 	PEMKeySet []string
 }
 
-func (r *Impl) Setup(ctx context.Context) error {
+func New(
+	configuration librepo.Configuration,
+	customConfig config.CustomConfiguration,
+	logging librepo.Logging,
+) repository.IdentityProvider {
+	return &Impl{
+		Configuration:       configuration,
+		CustomConfiguration: customConfig,
+		Logging:             logging,
+	}
+}
+
+func (r *Impl) IsIdentityProvider() bool {
+	return true
+}
+
+func (r *Impl) Setup() error {
+	ctx := auzerolog.AddLoggerToCtx(context.Background())
+
+	if err := r.SetupConnector(ctx); err != nil {
+		r.Logging.Logger().Ctx(ctx).Error().WithErr(err).Print("failed to set up idp connector. BAILING OUT")
+		return err
+	}
+
+	if err := r.ObtainKeySet(ctx); err != nil {
+		r.Logging.Logger().Ctx(ctx).Error().WithErr(err).Print("failed to obtain key set from identity provider. BAILING OUT")
+		return err
+	}
+
+	r.Logging.Logger().Ctx(ctx).Info().Print("successfully set up idp connector")
+	return nil
+}
+
+func (r *Impl) SetupConnector(ctx context.Context) error {
 	r.Logging.Logger().Ctx(ctx).Info().Print("setting up idp connector")
 
 	client, err := auresthttpclient.New(10*time.Second, nil, nil)

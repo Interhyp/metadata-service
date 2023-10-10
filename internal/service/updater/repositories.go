@@ -22,7 +22,7 @@ func (s *Impl) WriteRepository(ctx context.Context, key string, repository opena
 			allowed := s.CanMoveOrDeleteRepository(subCtx, key)
 			if !allowed {
 				s.Logging.Logger().Ctx(ctx).Info().Printf("tried to move repository %v, which is still referenced by its service", key)
-				return apierrors.NewConflictError("repository.conflict.referenced", "this repository is being referenced in a service, you cannot change its owner directly - you can change the owner of the service and this will move it along", nil, s.Now())
+				return apierrors.NewConflictError("repository.conflict.referenced", "this repository is being referenced in a service, you cannot change its owner directly - you can change the owner of the service and this will move it along", nil, s.Timestamp.Now())
 			}
 
 			repositoryWritten, err := s.Mapper.WriteRepositoryWithChangedOwner(subCtx, key, repository)
@@ -98,7 +98,7 @@ func (s *Impl) repositoryKafkaEvent(key string, timeStamp string, commitHash str
 func (s *Impl) updateRepositories(ctx context.Context) error {
 	s.Logging.Logger().Ctx(ctx).Info().Print("updating repositories")
 
-	ts := timeStamp(s.Now())
+	ts := timeStamp(s.Timestamp.Now())
 
 	repositoryKeysMap, err := s.decideRepositoriesToAddUpdateOrRemove(ctx)
 	if err != nil {

@@ -13,7 +13,11 @@ func (this *SshAuthProviderMock) IsSshAuthProvider() bool {
 	return true
 }
 
-func (this *SshAuthProviderMock) Setup(_ context.Context) error {
+func (this *SshAuthProviderMock) Setup() error {
+	return nil
+}
+
+func (this *SshAuthProviderMock) SetupProvider(ctx context.Context) error {
 	return nil
 }
 

@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	auzerolog "github.com/StephanHCB/go-autumn-logging-zerolog"
 	"github.com/StephanHCB/go-backend-service-common/web/middleware/security"
 	"io"
 	"os"
@@ -29,6 +30,7 @@ type Impl struct {
 	Configuration       librepo.Configuration
 	CustomConfiguration config.CustomConfiguration
 	Logging             librepo.Logging
+	Timestamp           librepo.Timestamp
 
 	SshAuthProvider repository.SshAuthProvider
 
@@ -47,10 +49,50 @@ type Impl struct {
 	AlreadySeenCommit string
 
 	mu       sync.Mutex
-	Now      func() time.Time
 	LastPull time.Time
 
 	consoleOutput bytes.Buffer
+}
+
+func New(
+	configuration librepo.Configuration,
+	customConfig config.CustomConfiguration,
+	logging librepo.Logging,
+	timestamp librepo.Timestamp,
+	sshAuth repository.SshAuthProvider,
+) repository.Metadata {
+	return &Impl{
+		Configuration:       configuration,
+		CustomConfiguration: customConfig,
+		Logging:             logging,
+		Timestamp:           timestamp,
+		SshAuthProvider:     sshAuth,
+
+		CommitCacheByFilePath: make(map[string]repository.CommitInfo),
+		NewCommits:            make([]repository.CommitInfo, 0),
+		KnownCommits:          make(map[string]bool),
+	}
+}
+
+func (r *Impl) IsMetadata() bool {
+	return true
+}
+
+func (r *Impl) Setup() error {
+	ctx := auzerolog.AddLoggerToCtx(context.Background())
+
+	if err := r.Clone(ctx); err != nil {
+		r.Logging.Logger().Ctx(ctx).Error().WithErr(err).Print("failed to clone service-metadata. BAILING OUT")
+		return err
+	}
+
+	r.Logging.Logger().Ctx(ctx).Info().Print("successfully set up metadata")
+	return nil
+}
+
+func (r *Impl) Teardown() {
+	ctx := auzerolog.AddLoggerToCtx(context.Background())
+	r.Discard(ctx)
 }
 
 const insecureSkipTLS = false
@@ -183,7 +225,7 @@ func (r *Impl) Clone(ctx context.Context) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
-	r.LastPull = r.Now()
+	r.LastPull = r.Timestamp.Now()
 
 	r.CommitCacheByFilePath = make(map[string]repository.CommitInfo)
 	r.NewCommits = make([]repository.CommitInfo, 0)
@@ -242,7 +284,7 @@ func (r *Impl) Pull(ctx context.Context) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
-	r.LastPull = r.Now()
+	r.LastPull = r.Timestamp.Now()
 
 	tree, err := r.GitRepo.Worktree()
 	if err != nil {
@@ -301,7 +343,7 @@ func (r *Impl) Commit(ctx context.Context, message string) (repository.CommitInf
 
 	commitInfo := repository.CommitInfo{
 		CommitHash: "",
-		TimeStamp:  r.Now(),
+		TimeStamp:  r.Timestamp.Now(),
 		Message:    message,
 	}
 
@@ -326,7 +368,7 @@ func (r *Impl) Commit(ctx context.Context, message string) (repository.CommitInf
 		return commitInfo, nochangeserror.New(ctx)
 	}
 
-	commitTimestamp := r.Now()
+	commitTimestamp := r.Timestamp.Now()
 	commit, err := tree.Commit(message, &git.CommitOptions{
 		Committer: &object.Signature{
 			Name:  r.CustomConfiguration.GitCommitterName(),
@@ -393,7 +435,7 @@ func (r *Impl) Push(ctx context.Context) error {
 		return err
 	}
 
-	r.LastPull = r.Now()
+	r.LastPull = r.Timestamp.Now()
 
 	r.Logging.Logger().Ctx(ctx).Debug().Print("git push worked - console output was: ", r.sanitizedConsoleOutput())
 	return nil
@@ -476,7 +518,7 @@ func (r *Impl) ReadFile(filename string) ([]byte, repository.CommitInfo, error) 
 
 	errorCommitInfo := repository.CommitInfo{
 		CommitHash: "",
-		TimeStamp:  r.Now(),
+		TimeStamp:  r.Timestamp.Now(),
 		Message:    "",
 	}
 

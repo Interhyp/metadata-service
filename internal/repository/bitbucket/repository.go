@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"github.com/Interhyp/metadata-service/internal/acorn/errors/httperror"
 	"github.com/Interhyp/metadata-service/internal/acorn/repository"
+	"github.com/Interhyp/metadata-service/internal/repository/bitbucket/bbclient"
 	"github.com/Interhyp/metadata-service/internal/repository/bitbucket/bbclientint"
+	auzerolog "github.com/StephanHCB/go-autumn-logging-zerolog"
 	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
 	"net/http"
 	"sort"
@@ -19,7 +21,36 @@ type Impl struct {
 	LowLevel bbclientint.BitbucketClient
 }
 
-func (r *Impl) Setup(ctx context.Context) error {
+func New(
+	configuration librepo.Configuration,
+	logging librepo.Logging,
+	vault librepo.Vault,
+) repository.Bitbucket {
+	return &Impl{
+		Configuration: configuration,
+		Logging:       logging,
+		Vault:         vault,
+		LowLevel:      bbclient.New(configuration, logging, vault),
+	}
+}
+
+func (r *Impl) IsBitbucket() bool {
+	return true
+}
+
+func (r *Impl) Setup() error {
+	ctx := auzerolog.AddLoggerToCtx(context.Background())
+
+	if err := r.SetupClient(ctx); err != nil {
+		r.Logging.Logger().Ctx(ctx).Error().WithErr(err).Print("failed to set up bitbucket client. BAILING OUT")
+		return err
+	}
+
+	r.Logging.Logger().Ctx(ctx).Info().Print("successfully set up bitbucket")
+	return nil
+}
+
+func (r *Impl) SetupClient(ctx context.Context) error {
 	r.Logging.Logger().Ctx(ctx).Info().Print("setting up bitbucket client")
 	return r.LowLevel.Setup()
 }

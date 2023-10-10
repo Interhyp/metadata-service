@@ -12,6 +12,24 @@ type Impl struct {
 	Recording []repository.UpdateEvent
 }
 
+func New() repository.Kafka {
+	return &Impl{
+		Callback:  func(_ repository.UpdateEvent) {},
+		Recording: make([]repository.UpdateEvent, 0),
+	}
+}
+
+func (r *Impl) IsKafka() bool {
+	return true
+}
+
+func (r *Impl) Setup() error {
+	return nil
+}
+
+func (r *Impl) Teardown() {
+}
+
 func (r *Impl) SubscribeIncoming(_ context.Context, callback repository.ReceiverCallback) error {
 	r.Callback = callback
 	return nil

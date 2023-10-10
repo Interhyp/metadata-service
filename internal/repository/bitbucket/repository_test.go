@@ -4,8 +4,11 @@ import (
 	"context"
 	"github.com/Interhyp/metadata-service/internal/acorn/errors/httperror"
 	"github.com/Interhyp/metadata-service/internal/acorn/repository"
+	"github.com/Interhyp/metadata-service/internal/repository/config"
 	"github.com/Interhyp/metadata-service/test/mock/bbclientmock"
 	"github.com/Interhyp/metadata-service/test/mock/vaultmock"
+	auconfigenv "github.com/StephanHCB/go-autumn-config-env"
+	libconfig "github.com/StephanHCB/go-backend-service-common/repository/config"
 	"github.com/StephanHCB/go-backend-service-common/repository/logging"
 	"github.com/stretchr/testify/require"
 	"testing"
@@ -20,6 +23,32 @@ func tstSetup() Impl {
 		LowLevel: &lowLevel,
 		Logging:  &logger,
 	}
+}
+
+func TestNewAndSetup(t *testing.T) {
+	vault := &vaultmock.VaultImpl{}
+	logger := &logging.LoggingImpl{}
+	conf := tstConfig(t)
+	cut := New(conf, logger, vault)
+
+	lowLevel := &bbclientmock.BitbucketClientMock{}
+	cut.(*Impl).LowLevel = lowLevel
+
+	require.True(t, cut.IsBitbucket())
+
+	err := cut.Setup()
+	require.Nil(t, err)
+}
+
+const validConfigurationPath = "../resources/valid-config.yaml"
+
+func tstConfig(t *testing.T) *libconfig.ConfigImpl {
+	impl, _ := config.New()
+	configImpl := impl.(*libconfig.ConfigImpl)
+	auconfigenv.LocalConfigFileName = validConfigurationPath
+	err := configImpl.Read()
+	require.Nil(t, err)
+	return configImpl
 }
 
 func TestGetBitbucketUser_Success(t *testing.T) {

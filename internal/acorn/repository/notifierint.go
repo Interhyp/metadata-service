@@ -6,12 +6,12 @@ import (
 	"github.com/Interhyp/metadata-service/internal/types"
 )
 
-const NotifierAcornName = "notifier"
-
 type Notifier interface {
 	IsNotifier() bool
 
-	Setup(ctx context.Context) error
+	Setup() error
+
+	SetupNotifier(ctx context.Context) error
 
 	PublishCreation(ctx context.Context, payloadName string, payload openapi.NotificationPayload) error
 

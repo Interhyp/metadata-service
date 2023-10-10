@@ -2,16 +2,16 @@ package repository
 
 import "context"
 
-const IdentityProviderAcornName = "idp"
-
 // IdentityProvider is the central singleton representing an Open ID Connect Identity Provider.
 //
 // We use this to obtain a JWT keyset and to check its id endpoint to synchronously validate JWT tokens.
 type IdentityProvider interface {
 	IsIdentityProvider() bool
 
-	// Setup uses the configuration to set up
-	Setup(ctx context.Context) error
+	Setup() error
+
+	// SetupConnector uses the configuration to set up the connector
+	SetupConnector(ctx context.Context) error
 
 	// ObtainKeySet calls the key set endpoint and converts the keys to PEM for use with the jwt package
 	ObtainKeySet(ctx context.Context) error

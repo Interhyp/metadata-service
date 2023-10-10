@@ -30,6 +30,46 @@ type Impl struct {
 	KafkaTopic    string
 }
 
+func New(
+	configuration librepo.Configuration,
+	customConfig config.CustomConfiguration,
+	logging librepo.Logging,
+	hostIP repository.HostIP,
+) repository.Kafka {
+	return &Impl{
+		Callback: func(_ repository.UpdateEvent) {},
+
+		Configuration:       configuration,
+		CustomConfiguration: customConfig,
+		Logging:             logging,
+		HostIP:              hostIP,
+	}
+}
+
+func (r *Impl) IsKafka() bool {
+	return true
+}
+
+func (r *Impl) Setup() error {
+	ctx := auzerolog.AddLoggerToCtx(context.Background())
+
+	if err := r.Connect(ctx); err != nil {
+		r.Logging.Logger().Ctx(ctx).Error().WithErr(err).Print("failed to set up kafka connection. BAILING OUT")
+		return err
+	}
+
+	r.Logging.Logger().Ctx(ctx).Info().Print("successfully set up kafka")
+	return nil
+}
+
+func (r *Impl) Teardown() {
+	ctx := auzerolog.AddLoggerToCtx(context.Background())
+
+	if err := r.Disconnect(ctx); err != nil {
+		r.Logging.Logger().Ctx(ctx).Error().WithErr(err).Print("failed to tear down kafka connection. Continuing anyway.")
+	}
+}
+
 func (r *Impl) SubscribeIncoming(ctx context.Context, callback repository.ReceiverCallback) error {
 	r.Logging.Logger().Ctx(ctx).Info().Print("accepted kafka subscription callback")
 	r.Callback = callback

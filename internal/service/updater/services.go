@@ -113,7 +113,7 @@ func (s *Impl) serviceAndReposKafkaEvent(serviceName string, repoKeys []string, 
 func (s *Impl) updateServices(ctx context.Context) error {
 	s.Logging.Logger().Ctx(ctx).Info().Print("updating services")
 
-	ts := timeStamp(s.Now())
+	ts := timeStamp(s.Timestamp.Now())
 
 	serviceNamesMap, err := s.decideServicesToAddUpdateOrRemove(ctx)
 	if err != nil {

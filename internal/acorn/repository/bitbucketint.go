@@ -4,12 +4,12 @@ import (
 	"context"
 )
 
-const BitbucketAcornName = "bitbucket"
-
 type Bitbucket interface {
 	IsBitbucket() bool
 
-	Setup(ctx context.Context) error
+	Setup() error
+
+	SetupClient(ctx context.Context) error
 
 	GetBitbucketUser(ctx context.Context, username string) (BitbucketUser, error)
 	GetBitbucketUsers(ctx context.Context, usernames []string) ([]BitbucketUser, error)
