@@ -146,6 +146,10 @@ type RepositoryConfigurationDto struct {
 	DefaultReviewers []string `yaml:"defaultReviewers,omitempty" json:"defaultReviewers,omitempty"`
 	// List of users, who can sign a pull request.
 	SignedApprovers []string `yaml:"signedApprovers,omitempty" json:"signedApprovers,omitempty"`
+	// Moves the repository into the archive.
+	Archived *bool `yaml:"archived,omitempty" json:"archived,omitempty"`
+	// Repository will not be configured, also not archived.
+	Unmanaged *bool `yaml:"unmanaged,omitempty" json:"unmanaged,omitempty"`
 }
 
 type RepositoryConfigurationWebhookDto struct {
