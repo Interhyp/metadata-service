@@ -528,7 +528,7 @@ func (s *Impl) validRepoKey(ctx context.Context, candidate string, serviceName s
 	return errors.New("repository key must have acceptable name and type combination (allowed types: api implementation helm-deployment), and for helm-deployment the name must match the service name")
 }
 
-var validOperationTypesForService = []string{"WORKLOAD", "PLATFORM", "APPLICATION"}
+var validOperationTypesForService = []string{"WORKLOAD", "PLATFORM", "APPLICATION", "LIBRARY"}
 
 func validOperationType(candidate *string) bool {
 	if candidate == nil {
