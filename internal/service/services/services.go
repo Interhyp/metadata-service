@@ -494,7 +494,7 @@ func (s *Impl) validateAlertTarget(messages []string, alertTarget string) []stri
 
 func validateOperationType(messages []string, operationType *string) []string {
 	if !validOperationType(operationType) {
-		messages = append(messages, "optional field operationType must be WORKLOAD (default if unset), PLATFORM or APPLICATION")
+		messages = append(messages, "optional field operationType must be WORKLOAD (default if unset), PLATFORM, LIBRARY, or APPLICATION")
 	}
 	return messages
 }
