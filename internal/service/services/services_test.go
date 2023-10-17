@@ -294,7 +294,7 @@ func TestValidate_OperationType(t *testing.T) {
 		OperationType: p("YET ANOTHER"),
 	}
 
-	expectedMessage := "validation error: optional field operationType must be WORKLOAD (default if unset), PLATFORM or APPLICATION"
+	expectedMessage := "validation error: optional field operationType must be WORKLOAD (default if unset), PLATFORM, LIBRARY, or APPLICATION"
 
 	tstValidationTestcaseAllOps(t, expectedMessage, data, create, patch)
 }
