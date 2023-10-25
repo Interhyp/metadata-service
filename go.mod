@@ -72,7 +72,7 @@ require (
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/rs/zerolog v1.31.0
 	github.com/stretchr/testify v1.8.4
-	github.com/twmb/franz-go v1.15.0
+	github.com/twmb/franz-go v1.15.1
 	gopkg.in/yaml.v3 v3.0.1
 )
 
@@ -123,7 +123,7 @@ require (
 	github.com/skeema/knownhosts v1.2.0 // indirect
 	github.com/sony/gobreaker v0.5.0 // indirect
 	github.com/tidwall/tinylru v1.2.1 // indirect
-	github.com/twmb/franz-go/pkg/kmsg v1.6.1 // indirect
+	github.com/twmb/franz-go/pkg/kmsg v1.7.0 // indirect
 	github.com/xanzy/ssh-agent v0.3.3 // indirect
 	go.elastic.co/apm/module/apmchiv5/v2 v2.4.4 // indirect
 	go.elastic.co/apm/module/apmhttp/v2 v2.4.4 // indirect
