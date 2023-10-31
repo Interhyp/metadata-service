@@ -43,8 +43,38 @@ func tstCurrent() openapi.ServiceDto {
 	}
 }
 
+func tstCurrentSpec() openapi.ServiceDto {
+	return openapi.ServiceDto{
+		Owner: "owner",
+		Quicklinks: []openapi.Quicklink{
+			{
+				Url:         p("url"),
+				Title:       p("title"),
+				Description: p("desc"),
+			},
+		},
+		Repositories:    []string{"repo1", "repo2"},
+		AlertTarget:     "target",
+		DevelopmentOnly: b(true),
+		OperationType:   p("PLATFORM"),
+		TimeStamp:       "ts",
+		CommitHash:      "hash",
+		Lifecycle:       p("experimental"),
+		Spec: &openapi.ServiceSpecDto{
+			DependsOn:    []string{"other-domain"},
+			ProvidesApis: []string{"some-other-api"},
+			ConsumesApis: []string{"other-api"},
+		},
+	}
+}
+
 func tstPatchService(t *testing.T, patch openapi.ServicePatchDto, expected openapi.ServiceDto) {
 	actual := patchService(tstCurrent(), patch)
+	require.Equal(t, expected, actual)
+}
+
+func tstPatchServiceSpec(t *testing.T, patch openapi.ServicePatchDto, expected openapi.ServiceDto) {
+	actual := patchService(tstCurrentSpec(), patch)
 	require.Equal(t, expected, actual)
 }
 
@@ -118,6 +148,52 @@ func TestPatchService_ClearFields(t *testing.T) {
 		CommitHash:      "",
 		Lifecycle:       nil,
 	})
+}
+
+func TestPatchServiceSpec_EmptyPatch(t *testing.T) {
+	docs.Description("patching of service spec with an empty patch")
+	expected := tstCurrent()
+	tstPatchService(t, openapi.ServicePatchDto{
+		TimeStamp:  "ts",
+		CommitHash: "hash",
+	}, expected)
+}
+
+func TestPatchServiceSpec_ReplaceAll(t *testing.T) {
+	docs.Description("patching of service spec with an empty patch")
+	expected := tstCurrent()
+	expected.Spec = &openapi.ServiceSpecDto{
+		DependsOn:    []string{"some-domain"},
+		ProvidesApis: []string{"some-other-api"},
+		ConsumesApis: []string{"some-api"},
+	}
+	tstPatchService(t, openapi.ServicePatchDto{
+		TimeStamp:  "ts",
+		CommitHash: "hash",
+		Spec: &openapi.ServiceSpecDto{
+			DependsOn:    []string{"some-domain"},
+			ProvidesApis: []string{"some-other-api"},
+			ConsumesApis: []string{"some-api"},
+		},
+	}, expected)
+}
+
+func TestPatchServiceSpec_ReplaceSpecific(t *testing.T) {
+	docs.Description("patching of service spec with an empty patch")
+	expected := tstCurrent()
+	expected.Spec = &openapi.ServiceSpecDto{
+		DependsOn:    []string{"some-domain"},
+		ConsumesApis: []string{"some-api"},
+	}
+	tstPatchServiceSpec(t, openapi.ServicePatchDto{
+		TimeStamp:  "ts",
+		CommitHash: "hash",
+		Spec: &openapi.ServiceSpecDto{
+			DependsOn:    []string{"some-domain"},
+			ProvidesApis: []string{},
+			ConsumesApis: []string{"some-api"},
+		},
+	}, expected)
 }
 
 func tstValid() openapi.ServiceDto {
