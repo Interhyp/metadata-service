@@ -972,6 +972,29 @@ func TestPATCHService_ChangeOwner(t *testing.T) {
 	require.Equal(t, tstServiceMovedExpectedKafka("some-service-backend"), string(actual))
 }
 
+func TestPATCHService_ChangeSpec(t *testing.T) {
+	tstReset()
+
+	docs.Given("Given an authenticated admin user")
+	token := tstValidAdminToken()
+
+	docs.When("When they perform a valid patch of an existing service that changes its spec")
+	body := tstServicePatch()
+	body.Spec = &openapi.ServiceSpecDto{
+		DependsOn:    []string{"some-service", "other-service"},
+		ProvidesApis: []string{},
+		ConsumesApis: []string{"some-api"},
+	}
+	response, err := tstPerformPatch("/rest/api/v1/services/some-service-backend", token, &body)
+
+	docs.Then("Then the request is successful and the response is as expected")
+	tstAssert(t, response, err, http.StatusOK, "service-patch-spec.json")
+
+	docs.Then("And the service has been cached and can be read again, returning the correct spec")
+	readAgain, err := tstPerformGet("/rest/api/v1/services/some-service-backend", tstUnauthenticated())
+	tstAssert(t, readAgain, err, http.StatusOK, "service-patch-spec.json")
+}
+
 func TestPATCHService_ImplementationCrossrefAllowed(t *testing.T) {
 	tstReset()
 

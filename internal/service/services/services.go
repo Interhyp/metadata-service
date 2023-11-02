@@ -145,6 +145,9 @@ func (s *Impl) mapServiceCreateDtoToServiceDto(serviceCreateDto openapi.ServiceC
 		Description:     serviceCreateDto.Description,
 		Lifecycle:       &initialServiceLifecycle,
 		InternetExposed: serviceCreateDto.InternetExposed,
+		Spec:            serviceCreateDto.Spec,
+		Tags:            serviceCreateDto.Tags,
+		Labels:          serviceCreateDto.Labels,
 	}
 }
 
@@ -343,6 +346,23 @@ func patchService(current openapi.ServiceDto, patch openapi.ServicePatchDto) ope
 		Description:     patchStringPtr(patch.Description, current.Description),
 		Lifecycle:       patchStringPtr(patch.Lifecycle, current.Lifecycle),
 		InternetExposed: patchPtr[bool](patch.InternetExposed, current.InternetExposed),
+		Spec:            patchServiceSpec(patch.Spec, current.Spec),
+		Tags:            patchStringSlice(patch.Tags, current.Tags),
+		Labels:          patchMapSlice(patch.Labels, current.Labels),
+	}
+}
+
+func patchServiceSpec(patch *openapi.ServiceSpecDto, current *openapi.ServiceSpecDto) *openapi.ServiceSpecDto {
+	if patch != nil && current != nil {
+		return &openapi.ServiceSpecDto{
+			DependsOn:    patchStringSlice(patch.DependsOn, current.DependsOn),
+			ProvidesApis: patchStringSlice(patch.ProvidesApis, current.ProvidesApis),
+			ConsumesApis: patchStringSlice(patch.ConsumesApis, current.ConsumesApis),
+		}
+	} else if patch != nil {
+		return patch
+	} else {
+		return current
 	}
 }
 
@@ -359,6 +379,18 @@ func patchStringSlice(patch []string, original []string) []string {
 		} else {
 			return patch
 		}
+	} else {
+		return original
+	}
+}
+
+func patchMapSlice(patch *map[string]string, original *map[string]string) *map[string]string {
+	if patch != nil {
+		if len(*patch) == 0 {
+			// remove
+			return nil
+		}
+		return patch
 	} else {
 		return original
 	}
@@ -523,6 +555,9 @@ func (s *Impl) validRepoKey(ctx context.Context, candidate string, serviceName s
 		return nil
 	}
 	if candidate == serviceName+".helm-deployment" {
+		return nil
+	}
+	if candidate == serviceName+".none" {
 		return nil
 	}
 	return errors.New("repository key must have acceptable name and type combination (allowed types: api implementation helm-deployment), and for helm-deployment the name must match the service name")
