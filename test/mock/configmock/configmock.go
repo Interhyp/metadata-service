@@ -257,3 +257,8 @@ func (c *MockConfig) NotificationConsumerConfigs() map[string]config.Notificatio
 	//TODO implement me
 	panic("implement me")
 }
+
+func (c *MockConfig) AllowedFileCategories() []string {
+	//TODO implement me
+	panic("implement me")
+}

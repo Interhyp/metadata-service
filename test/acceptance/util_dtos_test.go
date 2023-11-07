@@ -223,6 +223,9 @@ func tstUpdatedServicePayload(name string) openapi.NotificationPayload {
 // repository
 
 func tstRepository() openapi.RepositoryDto {
+	fc := map[string][]string{
+		"cached-template": {"cached-templates/*.yaml", "more/cached/templates/*.yaml"},
+	}
 	return openapi.RepositoryDto{
 		Owner:    "some-owner",
 		Url:      "ssh://git@bitbucket.some-organisation.com:7999/helm/karma-wrapper.git",
@@ -251,9 +254,10 @@ func tstRepository() openapi.RepositoryDto {
 			},
 			Approvers: &map[string][]string{"testing": {"some-user"}},
 		},
-		TimeStamp:  "2022-11-06T18:14:10Z",
-		CommitHash: "6c8ac2c35791edf9979623c717a243fc53400000",
-		JiraIssue:  "ISSUE-2345",
+		Filecategory: &fc,
+		TimeStamp:    "2022-11-06T18:14:10Z",
+		CommitHash:   "6c8ac2c35791edf9979623c717a243fc53400000",
+		JiraIssue:    "ISSUE-2345",
 	}
 }
 
@@ -310,6 +314,10 @@ configuration:
     approvers:
         testing:
             - some-user
+filecategory:
+    cached-template:
+        - cached-templates/*.yaml
+        - more/cached/templates/*.yaml
 `
 }
 

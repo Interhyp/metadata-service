@@ -64,3 +64,5 @@ NOTIFICATION_CONSUMER_CONFIGS: >-
       "url": "https://some.url.com/for/the/webhook"
     }
   }
+
+ALLOWED_FILE_CATEGORIES: '["a","b"]'

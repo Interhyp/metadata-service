@@ -17,6 +17,5 @@ func hasSentNotification(t *testing.T, clientIdentifier string, name string, eve
 		Type:    payloadType.String(),
 		Payload: payload,
 	}
-	notifications := mockClient.SentNotifications
-	require.Contains(t, notifications, expected)
+	require.Contains(t, mockClient.SentNotifications, mockClient.ToJson(expected))
 }

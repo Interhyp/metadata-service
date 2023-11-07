@@ -2612,6 +2612,9 @@
           "configuration": {
             "$ref": "#/components/schemas/RepositoryConfigurationDto"
           },
+          "filecategory": {
+            "$ref": "#/components/schemas/RepositoryFileCategoriesDto"
+          },
           "timeStamp": {
             "type": "string",
             "description": "ISO-8601 UTC date time at which this information was originally committed. When sending an update, include the original timestamp you got so we can detect concurrent updates.",
@@ -2662,6 +2665,9 @@
           "configuration": {
             "$ref": "#/components/schemas/RepositoryConfigurationDto"
           },
+          "filecategory": {
+            "$ref": "#/components/schemas/RepositoryFileCategoriesDto"
+          },
           "jiraIssue": {
             "type": "string",
             "description": "The jira issue to use for committing a change, or the last jira issue used.",
@@ -2700,6 +2706,9 @@
           },
           "configuration": {
             "$ref": "#/components/schemas/RepositoryConfigurationDto"
+          },
+          "filecategory": {
+            "$ref": "#/components/schemas/RepositoryFileCategoriesDto"
           },
           "timeStamp": {
             "type": "string",
@@ -2904,6 +2913,19 @@
               "REPO_WRITE"
             ]
           }
+        }
+      },
+      "RepositoryFileCategoriesDto": {
+        "type": "object",
+        "description": "Assign a category to a list of file globs, e.g. to mark them for caching purposes. The key is the category name, and the value is a list of globs. Files are considered to have that category if their path matches any of the given globs.",
+        "additionalProperties": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "example": {
+          "cache-template": ["templates/*.yaml", "another/path/*/*.json"]
         }
       },
       "ConditionReferenceDto": {

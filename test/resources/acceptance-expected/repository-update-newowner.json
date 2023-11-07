@@ -29,6 +29,12 @@
       "pipelineTrigger": false
     }
   },
+  "filecategory": {
+    "cached-template": [
+      "cached-templates/*.yaml",
+      "more/cached/templates/*.yaml"
+    ]
+  },
   "jiraIssue": "ISSUE-2345",
   "mainline": "master",
   "owner": "deleteme",

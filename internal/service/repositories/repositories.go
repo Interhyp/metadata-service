@@ -224,6 +224,7 @@ func (s *Impl) mapRepoCreateDtoToRepoDto(repositoryCreateDto openapi.RepositoryC
 		Url:           repositoryCreateDto.Url,
 		Mainline:      repositoryCreateDto.Mainline,
 		Configuration: repositoryCreateDto.Configuration,
+		Filecategory:  repositoryCreateDto.Filecategory,
 		Generator:     repositoryCreateDto.Generator,
 		Unittest:      repositoryCreateDto.Unittest,
 	}
@@ -395,6 +396,7 @@ func patchRepository(current openapi.RepositoryDto, patch openapi.RepositoryPatc
 		Generator:     patchStringPtr(patch.Generator, current.Generator),
 		Unittest:      patchPtr[bool](patch.Unittest, current.Unittest),
 		Configuration: patchConfiguration(patch.Configuration, current.Configuration),
+		Filecategory:  patchFilecategory(patch.Filecategory, current.Filecategory),
 		TimeStamp:     patch.TimeStamp,
 		CommitHash:    patch.CommitHash,
 		JiraIssue:     patch.JiraIssue,
@@ -437,6 +439,14 @@ func patchConditions(patch *map[string]openapi.ConditionReferenceDto, original *
 }
 
 func patchApprovers(patch *map[string][]string, original *map[string][]string) *map[string][]string {
+	return patchMapStringListString(patch, original)
+}
+
+func patchFilecategory(patch *map[string][]string, original *map[string][]string) *map[string][]string {
+	return patchMapStringListString(patch, original)
+}
+
+func patchMapStringListString(patch *map[string][]string, original *map[string][]string) *map[string][]string {
 	if patch != nil {
 		if len(*patch) == 0 {
 			// remove
