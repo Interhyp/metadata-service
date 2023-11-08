@@ -173,7 +173,7 @@ type RepositoryCreateDto struct {
 	// this repository contains unit tests (currently ignored except for helm charts)
 	Unittest      *bool                       `yaml:"unittest,omitempty" json:"unittest,omitempty"`
 	Configuration *RepositoryConfigurationDto `yaml:"configuration,omitempty" json:"configuration,omitempty"`
-	// Assign a category to a list of file globs, e.g. to mark them for caching purposes. The key is the category name, and the value is a list of globs. Files are considered to have that category if their path matches any of the given globs.
+	// Assign a category to a list of files, e.g. to mark them for caching purposes. The key is the category name, and the value is a list of paths. Files are considered to have that category if their path is in the list.
 	Filecategory *map[string][]string `yaml:"filecategory,omitempty" json:"filecategory,omitempty"`
 	// The jira issue to use for committing a change, or the last jira issue used.
 	JiraIssue string `yaml:"-" json:"jiraIssue"`
@@ -189,7 +189,7 @@ type RepositoryDto struct {
 	// this repository contains unit tests (currently ignored except for helm charts)
 	Unittest      *bool                       `yaml:"unittest,omitempty" json:"unittest,omitempty"`
 	Configuration *RepositoryConfigurationDto `yaml:"configuration,omitempty" json:"configuration,omitempty"`
-	// Assign a category to a list of file globs, e.g. to mark them for caching purposes. The key is the category name, and the value is a list of globs. Files are considered to have that category if their path matches any of the given globs.
+	// Assign a category to a list of files, e.g. to mark them for caching purposes. The key is the category name, and the value is a list of paths. Files are considered to have that category if their path is in the list.
 	Filecategory *map[string][]string `yaml:"filecategory,omitempty" json:"filecategory,omitempty"`
 	// ISO-8601 UTC date time at which this information was originally committed. When sending an update, include the original timestamp you got so we can detect concurrent updates.
 	TimeStamp string `yaml:"-" json:"timeStamp"`
@@ -215,7 +215,7 @@ type RepositoryPatchDto struct {
 	// this repository contains unit tests (currently ignored except for helm charts)
 	Unittest      *bool                       `yaml:"unittest,omitempty" json:"unittest,omitempty"`
 	Configuration *RepositoryConfigurationDto `yaml:"configuration,omitempty" json:"configuration,omitempty"`
-	// Assign a category to a list of file globs, e.g. to mark them for caching purposes. The key is the category name, and the value is a list of globs. Files are considered to have that category if their path matches any of the given globs.
+	// Assign a category to a list of files, e.g. to mark them for caching purposes. The key is the category name, and the value is a list of paths. Files are considered to have that category if their path is in the list.
 	Filecategory *map[string][]string `yaml:"filecategory,omitempty" json:"filecategory,omitempty"`
 	// ISO-8601 UTC date time at which this information was originally committed. When sending an update, include the original timestamp you got so we can detect concurrent updates.
 	TimeStamp string `yaml:"-" json:"timeStamp"`

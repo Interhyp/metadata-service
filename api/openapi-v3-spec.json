@@ -2917,7 +2917,7 @@
       },
       "RepositoryFileCategoriesDto": {
         "type": "object",
-        "description": "Assign a category to a list of file globs, e.g. to mark them for caching purposes. The key is the category name, and the value is a list of globs. Files are considered to have that category if their path matches any of the given globs.",
+        "description": "Assign a category to a list of files, e.g. to mark them for caching purposes. The key is the category name, and the value is a list of paths. Files are considered to have that category if their path is in the list.",
         "additionalProperties": {
           "type": "array",
           "items": {
@@ -2925,7 +2925,7 @@
           }
         },
         "example": {
-          "cache-template": ["templates/*.yaml", "another/path/*/*.json"]
+          "cache-template": ["templates/template1.yaml", "another/path/template2.json"]
         }
       },
       "ConditionReferenceDto": {

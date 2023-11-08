@@ -59,7 +59,7 @@ func createRepositoryDto() openapi.RepositoryDto {
 			DefaultReviewers: []string{"defaultreviewer1"},
 			SignedApprovers:  []string{"signedapprover1"},
 		},
-		Filecategory: &map[string][]string{"a": {"path/*.yaml"}},
+		Filecategory: &map[string][]string{"a": {"path/a.yaml"}},
 		TimeStamp:    "ts",
 		CommitHash:   "hash",
 	}
@@ -135,7 +135,7 @@ func TestPatchRepository_ReplaceAll(t *testing.T) {
 			DefaultReviewers: []string{"newdefaultreviewer1"},
 			SignedApprovers:  []string{"newsignedapprover1"},
 		},
-		Filecategory: &map[string][]string{"b": {"*.yaml", "*.json"}},
+		Filecategory: &map[string][]string{"b": {"b.yaml", "b.json"}},
 		TimeStamp:    "newts",
 		CommitHash:   "newhash",
 	}, openapi.RepositoryDto{
@@ -169,7 +169,7 @@ func TestPatchRepository_ReplaceAll(t *testing.T) {
 			DefaultReviewers: []string{"newdefaultreviewer1"},
 			SignedApprovers:  []string{"newsignedapprover1"},
 		},
-		Filecategory: &map[string][]string{"b": {"*.yaml", "*.json"}},
+		Filecategory: &map[string][]string{"b": {"b.yaml", "b.json"}},
 		TimeStamp:    "newts",
 		CommitHash:   "newhash",
 	})

@@ -224,7 +224,7 @@ func tstUpdatedServicePayload(name string) openapi.NotificationPayload {
 
 func tstRepository() openapi.RepositoryDto {
 	fc := map[string][]string{
-		"cached-template": {"cached-templates/*.yaml", "more/cached/templates/*.yaml"},
+		"cached-template": {"cached-templates/tpl1.yaml", "more/cached/templates/tpl2.yaml"},
 	}
 	return openapi.RepositoryDto{
 		Owner:    "some-owner",
@@ -316,8 +316,8 @@ configuration:
             - some-user
 filecategory:
     cached-template:
-        - cached-templates/*.yaml
-        - more/cached/templates/*.yaml
+        - cached-templates/tpl1.yaml
+        - more/cached/templates/tpl2.yaml
 `
 }
 

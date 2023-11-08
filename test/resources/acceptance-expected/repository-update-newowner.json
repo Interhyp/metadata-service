@@ -31,8 +31,8 @@
   },
   "filecategory": {
     "cached-template": [
-      "cached-templates/*.yaml",
-      "more/cached/templates/*.yaml"
+      "cached-templates/tpl1.yaml",
+      "more/cached/templates/tpl2.yaml"
     ]
   },
   "jiraIssue": "ISSUE-2345",
