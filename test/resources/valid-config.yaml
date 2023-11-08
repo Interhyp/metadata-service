@@ -65,4 +65,4 @@ NOTIFICATION_CONSUMER_CONFIGS: >-
     }
   }
 
-ALLOWED_FILE_CATEGORIES: '["a","b"]'
+ALLOWED_FILE_CATEGORIES: '["cached-template"]'

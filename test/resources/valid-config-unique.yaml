@@ -49,4 +49,4 @@ REPOSITORY_TYPES: 'some-type,some-other-type'
 
 NOTIFICATION_CONSUMER_CONFIGS: "{}"
 
-ALLOWED_FILE_CATEGORIES: '["yaml-template"]'
+ALLOWED_FILE_CATEGORIES: ''
