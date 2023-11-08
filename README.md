@@ -88,6 +88,8 @@ the [`local-config.yaml`][config] can be used to set the variables.
 | `REPOSITORY_NAME_MAX_LENGTH`       | `64`                                                  | Maximum length of a valid repository name.                                                                                                                                                                           |
 | `REPOSITORY_TYPES`                 |                                                       | Comma separated list of supported repository types.                                                                                                                                                                  |
 | `REPOSITORY_KEY_SEPARATOR`         | `.`                                                   | Single character used to separate repository name from repository type. repository name and repository type must not contain separator.                                                                              |
+|                                    |                                                       |                                                                                                                                                                                                                      |
+| `ALLOWED_FILE_CATEGORIES`          |                                                       | List of allowed keys for the filecategory field in repositories. Parsed as a json array, example value: `["key1","key2"]`. All keys not in this list are rejected on writes, and silently dropped when reading.      |
 
 ## Datastore
 
