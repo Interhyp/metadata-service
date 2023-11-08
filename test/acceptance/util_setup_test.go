@@ -2,7 +2,6 @@ package acceptance
 
 import (
 	"context"
-	"github.com/Interhyp/metadata-service/api"
 	"github.com/Interhyp/metadata-service/internal/repository/config"
 	"github.com/Interhyp/metadata-service/internal/repository/notifier"
 	"github.com/Interhyp/metadata-service/internal/service/trigger"
@@ -122,7 +121,7 @@ func tstSetup(configPath string) error {
 	security.Now = fakeNow
 
 	for identifier, _ := range notifierImpl.Clients {
-		notifierImpl.Clients[identifier] = &notifiermock.NotifierClientMock{SentNotifications: make([]openapi.Notification, 0)}
+		notifierImpl.Clients[identifier] = &notifiermock.NotifierClientMock{SentNotifications: make([]string, 0)}
 	}
 
 	tstSetupHttpTestServer()

@@ -173,3 +173,7 @@ func (c *CustomConfigImpl) RepositoryKeySeparator() string {
 func (c *CustomConfigImpl) NotificationConsumerConfigs() map[string]config.NotificationConsumerConfig {
 	return c.VNotificationConsumerConfigs
 }
+
+func (c *CustomConfigImpl) AllowedFileCategories() []string {
+	return c.VAllowedFileCategories
+}

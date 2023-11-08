@@ -152,6 +152,21 @@ func (s *Impl) GetRepository(ctx context.Context, repoKey string) (openapi.Repos
 		}
 	}
 
+	if err == nil && repositoryDto.Filecategory != nil {
+		// filter by allowed keys
+		allowedKeys := s.CustomConfiguration.AllowedFileCategories()
+		for key, _ := range *repositoryDto.Filecategory {
+			if !sliceContains(allowedKeys, key) {
+				delete(*repositoryDto.Filecategory, key)
+			}
+		}
+
+		if len(*repositoryDto.Filecategory) == 0 {
+			// drop empty map completely
+			repositoryDto.Filecategory = nil
+		}
+	}
+
 	return repositoryDto, err
 }
 
@@ -224,6 +239,7 @@ func (s *Impl) mapRepoCreateDtoToRepoDto(repositoryCreateDto openapi.RepositoryC
 		Url:           repositoryCreateDto.Url,
 		Mainline:      repositoryCreateDto.Mainline,
 		Configuration: repositoryCreateDto.Configuration,
+		Filecategory:  repositoryCreateDto.Filecategory,
 		Generator:     repositoryCreateDto.Generator,
 		Unittest:      repositoryCreateDto.Unittest,
 	}
@@ -238,6 +254,9 @@ func (s *Impl) validateRepositoryCreateDto(ctx context.Context, key string, dto 
 
 	if dto.JiraIssue == "" {
 		messages = append(messages, "field jiraIssue is mandatory")
+	}
+	if dto.Filecategory != nil {
+		messages = s.validateFilecategory(messages, *dto.Filecategory)
 	}
 
 	if len(messages) > 0 {
@@ -305,6 +324,9 @@ func (s *Impl) validateExistingRepositoryDto(ctx context.Context, key string, dt
 	if dto.JiraIssue == "" {
 		messages = append(messages, "field jiraIssue is mandatory for updates")
 	}
+	if dto.Filecategory != nil {
+		messages = s.validateFilecategory(messages, *dto.Filecategory)
+	}
 
 	if len(messages) > 0 {
 		details := strings.Join(messages, ", ")
@@ -369,6 +391,9 @@ func (s *Impl) validateRepositoryPatchDto(ctx context.Context, key string, patch
 	messages = validateOwner(messages, dto.Owner)
 	messages = validateUrl(messages, dto.Url)
 	messages = validateMainline(messages, dto.Mainline)
+	if dto.Filecategory != nil {
+		messages = s.validateFilecategory(messages, *dto.Filecategory)
+	}
 
 	if patchDto.CommitHash == "" {
 		messages = append(messages, "field commitHash is mandatory for patching")
@@ -379,6 +404,7 @@ func (s *Impl) validateRepositoryPatchDto(ctx context.Context, key string, patch
 	if patchDto.JiraIssue == "" {
 		messages = append(messages, "field jiraIssue is mandatory for patching")
 	}
+
 	if len(messages) > 0 {
 		details := strings.Join(messages, ", ")
 		s.Logging.Logger().Ctx(ctx).Info().Printf("repository values invalid: %s", details)
@@ -395,6 +421,7 @@ func patchRepository(current openapi.RepositoryDto, patch openapi.RepositoryPatc
 		Generator:     patchStringPtr(patch.Generator, current.Generator),
 		Unittest:      patchPtr[bool](patch.Unittest, current.Unittest),
 		Configuration: patchConfiguration(patch.Configuration, current.Configuration),
+		Filecategory:  patchFilecategory(patch.Filecategory, current.Filecategory),
 		TimeStamp:     patch.TimeStamp,
 		CommitHash:    patch.CommitHash,
 		JiraIssue:     patch.JiraIssue,
@@ -437,6 +464,14 @@ func patchConditions(patch *map[string]openapi.ConditionReferenceDto, original *
 }
 
 func patchApprovers(patch *map[string][]string, original *map[string][]string) *map[string][]string {
+	return patchMapStringListString(patch, original)
+}
+
+func patchFilecategory(patch *map[string][]string, original *map[string][]string) *map[string][]string {
+	return patchMapStringListString(patch, original)
+}
+
+func patchMapStringListString(patch *map[string][]string, original *map[string][]string) *map[string][]string {
 	if patch != nil {
 		if len(*patch) == 0 {
 			// remove
@@ -605,4 +640,25 @@ func validateMainline(messages []string, mainline string) []string {
 		}
 	}
 	return messages
+}
+
+func (s *Impl) validateFilecategory(messages []string, filecategories map[string][]string) []string {
+	allowedCategories := s.CustomConfiguration.AllowedFileCategories()
+
+	for category, _ := range filecategories {
+		if !sliceContains(allowedCategories, category) {
+			messages = append(messages, fmt.Sprintf("filecategory keys must be one of %s", strings.Join(allowedCategories, ",")))
+		}
+	}
+
+	return messages
+}
+
+func sliceContains[T comparable](haystack []T, needle T) bool {
+	for _, e := range haystack {
+		if e == needle {
+			return true
+		}
+	}
+	return false
 }

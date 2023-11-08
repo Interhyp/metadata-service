@@ -59,8 +59,9 @@ func createRepositoryDto() openapi.RepositoryDto {
 			DefaultReviewers: []string{"defaultreviewer1"},
 			SignedApprovers:  []string{"signedapprover1"},
 		},
-		TimeStamp:  "ts",
-		CommitHash: "hash",
+		Filecategory: &map[string][]string{"a": {"path/a.yaml"}},
+		TimeStamp:    "ts",
+		CommitHash:   "hash",
 	}
 }
 
@@ -134,8 +135,9 @@ func TestPatchRepository_ReplaceAll(t *testing.T) {
 			DefaultReviewers: []string{"newdefaultreviewer1"},
 			SignedApprovers:  []string{"newsignedapprover1"},
 		},
-		TimeStamp:  "newts",
-		CommitHash: "newhash",
+		Filecategory: &map[string][]string{"b": {"b.yaml", "b.json"}},
+		TimeStamp:    "newts",
+		CommitHash:   "newhash",
 	}, openapi.RepositoryDto{
 		Owner:     "newowner",
 		Url:       "newurl",
@@ -167,8 +169,9 @@ func TestPatchRepository_ReplaceAll(t *testing.T) {
 			DefaultReviewers: []string{"newdefaultreviewer1"},
 			SignedApprovers:  []string{"newsignedapprover1"},
 		},
-		TimeStamp:  "newts",
-		CommitHash: "newhash",
+		Filecategory: &map[string][]string{"b": {"b.yaml", "b.json"}},
+		TimeStamp:    "newts",
+		CommitHash:   "newhash",
 	})
 }
 
@@ -189,8 +192,9 @@ func TestPatchRepository_ClearFields(t *testing.T) {
 			DefaultReviewers: []string{},
 			SignedApprovers:  []string{},
 		},
-		TimeStamp:  "",
-		CommitHash: "",
+		Filecategory: &map[string][]string{},
+		TimeStamp:    "",
+		CommitHash:   "",
 	}, openapi.RepositoryDto{
 		Owner:     "",
 		Url:       "",
@@ -210,8 +214,9 @@ func TestPatchRepository_ClearFields(t *testing.T) {
 			DefaultReviewers: nil,
 			SignedApprovers:  nil,
 		},
-		TimeStamp:  "",
-		CommitHash: "",
+		Filecategory: nil,
+		TimeStamp:    "",
+		CommitHash:   "",
 	})
 }
 

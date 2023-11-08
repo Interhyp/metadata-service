@@ -29,6 +29,12 @@
       "pipelineTrigger": false
     }
   },
+  "filecategory": {
+    "cached-template": [
+      "cached-templates/tpl1.yaml",
+      "more/cached/templates/tpl2.yaml"
+    ]
+  },
   "jiraIssue": "ISSUE-2345",
   "mainline": "master",
   "owner": "some-owner",

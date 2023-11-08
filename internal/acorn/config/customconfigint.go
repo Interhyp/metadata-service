@@ -63,6 +63,8 @@ type CustomConfiguration interface {
 	RepositoryKeySeparator() string
 
 	NotificationConsumerConfigs() map[string]NotificationConsumerConfig
+
+	AllowedFileCategories() []string
 }
 
 type NotificationConsumerConfig struct {
@@ -117,4 +119,5 @@ const (
 	KeyRepositoryKeySeparator         = "REPOSITORY_KEY_SEPARATOR"
 	KeyRepositoryTypes                = "REPOSITORY_TYPES"
 	KeyNotificationConsumerConfigs    = "NOTIFICATION_CONSUMER_CONFIGS"
+	KeyAllowedFileCategories          = "ALLOWED_FILE_CATEGORIES"
 )
