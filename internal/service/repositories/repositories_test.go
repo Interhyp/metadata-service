@@ -15,11 +15,7 @@ import (
 	"time"
 )
 
-func p(v string) *string {
-	return &v
-}
-
-func b(v bool) *bool {
+func ptr[T any](v T) *T {
 	return &v
 }
 
@@ -32,20 +28,20 @@ func createRepositoryDto() openapi.RepositoryDto {
 		Owner:     "owner",
 		Url:       "url",
 		Mainline:  "mainline",
-		Generator: p("generator"),
-		Unittest:  b(true),
+		Generator: ptr("generator"),
+		Unittest:  ptr(true),
 		Configuration: &openapi.RepositoryConfigurationDto{
 			AccessKeys: []openapi.RepositoryConfigurationAccessKeyDto{
 				{
 					Key:        "KEY",
-					Permission: p("REPO_WRITE"),
+					Permission: ptr("REPO_WRITE"),
 				},
 			},
-			CommitMessageType:       p("SEMANTIC"),
-			RequireIssue:            b(false),
+			CommitMessageType:       ptr("SEMANTIC"),
+			RequireIssue:            ptr(false),
 			RequireSuccessfulBuilds: i(1),
 			Webhooks: &openapi.RepositoryConfigurationWebhooksDto{
-				PipelineTrigger: b(false),
+				PipelineTrigger: ptr(false),
 				Additional: []openapi.RepositoryConfigurationWebhookDto{
 					{
 						Name:          "webhookname",
@@ -58,6 +54,7 @@ func createRepositoryDto() openapi.RepositoryDto {
 			Approvers:        &map[string][]string{"group": {"approver1"}},
 			DefaultReviewers: []string{"defaultreviewer1"},
 			SignedApprovers:  []string{"signedapprover1"},
+			Archived:         ptr(false),
 		},
 		Filecategory: &map[string][]string{"a": {"path/a.yaml"}},
 		TimeStamp:    "ts",
@@ -105,23 +102,23 @@ func TestPatchRepository_WithConfig_And_EmptyOriginal(t *testing.T) {
 func TestPatchRepository_ReplaceAll(t *testing.T) {
 	docs.Description("patching of repositories works with an all fields patch")
 	assertPatchRepository(t, createRepositoryDto(), openapi.RepositoryPatchDto{
-		Owner:     p("newowner"),
-		Url:       p("newurl"),
-		Mainline:  p("newmainline"),
-		Generator: p("newgenerator"),
-		Unittest:  b(false),
+		Owner:     ptr("newowner"),
+		Url:       ptr("newurl"),
+		Mainline:  ptr("newmainline"),
+		Generator: ptr("newgenerator"),
+		Unittest:  ptr(false),
 		Configuration: &openapi.RepositoryConfigurationDto{
 			AccessKeys: []openapi.RepositoryConfigurationAccessKeyDto{
 				{
 					Key:        "DEPLOYMENT",
-					Permission: p("REPO_READ"),
+					Permission: ptr("REPO_READ"),
 				},
 			},
-			CommitMessageType:       p("DEFAULT"),
-			RequireIssue:            b(true),
+			CommitMessageType:       ptr("DEFAULT"),
+			RequireIssue:            ptr(true),
 			RequireSuccessfulBuilds: i(2),
 			Webhooks: &openapi.RepositoryConfigurationWebhooksDto{
-				PipelineTrigger: b(false),
+				PipelineTrigger: ptr(false),
 				Additional: []openapi.RepositoryConfigurationWebhookDto{
 					{
 						Name:          "newwebhookname",
@@ -134,6 +131,7 @@ func TestPatchRepository_ReplaceAll(t *testing.T) {
 			Approvers:        &map[string][]string{"group": {"newapprover1"}},
 			DefaultReviewers: []string{"newdefaultreviewer1"},
 			SignedApprovers:  []string{"newsignedapprover1"},
+			Archived:         ptr(true),
 		},
 		Filecategory: &map[string][]string{"b": {"b.yaml", "b.json"}},
 		TimeStamp:    "newts",
@@ -142,20 +140,20 @@ func TestPatchRepository_ReplaceAll(t *testing.T) {
 		Owner:     "newowner",
 		Url:       "newurl",
 		Mainline:  "newmainline",
-		Generator: p("newgenerator"),
-		Unittest:  b(false),
+		Generator: ptr("newgenerator"),
+		Unittest:  ptr(false),
 		Configuration: &openapi.RepositoryConfigurationDto{
 			AccessKeys: []openapi.RepositoryConfigurationAccessKeyDto{
 				{
 					Key:        "DEPLOYMENT",
-					Permission: p("REPO_READ"),
+					Permission: ptr("REPO_READ"),
 				},
 			},
-			CommitMessageType:       p("DEFAULT"),
-			RequireIssue:            b(true),
+			CommitMessageType:       ptr("DEFAULT"),
+			RequireIssue:            ptr(true),
 			RequireSuccessfulBuilds: i(2),
 			Webhooks: &openapi.RepositoryConfigurationWebhooksDto{
-				PipelineTrigger: b(false),
+				PipelineTrigger: ptr(false),
 				Additional: []openapi.RepositoryConfigurationWebhookDto{
 					{
 						Name:          "newwebhookname",
@@ -168,6 +166,7 @@ func TestPatchRepository_ReplaceAll(t *testing.T) {
 			Approvers:        &map[string][]string{"group": {"newapprover1"}},
 			DefaultReviewers: []string{"newdefaultreviewer1"},
 			SignedApprovers:  []string{"newsignedapprover1"},
+			Archived:         ptr(true),
 		},
 		Filecategory: &map[string][]string{"b": {"b.yaml", "b.json"}},
 		TimeStamp:    "newts",
@@ -178,13 +177,13 @@ func TestPatchRepository_ReplaceAll(t *testing.T) {
 func TestPatchRepository_ClearFields(t *testing.T) {
 	docs.Description("patching of repositories works with a patch that clears fields (result would not validate)")
 	assertPatchRepository(t, createRepositoryDto(), openapi.RepositoryPatchDto{
-		Owner:     p(""),
-		Url:       p(""),
-		Mainline:  p(""),
-		Generator: p(""),
+		Owner:     ptr(""),
+		Url:       ptr(""),
+		Mainline:  ptr(""),
+		Generator: ptr(""),
 		Configuration: &openapi.RepositoryConfigurationDto{
 			AccessKeys:        []openapi.RepositoryConfigurationAccessKeyDto{},
-			CommitMessageType: p(""),
+			CommitMessageType: ptr(""),
 			Webhooks: &openapi.RepositoryConfigurationWebhooksDto{
 				Additional: []openapi.RepositoryConfigurationWebhookDto{},
 			},
@@ -200,19 +199,20 @@ func TestPatchRepository_ClearFields(t *testing.T) {
 		Url:       "",
 		Mainline:  "",
 		Generator: nil,
-		Unittest:  b(true),
+		Unittest:  ptr(true),
 		Configuration: &openapi.RepositoryConfigurationDto{
 			AccessKeys:              nil,
 			CommitMessageType:       nil,
-			RequireIssue:            b(false),
+			RequireIssue:            ptr(false),
 			RequireSuccessfulBuilds: i(1),
 			Webhooks: &openapi.RepositoryConfigurationWebhooksDto{
-				PipelineTrigger: b(false),
+				PipelineTrigger: ptr(false),
 				Additional:      nil,
 			},
 			Approvers:        nil,
 			DefaultReviewers: nil,
 			SignedApprovers:  nil,
+			Archived:         ptr(false),
 		},
 		Filecategory: nil,
 		TimeStamp:    "",
@@ -369,7 +369,7 @@ func TestValidate_Url(t *testing.T) {
 	create.Url = "https://no.this.is.not.correct.git"
 
 	patch := openapi.RepositoryPatchDto{
-		Url: p("https://no.this.is.not.correct.git"),
+		Url: ptr("https://no.this.is.not.correct.git"),
 	}
 
 	expectedMessage := "validation error: field url must contain ssh git url"
@@ -387,7 +387,7 @@ func TestValidate_Mainline(t *testing.T) {
 	create.Mainline = "feature/hello"
 
 	patch := openapi.RepositoryPatchDto{
-		Mainline: p("feature/hello"),
+		Mainline: ptr("feature/hello"),
 	}
 
 	expectedMessage := "validation error: mainline must be one of master, main, develop"
@@ -396,7 +396,7 @@ func TestValidate_Mainline(t *testing.T) {
 
 	data.Mainline = ""
 	create.Mainline = ""
-	patch.Mainline = p("")
+	patch.Mainline = ptr("")
 
 	expectedMessage = "validation error: field mainline is mandatory"
 
