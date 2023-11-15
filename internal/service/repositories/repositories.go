@@ -444,6 +444,7 @@ func patchConfiguration(patch *openapi.RepositoryConfigurationDto, original *ope
 			Watchers:                patchStringSlice(patch.Watchers, original.Watchers),
 			DefaultReviewers:        patchStringSlice(patch.DefaultReviewers, original.DefaultReviewers),
 			SignedApprovers:         patchStringSlice(patch.SignedApprovers, original.SignedApprovers),
+			Archived:                patchPtr[bool](patch.Archived, original.Archived),
 		}
 	} else {
 		return original
