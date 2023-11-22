@@ -2,44 +2,31 @@ package cache
 
 import (
 	"context"
-	"fmt"
 	"github.com/Interhyp/metadata-service/api"
-	"github.com/StephanHCB/go-backend-service-common/api/apierrors"
 )
 
-func (s *Impl) SetRepositoryListTimestamp(_ context.Context, timestamp string) {
-	s.RepositoryCache.SetTimestamp(timestamp)
+const repositoryWhat = "repository"
+
+func (s *Impl) SetRepositoryListTimestamp(ctx context.Context, timestamp string) error {
+	return s.setTimestamp(ctx, repositoryWhat, repositoryTimestampKey, timestamp)
 }
 
-func (s *Impl) GetRepositoryListTimestamp(_ context.Context) string {
-	return s.RepositoryCache.GetTimestamp()
+func (s *Impl) GetRepositoryListTimestamp(ctx context.Context) (string, error) {
+	return s.getTimestamp(ctx, repositoryWhat, repositoryTimestampKey)
 }
 
-func (s *Impl) GetSortedRepositoryKeys(_ context.Context) []string {
-	keysPtr := s.RepositoryCache.GetSortedKeys()
-	return deepCopyStringSlice(*keysPtr)
+func (s *Impl) GetSortedRepositoryKeys(ctx context.Context) ([]string, error) {
+	return getSortedKeys(ctx, repositoryWhat, s, s.RepositoryCache)
 }
 
 func (s *Impl) GetRepository(ctx context.Context, key string) (openapi.RepositoryDto, error) {
-	immutableRepositoryPtr := s.RepositoryCache.GetEntryRef(key)
-	if immutableRepositoryPtr == nil {
-		s.Logging.Logger().Ctx(ctx).Info().Printf("repository %v not found", key)
-		return openapi.RepositoryDto{}, apierrors.NewNotFoundError("repository.notfound", fmt.Sprintf("repository %s not found", key), nil, s.Timestamp.Now())
-	} else {
-		repoCopy := openapi.RepositoryDto{}
-		repo := (*immutableRepositoryPtr).(openapi.RepositoryDto)
-		err := deepCopyStruct(repo, &repoCopy)
-		return repoCopy, err
-	}
+	return getEntry(ctx, repositoryWhat, s, s.RepositoryCache, key)
 }
 
-func (s *Impl) PutRepository(_ context.Context, key string, entry openapi.RepositoryDto) {
-	var e interface{}
-	e = entry
-
-	s.RepositoryCache.UpdateEntryRef(key, &e)
+func (s *Impl) PutRepository(ctx context.Context, key string, entry openapi.RepositoryDto) error {
+	return putEntry(ctx, repositoryWhat, s, s.RepositoryCache, key, entry)
 }
 
-func (s *Impl) DeleteRepository(_ context.Context, key string) {
-	s.RepositoryCache.UpdateEntryRef(key, nil)
+func (s *Impl) DeleteRepository(ctx context.Context, key string) error {
+	return removeEntry(ctx, repositoryWhat, s, s.RepositoryCache, key)
 }

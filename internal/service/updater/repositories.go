@@ -19,7 +19,10 @@ func (s *Impl) WriteRepository(ctx context.Context, key string, repository opena
 		current, err := s.Cache.GetRepository(ctx, key)
 		if err == nil && current.Owner != repository.Owner {
 
-			allowed := s.CanMoveOrDeleteRepository(subCtx, key)
+			allowed, err := s.CanMoveOrDeleteRepository(subCtx, key)
+			if err != nil {
+				return err
+			}
 			if !allowed {
 				s.Logging.Logger().Ctx(ctx).Info().Printf("tried to move repository %v, which is still referenced by its service", key)
 				return apierrors.NewConflictError("repository.conflict.referenced", "this repository is being referenced in a service, you cannot change its owner directly - you can change the owner of the service and this will move it along", nil, s.Timestamp.Now())
@@ -128,7 +131,10 @@ func (s *Impl) updateRepositories(ctx context.Context) error {
 }
 
 func (s *Impl) decideRepositoriesToAddUpdateOrRemove(ctx context.Context) (map[string]int8, error) {
-	cachedRepositoryKeys := s.Cache.GetSortedRepositoryKeys(ctx)
+	cachedRepositoryKeys, err := s.Cache.GetSortedRepositoryKeys(ctx)
+	if err != nil {
+		return nil, err
+	}
 
 	currentRepositoryKeys, err := s.Mapper.GetSortedRepositoryKeys(ctx)
 	if err != nil {
@@ -219,14 +225,18 @@ func (s *Impl) updateIndividualRepository(ctx context.Context, key string, isNew
 	return nil
 }
 
-func (s *Impl) CanMoveOrDeleteRepository(ctx context.Context, key string) bool {
-	for _, name := range s.Cache.GetSortedServiceNames(ctx) {
+func (s *Impl) CanMoveOrDeleteRepository(ctx context.Context, key string) (bool, error) {
+	names, err := s.Cache.GetSortedServiceNames(ctx)
+	if err != nil {
+		return false, err
+	}
+	for _, name := range names {
 		svc, _ := s.Cache.GetService(ctx, name)
 		for _, candidateKey := range svc.Repositories {
 			if key == candidateKey {
-				return false
+				return false, nil
 			}
 		}
 	}
-	return true
+	return true, nil
 }

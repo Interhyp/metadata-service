@@ -61,11 +61,19 @@ func (s *Impl) Setup() error {
 var initialServiceLifecycle = "experimental"
 
 func (s *Impl) GetServices(ctx context.Context, ownerAliasFilter string) (openapi.ServiceListDto, error) {
+	stamp, err := s.Cache.GetServiceListTimestamp(ctx)
+	if err != nil {
+		return openapi.ServiceListDto{}, err
+	}
 	result := openapi.ServiceListDto{
 		Services:  make(map[string]openapi.ServiceDto),
-		TimeStamp: s.Cache.GetServiceListTimestamp(ctx),
+		TimeStamp: stamp,
 	}
-	for _, name := range s.Cache.GetSortedServiceNames(ctx) {
+	names, err := s.Cache.GetSortedServiceNames(ctx)
+	if err != nil {
+		return openapi.ServiceListDto{}, err
+	}
+	for _, name := range names {
 		theService, err := s.GetService(ctx, name)
 		if err != nil {
 			// service not found errors are ok, the cache may have been changed concurrently, just drop the entry
@@ -477,7 +485,11 @@ func (s *Impl) validateDeletionDto(ctx context.Context, deletionInfo openapi.Del
 }
 
 func (s *Impl) addAllProductOwners(ctx context.Context, resultSet map[string]bool) error {
-	for _, alias := range s.Cache.GetSortedOwnerAliases(ctx) {
+	names, err := s.Cache.GetSortedOwnerAliases(ctx)
+	if err != nil {
+		return err
+	}
+	for _, alias := range names {
 		owner, err := s.Cache.GetOwner(ctx, alias)
 		if err != nil {
 			// owner not found errors are ok, the cache may have been changed concurrently, just drop the entry

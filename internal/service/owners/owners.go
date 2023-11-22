@@ -51,10 +51,20 @@ func (s *Impl) Setup() error {
 
 func (s *Impl) GetOwners(ctx context.Context) (openapi.OwnerListDto, error) {
 	result := openapi.OwnerListDto{
-		Owners:    make(map[string]openapi.OwnerDto),
-		TimeStamp: s.Cache.GetOwnerListTimestamp(ctx),
+		Owners: make(map[string]openapi.OwnerDto),
 	}
-	for _, name := range s.Cache.GetSortedOwnerAliases(ctx) {
+
+	stamp, err := s.Cache.GetOwnerListTimestamp(ctx)
+	if err != nil {
+		return result, err
+	}
+	result.TimeStamp = stamp
+
+	names, err := s.Cache.GetSortedOwnerAliases(ctx)
+	if err != nil {
+		return result, err
+	}
+	for _, name := range names {
 		owner, err := s.GetOwner(ctx, name)
 		if err != nil {
 			// owner not found errors are ok, the cache may have been changed concurrently, just drop the entry

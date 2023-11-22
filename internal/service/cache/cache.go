@@ -2,20 +2,25 @@ package cache
 
 import (
 	"context"
+	openapi "github.com/Interhyp/metadata-service/api"
 	"github.com/Interhyp/metadata-service/internal/acorn/service"
-	"github.com/Interhyp/metadata-service/internal/service/cache/cacheable"
+	libcache "github.com/Roshick/go-autumn-synchronisation/pkg/aucache"
 	auzerolog "github.com/StephanHCB/go-autumn-logging-zerolog"
 	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
+	"time"
 )
+
+var cacheRetention = 30 * 24 * time.Hour
 
 type Impl struct {
 	Configuration librepo.Configuration
 	Logging       librepo.Logging
 	Timestamp     librepo.Timestamp
 
-	OwnerCache      cacheable.Cacheable
-	ServiceCache    cacheable.Cacheable
-	RepositoryCache cacheable.Cacheable
+	OwnerCache      libcache.Cache[openapi.OwnerDto]
+	ServiceCache    libcache.Cache[openapi.ServiceDto]
+	RepositoryCache libcache.Cache[openapi.RepositoryDto]
+	TimestampCache  libcache.Cache[string]
 }
 
 func New(
@@ -47,15 +52,20 @@ func (s *Impl) Setup() error {
 }
 
 func (s *Impl) SetupCache(_ context.Context) error {
+	// TODO create redis instances based on configuration
+
 	// idempotent to allow mocking
 	if s.OwnerCache == nil {
-		s.OwnerCache = cacheable.New()
+		s.OwnerCache = libcache.NewMemoryCache[openapi.OwnerDto]()
 	}
 	if s.ServiceCache == nil {
-		s.ServiceCache = cacheable.New()
+		s.ServiceCache = libcache.NewMemoryCache[openapi.ServiceDto]()
 	}
 	if s.RepositoryCache == nil {
-		s.RepositoryCache = cacheable.New()
+		s.RepositoryCache = libcache.NewMemoryCache[openapi.RepositoryDto]()
+	}
+	if s.TimestampCache == nil {
+		s.TimestampCache = libcache.NewMemoryCache[string]()
 	}
 	return nil
 }

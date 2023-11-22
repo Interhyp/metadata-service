@@ -2,48 +2,31 @@ package cache
 
 import (
 	"context"
-	"fmt"
 	"github.com/Interhyp/metadata-service/api"
-	"github.com/StephanHCB/go-backend-service-common/api/apierrors"
 )
 
-func (s *Impl) SetOwnerListTimestamp(_ context.Context, timestamp string) {
-	s.OwnerCache.SetTimestamp(timestamp)
+const ownerWhat = "owner"
+
+func (s *Impl) SetOwnerListTimestamp(ctx context.Context, timestamp string) error {
+	return s.setTimestamp(ctx, ownerWhat, ownerTimestampKey, timestamp)
 }
 
-func (s *Impl) GetOwnerListTimestamp(_ context.Context) string {
-	return s.OwnerCache.GetTimestamp()
+func (s *Impl) GetOwnerListTimestamp(ctx context.Context) (string, error) {
+	return s.getTimestamp(ctx, ownerWhat, ownerTimestampKey)
 }
 
-func (s *Impl) GetSortedOwnerAliases(_ context.Context) []string {
-	keysPtr := s.OwnerCache.GetSortedKeys()
-	return deepCopyStringSlice(*keysPtr)
+func (s *Impl) GetSortedOwnerAliases(ctx context.Context) ([]string, error) {
+	return getSortedKeys(ctx, ownerWhat, s, s.OwnerCache)
 }
 
 func (s *Impl) GetOwner(ctx context.Context, alias string) (openapi.OwnerDto, error) {
-	immutableOwnerPtr := s.OwnerCache.GetEntryRef(alias)
-	if immutableOwnerPtr == nil {
-		s.Logging.Logger().Ctx(ctx).Info().Printf("owner %v not found", alias)
-		return openapi.OwnerDto{}, apierrors.NewNotFoundError("owner.notfound", fmt.Sprintf("owner %s not found", alias), nil, s.Timestamp.Now())
-	} else {
-		ownerCopy := openapi.OwnerDto{}
-		owner := (*immutableOwnerPtr).(openapi.OwnerDto)
-		err := deepCopyStruct(owner, &ownerCopy)
-		return ownerCopy, err
-	}
+	return getEntry(ctx, ownerWhat, s, s.OwnerCache, alias)
 }
 
-func (s *Impl) PutOwner(_ context.Context, alias string, entry openapi.OwnerDto) {
-	var e interface{}
-	e = entry
-
-	s.OwnerCache.UpdateEntryRef(alias, &e)
+func (s *Impl) PutOwner(ctx context.Context, alias string, entry openapi.OwnerDto) error {
+	return putEntry(ctx, ownerWhat, s, s.OwnerCache, alias, entry)
 }
 
-func (s *Impl) DeleteOwner(_ context.Context, alias string) {
-	s.OwnerCache.UpdateEntryRef(alias, nil)
-	// TODO since this may come in from reading a manually made git commit, in this lowlevel cache we cascade
-	//
-	// s.scDeleteOwner(alias)
-	// s.rcDeleteOwner(alias)
+func (s *Impl) DeleteOwner(ctx context.Context, alias string) error {
+	return removeEntry(ctx, ownerWhat, s, s.OwnerCache, alias)
 }

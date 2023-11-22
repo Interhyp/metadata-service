@@ -1,6 +1,6 @@
 module github.com/Interhyp/metadata-service
 
-go 1.21
+go 1.21.4
 
 // exclude actually unused dependencies (mostly of pact-go, which is testing only anyway)
 // because our scanner fails to understand they are not in use
@@ -80,6 +80,8 @@ require (
 	dario.cat/mergo v1.0.0 // indirect
 	github.com/Microsoft/go-winio v0.6.1 // indirect
 	github.com/ProtonMail/go-crypto v0.0.0-20230828082145-3c4c8a2d2371 // indirect
+	github.com/Roshick/go-autumn-kafka v0.3.1 // indirect
+	github.com/Roshick/go-autumn-synchronisation v0.2.0 // indirect
 	github.com/StephanHCB/go-autumn-acorn-registry v0.3.1 // indirect
 	github.com/StephanHCB/go-autumn-web-swagger-ui v0.2.3 // indirect
 	github.com/acomagu/bufpipe v1.0.4 // indirect
@@ -90,6 +92,7 @@ require (
 	github.com/cyphar/filepath-securejoin v0.2.4 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.2.0 // indirect
+	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/elastic/go-sysinfo v1.7.1 // indirect
 	github.com/elastic/go-windows v1.0.1 // indirect
 	github.com/emirpasic/gods v1.18.1 // indirect
@@ -116,6 +119,7 @@ require (
 	github.com/prometheus/client_model v0.4.1-0.20230718164431-9a2bf3000d16 // indirect
 	github.com/prometheus/common v0.44.0 // indirect
 	github.com/prometheus/procfs v0.11.1 // indirect
+	github.com/redis/go-redis/v9 v9.3.0 // indirect
 	github.com/segmentio/asm v1.2.0 // indirect
 	github.com/sergi/go-diff v1.1.0 // indirect
 	github.com/shurcooL/httpfs v0.0.0-20190707220628-8d4bc4ba7749 // indirect
@@ -131,7 +135,7 @@ require (
 	go.elastic.co/fastjson v1.1.0 // indirect
 	golang.org/x/crypto v0.15.0 // indirect
 	golang.org/x/mod v0.12.0 // indirect
-	golang.org/x/net v0.17.0 // indirect
+	golang.org/x/net v0.18.0 // indirect
 	golang.org/x/sys v0.14.0 // indirect
 	golang.org/x/tools v0.13.0 // indirect
 	google.golang.org/protobuf v1.31.0 // indirect
