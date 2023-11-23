@@ -2,6 +2,7 @@ package config
 
 import (
 	"github.com/Interhyp/metadata-service/internal/acorn/config"
+	"github.com/Roshick/go-autumn-kafka/pkg/aukafka"
 	"os"
 	"regexp"
 	"strings"
@@ -176,4 +177,8 @@ func (c *CustomConfigImpl) NotificationConsumerConfigs() map[string]config.Notif
 
 func (c *CustomConfigImpl) AllowedFileCategories() []string {
 	return c.VAllowedFileCategories
+}
+
+func (c *CustomConfigImpl) Kafka() *aukafka.Config {
+	return c.VKafkaConfig
 }

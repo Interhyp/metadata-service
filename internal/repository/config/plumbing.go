@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/Interhyp/metadata-service/internal/acorn/config"
 	openapi "github.com/Interhyp/metadata-service/internal/types"
+	"github.com/Roshick/go-autumn-kafka/pkg/aukafka"
 	auconfigapi "github.com/StephanHCB/go-autumn-config-api"
 	auconfigenv "github.com/StephanHCB/go-autumn-config-env"
 	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
@@ -64,13 +65,18 @@ type CustomConfigImpl struct {
 	VRepositoryKeySeparator         string
 	VNotificationConsumerConfigs    map[string]config.NotificationConsumerConfig
 	VAllowedFileCategories          []string
+
+	VKafkaConfig *aukafka.Config
 }
 
 func New() (librepo.Configuration, config.CustomConfiguration) {
-	instance := &CustomConfigImpl{}
+	instance := &CustomConfigImpl{
+		VKafkaConfig: aukafka.NewConfig(),
+	}
 	configItems := make([]auconfigapi.ConfigItem, 0)
 	configItems = append(configItems, CustomConfigItems...)
 	configItems = append(configItems, vault.ConfigItems...)
+	configItems = append(configItems, instance.VKafkaConfig.ConfigItems()...)
 
 	libInstance := libconfig.NewNoAcorn(instance, configItems)
 
@@ -121,6 +127,8 @@ func (c *CustomConfigImpl) Obtain(getter func(key string) string) {
 	c.VRepositoryKeySeparator = getter(config.KeyRepositoryKeySeparator)
 	c.VNotificationConsumerConfigs, _ = parseNotificationConsumerConfigs(getter(config.KeyNotificationConsumerConfigs))
 	c.VAllowedFileCategories, _ = parseAllowedFileCategories(getter(config.KeyAllowedFileCategories))
+
+	c.VKafkaConfig.Obtain(getter)
 }
 
 // used after validation, so known safe

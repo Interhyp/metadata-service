@@ -2,6 +2,7 @@ package config
 
 import (
 	"github.com/Interhyp/metadata-service/internal/types"
+	"github.com/Roshick/go-autumn-kafka/pkg/aukafka"
 	"regexp"
 
 	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
@@ -25,12 +26,6 @@ type CustomConfiguration interface {
 
 	GitCommitterName() string
 	GitCommitterEmail() string
-
-	KafkaUsername() string
-	KafkaPassword() string
-	KafkaTopic() string
-	KafkaSeedBrokers() string
-	KafkaGroupIdOverride() string
 
 	AuthOidcKeySetUrl() string
 	AuthOidcTokenAudience() string
@@ -65,6 +60,9 @@ type CustomConfiguration interface {
 	NotificationConsumerConfigs() map[string]NotificationConsumerConfig
 
 	AllowedFileCategories() []string
+
+	Kafka() *aukafka.Config
+	KafkaGroupIdOverride() string
 }
 
 type NotificationConsumerConfig struct {

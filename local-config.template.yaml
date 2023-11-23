@@ -26,6 +26,7 @@ VAULT_SECRETS_CONFIG: >-
       {"vaultKey": "BASIC_AUTH_PASSWORD"},
       {"vaultKey": "BITBUCKET_PASSWORD"},
       {"vaultKey": "KAFKA_PASSWORD"},
+      {"vaultKey": "METADATA_CHANGE_EVENTS_CONNECTION_STRING"},
       {"vaultKey": "SSH_PRIVATE_KEY"},
       {"vaultKey": "SSH_PRIVATE_KEY_PASSWORD"}
     ]
@@ -64,5 +65,20 @@ ALLOWED_FILE_CATEGORIES: '["template"]'
 #        "Owner": ["MODIFIED"],
 #      },
 #      "url": "https://another.url.com/for/another/webhook"
+#    }
+#  }
+
+# Enable KAFKA communication (Azure event hub example)
+
+#KAFKA_TOPICS_CONFIG: >-
+#  {
+#    "metadata-change-events": {
+#      "topic": "metadata-change-events",
+#      "brokers": [
+#        "example.com:9093"
+#      ],
+#      "username": "$ConnectionString",
+#      "passwordEnvVar": "METADATA_CHANGE_EVENTS_CONNECTION_STRING",
+#      "authType": "PLAIN"
 #    }
 #  }

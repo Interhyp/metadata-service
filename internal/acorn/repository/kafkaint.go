@@ -6,7 +6,9 @@ import "context"
 type Kafka interface {
 	IsKafka() bool
 
+	// Setup only connects the producer, the consumer is connected with StartReceiveLoop.
 	Setup() error
+	// Teardown will close both producer and consumer if they have been connected.
 	Teardown()
 
 	// SubscribeIncoming allows you to register a callback that is called whenever a message is received from the Kafka bus.

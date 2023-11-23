@@ -2,6 +2,7 @@ package configmock
 
 import (
 	"github.com/Interhyp/metadata-service/internal/acorn/config"
+	"github.com/Roshick/go-autumn-kafka/pkg/aukafka"
 	"regexp"
 )
 
@@ -259,6 +260,11 @@ func (c *MockConfig) NotificationConsumerConfigs() map[string]config.Notificatio
 }
 
 func (c *MockConfig) AllowedFileCategories() []string {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (c *MockConfig) Kafka() *aukafka.Config {
 	//TODO implement me
 	panic("implement me")
 }
