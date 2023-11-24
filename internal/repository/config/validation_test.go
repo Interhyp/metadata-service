@@ -78,7 +78,7 @@ func TestValidate_LotsOfErrors(t *testing.T) {
 	_, err := tstSetupCutAndLogRecorder(t, "invalid-config-values.yaml")
 
 	require.NotNil(t, err)
-	require.Contains(t, err.Error(), "some configuration values failed to validate or parse. There were 29 error(s). See details above")
+	require.Contains(t, err.Error(), "some configuration values failed to validate or parse. There were 27 error(s). See details above")
 
 	actualLog := goauzerolog.RecordedLogForTesting.String()
 
@@ -91,20 +91,17 @@ func TestValidate_LotsOfErrors(t *testing.T) {
 	expectedPart3 := "METRICS_PORT: value -12387192873invalid is not a valid integer"
 	require.Contains(t, actualLog, expectedPart3)
 
-	expectedPart4 := "failed to validate configuration field KAFKA_SEED_BROKERS: must match ^(|([a-z0-9-]+.[a-z0-9-]+.[a-z]{2,3}"
+	expectedPart4 := "failed to validate configuration field ALERT_TARGET_PREFIX: must match ^((http|https)://|)[a-z0-9-.]+.[a-z]{2,3}/$"
 	require.Contains(t, actualLog, expectedPart4)
 
-	expectedPart5 := "failed to validate configuration field ALERT_TARGET_PREFIX: must match ^((http|https)://|)[a-z0-9-.]+.[a-z]{2,3}/$"
+	expectedPart5 := "failed to validate configuration field ALERT_TARGET_SUFFIX: must match ^@[a-z0-9-]+.[a-z]{2,3}$"
 	require.Contains(t, actualLog, expectedPart5)
 
-	expectedPart6 := "failed to validate configuration field ALERT_TARGET_SUFFIX: must match ^@[a-z0-9-]+.[a-z]{2,3}$"
+	expectedPart6 := "failed to validate configuration field VAULT_ENABLED: value what is not a valid boolean value"
 	require.Contains(t, actualLog, expectedPart6)
 
-	expectedPart7 := "failed to validate configuration field VAULT_ENABLED: value what is not a valid boolean value"
+	expectedPart7 := "failed to validate configuration field VAULT_SECRETS_CONFIG: invalid character '}' after top-level value"
 	require.Contains(t, actualLog, expectedPart7)
-
-	expectedPart8 := "failed to validate configuration field VAULT_SECRETS_CONFIG: invalid character '}' after top-level value"
-	require.Contains(t, actualLog, expectedPart8)
 
 	require.Contains(t, actualLog, "failed to validate configuration field NOTIFICATION_CONSUMER_CONFIGS:")
 	require.Contains(t, actualLog, "Notification consumer config 'caseInvalidTypes' contains invalid type 'invalid'.")

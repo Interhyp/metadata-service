@@ -58,10 +58,7 @@ the [`local-config.yaml`][config] can be used to set the variables.
 | `GIT_COMMITTER_NAME`               |                                                       | Name of the user used to create the Git commits.                                                                                                                                                                     |
 | `GIT_COMMITTER_EMAIL`              |                                                       | E-Mail of the user used to create the Git commits.                                                                                                                                                                   |
 |                                    |                                                       |                                                                                                                                                                                                                      |
-| `KAFKA_USERNAME`                   |                                                       | Leave ALL of the following `KAFKA_` fields empty to skip the Kafka integration.                                                                                                                                      |
-| `KAFKA_PASSWORD`                   |                                                       | Leave ALL of the following `KAFKA_` fields empty to skip the Kafka integration.                                                                                                                                      |
-| `KAFKA_TOPIC`                      |                                                       |                                                                                                                                                                                                                      |
-| `KAFKA_SEED_BROKERS`               |                                                       | A comma separated list of Kafka brokers, e.g. first-kafka-broker.domain.com:9092,second-kafka-broker.domain.com:9092                                                                                                 |                        
+| `KAFKA_TOPICS_CONFIG`              |                                                       | A Json configuration for a Kafka Topic to publish updates to. Leave empty to skip the Kafka integration. See below for details and an example.                                                                       |
 | `KAFKA_GROUP_ID_OVERRIDE`          |                                                       | Override the kafka group id for local development to avoid creating lots of consumer groups. If unset, derived from local IP address so each k8s pod gets their own group.                                           |
 |                                    |                                                       |                                                                                                                                                                                                                      |
 | `AUTH_OIDC_KEY_SET_URL`            |                                                       | URL to the [OpenID Connect Keyset][openid] for validating JWTs. See [authentication](#authentication) for more details.                                                                                              |
@@ -90,6 +87,9 @@ the [`local-config.yaml`][config] can be used to set the variables.
 | `REPOSITORY_KEY_SEPARATOR`         | `.`                                                   | Single character used to separate repository name from repository type. repository name and repository type must not contain separator.                                                                              |
 |                                    |                                                       |                                                                                                                                                                                                                      |
 | `ALLOWED_FILE_CATEGORIES`          |                                                       | List of allowed keys for the filecategory field in repositories. Parsed as a json array, example value: `["key1","key2"]`. All keys not in this list are rejected on writes, and silently dropped when reading.      |
+|                                    |                                                       |                                                                                                                                                                                                                      |
+| `REDIS_URL`                        |                                                       | Url to an optional Redis instance to use as a shared cache. Will use in-memory cache if left blank                                                                                                                   |
+| `REDIS_PASSWORD`                   |                                                       | Password for the Redis instance. Can be read from Vault via `VAULT_SECRETS_CONFIG`                                                                                                                                   |
 
 ## Datastore
 
@@ -187,6 +187,41 @@ _If you are a client subscribing to our Kafka update notifications, and you want
 state following an update notification, you must compare the commit hash and timestamp to see if you got the
 correct version. If not, wait a bit and try again, you landed on an instance that isn't consistent yet._
 
+### Kafka configuration
+
+If you wish to use a Kafka topic, set the environment variable `KAFKA_TOPICS_CONFIG` to a JSON document 
+as follows (displayed in prettyprinted form for readability):
+
+```
+{
+    "metadata-change-events": {
+        "topic": "metadata-change-events",
+        "brokers": [
+          "kafka-seed-broker1.example.com:9092",
+          "kafka-seed-broker2.example.com:9092"
+        ],
+        "username": "<username used to connect>",
+        "passwordEnvVar": "METADATA_CHANGE_EVENTS_PASSWORD",
+        "authType": "PLAIN"
+    }
+}
+```
+
+This assumes of course that the password is provided in the specified environment variable. On Localhost, you
+can simply set "password" in the JSON.
+
+AuthType sets the SASL authentication method, possible values are `PLAIN`, `SCRAM-SHA-256`, `SCRAM-SHA-512`.
+
+Note: You can use the Vault integration configuration to read the password from Vault by including it in
+`VAULT_SECRETS_CONFIG`, similar to:
+
+```
+   [...]
+    "some/vault/path": [
+      {"vaultKey": "METADATA_CHANGE_EVENTS_PASSWORD"}
+    ],
+```
+
 ## architecture
 
 ![software architecture](docs/architecture-export.png)
@@ -241,8 +276,7 @@ Clear the test cache:
 ### Goland terminal configuration
 
 Goland has the annoying habit of limiting line width on the output terminal to 80 characters no matter how wide the
-window is.
-You can fix this. Menu: Help -> Find Action... -> search for "Registry"
+window is. You can fix this. Menu: Help -> Find Action... -> search for "Registry"
 
 Uncheck `go.run.processes.with.pty`.
 

@@ -60,22 +60,6 @@ func (c *CustomConfigImpl) GitCommitterEmail() string {
 	return c.VGitCommitterEmail
 }
 
-func (c *CustomConfigImpl) KafkaUsername() string {
-	return c.VKafkaUsername
-}
-
-func (c *CustomConfigImpl) KafkaPassword() string {
-	return c.VKafkaPassword
-}
-
-func (c *CustomConfigImpl) KafkaTopic() string {
-	return c.VKafkaTopic
-}
-
-func (c *CustomConfigImpl) KafkaSeedBrokers() string {
-	return c.VKafkaSeedBrokers
-}
-
 func (c *CustomConfigImpl) AuthOidcKeySetUrl() string {
 	return c.VAuthOidcKeySetUrl
 }

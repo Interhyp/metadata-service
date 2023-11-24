@@ -127,26 +127,6 @@ func (c *MockConfig) GitCommitterEmail() string {
 	panic("implement me")
 }
 
-func (c *MockConfig) KafkaUsername() string {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (c *MockConfig) KafkaPassword() string {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (c *MockConfig) KafkaTopic() string {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (c *MockConfig) KafkaSeedBrokers() string {
-	//TODO implement me
-	panic("implement me")
-}
-
 func (c *MockConfig) KafkaGroupIdOverride() string {
 	//TODO implement me
 	panic("implement me")

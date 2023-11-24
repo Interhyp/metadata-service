@@ -36,10 +36,6 @@ type CustomConfigImpl struct {
 	VBitbucketReviewerFallback      string
 	VGitCommitterName               string
 	VGitCommitterEmail              string
-	VKafkaUsername                  string
-	VKafkaPassword                  string
-	VKafkaTopic                     string
-	VKafkaSeedBrokers               string
 	VAuthOidcKeySetUrl              string
 	VAuthOidcTokenAudience          string
 	VAuthGroupWrite                 string
@@ -100,10 +96,6 @@ func (c *CustomConfigImpl) Obtain(getter func(key string) string) {
 	c.VBitbucketReviewerFallback = getter(config.KeyBitbucketReviewerFallback)
 	c.VGitCommitterName = getter(config.KeyGitCommitterName)
 	c.VGitCommitterEmail = getter(config.KeyGitCommitterEmail)
-	c.VKafkaUsername = getter(config.KeyKafkaUsername)
-	c.VKafkaPassword = getter(config.KeyKafkaPassword)
-	c.VKafkaTopic = getter(config.KeyKafkaTopic)
-	c.VKafkaSeedBrokers = getter(config.KeyKafkaSeedBrokers)
 	c.VKafkaGroupIdOverride = getter(config.KeyKafkaGroupIdOverride)
 	c.VAuthOidcKeySetUrl = getter(config.KeyAuthOidcKeySetUrl)
 	c.VAuthOidcTokenAudience = getter(config.KeyAuthOidcTokenAudience)
