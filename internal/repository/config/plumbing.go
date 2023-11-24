@@ -65,6 +65,8 @@ type CustomConfigImpl struct {
 	VRepositoryKeySeparator         string
 	VNotificationConsumerConfigs    map[string]config.NotificationConsumerConfig
 	VAllowedFileCategories          []string
+	VRedisUrl                       string
+	VRedisPassword                  string
 
 	VKafkaConfig *aukafka.Config
 }

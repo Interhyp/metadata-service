@@ -182,3 +182,11 @@ func (c *CustomConfigImpl) AllowedFileCategories() []string {
 func (c *CustomConfigImpl) Kafka() *aukafka.Config {
 	return c.VKafkaConfig
 }
+
+func (c *CustomConfigImpl) RedisUrl() string {
+	return c.VRedisUrl
+}
+
+func (c *CustomConfigImpl) RedisPassword() string {
+	return c.VRedisPassword
+}

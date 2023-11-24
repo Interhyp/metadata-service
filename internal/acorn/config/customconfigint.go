@@ -63,6 +63,9 @@ type CustomConfiguration interface {
 
 	Kafka() *aukafka.Config
 	KafkaGroupIdOverride() string
+
+	RedisUrl() string
+	RedisPassword() string
 }
 
 type NotificationConsumerConfig struct {
@@ -118,4 +121,6 @@ const (
 	KeyRepositoryTypes                = "REPOSITORY_TYPES"
 	KeyNotificationConsumerConfigs    = "NOTIFICATION_CONSUMER_CONFIGS"
 	KeyAllowedFileCategories          = "ALLOWED_FILE_CATEGORIES"
+	KeyRedisUrl                       = "REDIS_URL"
+	KeyRedisPassword                  = "REDIS_PASSWORD"
 )

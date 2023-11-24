@@ -308,4 +308,18 @@ var CustomConfigItems = []auconfigapi.ConfigItem{
 			return err
 		},
 	},
+	{
+		Key:         config.KeyRedisUrl,
+		EnvName:     config.KeyRedisUrl,
+		Default:     "",
+		Description: "base url to the redis, including protocol. Uses in-memory caching if blank.",
+		Validate:    auconfigapi.ConfigNeedsNoValidation,
+	},
+	{
+		Key:         config.KeyRedisPassword,
+		EnvName:     config.KeyRedisPassword,
+		Default:     "",
+		Description: "password used to access the redis",
+		Validate:    auconfigapi.ConfigNeedsNoValidation,
+	},
 }

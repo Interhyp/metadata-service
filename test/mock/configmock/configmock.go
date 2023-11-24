@@ -268,3 +268,11 @@ func (c *MockConfig) Kafka() *aukafka.Config {
 	//TODO implement me
 	panic("implement me")
 }
+
+func (c *MockConfig) RedisUrl() string {
+	return ""
+}
+
+func (c *MockConfig) RedisPassword() string {
+	return ""
+}
