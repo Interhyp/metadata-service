@@ -23,7 +23,7 @@ type Impl struct {
 	Kafka               repository.Kafka
 	Notifier            repository.Notifier
 	Mapper              service.Mapper
-	Cache               service.Cache
+	Cache               repository.Cache
 
 	mu sync.Mutex
 
@@ -42,7 +42,7 @@ func New(
 	kafka repository.Kafka,
 	notifier repository.Notifier,
 	mapper service.Mapper,
-	cache service.Cache,
+	cache repository.Cache,
 ) service.Updater {
 	return &Impl{
 		Configuration:       configuration,

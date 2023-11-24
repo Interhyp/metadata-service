@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/Interhyp/metadata-service/api"
 	"github.com/Interhyp/metadata-service/internal/acorn/config"
+	"github.com/Interhyp/metadata-service/internal/acorn/repository"
 	"github.com/Interhyp/metadata-service/internal/acorn/service"
 	"github.com/Interhyp/metadata-service/internal/service/util"
 	auzerolog "github.com/StephanHCB/go-autumn-logging-zerolog"
@@ -19,7 +20,7 @@ type Impl struct {
 	CustomConfiguration config.CustomConfiguration
 	Logging             librepo.Logging
 	Timestamp           librepo.Timestamp
-	Cache               service.Cache
+	Cache               repository.Cache
 	Updater             service.Updater
 	Owners              service.Owners
 }
@@ -29,7 +30,7 @@ func New(
 	customConfig config.CustomConfiguration,
 	logging librepo.Logging,
 	timestamp librepo.Timestamp,
-	cache service.Cache,
+	cache repository.Cache,
 	updater service.Updater,
 	owners service.Owners,
 ) service.Repositories {
