@@ -67,7 +67,7 @@ require (
 	github.com/StephanHCB/go-backend-service-common v0.8.0
 	github.com/go-chi/chi/v5 v5.0.10
 	github.com/go-git/go-billy/v5 v5.5.0
-	github.com/go-git/go-git/v5 v5.10.0
+	github.com/go-git/go-git/v5 v5.10.1
 	github.com/go-http-utils/headers v0.0.0-20181008091004-fed159eddc2a
 	github.com/lestrrat-go/jwx/v2 v2.0.17
 	github.com/pkg/errors v0.9.1
@@ -85,7 +85,6 @@ require (
 	github.com/ProtonMail/go-crypto v0.0.0-20230828082145-3c4c8a2d2371 // indirect
 	github.com/StephanHCB/go-autumn-acorn-registry v0.3.1 // indirect
 	github.com/StephanHCB/go-autumn-web-swagger-ui v0.2.3 // indirect
-	github.com/acomagu/bufpipe v1.0.4 // indirect
 	github.com/armon/go-radix v1.0.0 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
@@ -137,7 +136,7 @@ require (
 	github.com/sergi/go-diff v1.1.0 // indirect
 	github.com/shurcooL/httpfs v0.0.0-20190707220628-8d4bc4ba7749 // indirect
 	github.com/shurcooL/vfsgen v0.0.0-20200824052919-0d455de96546 // indirect
-	github.com/skeema/knownhosts v1.2.0 // indirect
+	github.com/skeema/knownhosts v1.2.1 // indirect
 	github.com/sony/gobreaker v0.5.0 // indirect
 	github.com/tidwall/tinylru v1.2.1 // indirect
 	github.com/xanzy/ssh-agent v0.3.3 // indirect
