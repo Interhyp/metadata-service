@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/Interhyp/metadata-service/api"
 	"github.com/Interhyp/metadata-service/internal/acorn/config"
+	"github.com/Interhyp/metadata-service/internal/acorn/repository"
 	"github.com/Interhyp/metadata-service/internal/acorn/service"
 	"github.com/Interhyp/metadata-service/internal/service/util"
 	auzerolog "github.com/StephanHCB/go-autumn-logging-zerolog"
@@ -19,7 +20,7 @@ type Impl struct {
 	CustomConfiguration config.CustomConfiguration
 	Logging             librepo.Logging
 	Timestamp           librepo.Timestamp
-	Cache               service.Cache
+	Cache               repository.Cache
 	Updater             service.Updater
 	Owners              service.Owners
 }
@@ -29,7 +30,7 @@ func New(
 	customConfig config.CustomConfiguration,
 	logging librepo.Logging,
 	timestamp librepo.Timestamp,
-	cache service.Cache,
+	cache repository.Cache,
 	updater service.Updater,
 	owners service.Owners,
 ) service.Repositories {
@@ -94,8 +95,13 @@ func (s *Impl) GetRepositories(ctx context.Context,
 ) (openapi.RepositoryListDto, error) {
 	result := openapi.RepositoryListDto{
 		Repositories: make(map[string]openapi.RepositoryDto),
-		TimeStamp:    s.Cache.GetRepositoryListTimestamp(ctx),
 	}
+
+	stamp, err := s.Cache.GetRepositoryListTimestamp(ctx)
+	if err != nil {
+		return result, err
+	}
+	result.TimeStamp = stamp
 
 	useReferencedRepositoriesMap := false
 	referencedRepositoriesMap := make(map[string]bool, 0)
@@ -110,7 +116,11 @@ func (s *Impl) GetRepositories(ctx context.Context,
 		}
 	}
 
-	for _, key := range s.Cache.GetSortedRepositoryKeys(ctx) {
+	keys, err := s.Cache.GetSortedRepositoryKeys(ctx)
+	if err != nil {
+		return openapi.RepositoryListDto{}, err
+	}
+	for _, key := range keys {
 		if !useReferencedRepositoriesMap || referencedRepositoriesMap[key] {
 			repository, err := s.GetRepository(ctx, key)
 			if err != nil {
@@ -583,7 +593,10 @@ func (s *Impl) DeleteRepository(ctx context.Context, key string, deletionInfo op
 			return err
 		}
 
-		allowed := s.Updater.CanMoveOrDeleteRepository(subCtx, key)
+		allowed, err := s.Updater.CanMoveOrDeleteRepository(subCtx, key)
+		if err != nil {
+			return err
+		}
 		if !allowed {
 			s.Logging.Logger().Ctx(ctx).Info().Printf("tried to delete repository %v, which is still referenced by its service", key)
 			return apierrors.NewConflictError("repository.conflict.referenced", "this repository is still being referenced by a service and cannot be deleted", nil, s.Timestamp.Now())

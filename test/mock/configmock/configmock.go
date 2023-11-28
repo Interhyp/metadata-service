@@ -2,6 +2,7 @@ package configmock
 
 import (
 	"github.com/Interhyp/metadata-service/internal/acorn/config"
+	"github.com/Roshick/go-autumn-kafka/pkg/aukafka"
 	"regexp"
 )
 
@@ -126,26 +127,6 @@ func (c *MockConfig) GitCommitterEmail() string {
 	panic("implement me")
 }
 
-func (c *MockConfig) KafkaUsername() string {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (c *MockConfig) KafkaPassword() string {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (c *MockConfig) KafkaTopic() string {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (c *MockConfig) KafkaSeedBrokers() string {
-	//TODO implement me
-	panic("implement me")
-}
-
 func (c *MockConfig) KafkaGroupIdOverride() string {
 	//TODO implement me
 	panic("implement me")
@@ -261,4 +242,17 @@ func (c *MockConfig) NotificationConsumerConfigs() map[string]config.Notificatio
 func (c *MockConfig) AllowedFileCategories() []string {
 	//TODO implement me
 	panic("implement me")
+}
+
+func (c *MockConfig) Kafka() *aukafka.Config {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (c *MockConfig) RedisUrl() string {
+	return ""
+}
+
+func (c *MockConfig) RedisPassword() string {
+	return ""
 }

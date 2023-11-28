@@ -143,7 +143,10 @@ func (s *Impl) updateServices(ctx context.Context) error {
 }
 
 func (s *Impl) decideServicesToAddUpdateOrRemove(ctx context.Context) (map[string]int8, error) {
-	cachedServiceNames := s.Cache.GetSortedServiceNames(ctx)
+	cachedServiceNames, err := s.Cache.GetSortedServiceNames(ctx)
+	if err != nil {
+		return nil, err
+	}
 
 	currentServiceNames, err := s.Mapper.GetSortedServiceNames(ctx)
 	if err != nil {

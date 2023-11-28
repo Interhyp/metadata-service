@@ -1,4 +1,4 @@
-package service
+package repository
 
 import (
 	"context"
@@ -14,15 +14,15 @@ type Cache interface {
 	// --- owner cache ---
 
 	// SetOwnerListTimestamp lets you set or update the timestamp for the last full scan of the list of aliases.
-	SetOwnerListTimestamp(ctx context.Context, timestamp string)
+	SetOwnerListTimestamp(ctx context.Context, timestamp string) error
 
 	// GetOwnerListTimestamp gives you the timestamp of the last full scan of the list of aliases.
-	GetOwnerListTimestamp(ctx context.Context) string
+	GetOwnerListTimestamp(ctx context.Context) (string, error)
 
 	// GetSortedOwnerAliases gives you a time snapshot copy of the slice of sorted owner names.
 	//
 	// This means you won't mess up the cache if you work with it in any way.
-	GetSortedOwnerAliases(ctx context.Context) []string
+	GetSortedOwnerAliases(ctx context.Context) ([]string, error)
 
 	// GetOwner gives you a time snapshot deep copy of the owner information.
 	//
@@ -34,25 +34,25 @@ type Cache interface {
 	// PutOwner creates or replaces the owner cache entry.
 	//
 	// This is an atomic operation.
-	PutOwner(ctx context.Context, alias string, entry openapi.OwnerDto)
+	PutOwner(ctx context.Context, alias string, entry openapi.OwnerDto) error
 
 	// DeleteOwner deletes the owner cache entry.
 	//
 	// This is an atomic operation.
-	DeleteOwner(ctx context.Context, alias string)
+	DeleteOwner(ctx context.Context, alias string) error
 
 	// --- service cache ---
 
 	// SetServiceListTimestamp lets you set or update the timestamp for the last full scan of the list of names.
-	SetServiceListTimestamp(ctx context.Context, timestamp string)
+	SetServiceListTimestamp(ctx context.Context, timestamp string) error
 
 	// GetServiceListTimestamp gives you the timestamp of the last full scan of the list of names.
-	GetServiceListTimestamp(ctx context.Context) string
+	GetServiceListTimestamp(ctx context.Context) (string, error)
 
 	// GetSortedServiceNames gives you a time snapshot copy of the slice of sorted service names.
 	//
 	// This means you won't mess up the cache if you work with it in any way.
-	GetSortedServiceNames(ctx context.Context) []string
+	GetSortedServiceNames(ctx context.Context) ([]string, error)
 
 	// GetService gives you a time snapshot deep copy of the service information.
 	//
@@ -64,25 +64,25 @@ type Cache interface {
 	// PutService creates or replaces the service cache entry.
 	//
 	// This is an atomic operation.
-	PutService(ctx context.Context, name string, entry openapi.ServiceDto)
+	PutService(ctx context.Context, name string, entry openapi.ServiceDto) error
 
 	// DeleteService deletes the service cache entry.
 	//
 	// This is an atomic operation.
-	DeleteService(ctx context.Context, name string)
+	DeleteService(ctx context.Context, name string) error
 
 	// --- repository cache ---
 
 	// SetRepositoryListTimestamp lets you set or update the timestamp for the last full scan of the list of keys.
-	SetRepositoryListTimestamp(ctx context.Context, timestamp string)
+	SetRepositoryListTimestamp(ctx context.Context, timestamp string) error
 
 	// GetRepositoryListTimestamp gives you the timestamp of the last full scan of the list of keys.
-	GetRepositoryListTimestamp(ctx context.Context) string
+	GetRepositoryListTimestamp(ctx context.Context) (string, error)
 
 	// GetSortedRepositoryKeys gives you a time snapshot copy of the slice of sorted repository names.
 	//
 	// This means you won't mess up the cache if you work with it in any way.
-	GetSortedRepositoryKeys(ctx context.Context) []string
+	GetSortedRepositoryKeys(ctx context.Context) ([]string, error)
 
 	// GetRepository gives you a time snapshot deep copy of the repository information.
 	//
@@ -94,10 +94,10 @@ type Cache interface {
 	// PutRepository creates or replaces the repository cache entry.
 	//
 	// This is an atomic operation.
-	PutRepository(ctx context.Context, key string, entry openapi.RepositoryDto)
+	PutRepository(ctx context.Context, key string, entry openapi.RepositoryDto) error
 
 	// DeleteRepository deletes the repository cache entry.
 	//
 	// This is an atomic operation.
-	DeleteRepository(ctx context.Context, key string)
+	DeleteRepository(ctx context.Context, key string) error
 }

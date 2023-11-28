@@ -2,6 +2,7 @@ package config
 
 import (
 	"github.com/Interhyp/metadata-service/internal/acorn/config"
+	"github.com/Roshick/go-autumn-kafka/pkg/aukafka"
 	"os"
 	"regexp"
 	"strings"
@@ -57,22 +58,6 @@ func (c *CustomConfigImpl) GitCommitterName() string {
 
 func (c *CustomConfigImpl) GitCommitterEmail() string {
 	return c.VGitCommitterEmail
-}
-
-func (c *CustomConfigImpl) KafkaUsername() string {
-	return c.VKafkaUsername
-}
-
-func (c *CustomConfigImpl) KafkaPassword() string {
-	return c.VKafkaPassword
-}
-
-func (c *CustomConfigImpl) KafkaTopic() string {
-	return c.VKafkaTopic
-}
-
-func (c *CustomConfigImpl) KafkaSeedBrokers() string {
-	return c.VKafkaSeedBrokers
 }
 
 func (c *CustomConfigImpl) AuthOidcKeySetUrl() string {
@@ -176,4 +161,16 @@ func (c *CustomConfigImpl) NotificationConsumerConfigs() map[string]config.Notif
 
 func (c *CustomConfigImpl) AllowedFileCategories() []string {
 	return c.VAllowedFileCategories
+}
+
+func (c *CustomConfigImpl) Kafka() *aukafka.Config {
+	return c.VKafkaConfig
+}
+
+func (c *CustomConfigImpl) RedisUrl() string {
+	return c.VRedisUrl
+}
+
+func (c *CustomConfigImpl) RedisPassword() string {
+	return c.VRedisPassword
 }

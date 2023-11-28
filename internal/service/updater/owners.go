@@ -106,7 +106,10 @@ func (s *Impl) updateOwners(ctx context.Context) error {
 }
 
 func (s *Impl) decideOwnersToAddUpdateOrRemove(ctx context.Context) (map[string]int8, error) {
-	cachedOwnerAliases := s.Cache.GetSortedOwnerAliases(ctx)
+	cachedOwnerAliases, err := s.Cache.GetSortedOwnerAliases(ctx)
+	if err != nil {
+		return nil, err
+	}
 
 	currentOwnerAliases, err := s.Mapper.GetSortedOwnerAliases(ctx)
 	if err != nil {

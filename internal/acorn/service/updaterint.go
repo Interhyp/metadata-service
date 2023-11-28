@@ -87,5 +87,5 @@ type Updater interface {
 	// CanMoveOrDeleteRepository checks that no service still references the repository key.
 	//
 	// Expects a current cache and you must be holding the lock.
-	CanMoveOrDeleteRepository(ctx context.Context, key string) bool
+	CanMoveOrDeleteRepository(ctx context.Context, key string) (bool, error)
 }

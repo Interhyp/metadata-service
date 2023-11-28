@@ -7,6 +7,7 @@ import (
 	"github.com/Interhyp/metadata-service/internal/acorn/repository"
 	"github.com/Interhyp/metadata-service/internal/acorn/service"
 	"github.com/Interhyp/metadata-service/internal/repository/bitbucket"
+	"github.com/Interhyp/metadata-service/internal/repository/cache"
 	"github.com/Interhyp/metadata-service/internal/repository/config"
 	"github.com/Interhyp/metadata-service/internal/repository/hostip"
 	"github.com/Interhyp/metadata-service/internal/repository/idp"
@@ -14,7 +15,6 @@ import (
 	"github.com/Interhyp/metadata-service/internal/repository/metadata"
 	"github.com/Interhyp/metadata-service/internal/repository/notifier"
 	"github.com/Interhyp/metadata-service/internal/repository/sshAuthProvider"
-	"github.com/Interhyp/metadata-service/internal/service/cache"
 	"github.com/Interhyp/metadata-service/internal/service/mapper"
 	"github.com/Interhyp/metadata-service/internal/service/owners"
 	"github.com/Interhyp/metadata-service/internal/service/repositories"
@@ -50,12 +50,12 @@ type ApplicationImpl struct {
 	Timestamp        librepo.Timestamp
 	SshAuthProvider  repository.SshAuthProvider
 	Notifier         repository.Notifier
+	Cache            repository.Cache
 
 	// services (business logic)
 	Mapper       service.Mapper
 	Trigger      service.Trigger
 	Updater      service.Updater
-	Cache        service.Cache
 	Owners       service.Owners
 	Services     service.Services
 	Repositories service.Repositories
@@ -187,6 +187,11 @@ func (a *ApplicationImpl) ConstructRepositories() error {
 		return err
 	}
 
+	a.Cache = cache.New(a.Config, a.CustomConfig, a.Logging, a.Timestamp)
+	if err := a.Cache.Setup(); err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -195,11 +200,6 @@ func (a *ApplicationImpl) ConstructServices() error {
 
 	a.Mapper = mapper.New(a.Config, a.CustomConfig, a.Logging, a.Timestamp, a.Metadata, a.Bitbucket)
 	if err := a.Mapper.Setup(); err != nil {
-		return err
-	}
-
-	a.Cache = cache.New(a.Config, a.Logging, a.Timestamp)
-	if err := a.Cache.Setup(); err != nil {
 		return err
 	}
 
