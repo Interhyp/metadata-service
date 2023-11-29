@@ -121,6 +121,8 @@ func (c *CustomConfigImpl) Obtain(getter func(key string) string) {
 	c.VRepositoryKeySeparator = getter(config.KeyRepositoryKeySeparator)
 	c.VNotificationConsumerConfigs, _ = parseNotificationConsumerConfigs(getter(config.KeyNotificationConsumerConfigs))
 	c.VAllowedFileCategories, _ = parseAllowedFileCategories(getter(config.KeyAllowedFileCategories))
+	c.VRedisUrl = getter(config.KeyRedisUrl)
+	c.VRedisPassword = getter(config.KeyRedisPassword)
 
 	c.VKafkaConfig.Obtain(getter)
 }
