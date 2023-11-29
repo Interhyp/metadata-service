@@ -177,6 +177,8 @@ type RepositoryCreateDto struct {
 	Filecategory *map[string][]string `yaml:"filecategory,omitempty" json:"filecategory,omitempty"`
 	// The jira issue to use for committing a change, or the last jira issue used.
 	JiraIssue string `yaml:"-" json:"jiraIssue"`
+	// A map of arbitrary string labels attached to this repository.
+	Labels *map[string]string `yaml:"labels,omitempty" json:"labels,omitempty"`
 }
 
 type RepositoryDto struct {
@@ -197,6 +199,8 @@ type RepositoryDto struct {
 	CommitHash string `yaml:"-" json:"commitHash"`
 	// The jira issue to use for committing a change, or the last jira issue used.
 	JiraIssue string `yaml:"-" json:"jiraIssue"`
+	// A map of arbitrary string labels attached to this repository.
+	Labels *map[string]string `yaml:"labels,omitempty" json:"labels,omitempty"`
 }
 
 type RepositoryListDto struct {
@@ -223,6 +227,8 @@ type RepositoryPatchDto struct {
 	CommitHash string `yaml:"-" json:"commitHash"`
 	// The jira issue to use for committing a change, or the last jira issue used.
 	JiraIssue string `yaml:"-" json:"jiraIssue"`
+	// A map of arbitrary string labels attached to this repository.
+	Labels *map[string]string `yaml:"labels,omitempty" json:"labels,omitempty"`
 }
 
 type ServiceCreateDto struct {

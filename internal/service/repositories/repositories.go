@@ -252,6 +252,7 @@ func (s *Impl) mapRepoCreateDtoToRepoDto(repositoryCreateDto openapi.RepositoryC
 		Filecategory:  repositoryCreateDto.Filecategory,
 		Generator:     repositoryCreateDto.Generator,
 		Unittest:      repositoryCreateDto.Unittest,
+		Labels:        repositoryCreateDto.Labels,
 	}
 }
 
@@ -432,6 +433,7 @@ func patchRepository(current openapi.RepositoryDto, patch openapi.RepositoryPatc
 		Unittest:      patchPtr[bool](patch.Unittest, current.Unittest),
 		Configuration: patchConfiguration(patch.Configuration, current.Configuration),
 		Filecategory:  patchFilecategory(patch.Filecategory, current.Filecategory),
+		Labels:        patchLabels(patch.Labels, current.Labels),
 		TimeStamp:     patch.TimeStamp,
 		CommitHash:    patch.CommitHash,
 		JiraIssue:     patch.JiraIssue,
@@ -490,6 +492,18 @@ func patchMapStringListString(patch *map[string][]string, original *map[string][
 		} else {
 			return patch
 		}
+	} else {
+		return original
+	}
+}
+
+func patchLabels(patch *map[string]string, original *map[string]string) *map[string]string {
+	if patch != nil {
+		if len(*patch) == 0 {
+			// remove
+			return nil
+		}
+		return patch
 	} else {
 		return original
 	}
