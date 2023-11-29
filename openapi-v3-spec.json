@@ -2629,6 +2629,17 @@
             "type": "string",
             "description": "The jira issue to use for committing a change, or the last jira issue used.",
             "example": "ISSUE-0000"
+          },
+          "labels": {
+            "type": "object",
+            "description": "A map of arbitrary string labels attached to this repository.",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "example": {
+              "some-key": "some-value",
+              "other-key": "other-value"
+            }
           }
         }
       },
@@ -2672,6 +2683,17 @@
             "type": "string",
             "description": "The jira issue to use for committing a change, or the last jira issue used.",
             "example": "ISSUE-0000"
+          },
+          "labels": {
+            "type": "object",
+            "description": "A map of arbitrary string labels attached to this repository.",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "example": {
+              "some-key": "some-value",
+              "other-key": "other-value"
+            }
           }
         }
       },
@@ -2724,6 +2746,17 @@
             "type": "string",
             "description": "The jira issue to use for committing a change, or the last jira issue used.",
             "example": "ISSUE-0000"
+          },
+          "labels": {
+            "type": "object",
+            "description": "A map of arbitrary string labels attached to this repository.",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "example": {
+              "some-key": "some-value",
+              "other-key": "other-value"
+            }
           }
         }
       },
