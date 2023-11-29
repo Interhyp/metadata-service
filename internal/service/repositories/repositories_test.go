@@ -57,6 +57,7 @@ func createRepositoryDto() openapi.RepositoryDto {
 			Archived:         ptr(false),
 		},
 		Filecategory: &map[string][]string{"a": {"path/a.yaml"}},
+		Labels:       &map[string]string{"label": "originalValue"},
 		TimeStamp:    "ts",
 		CommitHash:   "hash",
 	}
@@ -134,6 +135,7 @@ func TestPatchRepository_ReplaceAll(t *testing.T) {
 			Archived:         ptr(true),
 		},
 		Filecategory: &map[string][]string{"b": {"b.yaml", "b.json"}},
+		Labels:       &map[string]string{"label": "patchedValue"},
 		TimeStamp:    "newts",
 		CommitHash:   "newhash",
 	}, openapi.RepositoryDto{
@@ -169,6 +171,7 @@ func TestPatchRepository_ReplaceAll(t *testing.T) {
 			Archived:         ptr(true),
 		},
 		Filecategory: &map[string][]string{"b": {"b.yaml", "b.json"}},
+		Labels:       &map[string]string{"label": "patchedValue"},
 		TimeStamp:    "newts",
 		CommitHash:   "newhash",
 	})
@@ -192,6 +195,7 @@ func TestPatchRepository_ClearFields(t *testing.T) {
 			SignedApprovers:  []string{},
 		},
 		Filecategory: &map[string][]string{},
+		Labels:       &map[string]string{},
 		TimeStamp:    "",
 		CommitHash:   "",
 	}, openapi.RepositoryDto{
@@ -215,6 +219,7 @@ func TestPatchRepository_ClearFields(t *testing.T) {
 			Archived:         ptr(false),
 		},
 		Filecategory: nil,
+		Labels:       nil,
 		TimeStamp:    "",
 		CommitHash:   "",
 	})
