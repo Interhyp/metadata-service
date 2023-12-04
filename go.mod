@@ -54,7 +54,7 @@ exclude (
 require (
 	github.com/IBM/sarama v1.42.1
 	github.com/Roshick/go-autumn-kafka v0.4.0
-	github.com/Roshick/go-autumn-synchronisation v0.2.0
+	github.com/Roshick/go-autumn-synchronisation v0.2.1
 	github.com/StephanHCB/go-autumn-config-api v0.2.1
 	github.com/StephanHCB/go-autumn-config-env v0.2.2
 	github.com/StephanHCB/go-autumn-logging v0.3.0
@@ -147,10 +147,10 @@ require (
 	go.elastic.co/apm/module/apmhttp/v2 v2.4.5 // indirect
 	go.elastic.co/apm/v2 v2.4.5 // indirect
 	go.elastic.co/fastjson v1.1.0 // indirect
-	golang.org/x/crypto v0.15.0 // indirect
+	golang.org/x/crypto v0.16.0 // indirect
 	golang.org/x/mod v0.12.0 // indirect
-	golang.org/x/net v0.18.0 // indirect
-	golang.org/x/sys v0.14.0 // indirect
+	golang.org/x/net v0.19.0 // indirect
+	golang.org/x/sys v0.15.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
 	golang.org/x/tools v0.13.0 // indirect
 	google.golang.org/protobuf v1.31.0 // indirect
