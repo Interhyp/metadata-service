@@ -7,8 +7,8 @@ github.com/Microsoft/go-winio v0.6.1 h1:9/kr64B9VUZrLm5YYwbGtUJnMgqWVOdUAXu6Migc
 github.com/Microsoft/go-winio v0.6.1/go.mod h1:LRdKpFKfdobln8UmuiYcKPot9D2v6svN5+sAH+4kjUM=
 github.com/ProtonMail/go-crypto v0.0.0-20230828082145-3c4c8a2d2371 h1:kkhsdkhsCvIsutKu5zLMgWtgh9YxGCNAw8Ad8hjwfYg=
 github.com/ProtonMail/go-crypto v0.0.0-20230828082145-3c4c8a2d2371/go.mod h1:EjAoLdwvbIOoOQr3ihjnSoLZRtE8azugULFRteWMNc0=
-github.com/Roshick/go-autumn-kafka v0.4.0 h1:nF7rr5EyThsQwgUVwnGqUC+fWKvx1Gv4kJDg3+HwXCQ=
-github.com/Roshick/go-autumn-kafka v0.4.0/go.mod h1:xPnFTzE4ANIwJnu9+l+8fiy2ORhXXGB6JwQUbu2yUoo=
+github.com/Roshick/go-autumn-kafka v0.5.3 h1:NgxUORqWGTv8+00O86HRcxEDiJ8Itp2QXqi9bbbn0uo=
+github.com/Roshick/go-autumn-kafka v0.5.3/go.mod h1:BTRJ3HpM+xyZmAXbyZkoTKU90JVSy+xxe9WWE2oz4fQ=
 github.com/Roshick/go-autumn-synchronisation v0.2.1 h1:s+/mk0DuEpwLySj4VlGZUrtlrThQaSms8rz2pa4fGXw=
 github.com/Roshick/go-autumn-synchronisation v0.2.1/go.mod h1:Sz/eWPqqMeUSN63LaNxNQyB9dGuTKWCJOxQkbO/MA4Q=
 github.com/StephanHCB/go-autumn-acorn-registry v0.3.1 h1:rAJlEsrSTJArQZHOt4Q6Gkc4NgL2ObSQGvxW0chiRiM=
