@@ -25,6 +25,11 @@ type HealthComponent struct {
 	Status      *string `yaml:"status,omitempty" json:"status,omitempty"`
 }
 
+type Link struct {
+	Url   *string `yaml:"url,omitempty" json:"url,omitempty"`
+	Title *string `yaml:"title,omitempty" json:"title,omitempty"`
+}
+
 type Notification struct {
 	// name of the service that was updated
 	Name    string               `yaml:"name" json:"name"`
@@ -56,6 +61,7 @@ type OwnerCreateDto struct {
 	JiraIssue string `yaml:"-" json:"jiraIssue"`
 	// A display name of the owner, to be presented in user interfaces instead of the owner's name, when available
 	DisplayName *string `yaml:"displayName,omitempty" json:"displayName,omitempty"`
+	Links       []Link  `yaml:"links,omitempty" json:"links,omitempty"`
 }
 
 type OwnerDto struct {
@@ -79,6 +85,7 @@ type OwnerDto struct {
 	JiraIssue string `yaml:"-" json:"jiraIssue"`
 	// A display name of the owner, to be presented in user interfaces instead of the owner's name, when available
 	DisplayName *string `yaml:"displayName,omitempty" json:"displayName,omitempty"`
+	Links       []Link  `yaml:"links,omitempty" json:"links,omitempty"`
 }
 
 type OwnerListDto struct {
@@ -108,11 +115,16 @@ type OwnerPatchDto struct {
 	JiraIssue string `yaml:"-" json:"jiraIssue"`
 	// A display name of the owner, to be presented in user interfaces instead of the owner's name, when available
 	DisplayName *string `yaml:"displayName,omitempty" json:"displayName,omitempty"`
+	Links       []Link  `yaml:"links,omitempty" json:"links,omitempty"`
 }
 
 type Quicklink struct {
 	Url         *string `yaml:"url,omitempty" json:"url,omitempty"`
 	Title       *string `yaml:"title,omitempty" json:"title,omitempty"`
+	Description *string `yaml:"description,omitempty" json:"description,omitempty"`
+}
+
+type QuicklinkAllOf struct {
 	Description *string `yaml:"description,omitempty" json:"description,omitempty"`
 }
 

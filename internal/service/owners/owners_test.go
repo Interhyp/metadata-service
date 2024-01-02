@@ -24,7 +24,9 @@ func TestGetAllGroupMembers(t *testing.T) {
 	groupMembers = instance.GetAllGroupMembers(context.Background(), "someOwner", "someGroupName")
 	require.Equal(t, 0, len(groupMembers))
 }
-
+func ptr(in string) *string {
+	return &in
+}
 func TestPatchOwner(t *testing.T) {
 	docs.Description("patching of owners works")
 
@@ -40,6 +42,18 @@ func TestPatchOwner(t *testing.T) {
 	newGroups := map[string][]string{
 		"group1": {"user1"},
 	}
+	newLinks := []openapi.Link{
+		{
+			Url:   ptr("www.heute.de"),
+			Title: ptr("ZDF Heute Nachrichten"),
+		},
+	}
+	currentLinks := []openapi.Link{
+		{
+			Url:   ptr("www.interhyp.de"),
+			Title: ptr("Interhyp"),
+		},
+	}
 
 	emptyJiraproject := ""
 
@@ -50,6 +64,7 @@ func TestPatchOwner(t *testing.T) {
 		Groups:             &groups,
 		TimeStamp:          "timestamp",
 		CommitHash:         "commithash",
+		Links:              currentLinks,
 	}
 
 	patch0 := openapi.OwnerPatchDto{
@@ -64,6 +79,7 @@ func TestPatchOwner(t *testing.T) {
 		Groups:             &groups,
 		TimeStamp:          "timestamp.new",
 		CommitHash:         "commithash.new",
+		Links:              currentLinks,
 	}
 	require.Equal(t, expected0, actual0)
 
@@ -72,6 +88,7 @@ func TestPatchOwner(t *testing.T) {
 		TimeStamp:  "timestamp.new",
 		CommitHash: "commithash.new",
 		Groups:     &newGroups,
+		Links:      newLinks,
 	}
 	actual1 := patchOwner(current, patch1)
 	expected1 := openapi.OwnerDto{
@@ -81,6 +98,7 @@ func TestPatchOwner(t *testing.T) {
 		Groups:             &newGroups,
 		TimeStamp:          "timestamp.new",
 		CommitHash:         "commithash.new",
+		Links:              newLinks,
 	}
 	require.Equal(t, expected1, actual1)
 
@@ -89,6 +107,7 @@ func TestPatchOwner(t *testing.T) {
 		DefaultJiraProject: &emptyJiraproject,
 		TimeStamp:          "timestamp.new",
 		CommitHash:         "commithash.new",
+		Links:              make([]openapi.Link, 0),
 	}
 	actual2 := patchOwner(current, patch2)
 	expected2 := openapi.OwnerDto{
@@ -98,6 +117,7 @@ func TestPatchOwner(t *testing.T) {
 		Groups:             &groups,
 		TimeStamp:          "timestamp.new",
 		CommitHash:         "commithash.new",
+		Links:              nil,
 	}
 	require.Equal(t, expected2, actual2)
 
@@ -114,6 +134,7 @@ func TestPatchOwner(t *testing.T) {
 		Groups:             &groups,
 		TimeStamp:          "timestamp.new",
 		CommitHash:         "commithash.new",
+		Links:              currentLinks,
 	}
 	require.Equal(t, expected3, actual3)
 }

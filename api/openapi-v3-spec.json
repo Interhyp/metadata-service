@@ -1953,6 +1953,12 @@
             "type": "string",
             "description": "A display name of the owner, to be presented in user interfaces instead of the owner's name, when available",
             "example": "Owner Display Name"
+          },
+          "links": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Link"
+            }
           }
         }
       },
@@ -2019,6 +2025,12 @@
             "type": "string",
             "description": "A display name of the owner, to be presented in user interfaces instead of the owner's name, when available",
             "example": "Owner Display Name"
+          },
+          "links": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Link"
+            }
           }
         }
       },
@@ -2096,6 +2108,12 @@
             "type": "string",
             "description": "A display name of the owner, to be presented in user interfaces instead of the owner's name, when available",
             "example": "Owner Display Name"
+          },
+          "links": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Link"
+            }
           }
         }
       },
@@ -2199,7 +2217,10 @@
             "items": {
               "type": "string"
             },
-            "example": ["some-tag", "other-tag"]
+            "example": [
+              "some-tag",
+              "other-tag"
+            ]
           },
           "labels": {
             "type": "object",
@@ -2311,7 +2332,10 @@
             "items": {
               "type": "string"
             },
-            "example": ["some-tag", "other-tag"]
+            "example": [
+              "some-tag",
+              "other-tag"
+            ]
           },
           "labels": {
             "type": "object",
@@ -2401,7 +2425,10 @@
             "items": {
               "type": "string"
             },
-            "example": ["some-tag", "other-tag"]
+            "example": [
+              "some-tag",
+              "other-tag"
+            ]
           },
           "labels": {
             "type": "object",
@@ -2487,7 +2514,10 @@
             "items": {
               "type": "string"
             },
-            "example": ["user1","user2"]
+            "example": [
+              "user1",
+              "user2"
+            ]
           }
         }
       },
@@ -2500,15 +2530,20 @@
             "items": {
               "type": "string"
             },
-            "example": ["some-service", "other-service"]
+            "example": [
+              "some-service",
+              "other-service"
+            ]
           },
-          "providesApis":{
+          "providesApis": {
             "description": "A relation with an API, provided by this entity",
             "type": "array",
             "items": {
               "type": "string"
             },
-            "example": ["some-api"]
+            "example": [
+              "some-api"
+            ]
           },
           "consumesApis": {
             "description": "A relation with an API, consumed by this entity",
@@ -2516,14 +2551,21 @@
             "items": {
               "type": "string"
             },
-            "example": ["some-api", "other-api"]
+            "example": [
+              "some-api",
+              "other-api"
+            ]
           }
         }
       },
       "Notification": {
         "type": "object",
         "description": "Schema of the Dto sent to all configured downstreams upon a change of service.",
-        "required": ["name", "type", "event"],
+        "required": [
+          "name",
+          "type",
+          "event"
+        ],
         "properties": {
           "name": {
             "type": "string",
@@ -2531,11 +2573,19 @@
           },
           "event": {
             "type": "string",
-            "enum": ["CREATED", "MODIFIED", "DELETED"]
+            "enum": [
+              "CREATED",
+              "MODIFIED",
+              "DELETED"
+            ]
           },
           "type": {
             "type": "string",
-            "enum": ["Owner", "Service", "Repository"]
+            "enum": [
+              "Owner",
+              "Service",
+              "Repository"
+            ]
           },
           "payload": {
             "type": "object",
@@ -2556,6 +2606,28 @@
         }
       },
       "Quicklink": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Link"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "description": {
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "example": [
+          {
+            "url": "/swagger-ui/index.html",
+            "title": "SwaggerUI",
+            "description": "Displays the frontend for the API."
+          }
+        ]
+      },
+      "Link": {
         "type": "object",
         "properties": {
           "url": {
@@ -2563,17 +2635,13 @@
           },
           "title": {
             "type": "string"
-          },
-          "description": {
-            "type": "string"
           }
         },
-        "description": "A list of quicklinks related to the service",
+        "description": "A link ",
         "example": [
           {
             "url": "/swagger-ui/index.html",
-            "title": "SwaggerUI",
-            "description": "Displays the frontend for the API."
+            "title": "SwaggerUI"
           }
         ]
       },
@@ -2958,7 +3026,10 @@
           }
         },
         "example": {
-          "cache-template": ["templates/template1.yaml", "another/path/template2.json"]
+          "cache-template": [
+            "templates/template1.yaml",
+            "another/path/template2.json"
+          ]
         }
       },
       "ConditionReferenceDto": {

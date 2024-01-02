@@ -138,6 +138,7 @@ func (s *Impl) mapOwnerCreateDtoToOwnerDto(ownerCreateDto openapi.OwnerCreateDto
 		DefaultJiraProject: ownerCreateDto.DefaultJiraProject,
 		Groups:             ownerCreateDto.Groups,
 		DisplayName:        ownerCreateDto.DisplayName,
+		Links:              ownerCreateDto.Links,
 	}
 }
 
@@ -283,6 +284,7 @@ func patchOwner(current openapi.OwnerDto, patch openapi.OwnerPatchDto) openapi.O
 		CommitHash:         patch.CommitHash,
 		JiraIssue:          patch.JiraIssue,
 		DisplayName:        patch.DisplayName,
+		Links:              patchLinksSlice(patch.Links, current.Links),
 	}
 }
 
@@ -302,6 +304,20 @@ func patchStringPtr(patch *string, original *string) *string {
 func patchString(patch *string, original string) string {
 	if patch != nil {
 		return *patch
+	} else {
+		return original
+	}
+}
+
+// see internal/service/services/services.go patchQuicklinkSlice
+func patchLinksSlice(patch []openapi.Link, original []openapi.Link) []openapi.Link {
+	if patch != nil {
+		if len(patch) == 0 {
+			// remove
+			return nil
+		} else {
+			return patch
+		}
 	} else {
 		return original
 	}
