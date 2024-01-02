@@ -2619,13 +2619,12 @@
             }
           }
         ],
-        "example": [
-          {
+        "example": {
             "url": "/swagger-ui/index.html",
             "title": "SwaggerUI",
             "description": "Displays the frontend for the API."
           }
-        ]
+
       },
       "Link": {
         "type": "object",
@@ -2638,12 +2637,10 @@
           }
         },
         "description": "A link ",
-        "example": [
-          {
+        "example": {
             "url": "/swagger-ui/index.html",
             "title": "SwaggerUI"
           }
-        ]
       },
       "RepositoryDto": {
         "required": [
