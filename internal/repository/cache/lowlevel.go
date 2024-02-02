@@ -3,7 +3,7 @@ package cache
 import (
 	"context"
 	"fmt"
-	libcache "github.com/Roshick/go-autumn-synchronisation/pkg/aucache"
+	libcache "github.com/Roshick/go-autumn-synchronisation/pkg/cache"
 	"github.com/StephanHCB/go-backend-service-common/api/apierrors"
 	"sort"
 )
