@@ -10,7 +10,7 @@ require (
 	github.com/StephanHCB/go-autumn-config-env v0.2.2
 	github.com/StephanHCB/go-autumn-logging v0.3.0
 	github.com/StephanHCB/go-autumn-logging-zerolog v0.5.0
-	github.com/StephanHCB/go-autumn-restclient v0.7.3
+	github.com/StephanHCB/go-autumn-restclient v0.8.0
 	github.com/StephanHCB/go-autumn-restclient-apm v0.1.0
 	github.com/StephanHCB/go-autumn-restclient-circuitbreaker v0.4.1
 	github.com/StephanHCB/go-autumn-restclient-circuitbreaker-prometheus v0.1.0
