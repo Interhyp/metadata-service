@@ -3001,7 +3001,8 @@
           "key": {
             "type": "string",
             "enum": [
-              "DEPLOYMENT"
+              "DEPLOYMENT",
+              "QUMULO"
             ]
           },
           "permission": {
