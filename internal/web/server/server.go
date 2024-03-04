@@ -13,6 +13,7 @@ import (
 	libcontroller "github.com/StephanHCB/go-backend-service-common/acorns/controller"
 	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
 	libmiddleware "github.com/StephanHCB/go-backend-service-common/web/middleware"
+	"github.com/StephanHCB/go-backend-service-common/web/middleware/requestlogging"
 	"github.com/StephanHCB/go-backend-service-common/web/middleware/security"
 	"github.com/go-chi/chi/v5"
 	"net"
@@ -125,6 +126,11 @@ func (s *Impl) WireUp(ctx context.Context) {
 				"GET /v3/api-docs",
 				"GET /swagger-ui.*",
 			},
+			RequestLoggingOptions: requestlogging.Options{ExcludeLogging: []string{
+				"GET / 200",
+				"GET /health 200",
+				"GET /management/health 200",
+			}},
 		}
 
 		err := libmiddleware.SetupStandardMiddlewareStack(ctx, s.Router, options)
