@@ -185,6 +185,10 @@ func (s *Impl) updateIndividualServices(ctx context.Context, serviceNamesMap map
 				if firstError == nil {
 					firstError = err
 				}
+				if isContextCancelledOrTimeout(ctx) {
+					// no use continuing the loop, everything will fail at this point
+					return firstError
+				}
 			}
 		}
 	}

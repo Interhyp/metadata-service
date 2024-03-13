@@ -18,7 +18,7 @@ func (s *Impl) updateMetadata(ctx context.Context) ([]repository.UpdateEvent, er
 
 	if err := ctx.Err(); err != nil {
 		if errors.Is(err, context.Canceled) {
-			s.Logging.Logger().Ctx(ctx).Warn().Print("timeout while updating metadata")
+			s.Logging.Logger().Ctx(ctx).Warn().Print("timeout while updating metadata repository clone")
 			s.totalErrorCounter.Inc()
 			s.metadataErrorCounter.Inc()
 			return events, err
