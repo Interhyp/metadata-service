@@ -4,7 +4,7 @@ go 1.21
 
 require (
 	github.com/IBM/sarama v1.43.0
-	github.com/Roshick/go-autumn-kafka v0.6.1
+	github.com/Roshick/go-autumn-kafka v0.6.2
 	github.com/Roshick/go-autumn-synchronisation v0.6.0
 	github.com/StephanHCB/go-autumn-config-api v0.2.1
 	github.com/StephanHCB/go-autumn-config-env v0.2.2
