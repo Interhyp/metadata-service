@@ -2620,11 +2620,10 @@
           }
         ],
         "example": {
-            "url": "/swagger-ui/index.html",
-            "title": "SwaggerUI",
-            "description": "Displays the frontend for the API."
-          }
-
+          "url": "/swagger-ui/index.html",
+          "title": "SwaggerUI",
+          "description": "Displays the frontend for the API."
+        }
       },
       "Link": {
         "type": "object",
@@ -2638,9 +2637,9 @@
         },
         "description": "A link ",
         "example": {
-            "url": "/swagger-ui/index.html",
-            "title": "SwaggerUI"
-          }
+          "url": "/swagger-ui/index.html",
+          "title": "SwaggerUI"
+        }
       },
       "RepositoryDto": {
         "required": [
@@ -2990,6 +2989,23 @@
           "unmanaged": {
             "type": "boolean",
             "description": "Repository will not be configured, also not archived."
+          },
+          "mergeConfig": {
+            "type": "object",
+            "description": "Configures the allowed merge strategies",
+            "properties": {
+              "strategies": {
+                "type": "array",
+                "description": "Defines options a user can choose from for merging",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "defaultStrategy": {
+                "type": "string",
+                "description": "The first strategy in the list"
+              }
+            }
           }
         }
       },

@@ -2,7 +2,9 @@
 
 package openapi
 
-import "time"
+import (
+	"time"
+)
 
 type ConditionReferenceDto struct {
 	// Reference of a branch.
@@ -155,7 +157,15 @@ type RepositoryConfigurationDto struct {
 	// Moves the repository into the archive.
 	Archived *bool `yaml:"archived,omitempty" json:"archived,omitempty"`
 	// Repository will not be configured, also not archived.
-	Unmanaged *bool `yaml:"unmanaged,omitempty" json:"unmanaged,omitempty"`
+	Unmanaged   *bool                                  `yaml:"unmanaged,omitempty" json:"unmanaged,omitempty"`
+	MergeConfig *RepositoryConfigurationDtoMergeConfig `yaml:"mergeConfig,omitempty" json:"mergeConfig,omitempty"`
+}
+
+type RepositoryConfigurationDtoMergeConfig struct {
+	// Defines options a user can choose from for merging
+	Strategies []string `yaml:"strategies,omitempty" json:"strategies,omitempty"`
+	// The first strategy in the list
+	DefaultStrategy *string `yaml:"defaultStrategy,omitempty" json:"defaultStrategy,omitempty"`
 }
 
 type RepositoryConfigurationWebhookDto struct {
