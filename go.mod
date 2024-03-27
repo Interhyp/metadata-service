@@ -3,7 +3,7 @@ module github.com/Interhyp/metadata-service
 go 1.21
 
 require (
-	github.com/IBM/sarama v1.43.0
+	github.com/IBM/sarama v1.43.1
 	github.com/Roshick/go-autumn-kafka v0.6.2
 	github.com/Roshick/go-autumn-synchronisation v0.6.2
 	github.com/StephanHCB/go-autumn-config-api v0.2.1
