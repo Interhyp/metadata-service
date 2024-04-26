@@ -3,7 +3,7 @@ module github.com/Interhyp/metadata-service
 go 1.21
 
 require (
-	github.com/IBM/sarama v1.43.1
+	github.com/IBM/sarama v1.43.2
 	github.com/Roshick/go-autumn-kafka v0.6.2
 	github.com/Roshick/go-autumn-synchronisation v0.6.2
 	github.com/StephanHCB/go-autumn-config-api v0.2.1
@@ -66,7 +66,7 @@ require (
 	github.com/jcmturner/rpc/v2 v2.0.3 // indirect
 	github.com/joeshaw/multierror v0.0.0-20140124173710-69b34d4ec901 // indirect
 	github.com/kevinburke/ssh_config v1.2.0 // indirect
-	github.com/klauspost/compress v1.17.7 // indirect
+	github.com/klauspost/compress v1.17.8 // indirect
 	github.com/lestrrat-go/blackmagic v1.0.2 // indirect
 	github.com/lestrrat-go/httpcc v1.0.1 // indirect
 	github.com/lestrrat-go/httprc v1.0.5 // indirect
@@ -97,10 +97,10 @@ require (
 	go.elastic.co/apm/module/apmhttp/v2 v2.4.5 // indirect
 	go.elastic.co/apm/v2 v2.4.5 // indirect
 	go.elastic.co/fastjson v1.1.0 // indirect
-	golang.org/x/crypto v0.21.0 // indirect
+	golang.org/x/crypto v0.22.0 // indirect
 	golang.org/x/mod v0.12.0 // indirect
-	golang.org/x/net v0.23.0 // indirect
-	golang.org/x/sys v0.18.0 // indirect
+	golang.org/x/net v0.24.0 // indirect
+	golang.org/x/sys v0.19.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
 	golang.org/x/tools v0.13.0 // indirect
 	google.golang.org/protobuf v1.33.0 // indirect
