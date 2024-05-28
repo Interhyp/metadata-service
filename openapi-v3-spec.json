@@ -2929,6 +2929,10 @@
             "type": "integer",
             "description": "Set the required successful builds counter."
           },
+          "excludeMergeCommits": {
+            "type": "boolean",
+            "description": "Exclude merge commits from commit checks."
+          },
           "requireConditions": {
             "type": "object",
             "description": "Configuration of conditional builds as map of structs (key name e.g. some-key) of target references.",
