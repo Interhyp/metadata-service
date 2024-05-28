@@ -450,6 +450,7 @@ func patchConfiguration(patch *openapi.RepositoryConfigurationDto, original *ope
 			CommitMessageType:       patchStringPtr(patch.CommitMessageType, original.CommitMessageType),
 			RequireIssue:            patchPtr[bool](patch.RequireIssue, original.RequireIssue),
 			RequireSuccessfulBuilds: patchPtr[int32](patch.RequireSuccessfulBuilds, original.RequireSuccessfulBuilds),
+			ExcludeMergeCommits:     patchPtr[bool](patch.ExcludeMergeCommits, original.ExcludeMergeCommits),
 			RequireConditions:       patchConditions(patch.RequireConditions, original.RequireConditions),
 			Webhooks:                patchWebhooks(patch.Webhooks, original.Webhooks),
 			Approvers:               patchApprovers(patch.Approvers, original.Approvers),
