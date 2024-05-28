@@ -2,7 +2,13 @@
 
 package openapi
 
-import "time"
+import (
+	"time"
+)
+
+type _dummyTime struct {
+	Timestamp *time.Time
+}
 
 type ConditionReferenceDto struct {
 	// Reference of a branch.
@@ -124,10 +130,6 @@ type Quicklink struct {
 	Description *string `yaml:"description,omitempty" json:"description,omitempty"`
 }
 
-type QuicklinkAllOf struct {
-	Description *string `yaml:"description,omitempty" json:"description,omitempty"`
-}
-
 type RepositoryConfigurationAccessKeyDto struct {
 	Key        string  `yaml:"key" json:"key"`
 	Permission *string `yaml:"permission,omitempty" json:"permission,omitempty"`
@@ -142,6 +144,8 @@ type RepositoryConfigurationDto struct {
 	RequireIssue *bool `yaml:"requireIssue,omitempty" json:"requireIssue,omitempty"`
 	// Set the required successful builds counter.
 	RequireSuccessfulBuilds *int32 `yaml:"requireSuccessfulBuilds,omitempty" json:"requireSuccessfulBuilds,omitempty"`
+	// Exclude merge commits from commit checks.
+	ExcludeMergeCommits *bool `yaml:"excludeMergeCommits,omitempty" json:"excludeMergeCommits,omitempty"`
 	// Configuration of conditional builds as map of structs (key name e.g. some-key) of target references.
 	RequireConditions *map[string]ConditionReferenceDto   `yaml:"requireConditions,omitempty" json:"requireConditions,omitempty"`
 	Webhooks          *RepositoryConfigurationWebhooksDto `yaml:"webhooks,omitempty" json:"webhooks,omitempty"`
