@@ -5,7 +5,7 @@ go 1.21
 require (
 	github.com/IBM/sarama v1.43.2
 	github.com/Roshick/go-autumn-kafka v0.6.3
-	github.com/Roshick/go-autumn-synchronisation v0.6.3
+	github.com/Roshick/go-autumn-synchronisation v0.6.4
 	github.com/StephanHCB/go-autumn-config-api v0.2.1
 	github.com/StephanHCB/go-autumn-config-env v0.2.2
 	github.com/StephanHCB/go-autumn-logging v0.3.0
@@ -80,8 +80,8 @@ require (
 	github.com/prometheus/client_model v0.5.0 // indirect
 	github.com/prometheus/common v0.48.0 // indirect
 	github.com/prometheus/procfs v0.12.0 // indirect
-	github.com/redis/go-redis/v9 v9.5.1 // indirect
-	github.com/redis/rueidis v1.0.36 // indirect
+	github.com/redis/go-redis/v9 v9.5.2 // indirect
+	github.com/redis/rueidis v1.0.38 // indirect
 	github.com/segmentio/asm v1.2.0 // indirect
 	github.com/sergi/go-diff v1.3.2-0.20230802210424-5b0b94c5c0d3 // indirect
 	github.com/shurcooL/httpfs v0.0.0-20190707220628-8d4bc4ba7749 // indirect
@@ -97,11 +97,11 @@ require (
 	go.elastic.co/apm/module/apmhttp/v2 v2.4.5 // indirect
 	go.elastic.co/apm/v2 v2.4.5 // indirect
 	go.elastic.co/fastjson v1.1.0 // indirect
-	golang.org/x/crypto v0.22.0 // indirect
+	golang.org/x/crypto v0.23.0 // indirect
 	golang.org/x/mod v0.12.0 // indirect
-	golang.org/x/net v0.24.0 // indirect
-	golang.org/x/sys v0.19.0 // indirect
-	golang.org/x/text v0.14.0 // indirect
+	golang.org/x/net v0.25.0 // indirect
+	golang.org/x/sys v0.20.0 // indirect
+	golang.org/x/text v0.15.0 // indirect
 	golang.org/x/tools v0.13.0 // indirect
 	google.golang.org/protobuf v1.33.0 // indirect
 	gopkg.in/warnings.v0 v0.1.2 // indirect
