@@ -17,6 +17,7 @@ import (
 	"github.com/Interhyp/metadata-service/internal/repository/sshAuthProvider"
 	"github.com/Interhyp/metadata-service/internal/service/mapper"
 	"github.com/Interhyp/metadata-service/internal/service/owners"
+	"github.com/Interhyp/metadata-service/internal/service/prvalidator"
 	"github.com/Interhyp/metadata-service/internal/service/repositories"
 	"github.com/Interhyp/metadata-service/internal/service/services"
 	"github.com/Interhyp/metadata-service/internal/service/trigger"
@@ -59,6 +60,7 @@ type ApplicationImpl struct {
 	Owners       service.Owners
 	Services     service.Services
 	Repositories service.Repositories
+	PRValidator  service.PRValidator
 
 	// controllers (incoming connectors)
 	HealthCtl     libcontroller.HealthController
@@ -228,6 +230,9 @@ func (a *ApplicationImpl) ConstructServices() error {
 		return err
 	}
 
+	a.PRValidator = prvalidator.New(a.Config, a.CustomConfig, a.Logging, a.Timestamp, a.Bitbucket)
+	// no setup required
+
 	return nil
 }
 
@@ -239,7 +244,7 @@ func (a *ApplicationImpl) ConstructControllers() error {
 	a.OwnerCtl = ownerctl.New(a.Config, a.CustomConfig, a.Logging, a.Timestamp, a.Owners)
 	a.ServiceCtl = servicectl.New(a.Config, a.CustomConfig, a.Logging, a.Timestamp, a.Services)
 	a.RepositoryCtl = repositoryctl.New(a.Config, a.CustomConfig, a.Logging, a.Timestamp, a.Repositories)
-	a.WebhookCtl = webhookctl.New(a.Logging, a.Timestamp, a.Updater)
+	a.WebhookCtl = webhookctl.New(a.Logging, a.Timestamp, a.Updater, a.PRValidator)
 
 	a.Server = server.New(a.Config, a.CustomConfig, a.Logging, a.IdentityProvider,
 		a.HealthCtl, a.SwaggerCtl, a.OwnerCtl, a.ServiceCtl, a.RepositoryCtl, a.WebhookCtl)
