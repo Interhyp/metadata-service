@@ -33,6 +33,8 @@ type CustomConfiguration interface {
 
 	MetadataRepoUrl() string
 	MetadataRepoMainline() string
+	MetadataRepoProject() string
+	MetadataRepoName() string
 
 	UpdateJobIntervalCronPart() string
 	UpdateJobTimeoutSeconds() uint16

@@ -5,6 +5,7 @@ import (
 	"errors"
 	"github.com/Interhyp/metadata-service/internal/acorn/errors/httperror"
 	"github.com/Interhyp/metadata-service/internal/acorn/repository"
+	"github.com/Interhyp/metadata-service/internal/repository/bitbucket/bbclientint"
 	"strings"
 )
 
@@ -37,4 +38,18 @@ func (m *BitbucketClientMock) GetBitbucketUser(ctx context.Context, username str
 
 func (m *BitbucketClientMock) Setup() error {
 	return nil
+}
+
+func (c *BitbucketClientMock) GetPullRequest(ctx context.Context, projectKey string, repositorySlug string, pullRequestId int32) (bbclientint.PullRequest, error) {
+	response := bbclientint.PullRequest{}
+	return response, nil
+}
+
+func (c *BitbucketClientMock) GetChanges(ctx context.Context, projectKey string, repositorySlug string, sinceHash string, untilHash string) (bbclientint.Changes, error) {
+	response := bbclientint.Changes{}
+	return response, nil
+}
+
+func (c *BitbucketClientMock) GetFileContentsAt(ctx context.Context, projectKey string, repositorySlug string, atHash string, path string) (string, error) {
+	return "", nil
 }

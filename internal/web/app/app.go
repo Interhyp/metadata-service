@@ -178,7 +178,7 @@ func (a *ApplicationImpl) ConstructRepositories() error {
 	}
 
 	if a.Bitbucket == nil {
-		a.Bitbucket = bitbucket.New(a.Config, a.Logging, a.Vault)
+		a.Bitbucket = bitbucket.New(a.Config, a.CustomConfig, a.Logging, a.Vault)
 	}
 	if err := a.Bitbucket.Setup(); err != nil {
 		return err

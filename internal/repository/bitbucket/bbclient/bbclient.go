@@ -167,3 +167,70 @@ func (c *Impl) GetBitbucketUser(ctx context.Context, username string) (repositor
 	err := c.call(ctx, http.MethodGet, urlExt, nil, &response)
 	return response, err
 }
+
+func (c *Impl) GetPullRequest(ctx context.Context, projectKey string, repositorySlug string, pullRequestId int32) (bbclientint.PullRequest, error) {
+	urlExt := fmt.Sprintf("%s/projects/%s/repos/%s/pull-requests/%d",
+		bbclientint.CoreApi,
+		url.PathEscape(projectKey),
+		url.PathEscape(repositorySlug),
+		pullRequestId)
+	response := bbclientint.PullRequest{}
+	err := c.call(ctx, http.MethodGet, urlExt, nil, &response)
+	return response, err
+}
+
+func (c *Impl) GetChanges(ctx context.Context, projectKey string, repositorySlug string, sinceHash string, untilHash string) (bbclientint.Changes, error) {
+	// since : main
+	// until : pr head
+	urlExt := fmt.Sprintf("%s/projects/%s/repos/%s/changes?since=%s&until=%s&limit=%d",
+		bbclientint.CoreApi,
+		url.PathEscape(projectKey),
+		url.PathEscape(repositorySlug),
+		url.QueryEscape(sinceHash),
+		url.QueryEscape(untilHash),
+		1000) // TODO pagination?
+	response := bbclientint.Changes{}
+	err := c.call(ctx, http.MethodGet, urlExt, nil, &response)
+	return response, err
+}
+
+func (c *Impl) getFileContentsPage(ctx context.Context, projectKey string, repositorySlug string, atHash string, path string, start int, limit int) (bbclientint.PaginatedLines, error) {
+	escapedPath := ""
+	for _, pathComponent := range strings.Split(path, "/") {
+		escapedPath += "/" + url.PathEscape(pathComponent)
+	}
+	urlExt := fmt.Sprintf("%s/projects/%s/repos/%s/browse/%s?at=%s&start=%d&limit=%d",
+		bbclientint.CoreApi,
+		url.PathEscape(projectKey),
+		url.PathEscape(repositorySlug),
+		escapedPath,
+		url.QueryEscape(atHash),
+		start,
+		limit)
+	response := bbclientint.PaginatedLines{}
+	err := c.call(ctx, http.MethodGet, urlExt, nil, &response)
+	return response, err
+}
+
+func (c *Impl) GetFileContentsAt(ctx context.Context, projectKey string, repositorySlug string, atHash string, path string) (string, error) {
+	var contents strings.Builder
+	var err error
+	start := 0
+
+	page := bbclientint.PaginatedLines{
+		IsLastPage:    false,
+		NextPageStart: &start,
+	}
+
+	for !page.IsLastPage && page.NextPageStart != nil {
+		page, err = c.getFileContentsPage(ctx, projectKey, repositorySlug, atHash, path, *page.NextPageStart, 1000)
+		if err != nil {
+			return contents.String(), err
+		}
+		for _, line := range page.Lines {
+			contents.WriteString(line.Text + "\n")
+		}
+	}
+
+	return contents.String(), nil
+}

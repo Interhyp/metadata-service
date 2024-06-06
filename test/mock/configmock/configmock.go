@@ -256,3 +256,11 @@ func (c *MockConfig) RedisUrl() string {
 func (c *MockConfig) RedisPassword() string {
 	return ""
 }
+
+func (c *MockConfig) MetadataRepoProject() string {
+	return "sample"
+}
+
+func (c *MockConfig) MetadataRepoName() string {
+	return "sample-repo"
+}

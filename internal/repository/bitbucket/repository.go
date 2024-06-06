@@ -3,10 +3,12 @@ package bitbucket
 import (
 	"context"
 	"fmt"
+	"github.com/Interhyp/metadata-service/internal/acorn/config"
 	"github.com/Interhyp/metadata-service/internal/acorn/errors/httperror"
 	"github.com/Interhyp/metadata-service/internal/acorn/repository"
 	"github.com/Interhyp/metadata-service/internal/repository/bitbucket/bbclient"
 	"github.com/Interhyp/metadata-service/internal/repository/bitbucket/bbclientint"
+	aulogging "github.com/StephanHCB/go-autumn-logging"
 	auzerolog "github.com/StephanHCB/go-autumn-logging-zerolog"
 	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
 	"net/http"
@@ -14,23 +16,26 @@ import (
 )
 
 type Impl struct {
-	Configuration librepo.Configuration
-	Logging       librepo.Logging
-	Vault         librepo.Vault
+	Configuration       librepo.Configuration
+	CustomConfiguration config.CustomConfiguration
+	Logging             librepo.Logging
+	Vault               librepo.Vault
 
 	LowLevel bbclientint.BitbucketClient
 }
 
 func New(
 	configuration librepo.Configuration,
+	customConfiguration config.CustomConfiguration,
 	logging librepo.Logging,
 	vault librepo.Vault,
 ) repository.Bitbucket {
 	return &Impl{
-		Configuration: configuration,
-		Logging:       logging,
-		Vault:         vault,
-		LowLevel:      bbclient.New(configuration, logging, vault),
+		Configuration:       configuration,
+		CustomConfiguration: customConfiguration,
+		Logging:             logging,
+		Vault:               vault,
+		LowLevel:            bbclient.New(configuration, logging, vault),
 	}
 }
 
@@ -107,4 +112,40 @@ func Unique[T comparable](sliceList []T) []T {
 		}
 	}
 	return list
+}
+
+func (r *Impl) GetChangedFilesOnPullRequest(ctx context.Context, pullRequestId int) ([]repository.File, error) {
+	aulogging.Logger.Ctx(ctx).Info().Printf("obtaining changes for pull request %d", pullRequestId)
+
+	project := r.CustomConfiguration.MetadataRepoProject()
+	slug := r.CustomConfiguration.MetadataRepoName()
+	pullRequest, err := r.LowLevel.GetPullRequest(ctx, project, slug, int32(pullRequestId))
+	if err != nil {
+		return nil, err
+	}
+
+	prSourceHead := pullRequest.FromRef.LatestCommit
+	changes, err := r.LowLevel.GetChanges(ctx, project, slug, pullRequest.ToRef.LatestCommit, prSourceHead)
+	if err != nil {
+		return nil, err
+	}
+
+	aulogging.Logger.Ctx(ctx).Info().Printf("pull request had %d changed files", len(changes.Values))
+
+	result := make([]repository.File, 0)
+	for _, change := range changes.Values {
+		contents, err := r.LowLevel.GetFileContentsAt(ctx, project, slug, prSourceHead, change.Path.ToString)
+		if err != nil {
+			aulogging.Logger.Ctx(ctx).Info().Printf("failed to retrieve change for %s: %s", change.Path.ToString, err.Error())
+			return nil, err
+		}
+
+		result = append(result, repository.File{
+			Path:     change.Path.ToString,
+			Contents: contents,
+		})
+	}
+
+	aulogging.Logger.Ctx(ctx).Info().Printf("successfully obtained changes for pull request %d", pullRequestId)
+	return result, nil
 }

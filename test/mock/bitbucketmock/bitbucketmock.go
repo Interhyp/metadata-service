@@ -49,3 +49,7 @@ func (b *BitbucketMock) FilterExistingUsernames(ctx context.Context, usernames [
 	}
 	return usernames, nil
 }
+
+func (b *BitbucketMock) GetChangedFilesOnPullRequest(ctx context.Context, pullRequestId int) ([]repository.File, error) {
+	return []repository.File{}, nil
+}

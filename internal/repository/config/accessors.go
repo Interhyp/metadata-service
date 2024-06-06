@@ -174,3 +174,39 @@ func (c *CustomConfigImpl) RedisUrl() string {
 func (c *CustomConfigImpl) RedisPassword() string {
 	return c.VRedisPassword
 }
+
+func (c *CustomConfigImpl) MetadataRepoProject() string {
+	sshUrl := c.SSHMetadataRepositoryUrl()
+	if sshUrl != "" {
+		match := c.BitbucketGitUrlMatcher.FindStringSubmatch(sshUrl)
+		if len(match) == 3 {
+			return match[1]
+		}
+	}
+	httpUrl := c.MetadataRepoUrl()
+	if httpUrl != "" {
+		match := c.BitbucketGitUrlMatcher.FindStringSubmatch(sshUrl)
+		if len(match) == 3 {
+			return match[1]
+		}
+	}
+	return ""
+}
+
+func (c *CustomConfigImpl) MetadataRepoName() string {
+	sshUrl := c.SSHMetadataRepositoryUrl()
+	if sshUrl != "" {
+		match := c.BitbucketGitUrlMatcher.FindStringSubmatch(sshUrl)
+		if len(match) == 3 {
+			return match[2]
+		}
+	}
+	httpUrl := c.MetadataRepoUrl()
+	if httpUrl != "" {
+		match := c.BitbucketGitUrlMatcher.FindStringSubmatch(sshUrl)
+		if len(match) == 3 {
+			return match[2]
+		}
+	}
+	return ""
+}

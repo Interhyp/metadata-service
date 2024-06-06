@@ -64,12 +64,14 @@ type CustomConfigImpl struct {
 	VRedisUrl                       string
 	VRedisPassword                  string
 
-	VKafkaConfig *aukafka.Config
+	VKafkaConfig           *aukafka.Config
+	BitbucketGitUrlMatcher *regexp.Regexp
 }
 
 func New() (librepo.Configuration, config.CustomConfiguration) {
 	instance := &CustomConfigImpl{
-		VKafkaConfig: aukafka.NewConfig(),
+		VKafkaConfig:           aukafka.NewConfig(),
+		BitbucketGitUrlMatcher: regexp.MustCompile(`/([^/]+)/([^/]+).git$`),
 	}
 	configItems := make([]auconfigapi.ConfigItem, 0)
 	configItems = append(configItems, CustomConfigItems...)
