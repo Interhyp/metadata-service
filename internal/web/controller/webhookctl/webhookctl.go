@@ -119,7 +119,7 @@ func (c *Impl) validatePullRequest(ctx context.Context, operation string, parsed
 	}
 	aulogging.Logger.Ctx(ctx).Info().Printf("got pull request %s (%s)", operation, description)
 
-	err := c.PRValidator.ValidatePullRequest(pullRequestPayload.ID, pullRequestPayload.ToRef.ID, pullRequestPayload.FromRef.ID)
+	err := c.PRValidator.ValidatePullRequest(ctx, pullRequestPayload.ID, pullRequestPayload.ToRef.ID, pullRequestPayload.FromRef.ID)
 	if err != nil {
 		aulogging.Logger.Ctx(ctx).Error().WithErr(err).Printf("error while processing bitbucket webhook: pull request %s (%s): %s", operation, description, err.Error())
 		return
