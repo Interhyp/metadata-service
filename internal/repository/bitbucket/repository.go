@@ -114,20 +114,20 @@ func Unique[T comparable](sliceList []T) []T {
 	return list
 }
 
-func (r *Impl) GetChangedFilesOnPullRequest(ctx context.Context, pullRequestId int) ([]repository.File, error) {
+func (r *Impl) GetChangedFilesOnPullRequest(ctx context.Context, pullRequestId int) ([]repository.File, string, error) {
 	aulogging.Logger.Ctx(ctx).Info().Printf("obtaining changes for pull request %d", pullRequestId)
 
 	project := r.CustomConfiguration.MetadataRepoProject()
 	slug := r.CustomConfiguration.MetadataRepoName()
 	pullRequest, err := r.LowLevel.GetPullRequest(ctx, project, slug, int32(pullRequestId))
 	if err != nil {
-		return nil, err
+		return nil, "", err
 	}
 
 	prSourceHead := pullRequest.FromRef.LatestCommit
 	changes, err := r.LowLevel.GetChanges(ctx, project, slug, pullRequest.ToRef.LatestCommit, prSourceHead)
 	if err != nil {
-		return nil, err
+		return nil, prSourceHead, err
 	}
 
 	aulogging.Logger.Ctx(ctx).Info().Printf("pull request had %d changed files", len(changes.Values))
@@ -137,7 +137,7 @@ func (r *Impl) GetChangedFilesOnPullRequest(ctx context.Context, pullRequestId i
 		contents, err := r.LowLevel.GetFileContentsAt(ctx, project, slug, prSourceHead, change.Path.ToString)
 		if err != nil {
 			aulogging.Logger.Ctx(ctx).Info().Printf("failed to retrieve change for %s: %s", change.Path.ToString, err.Error())
-			return nil, err
+			return nil, prSourceHead, err
 		}
 
 		result = append(result, repository.File{
@@ -147,5 +147,42 @@ func (r *Impl) GetChangedFilesOnPullRequest(ctx context.Context, pullRequestId i
 	}
 
 	aulogging.Logger.Ctx(ctx).Info().Printf("successfully obtained changes for pull request %d", pullRequestId)
-	return result, nil
+	return result, prSourceHead, nil
+}
+
+func (r *Impl) AddCommitBuildStatus(ctx context.Context, commitHash string, url string, key string, success bool) error {
+	project := r.CustomConfiguration.MetadataRepoProject()
+	slug := r.CustomConfiguration.MetadataRepoName()
+
+	state := "FAILED"
+	if success {
+		state = "SUCCESS"
+	}
+
+	request := bbclientint.CommitBuildStatusRequest{
+		Key:   key,
+		State: state,
+		Url:   url,
+	}
+
+	response, err := r.LowLevel.AddProjectRepositoryCommitBuildStatus(ctx, project, slug, commitHash, request)
+	if err != nil {
+		return err
+	}
+	if response.Status != http.StatusNoContent {
+		return fmt.Errorf("could not add build status to commit: %d", response.Status)
+	}
+	return nil
+}
+
+func (r *Impl) CreatePullRequestComment(ctx context.Context, pullRequestId int, comment string) error {
+	project := r.CustomConfiguration.MetadataRepoProject()
+	slug := r.CustomConfiguration.MetadataRepoName()
+
+	request := bbclientint.PullRequestCommentRequest{
+		Text: comment,
+	}
+
+	_, err := r.LowLevel.CreatePullRequestComment(ctx, project, slug, int64(pullRequestId), request)
+	return err
 }

@@ -1,6 +1,6 @@
 package bbclientint
 
-// not part of spec
+// not part of spec - FileOrDirectory is missing useful fields
 
 type PaginatedLines struct {
 	Lines []struct {
@@ -49,6 +49,20 @@ type Change struct {
 	Properties struct {
 		GitChangeType string `json:"gitChangeType"`
 	} `json:"properties"`
+}
+
+type CommitBuildStatusRequest struct {
+	Key         string       `yaml:"key" json:"key"`
+	State       string       `yaml:"state" json:"state"`
+	Url         string       `yaml:"url" json:"url"`
+	BuildNumber *int32       `yaml:"buildNumber,omitempty" json:"buildNumber,omitempty"`
+	Description *string      `yaml:"description,omitempty" json:"description,omitempty"`
+	Duration    *int32       `yaml:"duration,omitempty" json:"duration,omitempty"`
+	LastUpdated *int32       `yaml:"lastUpdated,omitempty" json:"lastUpdated,omitempty"`
+	Name        *string      `yaml:"name,omitempty" json:"name,omitempty"`
+	Parent      *string      `yaml:"parent,omitempty" json:"parent,omitempty"`
+	Ref         *string      `yaml:"ref,omitempty" json:"ref,omitempty"`
+	TestResults *TestResults `yaml:"testResults,omitempty" json:"testResults,omitempty"`
 }
 
 type Link struct {
@@ -174,6 +188,12 @@ type RepositoryRefRepository struct {
 
 type RepositoryRefRepositoryProject struct {
 	Key string `yaml:"key" json:"key"`
+}
+
+type TestResults struct {
+	Failed     int32 `yaml:"failed" json:"failed"`
+	Skipped    int32 `yaml:"skipped" json:"skipped"`
+	Successful int32 `yaml:"successful" json:"successful"`
 }
 
 type User struct {

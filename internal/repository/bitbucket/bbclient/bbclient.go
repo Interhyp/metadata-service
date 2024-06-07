@@ -234,3 +234,32 @@ func (c *Impl) GetFileContentsAt(ctx context.Context, projectKey string, reposit
 
 	return contents.String(), nil
 }
+
+func (c *Impl) AddProjectRepositoryCommitBuildStatus(ctx context.Context, projectKey string, repositorySlug string, commitId string, commitBuildStatusRequest bbclientint.CommitBuildStatusRequest) (aurestclientapi.ParsedResponse, error) {
+	urlExt := fmt.Sprintf("%s/projects/%s/repos/%s/commits/%s/builds",
+		bbclientint.CoreApi,
+		url.PathEscape(projectKey),
+		url.PathEscape(repositorySlug),
+		url.PathEscape(commitId))
+
+	emptyResponse := make([]byte, 0)
+	responseBodyPointer := &emptyResponse
+	response := aurestclientapi.ParsedResponse{
+		Body: &responseBodyPointer,
+	}
+
+	err := c.call(ctx, http.MethodPost, urlExt, commitBuildStatusRequest, &response)
+	return response, err
+}
+
+func (c *Impl) CreatePullRequestComment(ctx context.Context, projectKey string, repositorySlug string, pullRequestId int64, pullRequestCommentRequest bbclientint.PullRequestCommentRequest) (bbclientint.PullRequestComment, error) {
+	urlExt := fmt.Sprintf("%s/projects/%s/repos/%s/pull-requests/%d/comments",
+		bbclientint.CoreApi,
+		url.PathEscape(projectKey),
+		url.PathEscape(repositorySlug),
+		pullRequestId)
+
+	response := bbclientint.PullRequestComment{}
+	err := c.call(ctx, http.MethodPost, urlExt, pullRequestCommentRequest, &response)
+	return response, err
+}

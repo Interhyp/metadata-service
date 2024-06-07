@@ -50,6 +50,14 @@ func (b *BitbucketMock) FilterExistingUsernames(ctx context.Context, usernames [
 	return usernames, nil
 }
 
-func (b *BitbucketMock) GetChangedFilesOnPullRequest(ctx context.Context, pullRequestId int) ([]repository.File, error) {
-	return []repository.File{}, nil
+func (b *BitbucketMock) GetChangedFilesOnPullRequest(ctx context.Context, pullRequestId int) ([]repository.File, string, error) {
+	return []repository.File{}, "", nil
+}
+
+func (r *BitbucketMock) AddCommitBuildStatus(ctx context.Context, commitHash string, url string, key string, success bool) error {
+	return nil
+}
+
+func (r *BitbucketMock) CreatePullRequestComment(ctx context.Context, pullRequestId int, comment string) error {
+	return nil
 }
