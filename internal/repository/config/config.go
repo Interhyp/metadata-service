@@ -294,4 +294,18 @@ var CustomConfigItems = []auconfigapi.ConfigItem{
 		Description: "password used to access the redis",
 		Validate:    auconfigapi.ConfigNeedsNoValidation,
 	},
+	{
+		Key:         config.KeyPullRequestBuildUrl,
+		EnvName:     config.KeyPullRequestBuildUrl,
+		Default:     "",
+		Description: "Url that pull request builds should link to.",
+		Validate:    auconfigenv.ObtainPatternValidator("^https?://.*$"),
+	},
+	{
+		Key:         config.KeyPullRequestBuildKey,
+		EnvName:     config.KeyPullRequestBuildKey,
+		Default:     "metadata-service",
+		Description: "Key to use for pull request builds.",
+		Validate:    auconfigapi.ConfigNeedsNoValidation,
+	},
 }

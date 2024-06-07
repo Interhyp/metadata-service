@@ -210,3 +210,11 @@ func (c *CustomConfigImpl) MetadataRepoName() string {
 	}
 	return ""
 }
+
+func (c *CustomConfigImpl) PullRequestBuildUrl() string {
+	return c.VPullRequestBuildUrl
+}
+
+func (c *CustomConfigImpl) PullRequestBuildKey() string {
+	return c.VPullRequestBuildKey
+}

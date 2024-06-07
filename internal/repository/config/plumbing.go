@@ -63,6 +63,8 @@ type CustomConfigImpl struct {
 	VAllowedFileCategories          []string
 	VRedisUrl                       string
 	VRedisPassword                  string
+	VPullRequestBuildUrl            string
+	VPullRequestBuildKey            string
 
 	VKafkaConfig           *aukafka.Config
 	BitbucketGitUrlMatcher *regexp.Regexp
@@ -125,6 +127,8 @@ func (c *CustomConfigImpl) Obtain(getter func(key string) string) {
 	c.VAllowedFileCategories, _ = parseAllowedFileCategories(getter(config.KeyAllowedFileCategories))
 	c.VRedisUrl = getter(config.KeyRedisUrl)
 	c.VRedisPassword = getter(config.KeyRedisPassword)
+	c.VPullRequestBuildUrl = getter(config.KeyPullRequestBuildUrl)
+	c.VPullRequestBuildKey = getter(config.KeyPullRequestBuildKey)
 
 	c.VKafkaConfig.Obtain(getter)
 }

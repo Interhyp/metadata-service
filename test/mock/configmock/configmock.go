@@ -264,3 +264,11 @@ func (c *MockConfig) MetadataRepoProject() string {
 func (c *MockConfig) MetadataRepoName() string {
 	return "sample-repo"
 }
+
+func (c *MockConfig) PullRequestBuildUrl() string {
+	return "https://example.com"
+}
+
+func (c *MockConfig) PullRequestBuildKey() string {
+	return "metadata-service"
+}
