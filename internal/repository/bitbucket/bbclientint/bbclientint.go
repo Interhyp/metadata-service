@@ -3,7 +3,6 @@ package bbclientint
 import (
 	"context"
 	"github.com/Interhyp/metadata-service/internal/acorn/repository"
-	aurestclientapi "github.com/StephanHCB/go-autumn-restclient/api"
 )
 
 type BitbucketClient interface {
@@ -15,7 +14,7 @@ type BitbucketClient interface {
 	GetChanges(ctx context.Context, projectKey string, repositorySlug string, sinceHash string, untilHash string) (Changes, error)
 	GetFileContentsAt(ctx context.Context, projectKey string, repositorySlug string, atHash string, path string) (string, error)
 
-	AddProjectRepositoryCommitBuildStatus(ctx context.Context, projectKey string, repositorySlug string, commitId string, commitBuildStatusRequest CommitBuildStatusRequest) (aurestclientapi.ParsedResponse, error)
+	AddProjectRepositoryCommitBuildStatus(ctx context.Context, projectKey string, repositorySlug string, commitId string, commitBuildStatusRequest CommitBuildStatusRequest) error
 
 	CreatePullRequestComment(ctx context.Context, projectKey string, repositorySlug string, pullRequestId int64, pullRequestCommentRequest PullRequestCommentRequest) (PullRequestComment, error)
 }

@@ -59,8 +59,8 @@ func (s *Impl) ValidatePullRequest(ctx context.Context, id uint64, toRef string,
 	buildKey := s.CustomConfiguration.PullRequestBuildKey()
 	message := "all changed files are valid\n"
 	if len(errorMessages) > 0 {
-		message = "failed to validate changed files. Please fix yaml syntax and/or remove unknown fields:\n\n" +
-			strings.Join(errorMessages, "\n") + "\n"
+		message = "# yaml validation failure\n\nThere were validation errors in changed files. Please fix yaml syntax and/or remove unknown fields:\n\n" +
+			strings.Join(errorMessages, "\n\n") + "\n"
 	}
 	err = s.BitBucket.CreatePullRequestComment(ctx, int(id), message)
 	if err != nil {
@@ -97,7 +97,7 @@ func parseStrict[T openapi.OwnerDto | openapi.ServiceDto | openapi.RepositoryDto
 	decoder.KnownFields(true)
 	err := decoder.Decode(resultPtr)
 	if err != nil {
-		return fmt.Errorf("failed to parse %s as yaml from metadata: %s", path, err.Error())
+		return fmt.Errorf(" - failed to parse `%s`:\n   %s", path, strings.ReplaceAll(err.Error(), "\n", "\n   "))
 	}
 	return nil
 }

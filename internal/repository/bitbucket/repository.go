@@ -136,8 +136,14 @@ func (r *Impl) GetChangedFilesOnPullRequest(ctx context.Context, pullRequestId i
 	for _, change := range changes.Values {
 		contents, err := r.LowLevel.GetFileContentsAt(ctx, project, slug, prSourceHead, change.Path.ToString)
 		if err != nil {
-			aulogging.Logger.Ctx(ctx).Info().Printf("failed to retrieve change for %s: %s", change.Path.ToString, err.Error())
-			return nil, prSourceHead, err
+			asHttpError, ok := err.(httperror.Error)
+			if ok && asHttpError.Status() == http.StatusNotFound {
+				aulogging.Logger.Ctx(ctx).Debug().Printf("path %s not present on PR head - skipping and continuing", change.Path.ToString)
+				continue // expected situation - happens for deleted files, or for files added on mainline after fork (which show up in changes)
+			} else {
+				aulogging.Logger.Ctx(ctx).Info().Printf("failed to retrieve change for %s: %s", change.Path.ToString, err.Error())
+				return nil, prSourceHead, err
+			}
 		}
 
 		result = append(result, repository.File{
@@ -146,7 +152,7 @@ func (r *Impl) GetChangedFilesOnPullRequest(ctx context.Context, pullRequestId i
 		})
 	}
 
-	aulogging.Logger.Ctx(ctx).Info().Printf("successfully obtained changes for pull request %d", pullRequestId)
+	aulogging.Logger.Ctx(ctx).Info().Printf("successfully obtained %d changes for pull request %d", len(result), pullRequestId)
 	return result, prSourceHead, nil
 }
 
@@ -165,14 +171,7 @@ func (r *Impl) AddCommitBuildStatus(ctx context.Context, commitHash string, url 
 		Url:   url,
 	}
 
-	response, err := r.LowLevel.AddProjectRepositoryCommitBuildStatus(ctx, project, slug, commitHash, request)
-	if err != nil {
-		return err
-	}
-	if response.Status != http.StatusNoContent {
-		return fmt.Errorf("could not add build status to commit: %d", response.Status)
-	}
-	return nil
+	return r.LowLevel.AddProjectRepositoryCommitBuildStatus(ctx, project, slug, commitHash, request)
 }
 
 func (r *Impl) CreatePullRequestComment(ctx context.Context, pullRequestId int, comment string) error {

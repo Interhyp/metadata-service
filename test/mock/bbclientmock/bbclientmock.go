@@ -6,8 +6,6 @@ import (
 	"github.com/Interhyp/metadata-service/internal/acorn/errors/httperror"
 	"github.com/Interhyp/metadata-service/internal/acorn/repository"
 	"github.com/Interhyp/metadata-service/internal/repository/bitbucket/bbclientint"
-	aurestclientapi "github.com/StephanHCB/go-autumn-restclient/api"
-	"net/http"
 	"strings"
 )
 
@@ -56,11 +54,8 @@ func (c *BitbucketClientMock) GetFileContentsAt(ctx context.Context, projectKey 
 	return "", nil
 }
 
-func (c *BitbucketClientMock) AddProjectRepositoryCommitBuildStatus(ctx context.Context, projectKey string, repositorySlug string, commitId string, commitBuildStatusRequest bbclientint.CommitBuildStatusRequest) (aurestclientapi.ParsedResponse, error) {
-	response := aurestclientapi.ParsedResponse{
-		Status: http.StatusCreated,
-	}
-	return response, nil
+func (c *BitbucketClientMock) AddProjectRepositoryCommitBuildStatus(ctx context.Context, projectKey string, repositorySlug string, commitId string, commitBuildStatusRequest bbclientint.CommitBuildStatusRequest) error {
+	return nil
 }
 
 func (c *BitbucketClientMock) CreatePullRequestComment(ctx context.Context, projectKey string, repositorySlug string, pullRequestId int64, pullRequestCommentRequest bbclientint.PullRequestCommentRequest) (bbclientint.PullRequestComment, error) {

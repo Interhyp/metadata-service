@@ -66,23 +66,25 @@ func (c *Impl) Webhook(w http.ResponseWriter, r *http.Request) {
 func (c *Impl) WebhookBitBucket(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
+	aulogging.Logger.Ctx(ctx).Info().Printf("received webhook from BitBucket")
+	webhook, err := bitbucketserver.New() // we don't need signature checking here
+	if err != nil {
+		aulogging.Logger.Ctx(ctx).Info().WithErr(err).Printf("unexpected error while instantiating bitbucket webhook parser - ignoring webhook")
+		util.UnexpectedErrorHandler(ctx, w, r, err, c.Timestamp.Now())
+		return
+	}
+
+	eventPayload, err := webhook.Parse(r, bitbucketserver.DiagnosticsPingEvent, bitbucketserver.PullRequestOpenedEvent,
+		bitbucketserver.RepositoryReferenceChangedEvent, bitbucketserver.PullRequestModifiedEvent, bitbucketserver.PullRequestFromReferenceUpdatedEvent)
+	if err != nil {
+		aulogging.Logger.Ctx(ctx).Info().WithErr(err).Printf("bad request error while parsing bitbucket webhook payload - ignoring webhook")
+		util.ErrorHandler(ctx, w, r, "webhook.payload.invalid", http.StatusBadRequest, "parse payload error", c.Timestamp.Now())
+		return
+	}
+
 	routineCtx, routineCtxCancel := contexthelper.AsyncCopyRequestContext(ctx, "webhookBitbucket", "backgroundJob")
 	go func() {
 		defer routineCtxCancel()
-
-		aulogging.Logger.Ctx(routineCtx).Info().Printf("received webhook from BitBucket")
-		webhook, err := bitbucketserver.New() // we don't need signature checking here
-		if err != nil {
-			aulogging.Logger.Ctx(routineCtx).Error().WithErr(err).Printf("unexpected error while instantiating bitbucket webhook parser - ignoring webhook")
-			return
-		}
-
-		eventPayload, err := webhook.Parse(r, bitbucketserver.DiagnosticsPingEvent, bitbucketserver.PullRequestOpenedEvent,
-			bitbucketserver.RepositoryReferenceChangedEvent, bitbucketserver.PullRequestModifiedEvent)
-		if err != nil {
-			aulogging.Logger.Ctx(routineCtx).Error().WithErr(err).Printf("bad request error while parsing bitbucket webhook payload - ignoring webhook")
-			return
-		}
 
 		switch eventPayload.(type) {
 		case bitbucketserver.PullRequestOpenedPayload:
@@ -91,6 +93,9 @@ func (c *Impl) WebhookBitBucket(w http.ResponseWriter, r *http.Request) {
 		case bitbucketserver.PullRequestModifiedPayload:
 			payload, ok := eventPayload.(bitbucketserver.PullRequestModifiedPayload)
 			c.validatePullRequest(routineCtx, "modified", ok, payload.PullRequest)
+		case bitbucketserver.PullRequestFromReferenceUpdatedPayload:
+			payload, ok := eventPayload.(bitbucketserver.PullRequestFromReferenceUpdatedPayload)
+			c.validatePullRequest(routineCtx, "from_reference", ok, payload.PullRequest)
 		case bitbucketserver.RepositoryReferenceChangedPayload:
 			payload, ok := eventPayload.(bitbucketserver.RepositoryReferenceChangedPayload)
 			if !ok || len(payload.Changes) < 1 || payload.Changes[0].ReferenceID == "" {

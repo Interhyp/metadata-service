@@ -140,10 +140,10 @@ func (c *Impl) betweenFailureAndRetry() aurestclientapi.BeforeRetryCallback {
 
 func (c *Impl) call(ctx context.Context, method string, requestUrlExtension string, requestBody interface{}, responseBodyPointer interface{}) error {
 	remoteUrl := fmt.Sprintf("%s/%s", c.apiBaseUrl, requestUrlExtension)
-	response := &aurestclientapi.ParsedResponse{
+	response := aurestclientapi.ParsedResponse{
 		Body: responseBodyPointer,
 	}
-	err := c.Client.Perform(ctx, method, remoteUrl, requestBody, response)
+	err := c.Client.Perform(ctx, method, remoteUrl, requestBody, &response)
 	if err != nil {
 		return err
 	}
@@ -235,21 +235,14 @@ func (c *Impl) GetFileContentsAt(ctx context.Context, projectKey string, reposit
 	return contents.String(), nil
 }
 
-func (c *Impl) AddProjectRepositoryCommitBuildStatus(ctx context.Context, projectKey string, repositorySlug string, commitId string, commitBuildStatusRequest bbclientint.CommitBuildStatusRequest) (aurestclientapi.ParsedResponse, error) {
+func (c *Impl) AddProjectRepositoryCommitBuildStatus(ctx context.Context, projectKey string, repositorySlug string, commitId string, commitBuildStatusRequest bbclientint.CommitBuildStatusRequest) error {
 	urlExt := fmt.Sprintf("%s/projects/%s/repos/%s/commits/%s/builds",
 		bbclientint.CoreApi,
 		url.PathEscape(projectKey),
 		url.PathEscape(repositorySlug),
 		url.PathEscape(commitId))
 
-	emptyResponse := make([]byte, 0)
-	responseBodyPointer := &emptyResponse
-	response := aurestclientapi.ParsedResponse{
-		Body: &responseBodyPointer,
-	}
-
-	err := c.call(ctx, http.MethodPost, urlExt, commitBuildStatusRequest, &response)
-	return response, err
+	return c.call(ctx, http.MethodPost, urlExt, commitBuildStatusRequest, nil)
 }
 
 func (c *Impl) CreatePullRequestComment(ctx context.Context, projectKey string, repositorySlug string, pullRequestId int64, pullRequestCommentRequest bbclientint.PullRequestCommentRequest) (bbclientint.PullRequestComment, error) {
