@@ -63,13 +63,17 @@ type CustomConfigImpl struct {
 	VAllowedFileCategories          []string
 	VRedisUrl                       string
 	VRedisPassword                  string
+	VPullRequestBuildUrl            string
+	VPullRequestBuildKey            string
 
-	VKafkaConfig *aukafka.Config
+	VKafkaConfig           *aukafka.Config
+	BitbucketGitUrlMatcher *regexp.Regexp
 }
 
 func New() (librepo.Configuration, config.CustomConfiguration) {
 	instance := &CustomConfigImpl{
-		VKafkaConfig: aukafka.NewConfig(),
+		VKafkaConfig:           aukafka.NewConfig(),
+		BitbucketGitUrlMatcher: regexp.MustCompile(`/([^/]+)/([^/]+).git$`),
 	}
 	configItems := make([]auconfigapi.ConfigItem, 0)
 	configItems = append(configItems, CustomConfigItems...)
@@ -123,6 +127,8 @@ func (c *CustomConfigImpl) Obtain(getter func(key string) string) {
 	c.VAllowedFileCategories, _ = parseAllowedFileCategories(getter(config.KeyAllowedFileCategories))
 	c.VRedisUrl = getter(config.KeyRedisUrl)
 	c.VRedisPassword = getter(config.KeyRedisPassword)
+	c.VPullRequestBuildUrl = getter(config.KeyPullRequestBuildUrl)
+	c.VPullRequestBuildKey = getter(config.KeyPullRequestBuildKey)
 
 	c.VKafkaConfig.Obtain(getter)
 }

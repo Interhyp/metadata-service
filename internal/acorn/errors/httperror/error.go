@@ -8,6 +8,7 @@ import (
 type Error interface {
 	Ctx() context.Context
 	IsHttpError() bool
+	Status() int
 }
 
 // this also implements the error interface

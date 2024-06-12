@@ -4,6 +4,7 @@ LOGSTYLE: plain
 
 BITBUCKET_USERNAME: localuser
 BITBUCKET_REVIEWER_FALLBACK: username
+PULL_REQUEST_BUILD_URL: https://metadata-service.example.com
 
 AUTH_OIDC_TOKEN_AUDIENCE: some-audience
 AUTH_GROUP_WRITE: admin

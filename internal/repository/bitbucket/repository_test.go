@@ -2,6 +2,7 @@ package bitbucket
 
 import (
 	"context"
+	configint "github.com/Interhyp/metadata-service/internal/acorn/config"
 	"github.com/Interhyp/metadata-service/internal/acorn/errors/httperror"
 	"github.com/Interhyp/metadata-service/internal/acorn/repository"
 	"github.com/Interhyp/metadata-service/internal/repository/config"
@@ -29,7 +30,8 @@ func TestNewAndSetup(t *testing.T) {
 	vault := &vaultmock.VaultImpl{}
 	logger := &logging.LoggingImpl{}
 	conf := tstConfig(t)
-	cut := New(conf, logger, vault)
+	customConf := configint.Custom(conf)
+	cut := New(conf, customConf, logger, vault)
 
 	lowLevel := &bbclientmock.BitbucketClientMock{}
 	cut.(*Impl).LowLevel = lowLevel

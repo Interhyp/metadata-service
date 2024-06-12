@@ -33,6 +33,8 @@ type CustomConfiguration interface {
 
 	MetadataRepoUrl() string
 	MetadataRepoMainline() string
+	MetadataRepoProject() string
+	MetadataRepoName() string
 
 	UpdateJobIntervalCronPart() string
 	UpdateJobTimeoutSeconds() uint16
@@ -66,6 +68,9 @@ type CustomConfiguration interface {
 
 	RedisUrl() string
 	RedisPassword() string
+
+	PullRequestBuildUrl() string
+	PullRequestBuildKey() string
 }
 
 type NotificationConsumerConfig struct {
@@ -123,4 +128,6 @@ const (
 	KeyAllowedFileCategories          = "ALLOWED_FILE_CATEGORIES"
 	KeyRedisUrl                       = "REDIS_URL"
 	KeyRedisPassword                  = "REDIS_PASSWORD"
+	KeyPullRequestBuildUrl            = "PULL_REQUEST_BUILD_URL"
+	KeyPullRequestBuildKey            = "PULL_REQUEST_BUILD_KEY"
 )
