@@ -20,6 +20,8 @@ type Impl struct {
 	Timestamp   librepo.Timestamp
 	Updater     service.Updater
 	PRValidator service.PRValidator
+
+	EnableAsync bool
 }
 
 func New(
@@ -33,6 +35,7 @@ func New(
 		Timestamp:   timestamp,
 		Updater:     updater,
 		PRValidator: prValidator,
+		EnableAsync: true,
 	}
 }
 
@@ -82,38 +85,46 @@ func (c *Impl) WebhookBitBucket(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	routineCtx, routineCtxCancel := contexthelper.AsyncCopyRequestContext(ctx, "webhookBitbucket", "backgroundJob")
-	go func() {
-		defer routineCtxCancel()
+	if c.EnableAsync {
+		routineCtx, routineCtxCancel := contexthelper.AsyncCopyRequestContext(ctx, "webhookBitbucket", "backgroundJob")
+		go func() {
+			defer routineCtxCancel()
 
-		switch eventPayload.(type) {
-		case bitbucketserver.PullRequestOpenedPayload:
-			payload, ok := eventPayload.(bitbucketserver.PullRequestOpenedPayload)
-			c.validatePullRequest(routineCtx, "opened", ok, payload.PullRequest)
-		case bitbucketserver.PullRequestModifiedPayload:
-			payload, ok := eventPayload.(bitbucketserver.PullRequestModifiedPayload)
-			c.validatePullRequest(routineCtx, "modified", ok, payload.PullRequest)
-		case bitbucketserver.PullRequestFromReferenceUpdatedPayload:
-			payload, ok := eventPayload.(bitbucketserver.PullRequestFromReferenceUpdatedPayload)
-			c.validatePullRequest(routineCtx, "from_reference", ok, payload.PullRequest)
-		case bitbucketserver.RepositoryReferenceChangedPayload:
-			payload, ok := eventPayload.(bitbucketserver.RepositoryReferenceChangedPayload)
-			if !ok || len(payload.Changes) < 1 || payload.Changes[0].ReferenceID == "" {
-				aulogging.Logger.Ctx(routineCtx).Error().Printf("bad request while processing bitbucket webhook - got reference changed with invalid info - ignoring webhook")
-				return
-			}
-			aulogging.Logger.Ctx(routineCtx).Info().Printf("got repository reference changed, refreshing caches")
-
-			err = c.Updater.PerformFullUpdateWithNotifications(routineCtx)
-			if err != nil {
-				aulogging.Logger.Ctx(routineCtx).Error().WithErr(err).Printf("webhook error")
-			}
-		default:
-			// ignore unknown events
-		}
-	}()
+			c.WebhookBitBucketProcessSync(routineCtx, eventPayload)
+		}()
+	} else {
+		c.WebhookBitBucketProcessSync(ctx, eventPayload)
+	}
 
 	util.SuccessNoBody(ctx, w, r, http.StatusNoContent)
+}
+
+func (c *Impl) WebhookBitBucketProcessSync(ctx context.Context, eventPayload any) {
+	switch eventPayload.(type) {
+	case bitbucketserver.PullRequestOpenedPayload:
+		payload, ok := eventPayload.(bitbucketserver.PullRequestOpenedPayload)
+		c.validatePullRequest(ctx, "opened", ok, payload.PullRequest)
+	case bitbucketserver.PullRequestModifiedPayload:
+		payload, ok := eventPayload.(bitbucketserver.PullRequestModifiedPayload)
+		c.validatePullRequest(ctx, "modified", ok, payload.PullRequest)
+	case bitbucketserver.PullRequestFromReferenceUpdatedPayload:
+		payload, ok := eventPayload.(bitbucketserver.PullRequestFromReferenceUpdatedPayload)
+		c.validatePullRequest(ctx, "from_reference", ok, payload.PullRequest)
+	case bitbucketserver.RepositoryReferenceChangedPayload:
+		payload, ok := eventPayload.(bitbucketserver.RepositoryReferenceChangedPayload)
+		if !ok || len(payload.Changes) < 1 || payload.Changes[0].ReferenceID == "" {
+			aulogging.Logger.Ctx(ctx).Error().Printf("bad request while processing bitbucket webhook - got reference changed with invalid info - ignoring webhook")
+			return
+		}
+		aulogging.Logger.Ctx(ctx).Info().Printf("got repository reference changed, refreshing caches")
+
+		err := c.Updater.PerformFullUpdateWithNotifications(ctx)
+		if err != nil {
+			aulogging.Logger.Ctx(ctx).Error().WithErr(err).Printf("webhook error")
+		}
+	default:
+		// ignore unknown events
+	}
 }
 
 func (c *Impl) validatePullRequest(ctx context.Context, operation string, parsedOk bool, pullRequestPayload bitbucketserver.PullRequest) {

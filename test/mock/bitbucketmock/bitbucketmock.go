@@ -2,13 +2,18 @@ package bitbucketmock
 
 import (
 	"context"
+	"fmt"
 	"github.com/Interhyp/metadata-service/internal/acorn/repository"
 	"github.com/pkg/errors"
+	"strings"
 )
 
 const FILTER_FAILED_USERNAME = "filterfailedusername"
 
 type BitbucketMock struct {
+	ChangedFilesResponse []repository.File
+	PRHead               string
+	Recording            []string
 }
 
 func New() repository.Bitbucket {
@@ -51,13 +56,16 @@ func (b *BitbucketMock) FilterExistingUsernames(ctx context.Context, usernames [
 }
 
 func (b *BitbucketMock) GetChangedFilesOnPullRequest(ctx context.Context, pullRequestId int) ([]repository.File, string, error) {
-	return []repository.File{}, "", nil
+	b.Recording = append(b.Recording, fmt.Sprintf("GetChangedFilesOnPullRequest(%d)", pullRequestId))
+	return b.ChangedFilesResponse, b.PRHead, nil
 }
 
-func (r *BitbucketMock) AddCommitBuildStatus(ctx context.Context, commitHash string, url string, key string, success bool) error {
+func (b *BitbucketMock) AddCommitBuildStatus(ctx context.Context, commitHash string, url string, key string, success bool) error {
+	b.Recording = append(b.Recording, fmt.Sprintf("AddCommitBuildStatus(%s, %s, %t)", commitHash, key, success))
 	return nil
 }
 
-func (r *BitbucketMock) CreatePullRequestComment(ctx context.Context, pullRequestId int, comment string) error {
+func (b *BitbucketMock) CreatePullRequestComment(ctx context.Context, pullRequestId int, comment string) error {
+	b.Recording = append(b.Recording, fmt.Sprintf("CreatePullRequestComment(%d, %s)", pullRequestId, strings.ReplaceAll(comment, "\n", "|")))
 	return nil
 }
