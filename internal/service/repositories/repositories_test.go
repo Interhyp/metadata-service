@@ -33,7 +33,7 @@ func createRepositoryDto() openapi.RepositoryDto {
 		Configuration: &openapi.RepositoryConfigurationDto{
 			AccessKeys: []openapi.RepositoryConfigurationAccessKeyDto{
 				{
-					Key:        "KEY",
+					Key:        ptr("KEY"),
 					Permission: ptr("REPO_WRITE"),
 				},
 			},
@@ -111,7 +111,7 @@ func TestPatchRepository_ReplaceAll(t *testing.T) {
 		Configuration: &openapi.RepositoryConfigurationDto{
 			AccessKeys: []openapi.RepositoryConfigurationAccessKeyDto{
 				{
-					Key:        "DEPLOYMENT",
+					Key:        ptr("DEPLOYMENT"),
 					Permission: ptr("REPO_READ"),
 				},
 			},
@@ -147,7 +147,7 @@ func TestPatchRepository_ReplaceAll(t *testing.T) {
 		Configuration: &openapi.RepositoryConfigurationDto{
 			AccessKeys: []openapi.RepositoryConfigurationAccessKeyDto{
 				{
-					Key:        "DEPLOYMENT",
+					Key:        ptr("DEPLOYMENT"),
 					Permission: ptr("REPO_READ"),
 				},
 			},

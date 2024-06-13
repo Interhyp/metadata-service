@@ -6,10 +6,6 @@ import (
 	"time"
 )
 
-type _dummyTime struct {
-	Timestamp *time.Time
-}
-
 type ConditionReferenceDto struct {
 	// Reference of a branch.
 	RefMatcher string `yaml:"refMatcher" json:"refMatcher"`
@@ -130,8 +126,13 @@ type Quicklink struct {
 	Description *string `yaml:"description,omitempty" json:"description,omitempty"`
 }
 
+type QuicklinkAllOf struct {
+	Description *string `yaml:"description,omitempty" json:"description,omitempty"`
+}
+
 type RepositoryConfigurationAccessKeyDto struct {
-	Key        string  `yaml:"key" json:"key"`
+	Key        *string `yaml:"key,omitempty" json:"key,omitempty"`
+	Data       *string `yaml:"data,omitempty" json:"data,omitempty"`
 	Permission *string `yaml:"permission,omitempty" json:"permission,omitempty"`
 }
 
