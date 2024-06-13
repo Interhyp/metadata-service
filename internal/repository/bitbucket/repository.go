@@ -162,7 +162,7 @@ func (r *Impl) AddCommitBuildStatus(ctx context.Context, commitHash string, url 
 
 	state := "FAILED"
 	if success {
-		state = "SUCCESS"
+		state = "SUCCESSFUL"
 	}
 
 	request := bbclientint.CommitBuildStatusRequest{
