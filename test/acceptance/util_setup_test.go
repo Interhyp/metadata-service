@@ -6,6 +6,7 @@ import (
 	"github.com/Interhyp/metadata-service/internal/repository/notifier"
 	"github.com/Interhyp/metadata-service/internal/service/trigger"
 	"github.com/Interhyp/metadata-service/internal/web/app"
+	"github.com/Interhyp/metadata-service/internal/web/controller/webhookctl"
 	"github.com/Interhyp/metadata-service/internal/web/server"
 	"github.com/Interhyp/metadata-service/test/mock/bitbucketmock"
 	"github.com/Interhyp/metadata-service/test/mock/idpmock"
@@ -71,6 +72,8 @@ func (a *ApplicationWithMocksImpl) Create() error {
 	if err := a.ConstructControllers(); err != nil {
 		return err
 	}
+
+	a.WebhookCtl.(*webhookctl.Impl).EnableAsync = false
 
 	return nil
 }
@@ -170,4 +173,7 @@ func tstReset() {
 	for _, client := range notifierImpl.Clients {
 		client.(*notifiermock.NotifierClientMock).Reset()
 	}
+	bbImpl.Recording = nil
+	bbImpl.PRHead = ""
+	bbImpl.ChangedFilesResponse = nil
 }
