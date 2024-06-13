@@ -3029,16 +3029,12 @@
         }
       },
       "RepositoryConfigurationAccessKeyDto": {
-        "required": [
-          "key"
-        ],
         "properties": {
           "key": {
-            "type": "string",
-            "enum": [
-              "DEPLOYMENT",
-              "QUMULO"
-            ]
+            "type": "string"
+          },
+          "data": {
+            "type": "string"
           },
           "permission": {
             "type": "string",
