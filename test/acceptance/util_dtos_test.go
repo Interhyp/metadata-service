@@ -234,7 +234,7 @@ func tstRepository() openapi.RepositoryDto {
 		Configuration: &openapi.RepositoryConfigurationDto{
 			AccessKeys: []openapi.RepositoryConfigurationAccessKeyDto{
 				{
-					Key:        "KEY",
+					Key:        p("KEY"),
 					Permission: p("REPO_WRITE"),
 				},
 			},
