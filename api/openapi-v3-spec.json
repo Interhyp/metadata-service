@@ -2651,11 +2651,10 @@
           }
         ],
         "example": {
-            "url": "/swagger-ui/index.html",
-            "title": "SwaggerUI",
-            "description": "Displays the frontend for the API."
-          }
-
+          "url": "/swagger-ui/index.html",
+          "title": "SwaggerUI",
+          "description": "Displays the frontend for the API."
+        }
       },
       "Link": {
         "type": "object",
@@ -2669,9 +2668,9 @@
         },
         "description": "A link ",
         "example": {
-            "url": "/swagger-ui/index.html",
-            "title": "SwaggerUI"
-          }
+          "url": "/swagger-ui/index.html",
+          "title": "SwaggerUI"
+        }
       },
       "RepositoryDto": {
         "required": [
@@ -2944,6 +2943,20 @@
               "$ref": "#/components/schemas/RepositoryConfigurationAccessKeyDto"
             }
           },
+          "mergeConfig": {
+            "type": "object",
+            "properties": {
+              "defaultStrategy": {
+                "$ref": "#/components/schemas/MergeStrategy"
+              },
+              "strategies": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/MergeStrategy"
+                }
+              }
+            }
+          },
           "commitMessageType": {
             "type": "string",
             "description": "Adds a corresponding commit message regex.",
@@ -3027,6 +3040,35 @@
             "description": "Repository will not be configured, also not archived."
           }
         }
+      },
+      "MergeStrategy": {
+        "type": "object",
+        "required": ["id"],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "enum": [
+              "no-ff",
+              "ff",
+              "ff-only",
+              "squash",
+              "squash-ff-only",
+              "rebase-no-ff",
+              "rebase-ff-only"
+            ],
+            "example": [
+              "no-ff",
+              "ff",
+              "ff-only",
+              "squash",
+              "squash-ff-only",
+              "rebase-no-ff",
+              "rebase-ff-only"
+            ]
+          }
+        },
+        "title": "Strategy"
       },
       "RepositoryConfigurationAccessKeyDto": {
         "properties": {

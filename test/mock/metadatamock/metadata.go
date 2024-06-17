@@ -96,9 +96,19 @@ configuration:
   accessKeys:
   - key: DEPLOYMENT
     permission: REPO_READ
+  - data: 'ssh-key abcdefgh.....'
+    permission: REPO_WRITE
   webhooks:
     pipelineTrigger: true
   commitMessageType: DEFAULT
+  mergeConfig:
+    defaultStrategy:
+      id: "no-ff"
+    strategies:
+      - id: "no-ff"
+      - id: "ff"
+      - id: "ff-only"
+      - id: "squash"
   requireIssue: true
   approvers:
     testing:

@@ -32,6 +32,10 @@ type Link struct {
 	Title *string `yaml:"title,omitempty" json:"title,omitempty"`
 }
 
+type MergeStrategy struct {
+	Id string `yaml:"id" json:"id"`
+}
+
 type Notification struct {
 	// name of the service that was updated
 	Name    string               `yaml:"name" json:"name"`
@@ -138,7 +142,8 @@ type RepositoryConfigurationAccessKeyDto struct {
 
 type RepositoryConfigurationDto struct {
 	// Ssh-Keys configured on the repository.
-	AccessKeys []RepositoryConfigurationAccessKeyDto `yaml:"accessKeys,omitempty" json:"accessKeys,omitempty"`
+	AccessKeys  []RepositoryConfigurationAccessKeyDto  `yaml:"accessKeys,omitempty" json:"accessKeys,omitempty"`
+	MergeConfig *RepositoryConfigurationDtoMergeConfig `yaml:"mergeConfig,omitempty" json:"mergeConfig,omitempty"`
 	// Adds a corresponding commit message regex.
 	CommitMessageType *string `yaml:"commitMessageType,omitempty" json:"commitMessageType,omitempty"`
 	// Configures JQL matcher with query: issuetype in (Story, Bug) AND 'Risk Level' is not EMPTY
@@ -161,6 +166,11 @@ type RepositoryConfigurationDto struct {
 	Archived *bool `yaml:"archived,omitempty" json:"archived,omitempty"`
 	// Repository will not be configured, also not archived.
 	Unmanaged *bool `yaml:"unmanaged,omitempty" json:"unmanaged,omitempty"`
+}
+
+type RepositoryConfigurationDtoMergeConfig struct {
+	DefaultStrategy *MergeStrategy  `yaml:"defaultStrategy,omitempty" json:"defaultStrategy,omitempty"`
+	Strategies      []MergeStrategy `yaml:"strategies,omitempty" json:"strategies,omitempty"`
 }
 
 type RepositoryConfigurationWebhookDto struct {
