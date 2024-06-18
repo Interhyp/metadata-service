@@ -2875,6 +2875,7 @@
                   "commitMessageType": "DEFAULT",
                   "requireIssue": true,
                   "requireSuccessfulBuilds": 1,
+                  "requireApprovals": 1,
                   "accessKeys": [
                     {
                       "key": "DEPLOYMENT",
@@ -2972,6 +2973,10 @@
           "requireSuccessfulBuilds": {
             "type": "integer",
             "description": "Set the required successful builds counter."
+          },
+          "requireApprovals": {
+            "type": "integer",
+            "description": "Set the required approvals counter."
           },
           "excludeMergeCommits": {
             "type": "boolean",
