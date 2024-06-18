@@ -150,6 +150,8 @@ type RepositoryConfigurationDto struct {
 	RequireIssue *bool `yaml:"requireIssue,omitempty" json:"requireIssue,omitempty"`
 	// Set the required successful builds counter.
 	RequireSuccessfulBuilds *int32 `yaml:"requireSuccessfulBuilds,omitempty" json:"requireSuccessfulBuilds,omitempty"`
+	// Set the required approvals counter.
+	RequireApprovals *int32 `yaml:"requireApprovals,omitempty" json:"requireApprovals,omitempty"`
 	// Exclude merge commits from commit checks.
 	ExcludeMergeCommits *bool `yaml:"excludeMergeCommits,omitempty" json:"excludeMergeCommits,omitempty"`
 	// Configuration of conditional builds as map of structs (key name e.g. some-key) of target references.
