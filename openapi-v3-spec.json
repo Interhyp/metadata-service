@@ -2872,6 +2872,8 @@
                 "url": "ssh://git@bitbucket.some-organisation.com:7999/UNICORNS/unicorn-finder-service-deployment.git",
                 "mainline": "main",
                 "configuration": {
+                  "branchNameRegex": "(testing_[^_-]+_[^-]+$|development.*|production.*|versioncheck.*|renovate.*)",
+                  "commitMessageRegex": "(([A-Z][A-Z_0-9]+-[0-9]+)|(Ticket#[0-9]{16})[^0-9]|((SCTASK|INC|RITM|CHG)[0-9]{7}))(.|\\n)*",
                   "commitMessageType": "DEFAULT",
                   "requireIssue": true,
                   "requireSuccessfulBuilds": 1,
@@ -2883,7 +2885,6 @@
                     }
                   ],
                   "webhooks": {
-                    "pipelineTrigger": true,
                     "predefined": [
                       "jenkinsPipeline"
                     ],
@@ -2957,6 +2958,14 @@
                 }
               }
             }
+          },
+          "branchNameRegex": {
+            "type": "string",
+            "description": "Use an explicit branch name regex."
+          },
+          "commitMessageRegex": {
+            "type": "string",
+            "description": "Use an explicit commit message regex."
           },
           "commitMessageType": {
             "type": "string",
@@ -3125,10 +3134,6 @@
         "type": "object",
         "description": "Webhooks configured to the repository.",
         "properties": {
-          "pipelineTrigger": {
-            "type": "boolean",
-            "description": "Default pipeline trigger webhook."
-          },
           "predefined": {
             "type": "array",
             "description": "List of predefined webhooks",
