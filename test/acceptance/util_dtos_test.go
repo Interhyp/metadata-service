@@ -243,7 +243,6 @@ func tstRepository() openapi.RepositoryDto {
 			RequireSuccessfulBuilds: pi(1),
 			RequireConditions:       &map[string]openapi.ConditionReferenceDto{"snyk-key": {RefMatcher: "master"}},
 			Webhooks: &openapi.RepositoryConfigurationWebhooksDto{
-				PipelineTrigger: pb(false),
 				Additional: []openapi.RepositoryConfigurationWebhookDto{
 					{
 						Name:   "webhookname",
@@ -305,7 +304,6 @@ configuration:
         snyk-key:
             refMatcher: master
     webhooks:
-        pipelineTrigger: false
         additional:
             - name: webhookname
               url: webhookurl

@@ -16,6 +16,10 @@ type RepositoryConfigurationDto struct {
 	// Ssh-Keys configured on the repository.
 	AccessKeys  []RepositoryConfigurationAccessKeyDto  `yaml:"accessKeys,omitempty" json:"accessKeys,omitempty"`
 	MergeConfig *RepositoryConfigurationDtoMergeConfig `yaml:"mergeConfig,omitempty" json:"mergeConfig,omitempty"`
+	// Use an explicit branch name regex.
+	BranchNameRegex *string `yaml:"branchNameRegex,omitempty" json:"branchNameRegex,omitempty"`
+	// Use an explicit commit message regex.
+	CommitMessageRegex *string `yaml:"commitMessageRegex,omitempty" json:"commitMessageRegex,omitempty"`
 	// Adds a corresponding commit message regex.
 	CommitMessageType *string `yaml:"commitMessageType,omitempty" json:"commitMessageType,omitempty"`
 	// Configures JQL matcher with query: issuetype in (Story, Bug) AND 'Risk Level' is not EMPTY

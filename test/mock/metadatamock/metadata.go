@@ -98,8 +98,6 @@ configuration:
     permission: REPO_READ
   - data: 'ssh-key abcdefgh.....'
     permission: REPO_WRITE
-  webhooks:
-    pipelineTrigger: true
   commitMessageType: DEFAULT
   mergeConfig:
     defaultStrategy:

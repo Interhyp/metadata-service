@@ -447,6 +447,8 @@ func patchConfiguration(patch *openapi.RepositoryConfigurationDto, original *ope
 		}
 		return &openapi.RepositoryConfigurationDto{
 			AccessKeys:              patchAccessKeys(patch.AccessKeys, original.AccessKeys),
+			BranchNameRegex:         patchStringPtr(patch.BranchNameRegex, original.BranchNameRegex),
+			CommitMessageRegex:      patchStringPtr(patch.CommitMessageRegex, original.CommitMessageRegex),
 			CommitMessageType:       patchStringPtr(patch.CommitMessageType, original.CommitMessageType),
 			RequireIssue:            patchPtr[bool](patch.RequireIssue, original.RequireIssue),
 			RequireSuccessfulBuilds: patchPtr[int32](patch.RequireSuccessfulBuilds, original.RequireSuccessfulBuilds),
@@ -516,8 +518,7 @@ func patchWebhooks(patch *openapi.RepositoryConfigurationWebhooksDto, original *
 			original = &openapi.RepositoryConfigurationWebhooksDto{}
 		}
 		return &openapi.RepositoryConfigurationWebhooksDto{
-			PipelineTrigger: patchPtr[bool](patch.PipelineTrigger, original.PipelineTrigger),
-			Additional:      patchAdditionalWebhooks(patch.Additional, original.Additional),
+			Additional: patchAdditionalWebhooks(patch.Additional, original.Additional),
 		}
 	} else {
 		return original
