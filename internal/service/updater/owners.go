@@ -137,47 +137,75 @@ func (s *Impl) decideOwnersToAddUpdateOrRemove(ctx context.Context) (map[string]
 func (s *Impl) updateIndividualOwners(ctx context.Context, ownerAliasesMap map[string]int8) error {
 	var firstError error = nil
 	for alias, activity := range ownerAliasesMap {
+		var err error
 		if activity == removeExisting {
-			s.Logging.Logger().Ctx(ctx).Info().Printf("owner %s is no longer current, removing it from the cache", alias)
-			s.Cache.DeleteOwner(ctx, alias)
-			s.Notifier.PublishDeletion(ctx, alias, types.OwnerPayload)
+			s.removeIndividualOwner(ctx, alias)
 		} else if activity == addNew {
-			owner, err := s.Mapper.GetOwner(ctx, alias)
-			if err != nil {
-				if firstError == nil {
-					firstError = err
-				}
-				s.Logging.Logger().Ctx(ctx).Warn().Printf("failed to get initial info for owner %s from metadata - owner will NOT be present until next run: %s", alias, err.Error())
-				s.totalErrorCounter.Inc()
-			} else {
-				s.Cache.PutOwner(ctx, alias, owner)
-				err = s.Notifier.PublishCreation(ctx, alias, notifier.AsPayload(owner))
-				if err != nil {
-					s.Logging.Logger().Ctx(ctx).Warn().WithErr(err).Printf("error publishing creation of owner %s", alias)
-				}
-				s.Logging.Logger().Ctx(ctx).Info().Printf("new owner %s added to cache", alias)
-			}
+			err = s.addIndividualOwner(ctx, alias)
 		} else {
-			owner, err := s.Mapper.GetOwner(ctx, alias)
-			if err != nil {
-				if firstError == nil {
-					firstError = err
-				}
-				s.Logging.Logger().Ctx(ctx).Warn().Printf("failed to get updated info for owner %s from metadata - owner may be outdated until next run: %s", alias, err.Error())
-				s.totalErrorCounter.Inc()
-			} else {
-				cached, cacheErr := s.Cache.GetOwner(ctx, alias)
-
-				s.Cache.PutOwner(ctx, alias, owner)
-				if cacheErr == nil && !equalExceptCacheInfo(cached, owner) {
-					err = s.Notifier.PublishModification(ctx, alias, notifier.AsPayload(owner))
-					if err != nil {
-						s.Logging.Logger().Ctx(ctx).Warn().WithErr(err).Printf("error publishing modification of owner %s", alias)
-					}
-				}
-				s.Logging.Logger().Ctx(ctx).Debug().Printf("owner %s updated in cache", alias)
+			err = s.updateIndividualOwner(ctx, alias)
+		}
+		if err != nil {
+			if firstError == nil {
+				firstError = err
+			}
+			if isContextCancelledOrTimeout(ctx) {
+				// no use continuing the loop, everything will fail at this point
+				return firstError
 			}
 		}
 	}
 	return firstError
+}
+
+func (s *Impl) removeIndividualOwner(ctx context.Context, alias string) {
+	s.Logging.Logger().Ctx(ctx).Info().Printf("owner %s is no longer current, removing it from the cache", alias)
+	s.Cache.DeleteOwner(ctx, alias)
+	s.Notifier.PublishDeletion(ctx, alias, types.OwnerPayload)
+}
+
+func (s *Impl) addIndividualOwner(ctx context.Context, alias string) error {
+	owner, err := s.Mapper.GetOwner(ctx, alias)
+	if err != nil {
+		s.Logging.Logger().Ctx(ctx).Warn().Printf("failed to get initial info for owner %s from metadata - owner will NOT be present until next run: %s", alias, err.Error())
+		s.totalErrorCounter.Inc()
+	} else {
+		s.Cache.PutOwner(ctx, alias, owner)
+		if errOnlyLog := s.Notifier.PublishCreation(ctx, alias, notifier.AsPayload(owner)); errOnlyLog != nil {
+			s.Logging.Logger().Ctx(ctx).Warn().WithErr(err).Printf("error publishing creation of owner %s", alias)
+		}
+		s.Logging.Logger().Ctx(ctx).Info().Printf("new owner %s added to cache", alias)
+	}
+	return err
+}
+
+func (s *Impl) updateIndividualOwner(ctx context.Context, alias string) error {
+	owner, err := s.Mapper.GetOwner(ctx, alias)
+	if err != nil {
+		s.Logging.Logger().Ctx(ctx).Warn().Printf("failed to get updated info for owner %s from metadata - owner may be outdated until next run: %s", alias, err.Error())
+		s.totalErrorCounter.Inc()
+	} else {
+		cached, cacheErr := s.Cache.GetOwner(ctx, alias)
+
+		s.Cache.PutOwner(ctx, alias, owner)
+		if cacheErr == nil && !equalExceptCacheInfo(cached, owner) {
+			if errOnlyLog := s.Notifier.PublishModification(ctx, alias, notifier.AsPayload(owner)); errOnlyLog != nil {
+				s.Logging.Logger().Ctx(ctx).Warn().WithErr(err).Printf("error publishing modification of owner %s", alias)
+			}
+		}
+		s.Logging.Logger().Ctx(ctx).Debug().Printf("owner %s updated in cache", alias)
+	}
+	return err
+}
+
+func isContextCancelledOrTimeout(ctx context.Context) bool {
+	if err := ctx.Err(); err != nil {
+		if errors.Is(err, context.Canceled) {
+			return true
+		}
+		if errors.Is(err, context.DeadlineExceeded) {
+			return true
+		}
+	}
+	return false
 }
