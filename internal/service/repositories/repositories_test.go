@@ -41,7 +41,6 @@ func createRepositoryDto() openapi.RepositoryDto {
 			RequireIssue:            ptr(false),
 			RequireSuccessfulBuilds: i(1),
 			Webhooks: &openapi.RepositoryConfigurationWebhooksDto{
-				PipelineTrigger: ptr(false),
 				Additional: []openapi.RepositoryConfigurationWebhookDto{
 					{
 						Name:          "webhookname",
@@ -115,11 +114,12 @@ func TestPatchRepository_ReplaceAll(t *testing.T) {
 					Permission: ptr("REPO_READ"),
 				},
 			},
+			BranchNameRegex:         ptr("(testing_[^_-]+_[^-]+$)"),
+			CommitMessageRegex:      ptr("(([A-Z][A-Z_0-9]+-[0-9]+))(.|\\n)*"),
 			CommitMessageType:       ptr("DEFAULT"),
 			RequireIssue:            ptr(true),
 			RequireSuccessfulBuilds: i(2),
 			Webhooks: &openapi.RepositoryConfigurationWebhooksDto{
-				PipelineTrigger: ptr(false),
 				Additional: []openapi.RepositoryConfigurationWebhookDto{
 					{
 						Name:          "newwebhookname",
@@ -151,11 +151,12 @@ func TestPatchRepository_ReplaceAll(t *testing.T) {
 					Permission: ptr("REPO_READ"),
 				},
 			},
+			BranchNameRegex:         ptr("(testing_[^_-]+_[^-]+$)"),
+			CommitMessageRegex:      ptr("(([A-Z][A-Z_0-9]+-[0-9]+))(.|\\n)*"),
 			CommitMessageType:       ptr("DEFAULT"),
 			RequireIssue:            ptr(true),
 			RequireSuccessfulBuilds: i(2),
 			Webhooks: &openapi.RepositoryConfigurationWebhooksDto{
-				PipelineTrigger: ptr(false),
 				Additional: []openapi.RepositoryConfigurationWebhookDto{
 					{
 						Name:          "newwebhookname",
@@ -210,8 +211,7 @@ func TestPatchRepository_ClearFields(t *testing.T) {
 			RequireIssue:            ptr(false),
 			RequireSuccessfulBuilds: i(1),
 			Webhooks: &openapi.RepositoryConfigurationWebhooksDto{
-				PipelineTrigger: ptr(false),
-				Additional:      nil,
+				Additional: nil,
 			},
 			Approvers:        nil,
 			DefaultReviewers: nil,

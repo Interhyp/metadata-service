@@ -13,8 +13,6 @@ package openapi
 
 // RepositoryConfigurationWebhooksDto Webhooks configured to the repository.
 type RepositoryConfigurationWebhooksDto struct {
-	// Default pipeline trigger webhook.
-	PipelineTrigger *bool `yaml:"pipelineTrigger,omitempty" json:"pipelineTrigger,omitempty"`
 	// List of predefined webhooks
 	Predefined []string `yaml:"predefined,omitempty" json:"predefined,omitempty"`
 	// Additional webhooks to be configured.
