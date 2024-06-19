@@ -304,7 +304,6 @@ configuration:
         snyk-key:
             refMatcher: master
     webhooks:
-        pipelineTrigger: false
         additional:
             - name: webhookname
               url: webhookurl

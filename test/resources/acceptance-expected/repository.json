@@ -36,10 +36,7 @@
         }
       ]
     },
-    "requireIssue": true,
-    "webhooks": {
-      "pipelineTrigger": true
-    }
+    "requireIssue": true
   },
   "generator": "third-party-software",
   "jiraIssue": "ISSUE-0000",
