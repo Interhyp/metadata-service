@@ -2,12 +2,14 @@ package updater
 
 import (
 	"context"
+	"fmt"
 	"github.com/Interhyp/metadata-service/api"
 	"github.com/Interhyp/metadata-service/internal/acorn/config"
 	"github.com/Interhyp/metadata-service/internal/acorn/repository"
 	"github.com/Interhyp/metadata-service/internal/acorn/service"
 	auzerolog "github.com/StephanHCB/go-autumn-logging-zerolog"
 	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
+	"github.com/StephanHCB/go-backend-service-common/api/apierrors"
 	"github.com/StephanHCB/go-backend-service-common/web/middleware/requestid"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/rs/zerolog/log"
@@ -267,4 +269,11 @@ func equalExceptCacheInfo[T openapi.ServiceDto | openapi.OwnerDto | openapi.Repo
 		return *cleaned
 	}
 	return reflect.DeepEqual(clean(&first), clean(&second))
+}
+
+func (s *Impl) httpErrorFromHook(err error, jiraIssue string) error {
+	return apierrors.NewBadRequestError("push.receive.hook.declined",
+		fmt.Sprintf("git hook declined the commit - most likely your JIRA issue (%s) does not exist, has wrong type, or wrong status", jiraIssue),
+		err,
+		s.Timestamp.Now())
 }

@@ -298,6 +298,25 @@ func TestPOSTService_GitServerDown(t *testing.T) {
 	require.Equal(t, 0, len(metadataImpl.FilesCommitted))
 }
 
+func TestPOSTService_GitHookDeclined(t *testing.T) {
+	tstReset()
+
+	docs.Given("Given an authenticated admin user")
+	token := tstValidAdminToken()
+
+	docs.When("When they request the creation of a valid service, but supply an invalid issue")
+	body := tstService("whatever")
+	body.JiraIssue = "INVALID-12345"
+	response, err := tstPerformPost("/rest/api/v1/services/whatever", token, &body)
+
+	docs.Then("Then the request fails and the error response is as expected")
+	tstAssert(t, response, err, http.StatusBadRequest, "receive-hook-declined.json")
+
+	docs.Then("And the local metadata repository clone has been reset to its original state")
+	require.Equal(t, 0, len(metadataImpl.FilesWritten))
+	require.Equal(t, 0, len(metadataImpl.FilesCommitted))
+}
+
 func TestPOSTService_ImplementationCrossrefAllowed(t *testing.T) {
 	tstReset()
 
@@ -587,6 +606,25 @@ func TestPUTService_GitServerDown(t *testing.T) {
 	require.Equal(t, 0, len(metadataImpl.FilesCommitted))
 }
 
+func TestPUTService_GitHookDeclined(t *testing.T) {
+	tstReset()
+
+	docs.Given("Given an authenticated admin user")
+	token := tstValidAdminToken()
+
+	docs.When("When they request an update of a service, but supply an invalid issue")
+	body := tstService("some-service-backend")
+	body.JiraIssue = "INVALID-12345"
+	response, err := tstPerformPut("/rest/api/v1/services/some-service-backend", token, &body)
+
+	docs.Then("Then the request fails and the error response is as expected")
+	tstAssert(t, response, err, http.StatusBadRequest, "receive-hook-declined.json")
+
+	docs.Then("And the local metadata repository clone has been reset to its original state")
+	require.Equal(t, 0, len(metadataImpl.FilesWritten))
+	require.Equal(t, 0, len(metadataImpl.FilesCommitted))
+}
+
 func TestPUTService_ChangeOwner(t *testing.T) {
 	tstReset()
 
@@ -625,6 +663,30 @@ func TestPUTService_ChangeOwner(t *testing.T) {
 	require.Equal(t, 1, len(kafkaImpl.Recording))
 	actual, _ := json.Marshal(kafkaImpl.Recording[0])
 	require.Equal(t, tstServiceMovedExpectedKafka("some-service-backend"), string(actual))
+}
+
+func TestPUTService_ChangeOwner_GitHookDeclined(t *testing.T) {
+	tstReset()
+
+	docs.Given("Given an authenticated admin user")
+	token := tstValidAdminToken()
+
+	docs.When("When they request an update of a service that changes its owner, but supply an invalid issue")
+	body := tstService("some-service-backend")
+	body.Owner = "deleteme"
+	body.JiraIssue = "INVALID-12345"
+	response, err := tstPerformPut("/rest/api/v1/services/some-service-backend", token, &body)
+
+	docs.Then("Then the request fails and the error response is as expected")
+	tstAssert(t, response, err, http.StatusBadRequest, "receive-hook-declined.json")
+
+	docs.Then("And the local metadata repository clone has been reset to its original state")
+	require.Equal(t, 0, len(metadataImpl.FilesWritten))
+	require.Equal(t, 0, len(metadataImpl.FilesCommitted))
+
+	docs.Then("And when the service is requested again, it still has the original owner")
+	readAgain, err := tstPerformGet("/rest/api/v1/services/some-service-backend", tstUnauthenticated())
+	tstAssert(t, readAgain, err, http.StatusOK, "service-original.json")
 }
 
 func TestPUTService_ImplementationCrossrefAllowed(t *testing.T) {
@@ -926,6 +988,25 @@ func TestPATCHService_GitServerDown(t *testing.T) {
 
 	docs.Then("Then the request fails and the error response is as expected")
 	tstAssert(t, response, err, http.StatusBadGateway, "bad-gateway.json")
+
+	docs.Then("And the local metadata repository clone has been reset to its original state")
+	require.Equal(t, 0, len(metadataImpl.FilesWritten))
+	require.Equal(t, 0, len(metadataImpl.FilesCommitted))
+}
+
+func TestPATCHService_GitHookDeclined(t *testing.T) {
+	tstReset()
+
+	docs.Given("Given an authenticated admin user")
+	token := tstValidAdminToken()
+
+	docs.When("When they request an update of a service, but supply an invalid issue")
+	body := tstServicePatch()
+	body.JiraIssue = "INVALID-12345"
+	response, err := tstPerformPatch("/rest/api/v1/services/some-service-backend", token, &body)
+
+	docs.Then("Then the request fails and the error response is as expected")
+	tstAssert(t, response, err, http.StatusBadRequest, "receive-hook-declined.json")
 
 	docs.Then("And the local metadata repository clone has been reset to its original state")
 	require.Equal(t, 0, len(metadataImpl.FilesWritten))
@@ -1272,6 +1353,25 @@ func TestDELETEService_GitServerDown(t *testing.T) {
 
 	docs.Then("Then the request fails and the error response is as expected")
 	tstAssert(t, response, err, http.StatusBadGateway, "bad-gateway.json")
+
+	docs.Then("And the local metadata repository clone has been reset to its original state")
+	require.Equal(t, 0, len(metadataImpl.FilesWritten))
+	require.Equal(t, 0, len(metadataImpl.FilesCommitted))
+}
+
+func TestDELETEService_GitHookDeclined(t *testing.T) {
+	tstReset()
+
+	docs.Given("Given an authenticated admin user")
+	token := tstValidAdminToken()
+
+	docs.When("When they request to delete a service, but supply an invalid issue")
+	body := tstDelete()
+	body.JiraIssue = "INVALID-12345"
+	response, err := tstPerformDelete("/rest/api/v1/services/some-service-backend", token, &body)
+
+	docs.Then("Then the request fails and the error response is as expected")
+	tstAssert(t, response, err, http.StatusBadRequest, "receive-hook-declined.json")
 
 	docs.Then("And the local metadata repository clone has been reset to its original state")
 	require.Equal(t, 0, len(metadataImpl.FilesWritten))

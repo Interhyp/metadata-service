@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"github.com/Interhyp/metadata-service/api"
+	"github.com/Interhyp/metadata-service/internal/acorn/errors/githookerror"
 	"github.com/Interhyp/metadata-service/internal/acorn/errors/nochangeserror"
 	"github.com/Interhyp/metadata-service/internal/acorn/repository"
 	"github.com/Interhyp/metadata-service/internal/repository/notifier"
@@ -35,6 +36,9 @@ func (s *Impl) WriteRepository(ctx context.Context, key string, repository opena
 					result.JiraIssue = "" // cannot know, could be multiple issues for the affected files
 					return nil
 				}
+				if githookerror.Is(err) {
+					return s.httpErrorFromHook(err, repository.JiraIssue)
+				}
 				return err
 			}
 			result = repositoryWritten
@@ -45,6 +49,9 @@ func (s *Impl) WriteRepository(ctx context.Context, key string, repository opena
 					// there were no actual changes, this is acceptable
 					result.JiraIssue = "" // cannot know
 					return nil
+				}
+				if githookerror.Is(err) {
+					return s.httpErrorFromHook(err, repository.JiraIssue)
 				}
 				return err
 			}
@@ -70,6 +77,9 @@ func (s *Impl) DeleteRepository(ctx context.Context, key string, deletionInfo op
 			if nochangeserror.Is(err) {
 				// there were no actual changes, this is acceptable
 				return nil
+			}
+			if githookerror.Is(err) {
+				return s.httpErrorFromHook(err, deletionInfo.JiraIssue)
 			}
 			return err
 		}

@@ -1,0 +1,5 @@
+{
+  "details": "git hook declined the commit - most likely your JIRA issue (INVALID-12345) does not exist, has wrong type, or wrong status",
+  "message": "push.receive.hook.declined",
+  "timestamp": "2022-11-06T18:14:10Z"
+}

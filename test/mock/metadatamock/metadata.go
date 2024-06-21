@@ -3,9 +3,11 @@ package metadatamock
 import (
 	"context"
 	"errors"
+	"fmt"
 	auzerolog "github.com/StephanHCB/go-autumn-logging-zerolog"
 	"io"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/Interhyp/metadata-service/internal/acorn/errors/nochangeserror"
@@ -24,6 +26,7 @@ type Impl struct {
 	FilesWritten   map[string]bool
 	FilesCommitted map[string]bool
 	Pushed         bool
+	InvalidIssue   bool
 
 	SimulateRemoteFailure      bool
 	SimulateConcurrencyFailure bool
@@ -233,6 +236,7 @@ func (r *Impl) Clone(ctx context.Context) error {
 	r.SimulateConcurrencyFailure = false
 	r.SimulateUnchangedFailure = false
 	r.Pushed = false
+	r.InvalidIssue = false
 	return nil
 }
 
@@ -250,6 +254,10 @@ func (r *Impl) Commit(ctx context.Context, message string) (repository.CommitInf
 	if r.SimulateUnchangedFailure {
 		return commitInfo, nochangeserror.New(ctx)
 	}
+	if strings.Contains(message, "INVALID-12345") {
+		r.InvalidIssue = true
+	}
+
 	r.FilesCommitted = r.FilesWritten
 	commitInfo.CommitHash = newCommitHash
 	commitInfo.Message = message
@@ -262,6 +270,9 @@ func (r *Impl) Push(ctx context.Context) error {
 	}
 	if r.SimulateConcurrencyFailure {
 		return apierrors.NewConflictError("", "cannot push", nil, r.Now())
+	}
+	if r.InvalidIssue {
+		return fmt.Errorf("failed to push ref: pre-receive hook declined: something something")
 	}
 	r.Pushed = true
 	return nil
