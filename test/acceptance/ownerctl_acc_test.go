@@ -255,6 +255,25 @@ func TestPOSTOwner_GitServerDown(t *testing.T) {
 	require.Equal(t, 0, len(metadataImpl.FilesCommitted))
 }
 
+func TestPOSTOwner_GitHookDeclined(t *testing.T) {
+	tstReset()
+
+	docs.Given("Given an authenticated admin user")
+	token := tstValidAdminToken()
+
+	docs.When("When they request the creation of a valid owner, but supply an invalid issue")
+	body := tstOwner()
+	body.JiraIssue = "INVALID-12345"
+	response, err := tstPerformPost("/rest/api/v1/owners/post-owner-receive-hook", token, &body)
+
+	docs.Then("Then the request fails and the error response is as expected")
+	tstAssert(t, response, err, http.StatusBadRequest, "receive-hook-declined.json")
+
+	docs.Then("And the local metadata repository clone has been reset to its original state")
+	require.Equal(t, 0, len(metadataImpl.FilesWritten))
+	require.Equal(t, 0, len(metadataImpl.FilesCommitted))
+}
+
 // update full owner
 
 func TestPUTOwner_Success(t *testing.T) {
@@ -488,6 +507,25 @@ func TestPUTOwner_GitServerDown(t *testing.T) {
 	require.Equal(t, 0, len(metadataImpl.FilesCommitted))
 }
 
+func TestPUTOwner_GitHookDeclined(t *testing.T) {
+	tstReset()
+
+	docs.Given("Given an authenticated admin user")
+	token := tstValidAdminToken()
+
+	docs.When("When they request an update of an owner, but supply an invalid issue")
+	body := tstOwner()
+	body.JiraIssue = "INVALID-12345"
+	response, err := tstPerformPut("/rest/api/v1/owners/some-owner", token, &body)
+
+	docs.Then("Then the request fails and the error response is as expected")
+	tstAssert(t, response, err, http.StatusBadRequest, "receive-hook-declined.json")
+
+	docs.Then("And the local metadata repository clone has been reset to its original state")
+	require.Equal(t, 0, len(metadataImpl.FilesWritten))
+	require.Equal(t, 0, len(metadataImpl.FilesCommitted))
+}
+
 // patch owner
 
 func TestPATCHOwner_Success(t *testing.T) {
@@ -703,6 +741,25 @@ func TestPATCHOwner_GitServerDown(t *testing.T) {
 	require.Equal(t, 0, len(metadataImpl.FilesCommitted))
 }
 
+func TestPATCHOwner_GitHookDeclined(t *testing.T) {
+	tstReset()
+
+	docs.Given("Given an authenticated admin user")
+	token := tstValidAdminToken()
+
+	docs.When("When they request a patch of an owner, but supply an invalid issue")
+	body := tstOwnerPatch()
+	body.JiraIssue = "INVALID-12345"
+	response, err := tstPerformPatch("/rest/api/v1/owners/some-owner", token, &body)
+
+	docs.Then("Then the request fails and the error response is as expected")
+	tstAssert(t, response, err, http.StatusBadRequest, "receive-hook-declined.json")
+
+	docs.Then("And the local metadata repository clone has been reset to its original state")
+	require.Equal(t, 0, len(metadataImpl.FilesWritten))
+	require.Equal(t, 0, len(metadataImpl.FilesCommitted))
+}
+
 // delete owner
 
 func TestDELETEOwner_Success(t *testing.T) {
@@ -863,6 +920,25 @@ func TestDELETEOwner_GitServerDown(t *testing.T) {
 
 	docs.Then("Then the request fails and the error response is as expected")
 	tstAssert(t, response, err, http.StatusBadGateway, "bad-gateway.json")
+
+	docs.Then("And the local metadata repository clone has been reset to its original state")
+	require.Equal(t, 0, len(metadataImpl.FilesWritten))
+	require.Equal(t, 0, len(metadataImpl.FilesCommitted))
+}
+
+func TestDELETEOwner_GitHookDeclined(t *testing.T) {
+	tstReset()
+
+	docs.Given("Given an authenticated admin user")
+	token := tstValidAdminToken()
+
+	docs.When("When they request to delete an owner, but supply an invalid issue")
+	body := tstDelete()
+	body.JiraIssue = "INVALID-12345"
+	response, err := tstPerformDelete("/rest/api/v1/owners/deleteme", token, &body)
+
+	docs.Then("Then the request fails and the error response is as expected")
+	tstAssert(t, response, err, http.StatusBadRequest, "receive-hook-declined.json")
 
 	docs.Then("And the local metadata repository clone has been reset to its original state")
 	require.Equal(t, 0, len(metadataImpl.FilesWritten))

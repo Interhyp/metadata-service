@@ -308,6 +308,25 @@ func TestPOSTRepository_GitServerDown(t *testing.T) {
 	require.Equal(t, 0, len(metadataImpl.FilesCommitted))
 }
 
+func TestPOSTRepository_GitHookDeclined(t *testing.T) {
+	tstReset()
+
+	docs.Given("Given an authenticated admin user")
+	token := tstValidAdminToken()
+
+	docs.When("When they request the creation of a valid repository, but supply an invalid issue")
+	body := tstRepository()
+	body.JiraIssue = "INVALID-12345"
+	response, err := tstPerformPost("/rest/api/v1/repositories/new-repository.api", token, &body)
+
+	docs.Then("Then the request fails and the error response is as expected")
+	tstAssert(t, response, err, http.StatusBadRequest, "receive-hook-declined.json")
+
+	docs.Then("And the local metadata repository clone has been reset to its original state")
+	require.Equal(t, 0, len(metadataImpl.FilesWritten))
+	require.Equal(t, 0, len(metadataImpl.FilesCommitted))
+}
+
 // update full repository
 
 func TestPUTRepository_Success(t *testing.T) {
@@ -536,6 +555,25 @@ func TestPUTRepository_GitServerDown(t *testing.T) {
 
 	docs.Then("Then the request fails and the error response is as expected")
 	tstAssert(t, response, err, http.StatusBadGateway, "bad-gateway.json")
+
+	docs.Then("And the local metadata repository clone has been reset to its original state")
+	require.Equal(t, 0, len(metadataImpl.FilesWritten))
+	require.Equal(t, 0, len(metadataImpl.FilesCommitted))
+}
+
+func TestPUTRepository_GitHookDeclined(t *testing.T) {
+	tstReset()
+
+	docs.Given("Given an authenticated admin user")
+	token := tstValidAdminToken()
+
+	docs.When("When they request an update of a repository, but supply an invalid issue")
+	body := tstRepository()
+	body.JiraIssue = "INVALID-12345"
+	response, err := tstPerformPut("/rest/api/v1/repositories/karma-wrapper.helm-chart", token, &body)
+
+	docs.Then("Then the request fails and the error response is as expected")
+	tstAssert(t, response, err, http.StatusBadRequest, "receive-hook-declined.json")
 
 	docs.Then("And the local metadata repository clone has been reset to its original state")
 	require.Equal(t, 0, len(metadataImpl.FilesWritten))
@@ -830,6 +868,25 @@ func TestPATCHRepository_GitServerDown(t *testing.T) {
 	require.Equal(t, 0, len(metadataImpl.FilesCommitted))
 }
 
+func TestPATCHRepository_GitHookDeclined(t *testing.T) {
+	tstReset()
+
+	docs.Given("Given an authenticated admin user")
+	token := tstValidAdminToken()
+
+	docs.When("When they attempt to patch a repository, but supply an invalid issue")
+	body := tstRepositoryPatch()
+	body.JiraIssue = "INVALID-12345"
+	response, err := tstPerformPatch("/rest/api/v1/repositories/karma-wrapper.helm-chart", token, &body)
+
+	docs.Then("Then the request fails and the error response is as expected")
+	tstAssert(t, response, err, http.StatusBadRequest, "receive-hook-declined.json")
+
+	docs.Then("And the local metadata repository clone has been reset to its original state")
+	require.Equal(t, 0, len(metadataImpl.FilesWritten))
+	require.Equal(t, 0, len(metadataImpl.FilesCommitted))
+}
+
 func TestPATCHRepository_ChangeOwner(t *testing.T) {
 	tstReset()
 
@@ -1026,6 +1083,25 @@ func TestDELETERepository_GitServerDown(t *testing.T) {
 
 	docs.Then("Then the request fails and the error response is as expected")
 	tstAssert(t, response, err, http.StatusBadGateway, "bad-gateway.json")
+
+	docs.Then("And the local metadata repository clone has been reset to its original state")
+	require.Equal(t, 0, len(metadataImpl.FilesWritten))
+	require.Equal(t, 0, len(metadataImpl.FilesCommitted))
+}
+
+func TestDELETERepository_GitHookDeclined(t *testing.T) {
+	tstReset()
+
+	docs.Given("Given an authenticated admin user")
+	token := tstValidAdminToken()
+
+	docs.When("When they request to delete a repository, but supply an invalid issue")
+	body := tstDelete()
+	body.JiraIssue = "INVALID-12345"
+	response, err := tstPerformDelete("/rest/api/v1/repositories/karma-wrapper.helm-chart", token, &body)
+
+	docs.Then("Then the request fails and the error response is as expected")
+	tstAssert(t, response, err, http.StatusBadRequest, "receive-hook-declined.json")
 
 	docs.Then("And the local metadata repository clone has been reset to its original state")
 	require.Equal(t, 0, len(metadataImpl.FilesWritten))

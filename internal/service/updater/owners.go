@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"github.com/Interhyp/metadata-service/api"
+	"github.com/Interhyp/metadata-service/internal/acorn/errors/githookerror"
 	"github.com/Interhyp/metadata-service/internal/acorn/errors/nochangeserror"
 	"github.com/Interhyp/metadata-service/internal/acorn/repository"
 	"github.com/Interhyp/metadata-service/internal/repository/notifier"
@@ -21,6 +22,9 @@ func (s *Impl) WriteOwner(ctx context.Context, ownerAlias string, owner openapi.
 				// there were no actual changes, this is acceptable
 				result.JiraIssue = "" // cannot know
 				return nil
+			}
+			if githookerror.Is(err) {
+				return s.httpErrorFromHook(err, owner.JiraIssue)
 			}
 			return err
 		}
@@ -46,6 +50,9 @@ func (s *Impl) DeleteOwner(ctx context.Context, ownerAlias string, deletionInfo 
 			if nochangeserror.Is(err) {
 				// there were no actual changes, this is acceptable
 				return nil
+			}
+			if githookerror.Is(err) {
+				return s.httpErrorFromHook(err, deletionInfo.JiraIssue)
 			}
 			return err
 		}

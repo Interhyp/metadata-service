@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"github.com/Interhyp/metadata-service/api"
+	"github.com/Interhyp/metadata-service/internal/acorn/errors/githookerror"
 	"github.com/Interhyp/metadata-service/internal/acorn/errors/nochangeserror"
 	"github.com/Interhyp/metadata-service/internal/acorn/repository"
 	"github.com/Interhyp/metadata-service/internal/repository/notifier"
@@ -23,6 +24,9 @@ func (s *Impl) WriteService(ctx context.Context, serviceName string, service ope
 					// there were no actual changes, this is acceptable
 					result.JiraIssue = "" // cannot know, could be multiple issues for the affected files
 					return nil
+				}
+				if githookerror.Is(err) {
+					return s.httpErrorFromHook(err, service.JiraIssue)
 				}
 				return err
 			}
@@ -45,6 +49,9 @@ func (s *Impl) WriteService(ctx context.Context, serviceName string, service ope
 					// there were no actual changes, this is acceptable
 					result.JiraIssue = "" // cannot know
 					return nil
+				}
+				if githookerror.Is(err) {
+					return s.httpErrorFromHook(err, service.JiraIssue)
 				}
 				return err
 			}
@@ -70,6 +77,9 @@ func (s *Impl) DeleteService(ctx context.Context, serviceName string, deletionIn
 			if nochangeserror.Is(err) {
 				// there were no actual changes, this is acceptable
 				return nil
+			}
+			if githookerror.Is(err) {
+				return s.httpErrorFromHook(err, deletionInfo.JiraIssue)
 			}
 			return err
 		}
