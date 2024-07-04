@@ -15,7 +15,7 @@ require (
 	github.com/StephanHCB/go-autumn-restclient-circuitbreaker v0.4.1
 	github.com/StephanHCB/go-autumn-restclient-circuitbreaker-prometheus v0.1.0
 	github.com/StephanHCB/go-autumn-restclient-prometheus v0.1.2
-	github.com/StephanHCB/go-backend-service-common v0.9.0
+	github.com/StephanHCB/go-backend-service-common v0.10.0
 	github.com/go-chi/chi/v5 v5.1.0
 	github.com/go-git/go-billy/v5 v5.5.0
 	github.com/go-git/go-git/v5 v5.12.0
@@ -36,7 +36,7 @@ require (
 	github.com/Microsoft/go-winio v0.6.1 // indirect
 	github.com/ProtonMail/go-crypto v1.0.0 // indirect
 	github.com/StephanHCB/go-autumn-acorn-registry v0.3.1 // indirect
-	github.com/StephanHCB/go-autumn-web-swagger-ui v0.2.3 // indirect
+	github.com/StephanHCB/go-autumn-web-swagger-ui v0.3.2 // indirect
 	github.com/armon/go-radix v1.0.0 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
@@ -94,9 +94,9 @@ require (
 	github.com/xdg-go/pbkdf2 v1.0.0 // indirect
 	github.com/xdg-go/scram v1.1.2 // indirect
 	github.com/xdg-go/stringprep v1.0.4 // indirect
-	go.elastic.co/apm/module/apmchiv5/v2 v2.4.5 // indirect
-	go.elastic.co/apm/module/apmhttp/v2 v2.4.5 // indirect
-	go.elastic.co/apm/v2 v2.4.5 // indirect
+	go.elastic.co/apm/module/apmchiv5/v2 v2.6.0 // indirect
+	go.elastic.co/apm/module/apmhttp/v2 v2.6.0 // indirect
+	go.elastic.co/apm/v2 v2.6.0 // indirect
 	go.elastic.co/fastjson v1.1.0 // indirect
 	golang.org/x/crypto v0.24.0 // indirect
 	golang.org/x/mod v0.17.0 // indirect
