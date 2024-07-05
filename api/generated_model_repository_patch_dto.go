@@ -23,7 +23,7 @@ type RepositoryPatchDto struct {
 	Unittest      *bool                       `yaml:"unittest,omitempty" json:"unittest,omitempty"`
 	Configuration *RepositoryConfigurationDto `yaml:"configuration,omitempty" json:"configuration,omitempty"`
 	// Assign a category to a list of files, e.g. to mark them for caching purposes. The key is the category name, and the value is a list of paths. Files are considered to have that category if their path is in the list.
-	Filecategory *map[string][]string `yaml:"filecategory,omitempty" json:"filecategory,omitempty"`
+	Filecategory map[string][]string `yaml:"filecategory,omitempty" json:"filecategory,omitempty"`
 	// ISO-8601 UTC date time at which this information was originally committed. When sending an update, include the original timestamp you got so we can detect concurrent updates.
 	TimeStamp string `yaml:"-" json:"timeStamp"`
 	// The git commit hash this information was originally committed under. When sending an update, include the original commitHash you got so we can detect concurrent updates.
@@ -31,5 +31,5 @@ type RepositoryPatchDto struct {
 	// The jira issue to use for committing a change, or the last jira issue used.
 	JiraIssue string `yaml:"-" json:"jiraIssue"`
 	// A map of arbitrary string labels attached to this repository.
-	Labels *map[string]string `yaml:"labels,omitempty" json:"labels,omitempty"`
+	Labels map[string]string `yaml:"labels,omitempty" json:"labels,omitempty"`
 }

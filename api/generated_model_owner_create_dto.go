@@ -22,7 +22,7 @@ type OwnerCreateDto struct {
 	// A list of users that are allowed to promote services in this owner space
 	Promoters []string `yaml:"promoters,omitempty" json:"promoters,omitempty"`
 	// Map of string (group name e.g. some-owner) of strings (list of usernames), one username for each group is required.
-	Groups *map[string][]string `yaml:"groups,omitempty" json:"groups,omitempty"`
+	Groups map[string][]string `yaml:"groups,omitempty" json:"groups,omitempty"`
 	// The default jira project that is used by this owner space
 	DefaultJiraProject *string `yaml:"defaultJiraProject,omitempty" json:"defaultJiraProject,omitempty"`
 	// The jira issue to use for committing a change, or the last jira issue used.

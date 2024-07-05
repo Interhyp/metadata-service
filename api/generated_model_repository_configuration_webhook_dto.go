@@ -16,6 +16,6 @@ type RepositoryConfigurationWebhookDto struct {
 	Name string `yaml:"name" json:"name"`
 	Url  string `yaml:"url" json:"url"`
 	// Events the webhook should be triggered with.
-	Events        []string           `yaml:"events,omitempty" json:"events,omitempty"`
-	Configuration *map[string]string `yaml:"configuration,omitempty" json:"configuration,omitempty"`
+	Events        []string          `yaml:"events,omitempty" json:"events,omitempty"`
+	Configuration map[string]string `yaml:"configuration,omitempty" json:"configuration,omitempty"`
 }

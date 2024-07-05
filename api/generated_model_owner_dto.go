@@ -20,7 +20,7 @@ type OwnerDto struct {
 	// The product owner of this owner space
 	ProductOwner *string `yaml:"productOwner,omitempty" json:"productOwner,omitempty"`
 	// Map of string (group name e.g. some-owner) of strings (list of usernames), one username for each group is required.
-	Groups *map[string][]string `yaml:"groups,omitempty" json:"groups,omitempty"`
+	Groups map[string][]string `yaml:"groups,omitempty" json:"groups,omitempty"`
 	// A list of users that are allowed to promote services in this owner space
 	Promoters []string `yaml:"promoters,omitempty" json:"promoters,omitempty"`
 	// The default jira project that is used by this owner space
