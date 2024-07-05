@@ -393,9 +393,9 @@ func patchStringSlice(patch []string, original []string) []string {
 	}
 }
 
-func patchMapSlice(patch *map[string]string, original *map[string]string) *map[string]string {
+func patchMapSlice(patch map[string]string, original map[string]string) map[string]string {
 	if patch != nil {
-		if len(*patch) == 0 {
+		if len(patch) == 0 {
 			// remove
 			return nil
 		}

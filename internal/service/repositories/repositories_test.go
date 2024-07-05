@@ -46,17 +46,17 @@ func createRepositoryDto() openapi.RepositoryDto {
 						Name:          "webhookname",
 						Url:           "webhookurl",
 						Events:        []string{"event"},
-						Configuration: &map[string]string{"key": "value"},
+						Configuration: map[string]string{"key": "value"},
 					},
 				},
 			},
-			Approvers:        &map[string][]string{"group": {"approver1"}},
+			Approvers:        map[string][]string{"group": {"approver1"}},
 			DefaultReviewers: []string{"defaultreviewer1"},
 			SignedApprovers:  []string{"signedapprover1"},
 			Archived:         ptr(false),
 		},
-		Filecategory: &map[string][]string{"a": {"path/a.yaml"}},
-		Labels:       &map[string]string{"label": "originalValue"},
+		Filecategory: map[string][]string{"a": {"path/a.yaml"}},
+		Labels:       map[string]string{"label": "originalValue"},
 		TimeStamp:    "ts",
 		CommitHash:   "hash",
 	}
@@ -125,17 +125,17 @@ func TestPatchRepository_ReplaceAll(t *testing.T) {
 						Name:          "newwebhookname",
 						Url:           "newwebhookurl",
 						Events:        []string{"event"},
-						Configuration: &map[string]string{"newkey": "newvalue"},
+						Configuration: map[string]string{"newkey": "newvalue"},
 					},
 				},
 			},
-			Approvers:        &map[string][]string{"group": {"newapprover1"}},
+			Approvers:        map[string][]string{"group": {"newapprover1"}},
 			DefaultReviewers: []string{"newdefaultreviewer1"},
 			SignedApprovers:  []string{"newsignedapprover1"},
 			Archived:         ptr(true),
 		},
-		Filecategory: &map[string][]string{"b": {"b.yaml", "b.json"}},
-		Labels:       &map[string]string{"label": "patchedValue"},
+		Filecategory: map[string][]string{"b": {"b.yaml", "b.json"}},
+		Labels:       map[string]string{"label": "patchedValue"},
 		TimeStamp:    "newts",
 		CommitHash:   "newhash",
 	}, openapi.RepositoryDto{
@@ -162,17 +162,17 @@ func TestPatchRepository_ReplaceAll(t *testing.T) {
 						Name:          "newwebhookname",
 						Url:           "newwebhookurl",
 						Events:        []string{"event"},
-						Configuration: &map[string]string{"newkey": "newvalue"},
+						Configuration: map[string]string{"newkey": "newvalue"},
 					},
 				},
 			},
-			Approvers:        &map[string][]string{"group": {"newapprover1"}},
+			Approvers:        map[string][]string{"group": {"newapprover1"}},
 			DefaultReviewers: []string{"newdefaultreviewer1"},
 			SignedApprovers:  []string{"newsignedapprover1"},
 			Archived:         ptr(true),
 		},
-		Filecategory: &map[string][]string{"b": {"b.yaml", "b.json"}},
-		Labels:       &map[string]string{"label": "patchedValue"},
+		Filecategory: map[string][]string{"b": {"b.yaml", "b.json"}},
+		Labels:       map[string]string{"label": "patchedValue"},
 		TimeStamp:    "newts",
 		CommitHash:   "newhash",
 	})
@@ -191,12 +191,12 @@ func TestPatchRepository_ClearFields(t *testing.T) {
 			Webhooks: &openapi.RepositoryConfigurationWebhooksDto{
 				Additional: []openapi.RepositoryConfigurationWebhookDto{},
 			},
-			Approvers:        &map[string][]string{},
+			Approvers:        map[string][]string{},
 			DefaultReviewers: []string{},
 			SignedApprovers:  []string{},
 		},
-		Filecategory: &map[string][]string{},
-		Labels:       &map[string]string{},
+		Filecategory: map[string][]string{},
+		Labels:       map[string]string{},
 		TimeStamp:    "",
 		CommitHash:   "",
 	}, openapi.RepositoryDto{
@@ -414,13 +414,13 @@ func TestRebuildApprovers_DuplicatesAndMultipleGroups(t *testing.T) {
 	testApprovers := make(map[string][]string, 0)
 	testApprovers["one"] = []string{"x", "y", "z", "z"}
 	testApprovers["two"] = []string{"z", "o", "v", "v"}
-	configDto := createRepositoryConfigDto(&testApprovers)
+	configDto := createRepositoryConfigDto(testApprovers)
 
 	instance.expandApprovers(context.TODO(), configDto.Approvers)
 
-	require.Equal(t, 2, len(*configDto.Approvers))
-	require.Exactly(t, (*configDto.Approvers)["one"], []string{"x", "y", "z"})
-	require.Exactly(t, (*configDto.Approvers)["two"], []string{"z", "o", "v"})
+	require.Equal(t, 2, len(configDto.Approvers))
+	require.Exactly(t, configDto.Approvers["one"], []string{"x", "y", "z"})
+	require.Exactly(t, configDto.Approvers["two"], []string{"z", "o", "v"})
 }
 
 func TestExpandWatchers(t *testing.T) {
@@ -454,7 +454,7 @@ func createInstanceWithOwners(ownersImpl service.Owners) Impl {
 	return instance
 }
 
-func createRepositoryConfigDto(testApprovers *map[string][]string) *openapi.RepositoryConfigurationDto {
+func createRepositoryConfigDto(testApprovers map[string][]string) *openapi.RepositoryConfigurationDto {
 	return &openapi.RepositoryConfigurationDto{
 		AccessKeys:              nil,
 		CommitMessageType:       nil,

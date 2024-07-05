@@ -241,7 +241,7 @@ func tstRepository() openapi.RepositoryDto {
 			CommitMessageType:       p("SEMANTIC"),
 			RequireIssue:            pb(false),
 			RequireSuccessfulBuilds: pi(1),
-			RequireConditions:       &map[string]openapi.ConditionReferenceDto{"snyk-key": {RefMatcher: "master"}},
+			RequireConditions:       map[string]openapi.ConditionReferenceDto{"snyk-key": {RefMatcher: "master"}},
 			Webhooks: &openapi.RepositoryConfigurationWebhooksDto{
 				Additional: []openapi.RepositoryConfigurationWebhookDto{
 					{
@@ -251,9 +251,9 @@ func tstRepository() openapi.RepositoryDto {
 					},
 				},
 			},
-			Approvers: &map[string][]string{"testing": {"some-user"}},
+			Approvers: map[string][]string{"testing": {"some-user"}},
 		},
-		Filecategory: &fc,
+		Filecategory: fc,
 		TimeStamp:    "2022-11-06T18:14:10Z",
 		CommitHash:   "6c8ac2c35791edf9979623c717a243fc53400000",
 		JiraIssue:    "ISSUE-2345",

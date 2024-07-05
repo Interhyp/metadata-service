@@ -83,7 +83,7 @@ func (s *Impl) GetRepository(ctx context.Context, repoKey string) (openapi.Repos
 
 	if err == nil && result.Configuration != nil && result.Configuration.Approvers != nil {
 		approversGroupsMap := result.Configuration.Approvers
-		for approversGroupName, approversGroup := range *approversGroupsMap {
+		for approversGroupName, approversGroup := range approversGroupsMap {
 			users, groups := util.SplitUsersAndGroups(approversGroup)
 			if len(users) > 0 {
 				filteredExistingUsers, err2 := s.Bitbucket.FilterExistingUsernames(ctx, users)
@@ -92,14 +92,14 @@ func (s *Impl) GetRepository(ctx context.Context, repoKey string) (openapi.Repos
 					if len(userDifference) > 0 {
 						s.Logging.Logger().Ctx(ctx).Warn().Printf("Found unknown users in configuration: %v", userDifference)
 					}
-					(*approversGroupsMap)[approversGroupName] = append(filteredExistingUsers, groups...)
+					approversGroupsMap[approversGroupName] = append(filteredExistingUsers, groups...)
 				} else {
 					s.Logging.Logger().Ctx(ctx).Error().Printf("Error checking existing bitbucket users: %s", err2.Error())
 				}
 
-				if len((*approversGroupsMap)[approversGroupName]) <= 0 && len(users) > 0 {
+				if len(approversGroupsMap[approversGroupName]) <= 0 && len(users) > 0 {
 					s.Logging.Logger().Ctx(ctx).Warn().Printf("Fallback to predefined reviewers")
-					(*approversGroupsMap)[approversGroupName] = append((*approversGroupsMap)[approversGroupName], s.CustomConfiguration.BitbucketReviewerFallback())
+					approversGroupsMap[approversGroupName] = append(approversGroupsMap[approversGroupName], s.CustomConfiguration.BitbucketReviewerFallback())
 				}
 			}
 		}

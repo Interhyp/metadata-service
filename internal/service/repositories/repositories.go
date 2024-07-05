@@ -165,13 +165,13 @@ func (s *Impl) GetRepository(ctx context.Context, repoKey string) (openapi.Repos
 	if err == nil && repositoryDto.Filecategory != nil {
 		// filter by allowed keys
 		allowedKeys := s.CustomConfiguration.AllowedFileCategories()
-		for key, _ := range *repositoryDto.Filecategory {
+		for key, _ := range repositoryDto.Filecategory {
 			if !sliceContains(allowedKeys, key) {
-				delete(*repositoryDto.Filecategory, key)
+				delete(repositoryDto.Filecategory, key)
 			}
 		}
 
-		if len(*repositoryDto.Filecategory) == 0 {
+		if len(repositoryDto.Filecategory) == 0 {
 			// drop empty map completely
 			repositoryDto.Filecategory = nil
 		}
@@ -180,10 +180,10 @@ func (s *Impl) GetRepository(ctx context.Context, repoKey string) (openapi.Repos
 	return repositoryDto, err
 }
 
-func (s *Impl) expandApprovers(ctx context.Context, approvers *map[string][]string) {
+func (s *Impl) expandApprovers(ctx context.Context, approvers map[string][]string) {
 	if approvers != nil {
-		for name, approverList := range *approvers {
-			(*approvers)[name] = s.expandUserGroups(ctx, approverList)
+		for name, approverList := range approvers {
+			approvers[name] = s.expandUserGroups(ctx, approverList)
 		}
 	}
 }
@@ -267,7 +267,7 @@ func (s *Impl) validateRepositoryCreateDto(ctx context.Context, key string, dto 
 		messages = append(messages, "field jiraIssue is mandatory")
 	}
 	if dto.Filecategory != nil {
-		messages = s.validateFilecategory(messages, *dto.Filecategory)
+		messages = s.validateFilecategory(messages, dto.Filecategory)
 	}
 
 	if len(messages) > 0 {
@@ -336,7 +336,7 @@ func (s *Impl) validateExistingRepositoryDto(ctx context.Context, key string, dt
 		messages = append(messages, "field jiraIssue is mandatory for updates")
 	}
 	if dto.Filecategory != nil {
-		messages = s.validateFilecategory(messages, *dto.Filecategory)
+		messages = s.validateFilecategory(messages, dto.Filecategory)
 	}
 
 	if len(messages) > 0 {
@@ -403,7 +403,7 @@ func (s *Impl) validateRepositoryPatchDto(ctx context.Context, key string, patch
 	messages = validateUrl(messages, dto.Url)
 	messages = validateMainline(messages, dto.Mainline)
 	if dto.Filecategory != nil {
-		messages = s.validateFilecategory(messages, *dto.Filecategory)
+		messages = s.validateFilecategory(messages, dto.Filecategory)
 	}
 
 	if patchDto.CommitHash == "" {
@@ -466,9 +466,9 @@ func patchConfiguration(patch *openapi.RepositoryConfigurationDto, original *ope
 	}
 }
 
-func patchConditions(patch *map[string]openapi.ConditionReferenceDto, original *map[string]openapi.ConditionReferenceDto) *map[string]openapi.ConditionReferenceDto {
+func patchConditions(patch map[string]openapi.ConditionReferenceDto, original map[string]openapi.ConditionReferenceDto) map[string]openapi.ConditionReferenceDto {
 	if patch != nil {
-		if len(*patch) == 0 {
+		if len(patch) == 0 {
 			// remove
 			return nil
 		} else {
@@ -479,17 +479,17 @@ func patchConditions(patch *map[string]openapi.ConditionReferenceDto, original *
 	}
 }
 
-func patchApprovers(patch *map[string][]string, original *map[string][]string) *map[string][]string {
+func patchApprovers(patch map[string][]string, original map[string][]string) map[string][]string {
 	return patchMapStringListString(patch, original)
 }
 
-func patchFilecategory(patch *map[string][]string, original *map[string][]string) *map[string][]string {
+func patchFilecategory(patch map[string][]string, original map[string][]string) map[string][]string {
 	return patchMapStringListString(patch, original)
 }
 
-func patchMapStringListString(patch *map[string][]string, original *map[string][]string) *map[string][]string {
+func patchMapStringListString(patch map[string][]string, original map[string][]string) map[string][]string {
 	if patch != nil {
-		if len(*patch) == 0 {
+		if len(patch) == 0 {
 			// remove
 			return nil
 		} else {
@@ -500,9 +500,9 @@ func patchMapStringListString(patch *map[string][]string, original *map[string][
 	}
 }
 
-func patchLabels(patch *map[string]string, original *map[string]string) *map[string]string {
+func patchLabels(patch map[string]string, original map[string]string) map[string]string {
 	if patch != nil {
-		if len(*patch) == 0 {
+		if len(patch) == 0 {
 			// remove
 			return nil
 		}
