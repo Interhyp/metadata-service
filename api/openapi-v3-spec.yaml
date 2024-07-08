@@ -1250,7 +1250,8 @@ components:
           description: 'Map of string (group name e.g. some-owner) of strings (list of usernames), one username for each group is required.'
           type: object
           examples:
-            - some-owner: {}
+            - some-owner:
+                - someotheruser
           additionalProperties:
             type: array
             items:
