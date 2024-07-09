@@ -31,7 +31,7 @@ func (s *Mock) GetSortedOwnerAliases(ctx context.Context) ([]string, error) {
 func (s *Mock) GetOwner(ctx context.Context, alias string) (openapi.OwnerDto, error) {
 	if alias == "ownerWithGroup" {
 		return openapi.OwnerDto{
-			Groups: &map[string][]string{"someGroupName": {"username1", "username2"}},
+			Groups: map[string][]string{"someGroupName": {"username1", "username2"}},
 		}, nil
 	}
 	return openapi.OwnerDto{}, nil

@@ -123,7 +123,7 @@ func (s *Impl) WireUp(ctx context.Context) {
 				"GET /health",
 				"GET /management/health",
 				// openapi
-				"GET /openapi-v3-spec.json",
+				"GET /openapi-v3-spec.yaml",
 				"GET /v3/api-docs",
 				"GET /swagger-ui.*",
 			},

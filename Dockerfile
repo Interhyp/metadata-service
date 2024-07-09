@@ -25,6 +25,6 @@ FROM scratch
 
 COPY --from=build /app/main /main
 COPY --from=build /etc/ssl/certs /etc/ssl/certs
-COPY --from=build /app/api/openapi-v3-spec.json /api/openapi-v3-spec.json
+COPY --from=build /app/api/openapi-v3-spec.yaml /api/openapi-v3-spec.yaml
 
 ENTRYPOINT ["/main"]

@@ -31,10 +31,10 @@ type RepositoryConfigurationDto struct {
 	// Exclude merge commits from commit checks.
 	ExcludeMergeCommits *bool `yaml:"excludeMergeCommits,omitempty" json:"excludeMergeCommits,omitempty"`
 	// Configuration of conditional builds as map of structs (key name e.g. some-key) of target references.
-	RequireConditions *map[string]ConditionReferenceDto   `yaml:"requireConditions,omitempty" json:"requireConditions,omitempty"`
+	RequireConditions map[string]ConditionReferenceDto    `yaml:"requireConditions,omitempty" json:"requireConditions,omitempty"`
 	Webhooks          *RepositoryConfigurationWebhooksDto `yaml:"webhooks,omitempty" json:"webhooks,omitempty"`
 	// Map of string (group name e.g. some-owner) of strings (list of approvers), one approval for each group is required.
-	Approvers *map[string][]string `yaml:"approvers,omitempty" json:"approvers,omitempty"`
+	Approvers map[string][]string `yaml:"approvers,omitempty" json:"approvers,omitempty"`
 	// List of strings (list of watchers, either usernames or group identifier), which are added as reviewers but require no approval.
 	Watchers         []string `yaml:"watchers,omitempty" json:"watchers,omitempty"`
 	DefaultReviewers []string `yaml:"defaultReviewers,omitempty" json:"defaultReviewers,omitempty"`

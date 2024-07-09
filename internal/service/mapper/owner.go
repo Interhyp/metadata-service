@@ -47,8 +47,8 @@ func (s *Impl) GetOwner(ctx context.Context, ownerAlias string) (openapi.OwnerDt
 	return result, err
 }
 
-func (s *Impl) processGroupMap(ctx context.Context, groupsMap *map[string][]string) {
-	for groupName, groupMembers := range *groupsMap {
+func (s *Impl) processGroupMap(ctx context.Context, groupsMap map[string][]string) {
+	for groupName, groupMembers := range groupsMap {
 		users, groups := util.SplitUsersAndGroups(groupMembers)
 		if len(users) > 0 {
 			filteredExistingUsers, err2 := s.Bitbucket.FilterExistingUsernames(ctx, users)
@@ -57,14 +57,14 @@ func (s *Impl) processGroupMap(ctx context.Context, groupsMap *map[string][]stri
 				if len(userDifference) > 0 {
 					s.Logging.Logger().Ctx(ctx).Warn().Printf("Found unknown users in configuration: %v", userDifference)
 				}
-				(*groupsMap)[groupName] = append(filteredExistingUsers, groups...)
+				groupsMap[groupName] = append(filteredExistingUsers, groups...)
 			} else {
 				s.Logging.Logger().Ctx(ctx).Error().Printf("Error checking existing bitbucket users: %s", err2.Error())
 			}
 
-			if len((*groupsMap)[groupName]) <= 0 && len(users) > 0 {
+			if len(groupsMap[groupName]) <= 0 && len(users) > 0 {
 				s.Logging.Logger().Ctx(ctx).Warn().Printf("Fallback to predefined reviewers")
-				(*groupsMap)[groupName] = append((*groupsMap)[groupName], s.CustomConfiguration.BitbucketReviewerFallback())
+				groupsMap[groupName] = append(groupsMap[groupName], s.CustomConfiguration.BitbucketReviewerFallback())
 			}
 		}
 	}

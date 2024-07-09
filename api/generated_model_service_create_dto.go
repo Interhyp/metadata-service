@@ -28,10 +28,10 @@ type ServiceCreateDto struct {
 	// The operation type of the service. 'WORKLOAD' follows the default deployment strategy of one instance per environment, 'PLATFORM' one instance per cluster or node and 'APPLICATION' is a standalone application that is not deployed via the common strategies.
 	OperationType *string `yaml:"operationType,omitempty" json:"operationType,omitempty"`
 	// The value defines if the service is available from the internet and the time period in which security holes must be processed.
-	InternetExposed *bool              `yaml:"internetExposed,omitempty" json:"internetExposed,omitempty"`
-	Tags            []string           `yaml:"tags,omitempty" json:"tags,omitempty"`
-	Labels          *map[string]string `yaml:"labels,omitempty" json:"labels,omitempty"`
-	Spec            *ServiceSpecDto    `yaml:"spec,omitempty" json:"spec,omitempty"`
+	InternetExposed *bool             `yaml:"internetExposed,omitempty" json:"internetExposed,omitempty"`
+	Tags            []string          `yaml:"tags,omitempty" json:"tags,omitempty"`
+	Labels          map[string]string `yaml:"labels,omitempty" json:"labels,omitempty"`
+	Spec            *ServiceSpecDto   `yaml:"spec,omitempty" json:"spec,omitempty"`
 	// The jira issue to use for committing a change, or the last jira issue used.
 	JiraIssue string `yaml:"-" json:"jiraIssue"`
 }

@@ -6,22 +6,24 @@ if [ -d "api-generator" ]; then
   cd api-generator
 fi
 
-GENERATOR=openapi-generator-cli-7.5.0_INTERHYP.jar
+GENERATOR=openapi-generator-cli-7.7.1_INTERHYP.jar
 
 if [ ! -f "$GENERATOR" ]; then
-  echo "Please download https://github.com/Interhyp/openapi-generator/blob/new_generator_rebased/bin/openapi-generator-cli-7.5.0_INTERHYP.jar using your browser and save as $GENERATOR"
+  echo "Please download https://github.com/Interhyp/openapi-generator/blob/new_generator_rebased/bin/openapi-generator-cli-7.7.1_INTERHYP.jar using your browser and save as $GENERATOR"
   exit 1
 fi
 
 API_MODEL_PACKAGE_NAME=openapi
 
-java -jar $GENERATOR generate \
-  -i ../api/openapi-v3-spec.json \
-  -o ../api \
-  --package-name $API_MODEL_PACKAGE_NAME \
-  --global-property models \
-  --additional-properties=enumClassPrefix=true,structPrefix=true \
-  -g go-autumrest
+function generate_apimodel {
+  java -jar $GENERATOR generate \
+    -i ../api/openapi-v3-spec.yaml \
+    -o ../api \
+    --package-name $API_MODEL_PACKAGE_NAME \
+    --global-property models \
+    --additional-properties=enumClassPrefix=true,structPrefix=true \
+    -g go-autumrest
+}
 
 function generate_downstream {
   P_DOWNSTREAM_NAME=$1
@@ -38,6 +40,8 @@ function generate_downstream {
     --additional-properties=enumClassPrefix=true,structPrefix=true \
     -g go-autumrest
 }
+
+generate_apimodel
 
 # -------------------------------------- customization -----------------------------------------
 # omit certain fields from yaml representations, which we use internally to save to files in git

@@ -89,7 +89,7 @@ func (s *Impl) GetAllGroupMembers(ctx context.Context, groupOwner string, groupN
 	owner, err := s.Cache.GetOwner(ctx, groupOwner)
 
 	if err == nil && owner.Groups != nil {
-		for k, v := range *owner.Groups {
+		for k, v := range owner.Groups {
 			allGroups[k] = v
 		}
 	}
@@ -323,11 +323,11 @@ func patchLinksSlice(patch []openapi.Link, original []openapi.Link) []openapi.Li
 	}
 }
 
-func patchStringToStringArrayMapPtr(patch *map[string][]string, original *map[string][]string) *map[string][]string {
+func patchStringToStringArrayMapPtr(patch map[string][]string, original map[string][]string) map[string][]string {
 	if patch == nil {
 		return original
 	}
-	if len(*patch) == 0 {
+	if len(patch) == 0 {
 		return original
 	} else {
 		return patch
