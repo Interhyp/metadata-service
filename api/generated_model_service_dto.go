@@ -38,6 +38,6 @@ type ServiceDto struct {
 	CommitHash string `yaml:"-" json:"commitHash"`
 	// The jira issue to use for committing a change, or the last jira issue used.
 	JiraIssue string `yaml:"-" json:"jiraIssue"`
-	// The current phase of the service's development. A service usually starts off as 'experimental', then becomes 'operational' (i. e. can be reliably used and/or consumed). Once 'deprecated', the service doesn’t guarantee reliable use/consumption any longer.
+	// The current phase of the service's development. A service usually starts off as 'experimental', then becomes 'operational' (i. e. can be reliably used and/or consumed). Once 'deprecated', the service doesn’t guarantee reliable use/consumption any longer and if 'decommissionable', the service will soon cease to exist.
 	Lifecycle *string `yaml:"lifecycle,omitempty" json:"lifecycle,omitempty"`
 }
