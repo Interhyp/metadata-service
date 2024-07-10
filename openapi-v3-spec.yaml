@@ -1449,7 +1449,7 @@ components:
           examples:
             - ISSUE-0000
         lifecycle:
-          description: 'The current phase of the service''s development. A service usually starts off as ''experimental'', then becomes ''operational'' (i. e. can be reliably used and/or consumed). Once ''deprecated'', the service doesn’t guarantee reliable use/consumption any longer.'
+          description: 'The current phase of the service''s development. A service usually starts off as ''experimental'', then becomes ''operational'' (i. e. can be reliably used and/or consumed). Once ''deprecated'', the service doesn’t guarantee reliable use/consumption any longer and if ''decommissionable'', the service will soon cease to exist.'
           type: string
           examples:
             - operational
@@ -1457,6 +1457,7 @@ components:
             - experimental
             - operational
             - deprecated
+            - decommissionable
       required:
         - owner
         - quicklinks
