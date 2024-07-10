@@ -1987,6 +1987,8 @@ components:
           enum:
             - DEFAULT
             - SEMANTIC
+        refProtections:
+          $ref: '#/components/schemas/RefProtections'
         requireIssue:
           description: 'Configures JQL matcher with query: issuetype in (Story, Bug) AND ''Risk Level'' is not EMPTY'
           type: boolean
@@ -2135,6 +2137,79 @@ components:
       required:
         - name
         - url
+    RefProtections:
+      type: object
+      properties:
+        branches:
+          type: object
+          properties:
+            requirePR:
+              description: Forces creating a PR to update the proteced refs.
+              type: array
+              items:
+                $ref: '#/components/schemas/ProtectedRef'
+            preventAllChanges:
+              description: Prevents all changes of the proteced refs.
+              type: array
+              items:
+                $ref: '#/components/schemas/ProtectedRef'
+            preventCreation:
+              description: Prevents creation of the proteced refs. Results in preventAllChanges for BitBucket.
+              type: array
+              items:
+                $ref: '#/components/schemas/ProtectedRef'
+            preventDeletion:
+              description: Prevents deletion of the proteced refs.
+              type: array
+              items:
+                $ref: '#/components/schemas/ProtectedRef'
+            preventPush:
+              description: Prevents pushes to the proteced refs. Results in preventAllChanges for BitBucket.
+              type: array
+              items:
+                $ref: '#/components/schemas/ProtectedRef'
+            preventForcePush:
+              description: Prevents force pushes to the proteced refs for users with push permission.
+              type: array
+              items:
+                $ref: '#/components/schemas/ProtectedRef'
+        tags:
+          type: object
+          properties:
+            preventAllChanges:
+              description: Prevents all changes of the proteced refs.
+              type: array
+              items:
+                $ref: '#/components/schemas/ProtectedRef'
+            preventCreation:
+              description: Prevents creation of the proteced refs. Results in preventAllChanges for BitBucket.
+              type: array
+              items:
+                $ref: '#/components/schemas/ProtectedRef'
+            preventDeletion:
+              description: Prevents deletion of the proteced refs.
+              type: array
+              items:
+                $ref: '#/components/schemas/ProtectedRef'
+            preventForcePush:
+              description: Prevents force pushes to the proteced refs for users with push permission.
+              type: array
+              items:
+                $ref: '#/components/schemas/ProtectedRef'
+    ProtectedRef:
+      type: object
+      required: [ pattern ]
+      properties:
+        pattern:
+          type: string
+          pattern: '^(?!refs\/(heads|tags)\/).*$'
+          description: "fnmatch pattern to define protected refs. Must not start with refs/heads/ or refs/tags/. Special value :MAINLINE: matches the currently configured mainline for branch protections."
+        exemptions:
+          description: list of users, teams or apps for whom this protection does not apply
+          type: array
+          items:
+            type: string
+            description: 'A user, team or app identifier. Teams are identified by leading @<OWNER>. prefix, apps are identified by app: prefix.'
     ErrorDto:
       type: object
       properties:
