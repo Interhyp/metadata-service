@@ -21,7 +21,8 @@ type RepositoryConfigurationDto struct {
 	// Use an explicit commit message regex.
 	CommitMessageRegex *string `yaml:"commitMessageRegex,omitempty" json:"commitMessageRegex,omitempty"`
 	// Adds a corresponding commit message regex.
-	CommitMessageType *string `yaml:"commitMessageType,omitempty" json:"commitMessageType,omitempty"`
+	CommitMessageType *string         `yaml:"commitMessageType,omitempty" json:"commitMessageType,omitempty"`
+	RefProtections    *RefProtections `yaml:"refProtections,omitempty" json:"refProtections,omitempty"`
 	// Configures JQL matcher with query: issuetype in (Story, Bug) AND 'Risk Level' is not EMPTY
 	RequireIssue *bool `yaml:"requireIssue,omitempty" json:"requireIssue,omitempty"`
 	// Set the required successful builds counter.

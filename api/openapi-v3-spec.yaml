@@ -2139,6 +2139,7 @@ components:
         - url
     RefProtections:
       type: object
+      description: Configures available protections for git refs
       properties:
         branches:
           type: object
