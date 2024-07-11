@@ -848,7 +848,7 @@ func TestPATCHService_NonexistentOwner(t *testing.T) {
 
 	docs.When("When they attempt to patch a service referring to an owner that does not exist")
 	body := tstServicePatch()
-	body.Owner = p("not-there")
+	body.Owner = ptr("not-there")
 	response, err := tstPerformPatch("/rest/api/v1/services/some-service-backend", token, &body)
 
 	docs.Then("Then the request fails and the error response is as expected")
@@ -885,8 +885,8 @@ func TestPATCHService_InvalidValues(t *testing.T) {
 
 	docs.When("When they request a patch of a service with invalid values in the body")
 	body := tstServicePatch()
-	body.Owner = p("")       // invalid
-	body.AlertTarget = p("") // invalid (nil would be valid)
+	body.Owner = ptr("")       // invalid
+	body.AlertTarget = ptr("") // invalid (nil would be valid)
 	body.CommitHash = ""
 	body.TimeStamp = ""
 	response, err := tstPerformPatch("/rest/api/v1/services/some-service-backend", token, &body)
@@ -1021,7 +1021,7 @@ func TestPATCHService_ChangeOwner(t *testing.T) {
 
 	docs.When("When they perform a valid patch of an existing service that changes its owner")
 	body := tstServicePatch()
-	body.Owner = p("deleteme")
+	body.Owner = ptr("deleteme")
 	response, err := tstPerformPatch("/rest/api/v1/services/some-service-backend", token, &body)
 
 	docs.Then("Then the request is successful and the response is as expected")
@@ -1169,7 +1169,7 @@ func TestPATCHService_ImplementationCrossref_ChangeOwner(t *testing.T) {
 
 	docs.When("When they perform a valid patch of the service that moves it to a new owner")
 	body := tstServicePatch()
-	body.Owner = p("deleteme")
+	body.Owner = ptr("deleteme")
 	body.CommitHash = tmp.CommitHash
 	response, err := tstPerformPatch("/rest/api/v1/services/crossref", token, &body)
 

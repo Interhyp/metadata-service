@@ -137,6 +137,8 @@ generator: java-spring-cloud
 const chart = `url: ssh://git@bitbucket.some-organisation.com:7999/helm/karma-wrapper.git
 mainline: master
 unittest: false
+configuration:
+  branchNameRegex: testing_.*
 `
 
 const (

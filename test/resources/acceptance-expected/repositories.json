@@ -2,6 +2,9 @@
   "repositories": {
     "karma-wrapper.helm-chart": {
       "commitHash": "6c8ac2c35791edf9979623c717a243fc53400000",
+      "configuration": {
+        "branchNameRegex": "testing_.*"
+      },
       "jiraIssue": "ISSUE-0000",
       "mainline": "master",
       "owner": "some-owner",

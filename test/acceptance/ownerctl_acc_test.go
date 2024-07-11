@@ -633,7 +633,7 @@ func TestPATCHOwner_InvalidValues(t *testing.T) {
 
 	docs.When("When they request a patch of an owner with invalid values in the body")
 	body := tstOwnerPatch()
-	body.Contact = p("") // invalid
+	body.Contact = ptr("") // invalid
 	body.CommitHash = ""
 	body.TimeStamp = ""
 	response, err := tstPerformPatch("/rest/api/v1/owners/some-owner", token, &body)

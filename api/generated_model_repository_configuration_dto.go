@@ -11,11 +11,11 @@ Contact: somebody@some-organisation.com
 
 package openapi
 
-// RepositoryConfigurationDto struct for RepositoryConfigurationDto
+// RepositoryConfigurationDto Attributes to configure the repository. If a configuration exists there are also some configured defaults for the repository.
 type RepositoryConfigurationDto struct {
 	// Ssh-Keys configured on the repository.
-	AccessKeys  []RepositoryConfigurationAccessKeyDto       `yaml:"accessKeys,omitempty" json:"accessKeys,omitempty"`
-	MergeConfig *RepositoryConfigurationPatchDtoMergeConfig `yaml:"mergeConfig,omitempty" json:"mergeConfig,omitempty"`
+	AccessKeys  []RepositoryConfigurationAccessKeyDto  `yaml:"accessKeys,omitempty" json:"accessKeys,omitempty"`
+	MergeConfig *RepositoryConfigurationDtoMergeConfig `yaml:"mergeConfig,omitempty" json:"mergeConfig,omitempty"`
 	// Use an explicit branch name regex.
 	BranchNameRegex *string `yaml:"branchNameRegex,omitempty" json:"branchNameRegex,omitempty"`
 	// Use an explicit commit message regex.

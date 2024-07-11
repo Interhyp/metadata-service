@@ -5,15 +5,7 @@ import (
 	"github.com/Interhyp/metadata-service/internal/repository/notifier"
 )
 
-func p(v string) *string {
-	return &v
-}
-
-func pb(v bool) *bool {
-	return &v
-}
-
-func pi(v int32) *int32 {
+func ptr[T interface{}](v T) *T {
 	return &v
 }
 
@@ -22,9 +14,9 @@ func pi(v int32) *int32 {
 func tstOwner() openapi.OwnerDto {
 	return openapi.OwnerDto{
 		Contact:            "somebody@some-organisation.com",
-		TeamsChannelURL:    p("https://teams.microsoft.com/l/channel/somechannel"),
-		ProductOwner:       p("kschlangenheld"),
-		DefaultJiraProject: p("JIRA"),
+		TeamsChannelURL:    ptr("https://teams.microsoft.com/l/channel/somechannel"),
+		ProductOwner:       ptr("kschlangenheld"),
+		DefaultJiraProject: ptr("JIRA"),
 		TimeStamp:          "2022-11-06T18:14:10Z",
 		CommitHash:         "6c8ac2c35791edf9979623c717a243fc53400000",
 		JiraIssue:          "ISSUE-2345",
@@ -33,8 +25,8 @@ func tstOwner() openapi.OwnerDto {
 
 func tstOwnerPatch() openapi.OwnerPatchDto {
 	return openapi.OwnerPatchDto{
-		Contact:         p("changed@some-organisation.com"),
-		TeamsChannelURL: p("https://teams.microsoft.com/l/channel/somechannel"),
+		Contact:         ptr("changed@some-organisation.com"),
+		TeamsChannelURL: ptr("https://teams.microsoft.com/l/channel/somechannel"),
 		TimeStamp:       "2022-11-06T18:14:10Z",
 		CommitHash:      "6c8ac2c35791edf9979623c717a243fc53400000",
 		JiraIssue:       "ISSUE-2345",
@@ -44,9 +36,9 @@ func tstOwnerPatch() openapi.OwnerPatchDto {
 func tstOwnerUnchanged() openapi.OwnerDto {
 	return openapi.OwnerDto{
 		Contact:            "somebody@some-organisation.com",
-		TeamsChannelURL:    p("https://teams.microsoft.com/l/channel/somechannel"),
-		ProductOwner:       p("kschlangenheldt"),
-		DefaultJiraProject: p("ISSUE"),
+		TeamsChannelURL:    ptr("https://teams.microsoft.com/l/channel/somechannel"),
+		ProductOwner:       ptr("kschlangenheldt"),
+		DefaultJiraProject: ptr("ISSUE"),
 		TimeStamp:          "2022-11-06T18:14:10Z",
 		CommitHash:         "6c8ac2c35791edf9979623c717a243fc53400000",
 		JiraIssue:          "ISSUE-2345",
@@ -55,8 +47,8 @@ func tstOwnerUnchanged() openapi.OwnerDto {
 
 func tstOwnerUnchangedPatch() openapi.OwnerPatchDto {
 	return openapi.OwnerPatchDto{
-		Contact:         p("somebody@some-organisation.com"),
-		TeamsChannelURL: p("https://teams.microsoft.com/l/channel/somechannel"),
+		Contact:         ptr("somebody@some-organisation.com"),
+		TeamsChannelURL: ptr("https://teams.microsoft.com/l/channel/somechannel"),
 		TimeStamp:       "2022-11-06T18:14:10Z",
 		CommitHash:      "6c8ac2c35791edf9979623c717a243fc53400000",
 		JiraIssue:       "ISSUE-2345",
@@ -112,21 +104,21 @@ func tstService(name string) openapi.ServiceDto {
 	return openapi.ServiceDto{
 		Owner: "some-owner",
 		Quicklinks: []openapi.Quicklink{{
-			Url:   p("/swagger-ui/index.html"),
-			Title: p("Swagger UI"),
+			Url:   ptr("/swagger-ui/index.html"),
+			Title: ptr("Swagger UI"),
 		}},
 		Repositories: []string{
 			name + ".helm-deployment",
 			name + ".implementation",
 		},
 		AlertTarget:     "squad_nothing@some-organisation.com",
-		DevelopmentOnly: pb(false),
+		DevelopmentOnly: ptr(false),
 		OperationType:   nil,
 		TimeStamp:       "2022-11-06T18:14:10Z",
 		CommitHash:      "6c8ac2c35791edf9979623c717a243fc53400000",
 		JiraIssue:       "ISSUE-2345",
-		Lifecycle:       p("experimental"),
-		InternetExposed: pb(true),
+		Lifecycle:       ptr("experimental"),
+		InternetExposed: ptr(true),
 	}
 }
 
@@ -134,15 +126,15 @@ func tstServiceUnchanged(name string) openapi.ServiceDto {
 	return openapi.ServiceDto{
 		Owner: "some-owner",
 		Quicklinks: []openapi.Quicklink{{
-			Url:   p("/swagger-ui/index.html"),
-			Title: p("Swagger UI"),
+			Url:   ptr("/swagger-ui/index.html"),
+			Title: ptr("Swagger UI"),
 		}},
 		Repositories: []string{
 			name + ".helm-deployment",
 			name + ".implementation",
 		},
 		AlertTarget:     "https://webhook.com/9asdflk29d4m39g",
-		DevelopmentOnly: pb(false),
+		DevelopmentOnly: ptr(false),
 		OperationType:   nil,
 		TimeStamp:       "2022-11-06T18:14:10Z",
 		CommitHash:      "6c8ac2c35791edf9979623c717a243fc53400000",
@@ -152,12 +144,12 @@ func tstServiceUnchanged(name string) openapi.ServiceDto {
 
 func tstServicePatch() openapi.ServicePatchDto {
 	return openapi.ServicePatchDto{
-		AlertTarget:     p("squad_nothing@some-organisation.com"),
+		AlertTarget:     ptr("squad_nothing@some-organisation.com"),
 		TimeStamp:       "2022-11-06T18:14:10Z",
 		CommitHash:      "6c8ac2c35791edf9979623c717a243fc53400000",
 		JiraIssue:       "ISSUE-2345",
-		Lifecycle:       p("experimental"),
-		InternetExposed: pb(true),
+		Lifecycle:       ptr("experimental"),
+		InternetExposed: ptr(true),
 	}
 }
 
@@ -230,17 +222,17 @@ func tstRepository() openapi.RepositoryDto {
 		Owner:    "some-owner",
 		Url:      "ssh://git@bitbucket.some-organisation.com:7999/helm/karma-wrapper.git",
 		Mainline: "master",
-		Unittest: pb(false),
+		Unittest: ptr(false),
 		Configuration: &openapi.RepositoryConfigurationDto{
 			AccessKeys: []openapi.RepositoryConfigurationAccessKeyDto{
 				{
-					Key:        p("KEY"),
-					Permission: p("REPO_WRITE"),
+					Key:        ptr("KEY"),
+					Permission: ptr("REPO_WRITE"),
 				},
 			},
-			CommitMessageType:       p("SEMANTIC"),
-			RequireIssue:            pb(false),
-			RequireSuccessfulBuilds: pi(1),
+			CommitMessageType:       ptr("SEMANTIC"),
+			RequireIssue:            ptr(false),
+			RequireSuccessfulBuilds: ptr(int32(1)),
 			RequireConditions:       map[string]openapi.ConditionReferenceDto{"snyk-key": {RefMatcher: "master"}},
 			Webhooks: &openapi.RepositoryConfigurationWebhooksDto{
 				Additional: []openapi.RepositoryConfigurationWebhookDto{
@@ -262,10 +254,13 @@ func tstRepository() openapi.RepositoryDto {
 
 func tstRepositoryUnchanged() openapi.RepositoryDto {
 	return openapi.RepositoryDto{
-		Owner:      "some-owner",
-		Url:        "ssh://git@bitbucket.some-organisation.com:7999/helm/karma-wrapper.git",
-		Mainline:   "master",
-		Unittest:   pb(false),
+		Owner:    "some-owner",
+		Url:      "ssh://git@bitbucket.some-organisation.com:7999/helm/karma-wrapper.git",
+		Mainline: "master",
+		Unittest: ptr(false),
+		Configuration: &openapi.RepositoryConfigurationDto{
+			BranchNameRegex: ptr("testing_.*"),
+		},
 		TimeStamp:  "2022-11-06T18:14:10Z",
 		CommitHash: "6c8ac2c35791edf9979623c717a243fc53400000",
 		JiraIssue:  "ISSUE-2345",
@@ -274,7 +269,39 @@ func tstRepositoryUnchanged() openapi.RepositoryDto {
 
 func tstRepositoryPatch() openapi.RepositoryPatchDto {
 	return openapi.RepositoryPatchDto{
-		Mainline:   p("main"),
+		Mainline: ptr("main"),
+		Configuration: &openapi.RepositoryConfigurationPatchDto{
+			BranchNameRegex: ptr("testing_.*"),
+		},
+		TimeStamp:  "2022-11-06T18:14:10Z",
+		CommitHash: "6c8ac2c35791edf9979623c717a243fc53400000",
+		JiraIssue:  "ISSUE-2345",
+	}
+}
+
+func tstRepositoryPatchWithIgnoredConfigurationFields() interface{} {
+	return struct {
+		Mainline      *string                             `yaml:"mainline,omitempty" json:"mainline,omitempty"`
+		Configuration *openapi.RepositoryConfigurationDto `yaml:"configuration,omitempty" json:"configuration,omitempty"`
+		TimeStamp     string                              `yaml:"-" json:"timeStamp"`
+		CommitHash    string                              `yaml:"-" json:"commitHash"`
+		JiraIssue     string                              `yaml:"-" json:"jiraIssue"`
+		Labels        map[string]string                   `yaml:"labels,omitempty" json:"labels,omitempty"`
+	}{
+		Mainline: ptr("main"),
+		Configuration: &openapi.RepositoryConfigurationDto{
+			RequireIssue:      ptr(true),
+			RequireConditions: make(map[string]openapi.ConditionReferenceDto),
+			RefProtections: &openapi.RefProtections{
+				Branches: &openapi.RefProtectionsBranches{
+					RequirePR: []openapi.ProtectedRef{
+						{
+							Pattern: ".*",
+						},
+					},
+				},
+			},
+		},
 		TimeStamp:  "2022-11-06T18:14:10Z",
 		CommitHash: "6c8ac2c35791edf9979623c717a243fc53400000",
 		JiraIssue:  "ISSUE-2345",
@@ -323,6 +350,8 @@ func tstRepositoryExpectedYamlKarmaWrapper() string {
 	return `url: ssh://git@bitbucket.some-organisation.com:7999/helm/karma-wrapper.git
 mainline: main
 unittest: false
+configuration:
+    branchNameRegex: testing_.*
 `
 }
 
@@ -330,6 +359,8 @@ func tstRepositoryUnchangedExpectedYaml() string {
 	return `url: ssh://git@bitbucket.some-organisation.com:7999/helm/karma-wrapper.git
 mainline: master
 unittest: false
+configuration:
+    branchNameRegex: testing_.*
 `
 }
 
@@ -355,5 +386,8 @@ func tstUpdatedRepositoryPayload() openapi.NotificationPayload {
 	repo := tstRepositoryUnchanged()
 	repo.Mainline = "main"
 	repo.CommitHash = "6c8ac2c35791edf9979623c717a2430000000000"
+	repo.Configuration = &openapi.RepositoryConfigurationDto{
+		BranchNameRegex: ptr("testing_.*"),
+	}
 	return notifier.AsPayload(repo)
 }

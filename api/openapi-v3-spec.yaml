@@ -1957,6 +1957,93 @@ components:
             - ISSUE-0000
       required:
         - jiraIssue
+    RepositoryConfigurationDto:
+      description: Attributes to configure the repository. If a configuration exists there are also some configured defaults for the repository.
+      type: object
+      properties:
+        accessKeys:
+          description: Ssh-Keys configured on the repository.
+          type: array
+          items:
+            $ref: '#/components/schemas/RepositoryConfigurationAccessKeyDto'
+        mergeConfig:
+          type: object
+          properties:
+            defaultStrategy:
+              $ref: '#/components/schemas/MergeStrategy'
+            strategies:
+              type: array
+              items:
+                $ref: '#/components/schemas/MergeStrategy'
+        branchNameRegex:
+          description: Use an explicit branch name regex.
+          type: string
+        commitMessageRegex:
+          description: Use an explicit commit message regex.
+          type: string
+        commitMessageType:
+          description: Adds a corresponding commit message regex.
+          type: string
+          enum:
+            - DEFAULT
+            - SEMANTIC
+        requireSuccessfulBuilds:
+          description: Set the required successful builds counter.
+          type: integer
+        requireApprovals:
+          description: Set the required approvals counter.
+          type: integer
+        excludeMergeCommits:
+          description: Exclude merge commits from commit checks.
+          type: boolean
+        webhooks:
+          $ref: '#/components/schemas/RepositoryConfigurationWebhooksDto'
+        approvers:
+          description: 'Map of string (group name e.g. some-owner) of strings (list of approvers), one approval for each group is required.'
+          type: object
+          examples:
+            - some-owner: { }
+          additionalProperties:
+            type: array
+            items:
+              type: string
+        watchers:
+          description: 'List of strings (list of watchers, either usernames or group identifier), which are added as reviewers but require no approval.'
+          type: array
+          items:
+            type: string
+          examples:
+            - - someUser
+              - anotherUser
+              - '@owner.users'
+        defaultReviewers:
+          type: array
+          items:
+            type: string
+        signedApprovers:
+          description: 'List of users, who can sign a pull request.'
+          type: array
+          items:
+            type: string
+        archived:
+          description: Moves the repository into the archive.
+          type: boolean
+        unmanaged:
+          description: 'Repository will not be configured, also not archived.'
+          type: boolean
+        refProtections:
+          $ref: '#/components/schemas/RefProtections'
+        requireIssue:
+          description: 'Configures JQL matcher with query: issuetype in (Story, Bug) AND ''Risk Level'' is not EMPTY'
+          type: boolean
+        requireConditions:
+          description: Configuration of conditional builds as map of structs (key name e.g. some-key) of target references.
+          type: object
+          examples:
+            - some-key:
+                refMatcher: main
+          additionalProperties:
+            $ref: '#/components/schemas/ConditionReferenceDto'
     RepositoryConfigurationPatchDto:
       description: Attributes to configure the repository. If a configuration exists there are also some configured defaults for the repository.
       type: object
@@ -2002,7 +2089,7 @@ components:
           description: 'Map of string (group name e.g. some-owner) of strings (list of approvers), one approval for each group is required.'
           type: object
           examples:
-            - some-owner: {}
+            - some-owner: { }
           additionalProperties:
             type: array
             items:
@@ -2031,25 +2118,6 @@ components:
         unmanaged:
           description: 'Repository will not be configured, also not archived.'
           type: boolean
-    RepositoryConfigurationDto:
-      allOf:
-        - $ref: '#/components/schemas/RepositoryConfigurationPatchDto'
-        - description: Attributes to configure the repository. If a configuration exists there are also some configured defaults for the repository.
-          type: object
-          properties:
-            refProtections:
-              $ref: '#/components/schemas/RefProtections'
-            requireIssue:
-              description: 'Configures JQL matcher with query: issuetype in (Story, Bug) AND ''Risk Level'' is not EMPTY'
-              type: boolean
-            requireConditions:
-              description: Configuration of conditional builds as map of structs (key name e.g. some-key) of target references.
-              type: object
-              examples:
-                - some-key:
-                    refMatcher: main
-              additionalProperties:
-                $ref: '#/components/schemas/ConditionReferenceDto'
     MergeStrategy:
       type: object
       properties:
