@@ -25,40 +25,56 @@ func i(v int32) *int32 {
 
 func createRepositoryDto() openapi.RepositoryDto {
 	return openapi.RepositoryDto{
-		Owner:     "owner",
-		Url:       "url",
-		Mainline:  "mainline",
-		Generator: ptr("generator"),
-		Unittest:  ptr(true),
-		Configuration: &openapi.RepositoryConfigurationDto{
-			AccessKeys: []openapi.RepositoryConfigurationAccessKeyDto{
-				{
-					Key:        ptr("KEY"),
-					Permission: ptr("REPO_WRITE"),
-				},
+		Owner:         "owner",
+		Url:           "url",
+		Mainline:      "mainline",
+		Generator:     ptr("generator"),
+		Unittest:      ptr(true),
+		Configuration: createRepositoryConfigurationDto(),
+		Filecategory:  map[string][]string{"a": {"path/a.yaml"}},
+		Labels:        map[string]string{"label": "originalValue"},
+		TimeStamp:     "ts",
+		CommitHash:    "hash",
+	}
+}
+
+func createRepositoryConfigurationDto() *openapi.RepositoryConfigurationDto {
+	return &openapi.RepositoryConfigurationDto{
+		AccessKeys: []openapi.RepositoryConfigurationAccessKeyDto{
+			{
+				Key:        ptr("KEY"),
+				Permission: ptr("REPO_WRITE"),
 			},
-			CommitMessageType:       ptr("SEMANTIC"),
-			RequireIssue:            ptr(false),
-			RequireSuccessfulBuilds: i(1),
-			Webhooks: &openapi.RepositoryConfigurationWebhooksDto{
-				Additional: []openapi.RepositoryConfigurationWebhookDto{
-					{
-						Name:          "webhookname",
-						Url:           "webhookurl",
-						Events:        []string{"event"},
-						Configuration: map[string]string{"key": "value"},
-					},
-				},
-			},
-			Approvers:        map[string][]string{"group": {"approver1"}},
-			DefaultReviewers: []string{"defaultreviewer1"},
-			SignedApprovers:  []string{"signedapprover1"},
-			Archived:         ptr(false),
 		},
-		Filecategory: map[string][]string{"a": {"path/a.yaml"}},
-		Labels:       map[string]string{"label": "originalValue"},
-		TimeStamp:    "ts",
-		CommitHash:   "hash",
+		CommitMessageType:       ptr("SEMANTIC"),
+		RequireIssue:            ptr(false),
+		RequireSuccessfulBuilds: i(1),
+		Webhooks: &openapi.RepositoryConfigurationWebhooksDto{
+			Additional: []openapi.RepositoryConfigurationWebhookDto{
+				{
+					Name:          "webhookname",
+					Url:           "webhookurl",
+					Events:        []string{"event"},
+					Configuration: map[string]string{"key": "value"},
+				},
+			},
+		},
+		Approvers:        map[string][]string{"group": {"approver1"}},
+		DefaultReviewers: []string{"defaultreviewer1"},
+		SignedApprovers:  []string{"signedapprover1"},
+		Archived:         ptr(false),
+	}
+}
+func createRepositoryConfigurationPatchDtoFromConfigurationDto(input *openapi.RepositoryConfigurationDto) *openapi.RepositoryConfigurationPatchDto {
+	return &openapi.RepositoryConfigurationPatchDto{
+		AccessKeys:              input.AccessKeys,
+		CommitMessageType:       input.CommitMessageType,
+		RequireSuccessfulBuilds: input.RequireSuccessfulBuilds,
+		Webhooks:                input.Webhooks,
+		Approvers:               input.Approvers,
+		DefaultReviewers:        input.DefaultReviewers,
+		SignedApprovers:         input.SignedApprovers,
+		Archived:                input.Archived,
 	}
 }
 
@@ -71,7 +87,7 @@ func createRepositoryDtoWithoutConfig() openapi.RepositoryDto {
 func assertPatchRepository(t *testing.T, current openapi.RepositoryDto, patch openapi.RepositoryPatchDto, expected openapi.RepositoryDto) {
 	t.Helper()
 	actual := patchRepository(current, patch)
-	assert.Equal(t, expected, actual)
+	assert.EqualExportedValues(t, expected, actual)
 }
 
 func TestPatchRepository_EmptyPatch(t *testing.T) {
@@ -87,11 +103,20 @@ func TestPatchRepository_EmptyPatch(t *testing.T) {
 
 func TestPatchRepository_WithConfig_And_EmptyOriginal(t *testing.T) {
 	docs.Description("patching of repositories works with a missing original configuration")
+	beforePatch := createRepositoryDtoWithoutConfig()
 	expected := createRepositoryDto()
+	beforePatch.Configuration = &openapi.RepositoryConfigurationDto{
+		//transfer not patchable fields to beforePatch
+		RefProtections:    expected.Configuration.RefProtections,
+		RequireIssue:      expected.Configuration.RequireIssue,
+		RequireConditions: expected.Configuration.RequireConditions,
+	}
 	assertPatchRepository(t,
-		createRepositoryDtoWithoutConfig(),
+		beforePatch,
 		openapi.RepositoryPatchDto{
-			Configuration: expected.Configuration,
+			//Generator:     expected.Generator,
+			Unittest:      expected.Unittest,
+			Configuration: createRepositoryConfigurationPatchDtoFromConfigurationDto(expected.Configuration),
 			TimeStamp:     expected.TimeStamp,
 			CommitHash:    expected.CommitHash,
 		},
@@ -107,7 +132,7 @@ func TestPatchRepository_ReplaceAll(t *testing.T) {
 		Mainline:  ptr("newmainline"),
 		Generator: ptr("newgenerator"),
 		Unittest:  ptr(false),
-		Configuration: &openapi.RepositoryConfigurationDto{
+		Configuration: &openapi.RepositoryConfigurationPatchDto{
 			AccessKeys: []openapi.RepositoryConfigurationAccessKeyDto{
 				{
 					Key:        ptr("DEPLOYMENT"),
@@ -117,7 +142,6 @@ func TestPatchRepository_ReplaceAll(t *testing.T) {
 			BranchNameRegex:         ptr("(testing_[^_-]+_[^-]+$)"),
 			CommitMessageRegex:      ptr("(([A-Z][A-Z_0-9]+-[0-9]+))(.|\\n)*"),
 			CommitMessageType:       ptr("DEFAULT"),
-			RequireIssue:            ptr(true),
 			RequireSuccessfulBuilds: i(2),
 			Webhooks: &openapi.RepositoryConfigurationWebhooksDto{
 				Additional: []openapi.RepositoryConfigurationWebhookDto{
@@ -154,7 +178,7 @@ func TestPatchRepository_ReplaceAll(t *testing.T) {
 			BranchNameRegex:         ptr("(testing_[^_-]+_[^-]+$)"),
 			CommitMessageRegex:      ptr("(([A-Z][A-Z_0-9]+-[0-9]+))(.|\\n)*"),
 			CommitMessageType:       ptr("DEFAULT"),
-			RequireIssue:            ptr(true),
+			RequireIssue:            ptr(false),
 			RequireSuccessfulBuilds: i(2),
 			Webhooks: &openapi.RepositoryConfigurationWebhooksDto{
 				Additional: []openapi.RepositoryConfigurationWebhookDto{
@@ -185,7 +209,7 @@ func TestPatchRepository_ClearFields(t *testing.T) {
 		Url:       ptr(""),
 		Mainline:  ptr(""),
 		Generator: ptr(""),
-		Configuration: &openapi.RepositoryConfigurationDto{
+		Configuration: &openapi.RepositoryConfigurationPatchDto{
 			AccessKeys:        []openapi.RepositoryConfigurationAccessKeyDto{},
 			CommitMessageType: ptr(""),
 			Webhooks: &openapi.RepositoryConfigurationWebhooksDto{

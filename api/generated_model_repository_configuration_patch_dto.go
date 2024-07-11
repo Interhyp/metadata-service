@@ -11,8 +11,8 @@ Contact: somebody@some-organisation.com
 
 package openapi
 
-// RepositoryConfigurationDto struct for RepositoryConfigurationDto
-type RepositoryConfigurationDto struct {
+// RepositoryConfigurationPatchDto Attributes to configure the repository. If a configuration exists there are also some configured defaults for the repository.
+type RepositoryConfigurationPatchDto struct {
 	// Ssh-Keys configured on the repository.
 	AccessKeys  []RepositoryConfigurationAccessKeyDto       `yaml:"accessKeys,omitempty" json:"accessKeys,omitempty"`
 	MergeConfig *RepositoryConfigurationPatchDtoMergeConfig `yaml:"mergeConfig,omitempty" json:"mergeConfig,omitempty"`
@@ -39,10 +39,5 @@ type RepositoryConfigurationDto struct {
 	// Moves the repository into the archive.
 	Archived *bool `yaml:"archived,omitempty" json:"archived,omitempty"`
 	// Repository will not be configured, also not archived.
-	Unmanaged      *bool           `yaml:"unmanaged,omitempty" json:"unmanaged,omitempty"`
-	RefProtections *RefProtections `yaml:"refProtections,omitempty" json:"refProtections,omitempty"`
-	// Configures JQL matcher with query: issuetype in (Story, Bug) AND 'Risk Level' is not EMPTY
-	RequireIssue *bool `yaml:"requireIssue,omitempty" json:"requireIssue,omitempty"`
-	// Configuration of conditional builds as map of structs (key name e.g. some-key) of target references.
-	RequireConditions map[string]ConditionReferenceDto `yaml:"requireConditions,omitempty" json:"requireConditions,omitempty"`
+	Unmanaged *bool `yaml:"unmanaged,omitempty" json:"unmanaged,omitempty"`
 }

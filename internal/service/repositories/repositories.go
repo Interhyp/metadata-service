@@ -440,7 +440,7 @@ func patchRepository(current openapi.RepositoryDto, patch openapi.RepositoryPatc
 	}
 }
 
-func patchConfiguration(patch *openapi.RepositoryConfigurationDto, original *openapi.RepositoryConfigurationDto) *openapi.RepositoryConfigurationDto {
+func patchConfiguration(patch *openapi.RepositoryConfigurationPatchDto, original *openapi.RepositoryConfigurationDto) *openapi.RepositoryConfigurationDto {
 	if patch != nil {
 		if original == nil {
 			original = &openapi.RepositoryConfigurationDto{}
@@ -450,29 +450,18 @@ func patchConfiguration(patch *openapi.RepositoryConfigurationDto, original *ope
 			BranchNameRegex:         patchStringPtr(patch.BranchNameRegex, original.BranchNameRegex),
 			CommitMessageRegex:      patchStringPtr(patch.CommitMessageRegex, original.CommitMessageRegex),
 			CommitMessageType:       patchStringPtr(patch.CommitMessageType, original.CommitMessageType),
-			RequireIssue:            patchPtr[bool](patch.RequireIssue, original.RequireIssue),
 			RequireSuccessfulBuilds: patchPtr[int32](patch.RequireSuccessfulBuilds, original.RequireSuccessfulBuilds),
 			ExcludeMergeCommits:     patchPtr[bool](patch.ExcludeMergeCommits, original.ExcludeMergeCommits),
-			RequireConditions:       patchConditions(patch.RequireConditions, original.RequireConditions),
 			Webhooks:                patchWebhooks(patch.Webhooks, original.Webhooks),
 			Approvers:               patchApprovers(patch.Approvers, original.Approvers),
 			Watchers:                patchStringSlice(patch.Watchers, original.Watchers),
 			DefaultReviewers:        patchStringSlice(patch.DefaultReviewers, original.DefaultReviewers),
 			SignedApprovers:         patchStringSlice(patch.SignedApprovers, original.SignedApprovers),
 			Archived:                patchPtr[bool](patch.Archived, original.Archived),
-		}
-	} else {
-		return original
-	}
-}
-
-func patchConditions(patch map[string]openapi.ConditionReferenceDto, original map[string]openapi.ConditionReferenceDto) map[string]openapi.ConditionReferenceDto {
-	if patch != nil {
-		if len(patch) == 0 {
-			// remove
-			return nil
-		} else {
-			return patch
+			// fields not allowed for patching carry over from original
+			RequireIssue:      original.RequireIssue,
+			RequireConditions: original.RequireConditions,
+			RefProtections:    original.RefProtections,
 		}
 	} else {
 		return original

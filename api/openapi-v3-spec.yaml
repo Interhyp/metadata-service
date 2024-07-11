@@ -1870,7 +1870,7 @@ components:
           type: boolean
           default: false
         configuration:
-          $ref: '#/components/schemas/RepositoryConfigurationDto'
+          $ref: '#/components/schemas/RepositoryConfigurationPatchDto'
         filecategory:
           $ref: '#/components/schemas/RepositoryFileCategoriesDto'
         timeStamp:
@@ -1957,7 +1957,7 @@ components:
             - ISSUE-0000
       required:
         - jiraIssue
-    RepositoryConfigurationDto:
+    RepositoryConfigurationPatchDto:
       description: Attributes to configure the repository. If a configuration exists there are also some configured defaults for the repository.
       type: object
       properties:
@@ -1987,11 +1987,6 @@ components:
           enum:
             - DEFAULT
             - SEMANTIC
-        refProtections:
-          $ref: '#/components/schemas/RefProtections'
-        requireIssue:
-          description: 'Configures JQL matcher with query: issuetype in (Story, Bug) AND ''Risk Level'' is not EMPTY'
-          type: boolean
         requireSuccessfulBuilds:
           description: Set the required successful builds counter.
           type: integer
@@ -2001,14 +1996,6 @@ components:
         excludeMergeCommits:
           description: Exclude merge commits from commit checks.
           type: boolean
-        requireConditions:
-          description: Configuration of conditional builds as map of structs (key name e.g. some-key) of target references.
-          type: object
-          examples:
-            - some-key:
-                refMatcher: main
-          additionalProperties:
-            $ref: '#/components/schemas/ConditionReferenceDto'
         webhooks:
           $ref: '#/components/schemas/RepositoryConfigurationWebhooksDto'
         approvers:
@@ -2044,6 +2031,25 @@ components:
         unmanaged:
           description: 'Repository will not be configured, also not archived.'
           type: boolean
+    RepositoryConfigurationDto:
+      allOf:
+        - $ref: '#/components/schemas/RepositoryConfigurationPatchDto'
+        - description: Attributes to configure the repository. If a configuration exists there are also some configured defaults for the repository.
+          type: object
+          properties:
+            refProtections:
+              $ref: '#/components/schemas/RefProtections'
+            requireIssue:
+              description: 'Configures JQL matcher with query: issuetype in (Story, Bug) AND ''Risk Level'' is not EMPTY'
+              type: boolean
+            requireConditions:
+              description: Configuration of conditional builds as map of structs (key name e.g. some-key) of target references.
+              type: object
+              examples:
+                - some-key:
+                    refMatcher: main
+              additionalProperties:
+                $ref: '#/components/schemas/ConditionReferenceDto'
     MergeStrategy:
       type: object
       properties:

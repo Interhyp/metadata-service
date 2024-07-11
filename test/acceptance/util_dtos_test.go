@@ -298,11 +298,7 @@ configuration:
         - key: KEY
           permission: REPO_WRITE
     commitMessageType: SEMANTIC
-    requireIssue: false
     requireSuccessfulBuilds: 1
-    requireConditions:
-        snyk-key:
-            refMatcher: master
     webhooks:
         additional:
             - name: webhookname
@@ -312,6 +308,10 @@ configuration:
     approvers:
         testing:
             - some-user
+    requireIssue: false
+    requireConditions:
+        snyk-key:
+            refMatcher: master
 filecategory:
     cached-template:
         - cached-templates/tpl1.yaml

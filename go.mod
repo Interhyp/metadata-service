@@ -29,6 +29,7 @@ require (
 	github.com/rs/zerolog v1.33.0
 	github.com/stretchr/testify v1.9.0
 	gopkg.in/yaml.v3 v3.0.1
+
 )
 
 require (
@@ -36,7 +37,7 @@ require (
 	github.com/Microsoft/go-winio v0.6.1 // indirect
 	github.com/ProtonMail/go-crypto v1.0.0 // indirect
 	github.com/StephanHCB/go-autumn-acorn-registry v0.3.1 // indirect
-	github.com/StephanHCB/go-autumn-web-swagger-ui v0.2.3 // indirect
+	github.com/StephanHCB/go-autumn-web-swagger-ui v0.3.2 // indirect
 	github.com/armon/go-radix v1.0.0 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
