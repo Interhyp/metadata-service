@@ -160,6 +160,11 @@ func (s *Impl) GetRepository(ctx context.Context, repoKey string) (openapi.Repos
 			repoConfig.Watchers = s.expandUserGroups(ctx, repoConfig.Watchers)
 			repositoryDto.Configuration = &repoConfig
 		}
+		if repoConfig.RefProtections != nil {
+			repoConfig.RefProtections = s.expandRefProtectionsExemptionLists(ctx, repoConfig.RefProtections)
+			repositoryDto.Configuration = &repoConfig
+		}
+
 	}
 
 	if err == nil && repositoryDto.Filecategory != nil {
@@ -671,6 +676,39 @@ func (s *Impl) validateFilecategory(messages []string, filecategories map[string
 	}
 
 	return messages
+}
+
+func (s *Impl) expandRefProtectionsExemptionLists(ctx context.Context, protections *openapi.RefProtections) *openapi.RefProtections {
+	if protections == nil {
+		return protections
+	}
+	if protections.Branches != nil {
+		protections.Branches.RequirePR = s.expandProtectedRefsExemptionLists(ctx, protections.Branches.RequirePR)
+		protections.Branches.PreventAllChanges = s.expandProtectedRefsExemptionLists(ctx, protections.Branches.PreventAllChanges)
+		protections.Branches.PreventCreation = s.expandProtectedRefsExemptionLists(ctx, protections.Branches.PreventCreation)
+		protections.Branches.PreventDeletion = s.expandProtectedRefsExemptionLists(ctx, protections.Branches.PreventDeletion)
+		protections.Branches.PreventPush = s.expandProtectedRefsExemptionLists(ctx, protections.Branches.PreventPush)
+		protections.Branches.PreventForcePush = s.expandProtectedRefsExemptionLists(ctx, protections.Branches.PreventForcePush)
+	}
+	if protections.Tags != nil {
+		protections.Tags.PreventAllChanges = s.expandProtectedRefsExemptionLists(ctx, protections.Tags.PreventAllChanges)
+		protections.Tags.PreventCreation = s.expandProtectedRefsExemptionLists(ctx, protections.Tags.PreventCreation)
+		protections.Tags.PreventDeletion = s.expandProtectedRefsExemptionLists(ctx, protections.Tags.PreventDeletion)
+		protections.Tags.PreventForcePush = s.expandProtectedRefsExemptionLists(ctx, protections.Tags.PreventForcePush)
+	}
+	return protections
+}
+
+func (s *Impl) expandProtectedRefsExemptionLists(ctx context.Context, pr []openapi.ProtectedRef) []openapi.ProtectedRef {
+	if pr == nil {
+		return pr
+	}
+	for i, protectedRef := range pr {
+		protectedRef.Exemptions = s.expandUserGroups(ctx, protectedRef.Exemptions)
+		pr[i] = protectedRef
+	}
+	return pr
+
 }
 
 func sliceContains[T comparable](haystack []T, needle T) bool {

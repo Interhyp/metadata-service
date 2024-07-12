@@ -42,6 +42,12 @@ func tstOwnerUnchanged() openapi.OwnerDto {
 		TimeStamp:          "2022-11-06T18:14:10Z",
 		CommitHash:         "6c8ac2c35791edf9979623c717a243fc53400000",
 		JiraIssue:          "ISSUE-2345",
+		Groups: map[string][]string{
+			"users": {
+				"some-other-user",
+				"a-very-special-user",
+			},
+		},
 	}
 }
 
@@ -80,6 +86,10 @@ func tstOwnerUnchangedExpectedYaml() string {
 	return `contact: somebody@some-organisation.com
 teamsChannelURL: https://teams.microsoft.com/l/channel/somechannel
 productOwner: kschlangenheldt
+groups:
+    users:
+        - some-other-user
+        - a-very-special-user
 defaultJiraProject: ISSUE
 `
 }
@@ -88,6 +98,10 @@ func tstOwnerPatchExpectedYaml() string {
 	return `contact: changed@some-organisation.com
 teamsChannelURL: https://teams.microsoft.com/l/channel/somechannel
 productOwner: kschlangenheldt
+groups:
+    users:
+        - some-other-user
+        - a-very-special-user
 defaultJiraProject: ISSUE
 `
 }

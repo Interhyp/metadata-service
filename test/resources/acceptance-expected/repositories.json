@@ -12,23 +12,70 @@
       "unittest": false,
       "url": "ssh://git@bitbucket.some-organisation.com:7999/helm/karma-wrapper.git"
     },
-    "whatever.helm-deployment": {
+    "some-service-backend-with-expandable-groups.helm-deployment": {
       "commitHash": "6c8ac2c35791edf9979623c717a243fc53400000",
+      "configuration": {
+        "accessKeys": [
+          {
+            "key": "DEPLOYMENT",
+            "permission": "REPO_READ"
+          },
+          {
+            "data": "ssh-key abcdefgh.....",
+            "permission": "REPO_WRITE"
+          }
+        ],
+        "approvers": {
+          "testing": [
+            "some-other-user",
+            "a-very-special-user"
+          ]
+        },
+        "commitMessageType": "DEFAULT",
+        "mergeConfig": {
+          "defaultStrategy": {
+            "id": "no-ff"
+          },
+          "strategies": [
+            {
+              "id": "no-ff"
+            },
+            {
+              "id": "ff"
+            },
+            {
+              "id": "ff-only"
+            },
+            {
+              "id": "squash"
+            }
+          ]
+        },
+        "refProtections": {
+          "branches": {
+            "requirePR": [
+              {
+                "exemptions": [
+                  "some-other-user",
+                  "a-very-special-user"
+                ],
+                "pattern": ":MAINLINE:"
+              }
+            ]
+          }
+        },
+        "requireIssue": true,
+        "watchers": [
+          "some-other-user",
+          "a-very-special-user"
+        ]
+      },
       "generator": "third-party-software",
       "jiraIssue": "ISSUE-0000",
       "mainline": "main",
       "owner": "some-owner",
       "timeStamp": "2022-11-06T18:14:10Z",
-      "url": "ssh://git@bitbucket.some-organisation.com:7999/PROJECT/whatever-deployment.git"
-    },
-    "whatever.implementation": {
-      "commitHash": "6c8ac2c35791edf9979623c717a243fc53400000",
-      "generator": "java-spring-cloud",
-      "jiraIssue": "ISSUE-0000",
-      "mainline": "master",
-      "owner": "some-owner",
-      "timeStamp": "2022-11-06T18:14:10Z",
-      "url": "ssh://git@bitbucket.some-organisation.com:7999/PROJECT/whatever.git"
+      "url": "ssh://git@bitbucket.some-organisation.com:7999/PROJECT/some-service-backend-with-expandable-groups-deployment.git"
     },
     "some-service-backend.helm-deployment": {
       "commitHash": "6c8ac2c35791edf9979623c717a243fc53400000",
@@ -85,6 +132,24 @@
       "owner": "some-owner",
       "timeStamp": "2022-11-06T18:14:10Z",
       "url": "ssh://git@bitbucket.some-organisation.com:7999/PROJECT/some-service-backend.git"
+    },
+    "whatever.helm-deployment": {
+      "commitHash": "6c8ac2c35791edf9979623c717a243fc53400000",
+      "generator": "third-party-software",
+      "jiraIssue": "ISSUE-0000",
+      "mainline": "main",
+      "owner": "some-owner",
+      "timeStamp": "2022-11-06T18:14:10Z",
+      "url": "ssh://git@bitbucket.some-organisation.com:7999/PROJECT/whatever-deployment.git"
+    },
+    "whatever.implementation": {
+      "commitHash": "6c8ac2c35791edf9979623c717a243fc53400000",
+      "generator": "java-spring-cloud",
+      "jiraIssue": "ISSUE-0000",
+      "mainline": "master",
+      "owner": "some-owner",
+      "timeStamp": "2022-11-06T18:14:10Z",
+      "url": "ssh://git@bitbucket.some-organisation.com:7999/PROJECT/whatever.git"
     }
   },
   "timeStamp": "2022-11-06T18:14:10Z"

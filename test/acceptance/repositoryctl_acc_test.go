@@ -91,6 +91,19 @@ func TestGETRepository_Success(t *testing.T) {
 	tstAssert(t, response, err, http.StatusOK, "repository.json")
 }
 
+func TestGETRepository_ExpandsUserGroups(t *testing.T) {
+	tstReset()
+
+	docs.Given("Given an unauthenticated user")
+	token := tstUnauthenticated()
+
+	docs.When("When they request a single existing repository with group references")
+	response, err := tstPerformGet("/rest/api/v1/repositories/some-service-backend-with-expandable-groups.helm-deployment", token)
+
+	docs.Then("Then the request is successful and the response is as expected")
+	tstAssert(t, response, err, http.StatusOK, "repository-expanded-groups.json")
+}
+
 func TestGETRepository_NotFound(t *testing.T) {
 	tstReset()
 
