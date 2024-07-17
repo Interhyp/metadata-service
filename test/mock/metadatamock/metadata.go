@@ -59,6 +59,10 @@ const ownerInfo = `contact: somebody@some-organisation.com
 teamsChannelURL: https://teams.microsoft.com/l/channel/somechannel
 productOwner: kschlangenheldt
 defaultJiraProject: ISSUE
+groups:
+  users:
+    - some-other-user
+    - a-very-special-user
 `
 
 const ownerInfoNoPromoters = `contact: somebody@some-organisation.com
@@ -115,6 +119,62 @@ configuration:
     testing:
     - some-user
 `
+const expandableGroupsService = `quicklinks:
+- title: Swagger UI
+  url: /swagger-ui/index.html
+repositories:
+- some-service-backend-with-expandable-groups/helm-deployment
+- some-service-backend/implementation
+alertTarget: https://webhook.com/9asdflk29d4m39g
+developmentOnly: false
+`
+
+const expandableGroupsDeployment = `mainline: main
+url: ssh://git@bitbucket.some-organisation.com:7999/PROJECT/some-service-backend-with-expandable-groups-deployment.git
+deployment:
+  kubernetes:
+    instances:
+    - namespace: project
+      environment: prod
+      cluster: openshift
+    - namespace: project
+      environment: dev
+      cluster: openshift
+    - namespace: project
+      environment: test
+      cluster: openshift
+    - namespace: project
+      environment: livetest
+      cluster: openshift
+generator: third-party-software
+configuration:
+  accessKeys:
+  - key: DEPLOYMENT
+    permission: REPO_READ
+  - data: 'ssh-key abcdefgh.....'
+    permission: REPO_WRITE
+  commitMessageType: DEFAULT
+  mergeConfig:
+    defaultStrategy:
+      id: "no-ff"
+    strategies:
+      - id: "no-ff"
+      - id: "ff"
+      - id: "ff-only"
+      - id: "squash"
+  requireIssue: true
+  watchers:
+    - '@some-owner.users'
+  refProtections:
+    branches:
+      requirePR:
+        - pattern: ':MAINLINE:'
+          exemptions:
+            - '@some-owner.users'
+  approvers:
+    testing:
+    - '@some-owner.users'
+`
 
 const deployment2 = `mainline: main
 url: ssh://git@bitbucket.some-organisation.com:7999/PROJECT/whatever-deployment.git
@@ -137,6 +197,8 @@ generator: java-spring-cloud
 const chart = `url: ssh://git@bitbucket.some-organisation.com:7999/helm/karma-wrapper.git
 mainline: master
 unittest: false
+configuration:
+  branchNameRegex: testing_.*
 `
 
 const (
@@ -202,7 +264,15 @@ func (r *Impl) Clone(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
+	err = r.writeFile("owners/some-owner/services/some-service-backend-with-expandable-groups.yaml", expandableGroupsService)
+	if err != nil {
+		return err
+	}
 	err = r.writeFile("owners/some-owner/repositories/some-service-backend.helm-deployment.yaml", deployment)
+	if err != nil {
+		return err
+	}
+	err = r.writeFile("owners/some-owner/repositories/some-service-backend-with-expandable-groups.helm-deployment.yaml", expandableGroupsDeployment)
 	if err != nil {
 		return err
 	}

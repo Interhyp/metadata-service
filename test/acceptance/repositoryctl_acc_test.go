@@ -91,6 +91,19 @@ func TestGETRepository_Success(t *testing.T) {
 	tstAssert(t, response, err, http.StatusOK, "repository.json")
 }
 
+func TestGETRepository_ExpandsUserGroups(t *testing.T) {
+	tstReset()
+
+	docs.Given("Given an unauthenticated user")
+	token := tstUnauthenticated()
+
+	docs.When("When they request a single existing repository with group references")
+	response, err := tstPerformGet("/rest/api/v1/repositories/some-service-backend-with-expandable-groups.helm-deployment", token)
+
+	docs.Then("Then the request is successful and the response is as expected")
+	tstAssert(t, response, err, http.StatusOK, "repository-expanded-groups.json")
+}
+
 func TestGETRepository_NotFound(t *testing.T) {
 	tstReset()
 
@@ -670,6 +683,40 @@ func TestPATCHRepository_Success(t *testing.T) {
 	hasSentNotification(t, "receivesRepository", "karma-wrapper.helm-chart", types.ModifiedEvent, types.RepositoryPayload, &payload)
 }
 
+func TestPATCHRepository_UnsupportedConfigurationFieldsAreIgnored(t *testing.T) {
+	tstReset()
+
+	docs.Given("Given an authenticated admin user")
+	token := tstValidAdminToken()
+
+	docs.When("When they perform a patch changing unsupported fields in the configuration of an existing repository")
+	body := tstRepositoryPatchWithIgnoredConfigurationFields()
+	response, err := tstPerformPatch("/rest/api/v1/repositories/karma-wrapper.helm-chart", token, &body)
+
+	docs.Then("Then the request is successful and the response is as expected")
+	tstAssert(t, response, err, http.StatusOK, "repository-patch.json")
+
+	docs.Then("And the repository has been correctly written, committed and pushed")
+	filename := "owners/some-owner/repositories/karma-wrapper.helm-chart.yaml"
+	require.Equal(t, tstRepositoryExpectedYamlKarmaWrapper(), metadataImpl.ReadContents(filename))
+	require.True(t, metadataImpl.FilesCommitted[filename])
+	require.True(t, metadataImpl.Pushed)
+
+	docs.Then("And the repository has been cached and can be read again")
+	readAgain, err := tstPerformGet("/rest/api/v1/repositories/karma-wrapper.helm-chart", tstUnauthenticated())
+	tstAssert(t, readAgain, err, http.StatusOK, "repository-patch.json")
+
+	docs.Then("And a kafka message notifying other instances of the update has been sent")
+	require.Equal(t, 1, len(kafkaImpl.Recording))
+	actual, _ := json.Marshal(kafkaImpl.Recording[0])
+	require.Equal(t, tstRepositoryExpectedKafka("karma-wrapper.helm-chart"), string(actual))
+
+	docs.Then("And a notification has been sent to all matching owners")
+	payload := tstUpdatedRepositoryPayload()
+	hasSentNotification(t, "receivesModified", "karma-wrapper.helm-chart", types.ModifiedEvent, types.RepositoryPayload, &payload)
+	hasSentNotification(t, "receivesRepository", "karma-wrapper.helm-chart", types.ModifiedEvent, types.RepositoryPayload, &payload)
+}
+
 func TestPATCHRepository_NoChangeSuccess(t *testing.T) {
 	tstReset()
 
@@ -723,7 +770,7 @@ func TestPATCHRepository_NonexistentOwner(t *testing.T) {
 
 	docs.When("When they attempt to patch a repository referring to an owner that does not exist")
 	body := tstRepositoryPatch()
-	body.Owner = p("not-there")
+	body.Owner = ptr("not-there")
 	response, err := tstPerformPatch("/rest/api/v1/repositories/karma-wrapper.helm-chart", token, &body)
 
 	docs.Then("Then the request fails and the error response is as expected")
@@ -760,7 +807,7 @@ func TestPATCHRepository_InvalidValues(t *testing.T) {
 
 	docs.When("When they request a patch of a repository with invalid values in the body")
 	body := tstRepositoryPatch()
-	body.Owner = p("") // invalid
+	body.Owner = ptr("") // invalid
 	body.CommitHash = ""
 	body.TimeStamp = ""
 	response, err := tstPerformPatch("/rest/api/v1/repositories/karma-wrapper.helm-chart", token, &body)
@@ -895,7 +942,7 @@ func TestPATCHRepository_ChangeOwner(t *testing.T) {
 
 	docs.When("When they perform a valid patch of an existing repository that changes its owner")
 	body := tstRepositoryUnchangedPatch()
-	body.Owner = p("deleteme")
+	body.Owner = ptr("deleteme")
 	response, err := tstPerformPatch("/rest/api/v1/repositories/karma-wrapper.helm-chart", token, &body)
 
 	docs.Then("Then the request is successful and the response is as expected")
@@ -927,7 +974,7 @@ func TestPATCHRepository_ChangeOwnerReferenced(t *testing.T) {
 
 	docs.When("When they attempt to change the owner of a repository that is referenced in its service")
 	body := tstRepositoryPatch()
-	body.Owner = p("deleteme")
+	body.Owner = ptr("deleteme")
 	response, err := tstPerformPatch("/rest/api/v1/repositories/some-service-backend.helm-deployment", token, &body)
 
 	docs.Then("Then the request fails and the error response is as expected")

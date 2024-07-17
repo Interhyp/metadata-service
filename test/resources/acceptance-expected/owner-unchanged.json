@@ -2,6 +2,12 @@
   "commitHash": "6c8ac2c35791edf9979623c717a243fc53400000",
   "contact": "somebody@some-organisation.com",
   "defaultJiraProject": "ISSUE",
+  "groups": {
+    "users": [
+      "some-other-user",
+      "a-very-special-user"
+    ]
+  },
   "jiraIssue": "",
   "productOwner": "kschlangenheldt",
   "teamsChannelURL": "https://teams.microsoft.com/l/channel/somechannel",

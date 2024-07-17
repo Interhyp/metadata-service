@@ -1,5 +1,8 @@
 {
   "commitHash": "6c8ac2c35791edf9979623c717a2430000000000",
+  "configuration": {
+    "branchNameRegex": "testing_.*"
+  },
   "jiraIssue": "ISSUE-2345",
   "mainline": "master",
   "owner": "deleteme",

@@ -160,6 +160,11 @@ func (s *Impl) GetRepository(ctx context.Context, repoKey string) (openapi.Repos
 			repoConfig.Watchers = s.expandUserGroups(ctx, repoConfig.Watchers)
 			repositoryDto.Configuration = &repoConfig
 		}
+		if repoConfig.RefProtections != nil {
+			repoConfig.RefProtections = s.expandRefProtectionsExemptionLists(ctx, repoConfig.RefProtections)
+			repositoryDto.Configuration = &repoConfig
+		}
+
 	}
 
 	if err == nil && repositoryDto.Filecategory != nil {
@@ -440,7 +445,7 @@ func patchRepository(current openapi.RepositoryDto, patch openapi.RepositoryPatc
 	}
 }
 
-func patchConfiguration(patch *openapi.RepositoryConfigurationDto, original *openapi.RepositoryConfigurationDto) *openapi.RepositoryConfigurationDto {
+func patchConfiguration(patch *openapi.RepositoryConfigurationPatchDto, original *openapi.RepositoryConfigurationDto) *openapi.RepositoryConfigurationDto {
 	if patch != nil {
 		if original == nil {
 			original = &openapi.RepositoryConfigurationDto{}
@@ -450,29 +455,18 @@ func patchConfiguration(patch *openapi.RepositoryConfigurationDto, original *ope
 			BranchNameRegex:         patchStringPtr(patch.BranchNameRegex, original.BranchNameRegex),
 			CommitMessageRegex:      patchStringPtr(patch.CommitMessageRegex, original.CommitMessageRegex),
 			CommitMessageType:       patchStringPtr(patch.CommitMessageType, original.CommitMessageType),
-			RequireIssue:            patchPtr[bool](patch.RequireIssue, original.RequireIssue),
 			RequireSuccessfulBuilds: patchPtr[int32](patch.RequireSuccessfulBuilds, original.RequireSuccessfulBuilds),
 			ExcludeMergeCommits:     patchPtr[bool](patch.ExcludeMergeCommits, original.ExcludeMergeCommits),
-			RequireConditions:       patchConditions(patch.RequireConditions, original.RequireConditions),
 			Webhooks:                patchWebhooks(patch.Webhooks, original.Webhooks),
 			Approvers:               patchApprovers(patch.Approvers, original.Approvers),
 			Watchers:                patchStringSlice(patch.Watchers, original.Watchers),
 			DefaultReviewers:        patchStringSlice(patch.DefaultReviewers, original.DefaultReviewers),
 			SignedApprovers:         patchStringSlice(patch.SignedApprovers, original.SignedApprovers),
 			Archived:                patchPtr[bool](patch.Archived, original.Archived),
-		}
-	} else {
-		return original
-	}
-}
-
-func patchConditions(patch map[string]openapi.ConditionReferenceDto, original map[string]openapi.ConditionReferenceDto) map[string]openapi.ConditionReferenceDto {
-	if patch != nil {
-		if len(patch) == 0 {
-			// remove
-			return nil
-		} else {
-			return patch
+			// fields not allowed for patching carry over from original
+			RequireIssue:      original.RequireIssue,
+			RequireConditions: original.RequireConditions,
+			RefProtections:    original.RefProtections,
 		}
 	} else {
 		return original
@@ -682,6 +676,39 @@ func (s *Impl) validateFilecategory(messages []string, filecategories map[string
 	}
 
 	return messages
+}
+
+func (s *Impl) expandRefProtectionsExemptionLists(ctx context.Context, protections *openapi.RefProtections) *openapi.RefProtections {
+	if protections == nil {
+		return protections
+	}
+	if protections.Branches != nil {
+		protections.Branches.RequirePR = s.expandProtectedRefsExemptionLists(ctx, protections.Branches.RequirePR)
+		protections.Branches.PreventAllChanges = s.expandProtectedRefsExemptionLists(ctx, protections.Branches.PreventAllChanges)
+		protections.Branches.PreventCreation = s.expandProtectedRefsExemptionLists(ctx, protections.Branches.PreventCreation)
+		protections.Branches.PreventDeletion = s.expandProtectedRefsExemptionLists(ctx, protections.Branches.PreventDeletion)
+		protections.Branches.PreventPush = s.expandProtectedRefsExemptionLists(ctx, protections.Branches.PreventPush)
+		protections.Branches.PreventForcePush = s.expandProtectedRefsExemptionLists(ctx, protections.Branches.PreventForcePush)
+	}
+	if protections.Tags != nil {
+		protections.Tags.PreventAllChanges = s.expandProtectedRefsExemptionLists(ctx, protections.Tags.PreventAllChanges)
+		protections.Tags.PreventCreation = s.expandProtectedRefsExemptionLists(ctx, protections.Tags.PreventCreation)
+		protections.Tags.PreventDeletion = s.expandProtectedRefsExemptionLists(ctx, protections.Tags.PreventDeletion)
+		protections.Tags.PreventForcePush = s.expandProtectedRefsExemptionLists(ctx, protections.Tags.PreventForcePush)
+	}
+	return protections
+}
+
+func (s *Impl) expandProtectedRefsExemptionLists(ctx context.Context, pr []openapi.ProtectedRef) []openapi.ProtectedRef {
+	if pr == nil {
+		return pr
+	}
+	for i, protectedRef := range pr {
+		protectedRef.Exemptions = s.expandUserGroups(ctx, protectedRef.Exemptions)
+		pr[i] = protectedRef
+	}
+	return pr
+
 }
 
 func sliceContains[T comparable](haystack []T, needle T) bool {
