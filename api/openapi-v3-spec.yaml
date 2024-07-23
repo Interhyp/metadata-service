@@ -2135,6 +2135,83 @@ components:
       required:
         - name
         - url
+<<<<<<< Updated upstream
+=======
+    RefProtections:
+      type: object
+      description: Configures available protections for git refs
+      properties:
+        branches:
+          type: object
+          properties:
+            requirePR:
+              description: Forces creating a PR to update the protected refs.
+              type: array
+              items:
+                $ref: '#/components/schemas/ProtectedRef'
+            preventAllChanges:
+              description: Prevents all changes of the protected refs.
+              type: array
+              items:
+                $ref: '#/components/schemas/ProtectedRef'
+            preventCreation:
+              description: Prevents creation of the protected refs. Results in preventAllChanges for BitBucket.
+              type: array
+              items:
+                $ref: '#/components/schemas/ProtectedRef'
+            preventDeletion:
+              description: Prevents deletion of the protected refs.
+              type: array
+              items:
+                $ref: '#/components/schemas/ProtectedRef'
+            preventPush:
+              description: Prevents pushes to the protected refs. Results in preventAllChanges for BitBucket.
+              type: array
+              items:
+                $ref: '#/components/schemas/ProtectedRef'
+            preventForcePush:
+              description: Prevents force pushes to the protected refs for users with push permission.
+              type: array
+              items:
+                $ref: '#/components/schemas/ProtectedRef'
+        tags:
+          type: object
+          properties:
+            preventAllChanges:
+              description: Prevents all changes of the protected refs.
+              type: array
+              items:
+                $ref: '#/components/schemas/ProtectedRef'
+            preventCreation:
+              description: Prevents creation of the protected refs. Results in preventAllChanges for BitBucket.
+              type: array
+              items:
+                $ref: '#/components/schemas/ProtectedRef'
+            preventDeletion:
+              description: Prevents deletion of the protected refs.
+              type: array
+              items:
+                $ref: '#/components/schemas/ProtectedRef'
+            preventForcePush:
+              description: Prevents force pushes to the protected refs for users with push permission.
+              type: array
+              items:
+                $ref: '#/components/schemas/ProtectedRef'
+    ProtectedRef:
+      type: object
+      required: [ pattern ]
+      properties:
+        pattern:
+          type: string
+          pattern: '^(?!refs\/(heads|tags)\/).*$'
+          description: "fnmatch pattern to define protected refs. Must not start with refs/heads/ or refs/tags/. Special value :MAINLINE: matches the currently configured mainline for branch protections."
+        exemptions:
+          description: list of users, teams or apps for whom this protection does not apply
+          type: array
+          items:
+            type: string
+            description: 'A user, team or app identifier. Teams are identified by leading @<OWNER>. prefix, apps are identified by app: prefix.'
+>>>>>>> Stashed changes
     ErrorDto:
       type: object
       properties:
