@@ -2219,32 +2219,32 @@ components:
           type: object
           properties:
             requirePR:
-              description: Forces creating a PR to update the proteced refs.
+              description: Forces creating a PR to update the protected refs.
               type: array
               items:
                 $ref: '#/components/schemas/ProtectedRef'
             preventAllChanges:
-              description: Prevents all changes of the proteced refs.
+              description: Prevents all changes of the protected refs.
               type: array
               items:
                 $ref: '#/components/schemas/ProtectedRef'
             preventCreation:
-              description: Prevents creation of the proteced refs. Results in preventAllChanges for BitBucket.
+              description: Prevents creation of the protected refs. Results in preventAllChanges for BitBucket.
               type: array
               items:
                 $ref: '#/components/schemas/ProtectedRef'
             preventDeletion:
-              description: Prevents deletion of the proteced refs.
+              description: Prevents deletion of the protected refs.
               type: array
               items:
                 $ref: '#/components/schemas/ProtectedRef'
             preventPush:
-              description: Prevents pushes to the proteced refs. Results in preventAllChanges for BitBucket.
+              description: Prevents pushes to the protected refs. Results in preventAllChanges for BitBucket.
               type: array
               items:
                 $ref: '#/components/schemas/ProtectedRef'
             preventForcePush:
-              description: Prevents force pushes to the proteced refs for users with push permission.
+              description: Prevents force pushes to the protected refs for users with push permission.
               type: array
               items:
                 $ref: '#/components/schemas/ProtectedRef'
@@ -2252,22 +2252,22 @@ components:
           type: object
           properties:
             preventAllChanges:
-              description: Prevents all changes of the proteced refs.
+              description: Prevents all changes of the protected refs.
               type: array
               items:
                 $ref: '#/components/schemas/ProtectedRef'
             preventCreation:
-              description: Prevents creation of the proteced refs. Results in preventAllChanges for BitBucket.
+              description: Prevents creation of the protected refs. Results in preventAllChanges for BitBucket.
               type: array
               items:
                 $ref: '#/components/schemas/ProtectedRef'
             preventDeletion:
-              description: Prevents deletion of the proteced refs.
+              description: Prevents deletion of the protected refs.
               type: array
               items:
                 $ref: '#/components/schemas/ProtectedRef'
             preventForcePush:
-              description: Prevents force pushes to the proteced refs for users with push permission.
+              description: Prevents force pushes to the protected refs for users with push permission.
               type: array
               items:
                 $ref: '#/components/schemas/ProtectedRef'
