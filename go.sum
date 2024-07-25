@@ -24,8 +24,8 @@ github.com/StephanHCB/go-autumn-logging-zerolog v0.5.0 h1:UnSgOuwwZH6vJigW6aBtUg
 github.com/StephanHCB/go-autumn-logging-zerolog v0.5.0/go.mod h1:Hspu94dHAKtgjMAkqtjMDZJnVv0VjVjyq6uKHI0Q4R8=
 github.com/StephanHCB/go-autumn-restclient v0.8.1 h1:0ZD3pJ5pWZ96x3dCcstmbyum4xt/kDDDA9ne48B8NNI=
 github.com/StephanHCB/go-autumn-restclient v0.8.1/go.mod h1:etWCMr0i0iAl1RVBgwLczoFt2rhWrUMySalot0i6vT8=
-github.com/StephanHCB/go-autumn-restclient-apm v0.1.0 h1:fgP5eKl6FyBplYOPpV1ZH86w5JG7PkKST42maXZQnM8=
-github.com/StephanHCB/go-autumn-restclient-apm v0.1.0/go.mod h1:DifnN7pnTSEaPWXjg9LkWynPRlrTAjnsBAu2Rud7enQ=
+github.com/StephanHCB/go-autumn-restclient-apm v0.2.0 h1:AIlQYcs6n4QbzPg1JhwyVAUxMSbBaNUeqp9NiipbxzM=
+github.com/StephanHCB/go-autumn-restclient-apm v0.2.0/go.mod h1:3zD5Hz6rEuUxXIjpcoACXRy/bGvNbcVPOpZtZlGpAG4=
 github.com/StephanHCB/go-autumn-restclient-circuitbreaker v0.5.0 h1:enGcKHKDa1CcDPENyZB5Z7lIW04JCn+4g6IElfF8Sig=
 github.com/StephanHCB/go-autumn-restclient-circuitbreaker v0.5.0/go.mod h1:Sb2Fau+PCZ+D2ESFuvjXdWX488ptjGjj1SbaxpRb0r4=
 github.com/StephanHCB/go-autumn-restclient-circuitbreaker-prometheus v0.1.0 h1:e/URQHOH0SMTPwK6JGbt1DeGS4QFUtBDky0wadMlieQ=
@@ -243,10 +243,10 @@ github.com/yuin/goldmark v1.1.27/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9de
 github.com/yuin/goldmark v1.4.13/go.mod h1:6yULJ656Px+3vBD8DxQVa3kxgyrAnzto9xy5taEt/CY=
 go.elastic.co/apm/module/apmchiv5/v2 v2.4.5 h1:1HCImhPw5E0Zvv1Bl2jArWcTe5750fxw3TjoJ7l+qe0=
 go.elastic.co/apm/module/apmchiv5/v2 v2.4.5/go.mod h1:978051bqdJL8+t+ujDs185V4DhDu7SWE3LETLQozNu4=
-go.elastic.co/apm/module/apmhttp/v2 v2.4.5 h1:t51CtOQdn6KSp11wNb0PxnhH09TjE+V4ajU8bqkLxmg=
-go.elastic.co/apm/module/apmhttp/v2 v2.4.5/go.mod h1:dmgyWIKzVk76gSgOWkTmPcSCqjRl7dfjWbBzFq8W3y0=
-go.elastic.co/apm/v2 v2.4.5 h1:+01xPucS6YazBMYxbTSwNEsV9sgznFC0WW7x5dzxyPg=
-go.elastic.co/apm/v2 v2.4.5/go.mod h1:+CiBUdrrAGnGCL9TNx7tQz3BrfYV23L8Ljvotoc87so=
+go.elastic.co/apm/module/apmhttp/v2 v2.6.0 h1:s8UeNFQmVBCNd4eoz7KDD9rEFhQC0HeUFXz3z9gpAmQ=
+go.elastic.co/apm/module/apmhttp/v2 v2.6.0/go.mod h1:D0GLppLuI0Ddwvtl595GUxRgn6Z8L5KaDFVMv2H3GK0=
+go.elastic.co/apm/v2 v2.6.0 h1:VieBMLQFtXua2YxpYxaSdYGnmmxhLT46gosI5yErJgY=
+go.elastic.co/apm/v2 v2.6.0/go.mod h1:33rOXgtHwbgZcDgi6I/GtCSMZQqgxkHC0IQT3gudKvo=
 go.elastic.co/fastjson v1.1.0 h1:3MrGBWWVIxe/xvsbpghtkFoPciPhOCmjsR/HfwEeQR4=
 go.elastic.co/fastjson v1.1.0/go.mod h1:boNGISWMjQsUPy/t6yqt2/1Wx4YNPSe+mZjlyw9vKKI=
 golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACkg1iLfiJU5Ep61QUkGW8qpdssI0+w=
