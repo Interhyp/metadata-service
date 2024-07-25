@@ -11,7 +11,7 @@ require (
 	github.com/StephanHCB/go-autumn-logging v0.4.0
 	github.com/StephanHCB/go-autumn-logging-zerolog v0.5.0
 	github.com/StephanHCB/go-autumn-restclient v0.8.1
-	github.com/StephanHCB/go-autumn-restclient-apm v0.1.0
+	github.com/StephanHCB/go-autumn-restclient-apm v0.2.0
 	github.com/StephanHCB/go-autumn-restclient-circuitbreaker v0.5.0
 	github.com/StephanHCB/go-autumn-restclient-circuitbreaker-prometheus v0.1.0
 	github.com/StephanHCB/go-autumn-restclient-prometheus v0.1.2
@@ -96,8 +96,8 @@ require (
 	github.com/xdg-go/scram v1.1.2 // indirect
 	github.com/xdg-go/stringprep v1.0.4 // indirect
 	go.elastic.co/apm/module/apmchiv5/v2 v2.4.5 // indirect
-	go.elastic.co/apm/module/apmhttp/v2 v2.4.5 // indirect
-	go.elastic.co/apm/v2 v2.4.5 // indirect
+	go.elastic.co/apm/module/apmhttp/v2 v2.6.0 // indirect
+	go.elastic.co/apm/v2 v2.6.0 // indirect
 	go.elastic.co/fastjson v1.1.0 // indirect
 	golang.org/x/crypto v0.24.0 // indirect
 	golang.org/x/mod v0.17.0 // indirect
