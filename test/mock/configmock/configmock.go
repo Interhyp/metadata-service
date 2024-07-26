@@ -1,9 +1,10 @@
 package configmock
 
 import (
-	"github.com/Interhyp/metadata-service/internal/acorn/config"
-	"github.com/Roshick/go-autumn-kafka/pkg/aukafka"
 	"regexp"
+
+	"github.com/Interhyp/metadata-service/internal/acorn/config"
+	"github.com/Roshick/go-autumn-kafka/pkg/kafka"
 )
 
 type MockConfig struct {
@@ -244,7 +245,7 @@ func (c *MockConfig) AllowedFileCategories() []string {
 	panic("implement me")
 }
 
-func (c *MockConfig) Kafka() *aukafka.Config {
+func (c *MockConfig) Kafka() *kafka.Config {
 	//TODO implement me
 	panic("implement me")
 }

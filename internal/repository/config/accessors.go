@@ -1,11 +1,12 @@
 package config
 
 import (
-	"github.com/Interhyp/metadata-service/internal/acorn/config"
-	"github.com/Roshick/go-autumn-kafka/pkg/aukafka"
 	"os"
 	"regexp"
 	"strings"
+
+	"github.com/Interhyp/metadata-service/internal/acorn/config"
+	"github.com/Roshick/go-autumn-kafka/pkg/kafka"
 )
 
 func (c *CustomConfigImpl) BasicAuthUsername() string {
@@ -163,7 +164,7 @@ func (c *CustomConfigImpl) AllowedFileCategories() []string {
 	return c.VAllowedFileCategories
 }
 
-func (c *CustomConfigImpl) Kafka() *aukafka.Config {
+func (c *CustomConfigImpl) Kafka() *kafka.Config {
 	return c.VKafkaConfig
 }
 

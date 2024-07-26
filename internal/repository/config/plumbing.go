@@ -3,17 +3,18 @@ package config
 import (
 	"encoding/json"
 	"fmt"
+	"regexp"
+	"strconv"
+	"strings"
+
 	"github.com/Interhyp/metadata-service/internal/acorn/config"
 	openapi "github.com/Interhyp/metadata-service/internal/types"
-	"github.com/Roshick/go-autumn-kafka/pkg/aukafka"
+	"github.com/Roshick/go-autumn-kafka/pkg/kafka"
 	auconfigapi "github.com/StephanHCB/go-autumn-config-api"
 	auconfigenv "github.com/StephanHCB/go-autumn-config-env"
 	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
 	libconfig "github.com/StephanHCB/go-backend-service-common/repository/config"
 	"github.com/StephanHCB/go-backend-service-common/repository/vault"
-	"regexp"
-	"strconv"
-	"strings"
 )
 
 const (
@@ -66,13 +67,13 @@ type CustomConfigImpl struct {
 	VPullRequestBuildUrl            string
 	VPullRequestBuildKey            string
 
-	VKafkaConfig           *aukafka.Config
+	VKafkaConfig           *kafka.Config
 	BitbucketGitUrlMatcher *regexp.Regexp
 }
 
 func New() (librepo.Configuration, config.CustomConfiguration) {
 	instance := &CustomConfigImpl{
-		VKafkaConfig:           aukafka.NewConfig(),
+		VKafkaConfig:           kafka.NewConfig(),
 		BitbucketGitUrlMatcher: regexp.MustCompile(`/([^/]+)/([^/]+).git$`),
 	}
 	configItems := make([]auconfigapi.ConfigItem, 0)

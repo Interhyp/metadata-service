@@ -4,16 +4,17 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
+	"time"
+
 	"github.com/IBM/sarama"
 	"github.com/Interhyp/metadata-service/internal/acorn/config"
 	"github.com/Interhyp/metadata-service/internal/acorn/repository"
-	"github.com/Roshick/go-autumn-kafka/pkg/aukafka"
+	"github.com/Roshick/go-autumn-kafka/pkg/kafka"
 	aulogging "github.com/StephanHCB/go-autumn-logging"
 	auzerolog "github.com/StephanHCB/go-autumn-logging-zerolog"
 	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
 	"github.com/rcrowley/go-metrics"
-	"strings"
-	"time"
 )
 import _ "github.com/go-git/go-git/v5"
 
@@ -26,8 +27,8 @@ type Impl struct {
 	HostIP              repository.HostIP
 
 	Callback      repository.ReceiverCallback
-	KafkaProducer *aukafka.SyncProducer[repository.UpdateEvent]
-	KafkaConsumer *aukafka.Consumer[repository.UpdateEvent]
+	KafkaProducer *kafka.SyncProducer[repository.UpdateEvent]
+	KafkaConsumer *kafka.Consumer[repository.UpdateEvent]
 }
 
 func New(
@@ -81,10 +82,19 @@ func (r *Impl) Send(ctx context.Context, event repository.UpdateEvent) error {
 		return nil
 	}
 
-	return r.KafkaProducer.Produce(ctx, nil, &event)
+	asyncCtx := context.WithoutCancel(ctx)
+	asyncCtx, cancel := context.WithTimeout(asyncCtx, 60*time.Second)
+	go func() {
+		defer cancel()
+
+		if err := r.KafkaProducer.Produce(asyncCtx, nil, &event); err != nil {
+			aulogging.Logger.Ctx(asyncCtx).Warn().WithErr(err).Printf("failed to send event")
+		}
+	}()
+	return nil
 }
 
-func (r *Impl) topicConfig(ctx context.Context) (*aukafka.TopicConfig, error) {
+func (r *Impl) topicConfig(ctx context.Context) (*kafka.TopicConfig, error) {
 	if r.CustomConfiguration.Kafka() != nil {
 		if topicConfig, ok := r.CustomConfiguration.Kafka().TopicConfigs()[MetadataChangeEventsTopicKey]; ok {
 			if topicConfig.Password == "" {
@@ -143,7 +153,7 @@ func (r *Impl) StartReceiveLoop(ctx context.Context) error {
 	configPreset.MetricRegistry = metrics.NewPrefixedChildRegistry(metrics.DefaultRegistry, "sarama.consumer.")
 	configPreset.Consumer.Offsets.Initial = sarama.OffsetNewest
 
-	consumer, err := aukafka.CreateConsumer[repository.UpdateEvent](ctx, *topicConfig, callback, configPreset)
+	consumer, err := kafka.CreateConsumer[repository.UpdateEvent](ctx, *topicConfig, callback, configPreset)
 	if err != nil {
 		return err
 	}
@@ -167,7 +177,7 @@ func (r *Impl) ConnectProducer(ctx context.Context) error {
 	configPreset.Producer.Compression = sarama.CompressionNone
 	configPreset.MetricRegistry = metrics.NewPrefixedChildRegistry(metrics.DefaultRegistry, "sarama.producer.")
 
-	producer, err := aukafka.CreateSyncProducer[repository.UpdateEvent](ctx, *topicConfig, configPreset)
+	producer, err := kafka.CreateSyncProducer[repository.UpdateEvent](ctx, *topicConfig, configPreset)
 	if err != nil {
 		return err
 	}

@@ -1,9 +1,10 @@
 package config
 
 import (
-	"github.com/Interhyp/metadata-service/internal/types"
-	"github.com/Roshick/go-autumn-kafka/pkg/aukafka"
 	"regexp"
+
+	"github.com/Interhyp/metadata-service/internal/types"
+	"github.com/Roshick/go-autumn-kafka/pkg/kafka"
 
 	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
 )
@@ -63,7 +64,7 @@ type CustomConfiguration interface {
 
 	AllowedFileCategories() []string
 
-	Kafka() *aukafka.Config
+	Kafka() *kafka.Config
 	KafkaGroupIdOverride() string
 
 	RedisUrl() string
