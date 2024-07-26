@@ -9,6 +9,8 @@ github.com/ProtonMail/go-crypto v1.0.0 h1:LRuvITjQWX+WIfr930YHG2HNfjR1uOfyf5vE0k
 github.com/ProtonMail/go-crypto v1.0.0/go.mod h1:EjAoLdwvbIOoOQr3ihjnSoLZRtE8azugULFRteWMNc0=
 github.com/Roshick/go-autumn-kafka v0.6.3 h1:BA2vmOZOtlW0Im76VAFxDwsxGRdlj9EZPuKRZX1uIXk=
 github.com/Roshick/go-autumn-kafka v0.6.3/go.mod h1:Zfx0X2B856i8yr7A856bzGsOWiHDR0CrtG7VghZy/gU=
+github.com/Roshick/go-autumn-kafka v0.7.1 h1:bemkEH0NH2Dph/UhWc6euY9fvEUUD48efpps77ROXco=
+github.com/Roshick/go-autumn-kafka v0.7.1/go.mod h1:Zfx0X2B856i8yr7A856bzGsOWiHDR0CrtG7VghZy/gU=
 github.com/Roshick/go-autumn-synchronisation v0.6.4 h1:4OXyqJJrje3YgjvjJpDvooIHPsgrIAnlHODWhVGi6Do=
 github.com/Roshick/go-autumn-synchronisation v0.6.4/go.mod h1:Whsa6SW9DKh+gdI0LOgp/D4wYQVdQUoOuHqDFle1b1I=
 github.com/StephanHCB/go-autumn-acorn-registry v0.3.2 h1:eW+KndxdD8p+TdQ6HsqXLdqkowlcWb9qkVeUjdchAfA=
