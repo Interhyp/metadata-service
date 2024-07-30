@@ -32,10 +32,7 @@ type RepositoryConfigurationPatchDto struct {
 	// Map of string (group name e.g. some-owner) of strings (list of approvers), one approval for each group is required.
 	Approvers map[string][]string `yaml:"approvers,omitempty" json:"approvers,omitempty"`
 	// List of strings (list of watchers, either usernames or group identifier), which are added as reviewers but require no approval.
-	Watchers         []string `yaml:"watchers,omitempty" json:"watchers,omitempty"`
-	DefaultReviewers []string `yaml:"defaultReviewers,omitempty" json:"defaultReviewers,omitempty"`
-	// List of users, who can sign a pull request.
-	SignedApprovers []string `yaml:"signedApprovers,omitempty" json:"signedApprovers,omitempty"`
+	Watchers []string `yaml:"watchers,omitempty" json:"watchers,omitempty"`
 	// Moves the repository into the archive.
 	Archived *bool `yaml:"archived,omitempty" json:"archived,omitempty"`
 	// Repository will not be configured, also not archived.
