@@ -1930,8 +1930,6 @@ components:
                     testing:
                       - user-one
                       - user-two
-                  defaultReviewers: []
-                  signedApprovers: []
                 timeStamp: '2022-04-18T14:22:38Z'
               unicorn-finder-service.implementation:
                 url: 'ssh://git@bitbucket.some-organisation.com:7999/UNICORNS/unicorn-finder-service.git'
@@ -2016,15 +2014,6 @@ components:
             - - someUser
               - anotherUser
               - '@owner.users'
-        defaultReviewers:
-          type: array
-          items:
-            type: string
-        signedApprovers:
-          description: 'List of users, who can sign a pull request.'
-          type: array
-          items:
-            type: string
         archived:
           description: Moves the repository into the archive.
           type: boolean
@@ -2103,15 +2092,6 @@ components:
             - - someUser
               - anotherUser
               - '@owner.users'
-        defaultReviewers:
-          type: array
-          items:
-            type: string
-        signedApprovers:
-          description: 'List of users, who can sign a pull request.'
-          type: array
-          items:
-            type: string
         archived:
           description: Moves the repository into the archive.
           type: boolean

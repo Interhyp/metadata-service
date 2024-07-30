@@ -13,12 +13,12 @@ package openapi
 
 // RefProtectionsTags struct for RefProtectionsTags
 type RefProtectionsTags struct {
-	// Prevents all changes of the proteced refs.
+	// Prevents all changes of the protected refs.
 	PreventAllChanges []ProtectedRef `yaml:"preventAllChanges,omitempty" json:"preventAllChanges,omitempty"`
-	// Prevents creation of the proteced refs. Results in preventAllChanges for BitBucket.
+	// Prevents creation of the protected refs. Results in preventAllChanges for BitBucket.
 	PreventCreation []ProtectedRef `yaml:"preventCreation,omitempty" json:"preventCreation,omitempty"`
-	// Prevents deletion of the proteced refs.
+	// Prevents deletion of the protected refs.
 	PreventDeletion []ProtectedRef `yaml:"preventDeletion,omitempty" json:"preventDeletion,omitempty"`
-	// Prevents force pushes to the proteced refs for users with push permission.
+	// Prevents force pushes to the protected refs for users with push permission.
 	PreventForcePush []ProtectedRef `yaml:"preventForcePush,omitempty" json:"preventForcePush,omitempty"`
 }

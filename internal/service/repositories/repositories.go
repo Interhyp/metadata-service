@@ -3,6 +3,9 @@ package repositories
 import (
 	"context"
 	"fmt"
+	"net/url"
+	"strings"
+
 	"github.com/Interhyp/metadata-service/api"
 	"github.com/Interhyp/metadata-service/internal/acorn/config"
 	"github.com/Interhyp/metadata-service/internal/acorn/repository"
@@ -11,8 +14,6 @@ import (
 	auzerolog "github.com/StephanHCB/go-autumn-logging-zerolog"
 	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
 	"github.com/StephanHCB/go-backend-service-common/api/apierrors"
-	"net/url"
-	"strings"
 )
 
 type Impl struct {
@@ -460,8 +461,6 @@ func patchConfiguration(patch *openapi.RepositoryConfigurationPatchDto, original
 			Webhooks:                patchWebhooks(patch.Webhooks, original.Webhooks),
 			Approvers:               patchApprovers(patch.Approvers, original.Approvers),
 			Watchers:                patchStringSlice(patch.Watchers, original.Watchers),
-			DefaultReviewers:        patchStringSlice(patch.DefaultReviewers, original.DefaultReviewers),
-			SignedApprovers:         patchStringSlice(patch.SignedApprovers, original.SignedApprovers),
 			Archived:                patchPtr[bool](patch.Archived, original.Archived),
 			// fields not allowed for patching carry over from original
 			RequireIssue:      original.RequireIssue,
