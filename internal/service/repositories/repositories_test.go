@@ -2,6 +2,9 @@ package repositories
 
 import (
 	"context"
+	"testing"
+	"time"
+
 	"github.com/Interhyp/metadata-service/api"
 	"github.com/Interhyp/metadata-service/internal/acorn/service"
 	"github.com/Interhyp/metadata-service/internal/service/owners"
@@ -11,8 +14,6 @@ import (
 	"github.com/StephanHCB/go-backend-service-common/repository/timestamp"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"testing"
-	"time"
 )
 
 func ptr[T any](v T) *T {
@@ -59,10 +60,8 @@ func createRepositoryConfigurationDto() *openapi.RepositoryConfigurationDto {
 				},
 			},
 		},
-		Approvers:        map[string][]string{"group": {"approver1"}},
-		DefaultReviewers: []string{"defaultreviewer1"},
-		SignedApprovers:  []string{"signedapprover1"},
-		Archived:         ptr(false),
+		Approvers: map[string][]string{"group": {"approver1"}},
+		Archived:  ptr(false),
 	}
 }
 func createRepositoryConfigurationPatchDtoFromConfigurationDto(input *openapi.RepositoryConfigurationDto) *openapi.RepositoryConfigurationPatchDto {
@@ -72,8 +71,6 @@ func createRepositoryConfigurationPatchDtoFromConfigurationDto(input *openapi.Re
 		RequireSuccessfulBuilds: input.RequireSuccessfulBuilds,
 		Webhooks:                input.Webhooks,
 		Approvers:               input.Approvers,
-		DefaultReviewers:        input.DefaultReviewers,
-		SignedApprovers:         input.SignedApprovers,
 		Archived:                input.Archived,
 	}
 }
@@ -153,10 +150,8 @@ func TestPatchRepository_ReplaceAll(t *testing.T) {
 					},
 				},
 			},
-			Approvers:        map[string][]string{"group": {"newapprover1"}},
-			DefaultReviewers: []string{"newdefaultreviewer1"},
-			SignedApprovers:  []string{"newsignedapprover1"},
-			Archived:         ptr(true),
+			Approvers: map[string][]string{"group": {"newapprover1"}},
+			Archived:  ptr(true),
 		},
 		Filecategory: map[string][]string{"b": {"b.yaml", "b.json"}},
 		Labels:       map[string]string{"label": "patchedValue"},
@@ -190,10 +185,8 @@ func TestPatchRepository_ReplaceAll(t *testing.T) {
 					},
 				},
 			},
-			Approvers:        map[string][]string{"group": {"newapprover1"}},
-			DefaultReviewers: []string{"newdefaultreviewer1"},
-			SignedApprovers:  []string{"newsignedapprover1"},
-			Archived:         ptr(true),
+			Approvers: map[string][]string{"group": {"newapprover1"}},
+			Archived:  ptr(true),
 		},
 		Filecategory: map[string][]string{"b": {"b.yaml", "b.json"}},
 		Labels:       map[string]string{"label": "patchedValue"},
@@ -215,9 +208,7 @@ func TestPatchRepository_ClearFields(t *testing.T) {
 			Webhooks: &openapi.RepositoryConfigurationWebhooksDto{
 				Additional: []openapi.RepositoryConfigurationWebhookDto{},
 			},
-			Approvers:        map[string][]string{},
-			DefaultReviewers: []string{},
-			SignedApprovers:  []string{},
+			Approvers: map[string][]string{},
 		},
 		Filecategory: map[string][]string{},
 		Labels:       map[string]string{},
@@ -237,10 +228,8 @@ func TestPatchRepository_ClearFields(t *testing.T) {
 			Webhooks: &openapi.RepositoryConfigurationWebhooksDto{
 				Additional: nil,
 			},
-			Approvers:        nil,
-			DefaultReviewers: nil,
-			SignedApprovers:  nil,
-			Archived:         ptr(false),
+			Approvers: nil,
+			Archived:  ptr(false),
 		},
 		Filecategory: nil,
 		Labels:       nil,
@@ -487,7 +476,5 @@ func createRepositoryConfigDto(testApprovers map[string][]string) *openapi.Repos
 		Webhooks:                nil,
 		Approvers:               testApprovers,
 		Watchers:                nil,
-		DefaultReviewers:        nil,
-		SignedApprovers:         nil,
 	}
 }
