@@ -82,16 +82,32 @@ func (s *Impl) SetupCache(ctx context.Context) error {
 		s.Logging.Logger().Ctx(ctx).Info().Printf("using redis at %s", redisUrl)
 		redisPassword := s.CustomConfiguration.RedisUrl()
 		if s.OwnerCache == nil {
-			s.OwnerCache = libcache.NewRedisCache[openapi.OwnerDto](redisUrl, redisPassword, ownerKeyPrefix)
+			cache, err := libcache.NewRedisCache[openapi.OwnerDto](redisUrl, redisPassword, ownerKeyPrefix)
+			if err != nil {
+				return err
+			}
+			s.OwnerCache = cache
 		}
 		if s.ServiceCache == nil {
-			s.ServiceCache = libcache.NewRedisCache[openapi.ServiceDto](redisUrl, redisPassword, serviceKeyPrefix)
+			cache, err := libcache.NewRedisCache[openapi.ServiceDto](redisUrl, redisPassword, serviceKeyPrefix)
+			if err != nil {
+				return err
+			}
+			s.ServiceCache = cache
 		}
 		if s.RepositoryCache == nil {
-			s.RepositoryCache = libcache.NewRedisCache[openapi.RepositoryDto](redisUrl, redisPassword, repositoryKeyPrefix)
+			cache, err := libcache.NewRedisCache[openapi.RepositoryDto](redisUrl, redisPassword, repositoryKeyPrefix)
+			if err != nil {
+				return err
+			}
+			s.RepositoryCache = cache
 		}
 		if s.TimestampCache == nil {
-			s.TimestampCache = libcache.NewRedisCache[string](redisUrl, redisPassword, timestampKeyPrefix)
+			cache, err := libcache.NewRedisCache[string](redisUrl, redisPassword, timestampKeyPrefix)
+			if err != nil {
+				return err
+			}
+			s.TimestampCache = cache
 		}
 	}
 	return nil
