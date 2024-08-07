@@ -40,8 +40,7 @@ type CustomConfiguration interface {
 	UpdateJobIntervalCronPart() string
 	UpdateJobTimeoutSeconds() uint16
 
-	AlertTargetPrefix() string
-	AlertTargetSuffix() string
+	AlertTargetRegex() *regexp.Regexp
 
 	ElasticApmEnabled() bool
 
@@ -98,10 +97,6 @@ const (
 	KeyBitbucketReviewerFallback      = "BITBUCKET_REVIEWER_FALLBACK"
 	KeyGitCommitterName               = "GIT_COMMITTER_NAME"
 	KeyGitCommitterEmail              = "GIT_COMMITTER_EMAIL"
-	KeyKafkaUsername                  = "KAFKA_USERNAME"
-	KeyKafkaPassword                  = "KAFKA_PASSWORD"
-	KeyKafkaTopic                     = "KAFKA_TOPIC"
-	KeyKafkaSeedBrokers               = "KAFKA_SEED_BROKERS"
 	KeyKafkaGroupIdOverride           = "KAFKA_GROUP_ID_OVERRIDE"
 	KeyAuthOidcKeySetUrl              = "AUTH_OIDC_KEY_SET_URL"
 	KeyAuthOidcTokenAudience          = "AUTH_OIDC_TOKEN_AUDIENCE"
@@ -110,8 +105,7 @@ const (
 	KeyMetadataRepoMainline           = "METADATA_REPO_MAINLINE"
 	KeyUpdateJobIntervalMinutes       = "UPDATE_JOB_INTERVAL_MINUTES"
 	KeyUpdateJobTimeoutSeconds        = "UPDATE_JOB_TIMEOUT_SECONDS"
-	KeyAlertTargetPrefix              = "ALERT_TARGET_PREFIX"
-	KeyAlertTargetSuffix              = "ALERT_TARGET_SUFFIX"
+	KeyAlertTargetRegex               = "ALERT_TARGET_REGEX"
 	KeyElasticApmDisabled             = "ELASTIC_APM_DISABLED"
 	KeyOwnerAliasPermittedRegex       = "OWNER_ALIAS_PERMITTED_REGEX"
 	KeyOwnerAliasProhibitedRegex      = "OWNER_ALIAS_PROHIBITED_REGEX"

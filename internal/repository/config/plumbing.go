@@ -17,12 +17,6 @@ import (
 	"github.com/StephanHCB/go-backend-service-common/repository/vault"
 )
 
-const (
-	allowedNotificationTypeService    = "Service"
-	allowedNotificationTypeOwner      = "Owner"
-	allowedNotificationTypeRepository = "Repository"
-)
-
 type CustomConfigImpl struct {
 	VBasicAuthUsername              string
 	VBasicAuthPassword              string
@@ -45,8 +39,7 @@ type CustomConfigImpl struct {
 	VMetadataRepoMainline           string
 	VUpdateJobIntervalCronPart      string
 	VUpdateJobTimeoutSeconds        uint16
-	VAlertTargetPrefix              string
-	VAlertTargetSuffix              string
+	VAlertTargetRegex               *regexp.Regexp
 	VElasticApmDisabled             bool
 	VOwnerAliasPermittedRegex       *regexp.Regexp
 	VOwnerAliasProhibitedRegex      *regexp.Regexp
@@ -109,8 +102,7 @@ func (c *CustomConfigImpl) Obtain(getter func(key string) string) {
 	c.VMetadataRepoMainline = getter(config.KeyMetadataRepoMainline)
 	c.VUpdateJobIntervalCronPart = getter(config.KeyUpdateJobIntervalMinutes)
 	c.VUpdateJobTimeoutSeconds = toUint16(getter(config.KeyUpdateJobTimeoutSeconds))
-	c.VAlertTargetPrefix = getter(config.KeyAlertTargetPrefix)
-	c.VAlertTargetSuffix = getter(config.KeyAlertTargetSuffix)
+	c.VAlertTargetRegex, _ = regexp.Compile(getter(config.KeyAlertTargetRegex))
 	c.VElasticApmDisabled, _ = strconv.ParseBool(getter(config.KeyElasticApmDisabled))
 	c.VOwnerAliasPermittedRegex, _ = regexp.Compile(getter(config.KeyOwnerAliasPermittedRegex))
 	c.VOwnerAliasProhibitedRegex, _ = regexp.Compile(getter(config.KeyOwnerAliasProhibitedRegex))

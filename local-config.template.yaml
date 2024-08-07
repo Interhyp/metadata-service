@@ -45,8 +45,7 @@ SSH_METADATA_REPO_URL: ssh://git@github.com/Interhyp/service-metadata-example.gi
 UPDATE_JOB_INTERVAL_MINUTES: 15
 UPDATE_JOB_TIMEOUT_SECONDS: 30
 
-ALERT_TARGET_PREFIX: https://domain.com/
-ALERT_TARGET_SUFFIX: '@domain.com'
+ALERT_TARGET_REGEX: '(^https://domain[.]com/)|(@domain[.]com$)'
 
 OWNER_ALIAS_FILTER_REGEX: '.*'
 

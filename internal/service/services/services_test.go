@@ -352,7 +352,7 @@ func TestValidate_AlertTarget(t *testing.T) {
 		AlertTarget: p("somethingother"),
 	}
 
-	expectedMessage := "validation error: field alertTarget must either be an email address @some-organisation.com or a Teams webhook"
+	expectedMessage := "validation error: field alertTarget must match @some-organisation[.]com$"
 
 	tstValidationTestcaseAllOps(t, expectedMessage, data, create, patch)
 }

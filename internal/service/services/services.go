@@ -4,9 +4,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
+
 	"github.com/Interhyp/metadata-service/internal/acorn/repository"
 	auzerolog "github.com/StephanHCB/go-autumn-logging-zerolog"
-	"strings"
 
 	"github.com/Interhyp/metadata-service/api"
 	"github.com/Interhyp/metadata-service/internal/acorn/config"
@@ -531,7 +532,7 @@ func (s *Impl) validateAlertTarget(messages []string, alertTarget string) []stri
 		messages = append(messages, "field alertTarget is mandatory")
 	} else {
 		if !s.validAlertTarget(alertTarget) {
-			messages = append(messages, "field alertTarget must either be an email address @some-organisation.com or a Teams webhook")
+			messages = append(messages, fmt.Sprintf("field alertTarget must match %s", s.CustomConfiguration.AlertTargetRegex().String()))
 		}
 	}
 	return messages
@@ -552,8 +553,7 @@ func validateDescription(messages []string, description *string) []string {
 }
 
 func (s *Impl) validAlertTarget(candidate string) bool {
-	return strings.HasPrefix(candidate, s.CustomConfiguration.AlertTargetPrefix()) ||
-		strings.HasSuffix(candidate, s.CustomConfiguration.AlertTargetSuffix())
+	return s.CustomConfiguration.AlertTargetRegex().MatchString(candidate)
 }
 
 func (s *Impl) validRepoKey(ctx context.Context, candidate string, serviceName string) error {
