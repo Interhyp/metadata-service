@@ -93,12 +93,8 @@ func (c *CustomConfigImpl) UpdateJobTimeoutSeconds() uint16 {
 	return c.VUpdateJobTimeoutSeconds
 }
 
-func (c *CustomConfigImpl) AlertTargetPrefix() string {
-	return c.VAlertTargetPrefix
-}
-
-func (c *CustomConfigImpl) AlertTargetSuffix() string {
-	return c.VAlertTargetSuffix
+func (c *CustomConfigImpl) AlertTargetRegex() *regexp.Regexp {
+	return c.VAlertTargetRegex
 }
 
 func (c *CustomConfigImpl) ElasticApmEnabled() bool {

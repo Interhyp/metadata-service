@@ -1,10 +1,11 @@
 package config
 
 import (
+	"math"
+
 	"github.com/Interhyp/metadata-service/internal/acorn/config"
 	auconfigapi "github.com/StephanHCB/go-autumn-config-api"
 	auconfigenv "github.com/StephanHCB/go-autumn-config-env"
-	"math"
 )
 
 var CustomConfigItems = []auconfigapi.ConfigItem{
@@ -156,16 +157,10 @@ var CustomConfigItems = []auconfigapi.ConfigItem{
 		Validate:    auconfigenv.ObtainUintRangeValidator(10, 60),
 	},
 	{
-		Key:      config.KeyAlertTargetPrefix,
-		EnvName:  config.KeyAlertTargetPrefix,
+		Key:      config.KeyAlertTargetRegex,
+		EnvName:  config.KeyAlertTargetRegex,
 		Default:  "",
-		Validate: auconfigenv.ObtainPatternValidator("^((http|https)://|)[a-z0-9-.]+.[a-z]{2,3}/$"),
-	},
-	{
-		Key:      config.KeyAlertTargetSuffix,
-		EnvName:  config.KeyAlertTargetSuffix,
-		Default:  "",
-		Validate: auconfigenv.ObtainPatternValidator("^@[a-z0-9-]+.[a-z]{2,3}$"),
+		Validate: auconfigenv.ObtainIsRegexValidator(),
 	},
 	{
 		Key:         config.KeyElasticApmDisabled,

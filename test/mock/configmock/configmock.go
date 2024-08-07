@@ -158,12 +158,8 @@ func (c *MockConfig) UpdateJobTimeoutSeconds() uint16 {
 	panic("implement me")
 }
 
-func (c *MockConfig) AlertTargetPrefix() string {
-	return "https://some-domain.com/"
-}
-
-func (c *MockConfig) AlertTargetSuffix() string {
-	return "@some-organisation.com"
+func (c *MockConfig) AlertTargetRegex() *regexp.Regexp {
+	return regexp.MustCompile("@some-organisation[.]com$")
 }
 
 func (c *MockConfig) ElasticApmEnabled() bool {

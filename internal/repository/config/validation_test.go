@@ -3,8 +3,9 @@ package config
 import (
 	"bytes"
 	"context"
-	"github.com/Interhyp/metadata-service/internal/acorn/config"
 	"testing"
+
+	"github.com/Interhyp/metadata-service/internal/acorn/config"
 
 	auconfigenv "github.com/StephanHCB/go-autumn-config-env"
 	goauzerolog "github.com/StephanHCB/go-autumn-logging-zerolog"
@@ -78,7 +79,7 @@ func TestValidate_LotsOfErrors(t *testing.T) {
 	_, err := tstSetupCutAndLogRecorder(t, "invalid-config-values.yaml")
 
 	require.NotNil(t, err)
-	require.Contains(t, err.Error(), "some configuration values failed to validate or parse. There were 28 error(s). See details above")
+	require.Contains(t, err.Error(), "some configuration values failed to validate or parse. There were 26 error(s). See details above")
 
 	actualLog := goauzerolog.RecordedLogForTesting.String()
 
@@ -90,12 +91,6 @@ func TestValidate_LotsOfErrors(t *testing.T) {
 
 	expectedPart3 := "METRICS_PORT: value -12387192873invalid is not a valid integer"
 	require.Contains(t, actualLog, expectedPart3)
-
-	expectedPart4 := "failed to validate configuration field ALERT_TARGET_PREFIX: must match ^((http|https)://|)[a-z0-9-.]+.[a-z]{2,3}/$"
-	require.Contains(t, actualLog, expectedPart4)
-
-	expectedPart5 := "failed to validate configuration field ALERT_TARGET_SUFFIX: must match ^@[a-z0-9-]+.[a-z]{2,3}$"
-	require.Contains(t, actualLog, expectedPart5)
 
 	expectedPart6 := "failed to validate configuration field VAULT_ENABLED: value what is not a valid boolean value"
 	require.Contains(t, actualLog, expectedPart6)
@@ -139,8 +134,7 @@ func TestAccessors(t *testing.T) {
 	require.Equal(t, "git://metadata", config.Custom(cut).SSHMetadataRepositoryUrl())
 	require.Equal(t, "5", config.Custom(cut).UpdateJobIntervalCronPart())
 	require.Equal(t, uint16(30), config.Custom(cut).UpdateJobTimeoutSeconds())
-	require.Equal(t, "https://some-domain.com/", config.Custom(cut).AlertTargetPrefix())
-	require.Equal(t, "@some-domain.com", config.Custom(cut).AlertTargetSuffix())
+	require.Equal(t, "(^https://domain[.]com/)|(@domain[.]com$)", config.Custom(cut).AlertTargetRegex().String())
 	require.Equal(t, "[a-z][0-1]+", config.Custom(cut).OwnerAliasPermittedRegex().String())
 	require.Equal(t, "[a-z][0-2]+", config.Custom(cut).OwnerAliasProhibitedRegex().String())
 	require.Equal(t, uint16(1), config.Custom(cut).OwnerAliasMaxLength())

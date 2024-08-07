@@ -25,8 +25,7 @@ METADATA_REPO_URL: http://metadata
 UPDATE_JOB_INTERVAL_MINUTES: 5
 UPDATE_JOB_TIMEOUT_SECONDS: 30
 
-ALERT_TARGET_PREFIX: https://some-domain.com/
-ALERT_TARGET_SUFFIX: '@some-domain.com'
+ALERT_TARGET_REGEX: '(^https://domain[.]com/)|(@domain[.]com$)'
 
 OWNER_ALIAS_PERMITTED_REGEX: '[a-z][0-1]+'
 OWNER_ALIAS_PROHIBITED_REGEX: '[a-z][0-2]+'
