@@ -5,7 +5,7 @@ go 1.21
 require (
 	github.com/IBM/sarama v1.43.2
 	github.com/Roshick/go-autumn-kafka v0.7.2
-	github.com/Roshick/go-autumn-synchronisation v0.7.0
+	github.com/Roshick/go-autumn-synchronisation v0.7.1
 	github.com/StephanHCB/go-autumn-config-api v0.2.2
 	github.com/StephanHCB/go-autumn-config-env v0.2.3
 	github.com/StephanHCB/go-autumn-logging v0.4.0
@@ -97,12 +97,12 @@ require (
 	go.elastic.co/apm/module/apmhttp/v2 v2.6.0 // indirect
 	go.elastic.co/apm/v2 v2.6.0 // indirect
 	go.elastic.co/fastjson v1.1.0 // indirect
-	golang.org/x/crypto v0.25.0 // indirect
+	golang.org/x/crypto v0.26.0 // indirect
 	golang.org/x/mod v0.17.0 // indirect
-	golang.org/x/net v0.27.0 // indirect
-	golang.org/x/sync v0.7.0 // indirect
-	golang.org/x/sys v0.22.0 // indirect
-	golang.org/x/text v0.16.0 // indirect
+	golang.org/x/net v0.28.0 // indirect
+	golang.org/x/sync v0.8.0 // indirect
+	golang.org/x/sys v0.23.0 // indirect
+	golang.org/x/text v0.17.0 // indirect
 	golang.org/x/tools v0.21.1-0.20240508182429-e35e4ccd0d2d // indirect
 	google.golang.org/protobuf v1.33.0 // indirect
 	gopkg.in/warnings.v0 v0.1.2 // indirect
