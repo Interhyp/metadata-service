@@ -16,7 +16,7 @@ paths:
       operationId: getOwners
       summary: get owners
       description: 'Obtains all owners. Currently, no filtering is available.'
-      parameters: []
+      parameters: [ ]
       responses:
         '200':
           description: Success
@@ -129,8 +129,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorDto'
       security:
-        - bearerAuth: []
-        - basicAuth: []
+        - bearerAuth: [ ]
+        - basicAuth: [ ]
       tags:
         - /rest/api/v1/owners
     put:
@@ -199,8 +199,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorDto'
       security:
-        - bearerAuth: []
-        - basicAuth: []
+        - bearerAuth: [ ]
+        - basicAuth: [ ]
       tags:
         - /rest/api/v1/owners
     patch:
@@ -269,8 +269,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorDto'
       security:
-        - bearerAuth: []
-        - basicAuth: []
+        - bearerAuth: [ ]
+        - basicAuth: [ ]
       tags:
         - /rest/api/v1/owners
     delete:
@@ -335,8 +335,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorDto'
       security:
-        - bearerAuth: []
-        - basicAuth: []
+        - bearerAuth: [ ]
+        - basicAuth: [ ]
       tags:
         - /rest/api/v1/owners
   /rest/api/v1/services:
@@ -471,8 +471,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorDto'
       security:
-        - bearerAuth: []
-        - basicAuth: []
+        - bearerAuth: [ ]
+        - basicAuth: [ ]
       tags:
         - /rest/api/v1/services
     put:
@@ -542,8 +542,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorDto'
       security:
-        - bearerAuth: []
-        - basicAuth: []
+        - bearerAuth: [ ]
+        - basicAuth: [ ]
       tags:
         - /rest/api/v1/services
     patch:
@@ -613,8 +613,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorDto'
       security:
-        - bearerAuth: []
-        - basicAuth: []
+        - bearerAuth: [ ]
+        - basicAuth: [ ]
       tags:
         - /rest/api/v1/services
     delete:
@@ -680,8 +680,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorDto'
       security:
-        - bearerAuth: []
-        - basicAuth: []
+        - bearerAuth: [ ]
+        - basicAuth: [ ]
       tags:
         - /rest/api/v1/services
   '/rest/api/v1/services/{service}/promoters':
@@ -863,8 +863,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorDto'
       security:
-        - bearerAuth: []
-        - basicAuth: []
+        - bearerAuth: [ ]
+        - basicAuth: [ ]
       tags:
         - /rest/api/v1/repositories
     put:
@@ -934,8 +934,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorDto'
       security:
-        - bearerAuth: []
-        - basicAuth: []
+        - bearerAuth: [ ]
+        - basicAuth: [ ]
       tags:
         - /rest/api/v1/repositories
     patch:
@@ -1005,8 +1005,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorDto'
       security:
-        - bearerAuth: []
-        - basicAuth: []
+        - bearerAuth: [ ]
+        - basicAuth: [ ]
       tags:
         - /rest/api/v1/repositories
     delete:
@@ -1072,8 +1072,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorDto'
       security:
-        - bearerAuth: []
-        - basicAuth: []
+        - bearerAuth: [ ]
+        - basicAuth: [ ]
       tags:
         - /rest/api/v1/repositories
   /health:
@@ -1167,7 +1167,7 @@ components:
           description: 'Map of string (group name e.g. some-owner) of strings (list of usernames), one username for each group is required.'
           type: object
           examples:
-            - some-owner: {}
+            - some-owner: { }
           additionalProperties:
             type: array
             items:
@@ -1300,7 +1300,7 @@ components:
           description: 'Map of string (group name e.g. some-owner) of strings (list of usernames), one username for each group is required.'
           type: object
           examples:
-            - some-owner: {}
+            - some-owner: { }
           additionalProperties:
             type: array
             items:
@@ -1638,7 +1638,7 @@ components:
           type: object
           examples:
             - unicorn-finder-service:
-                quicklinks: []
+                quicklinks: [ ]
                 repositories:
                   - unicorn-finder-service.implementation
                   - unicorn-finder-service.helm-deployment
@@ -1758,6 +1758,8 @@ components:
           type: string
           examples:
             - some-owner
+        description:
+          type: string
         url:
           type: string
         mainline:
@@ -1925,7 +1927,7 @@ components:
                     additional:
                       - name: trigger something
                         url: 'https://somejenkinspipeline'
-                        events: []
+                        events: [ ]
                   approvers:
                     testing:
                       - user-one
@@ -1973,6 +1975,10 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/MergeStrategy'
+        defaultTasks:
+          type: array
+          items:
+            $ref: '#/components/schemas/RepositoryConfigurationDefaultTaskDto'
         branchNameRegex:
           description: Use an explicit branch name regex.
           type: string
@@ -2134,6 +2140,12 @@ components:
           enum:
             - REPO_READ
             - REPO_WRITE
+    RepositoryConfigurationDefaultTaskDto:
+      required:
+        - text
+      properties:
+        text:
+          type: string
     RepositoryFileCategoriesDto:
       description: 'Assign a category to a list of files, e.g. to mark them for caching purposes. The key is the category name, and the value is a list of paths. Files are considered to have that category if their path is in the list.'
       type: object
