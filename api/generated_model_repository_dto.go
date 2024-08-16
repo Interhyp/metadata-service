@@ -14,9 +14,10 @@ package openapi
 // RepositoryDto struct for RepositoryDto
 type RepositoryDto struct {
 	// The alias of the repository owner
-	Owner    string `yaml:"-" json:"owner"`
-	Url      string `yaml:"url" json:"url"`
-	Mainline string `yaml:"mainline" json:"mainline"`
+	Owner       string  `yaml:"-" json:"owner"`
+	Description *string `yaml:"description,omitempty" json:"description,omitempty"`
+	Url         string  `yaml:"url" json:"url"`
+	Mainline    string  `yaml:"mainline" json:"mainline"`
 	// the generator used for the initial contents of this repository
 	Generator *string `yaml:"generator,omitempty" json:"generator,omitempty"`
 	// this repository contains unit tests (currently ignored except for helm charts)
