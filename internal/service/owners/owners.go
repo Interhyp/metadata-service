@@ -9,8 +9,8 @@ import (
 	auzerolog "github.com/StephanHCB/go-autumn-logging-zerolog"
 	"strings"
 
-	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
-	"github.com/StephanHCB/go-backend-service-common/api/apierrors"
+	librepo "github.com/Interhyp/go-backend-service-common/acorns/repository"
+	"github.com/Interhyp/go-backend-service-common/api/apierrors"
 )
 
 type Impl struct {

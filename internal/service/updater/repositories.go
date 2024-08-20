@@ -3,13 +3,13 @@ package updater
 import (
 	"context"
 	"errors"
+	"github.com/Interhyp/go-backend-service-common/api/apierrors"
 	"github.com/Interhyp/metadata-service/api"
 	"github.com/Interhyp/metadata-service/internal/acorn/errors/githookerror"
 	"github.com/Interhyp/metadata-service/internal/acorn/errors/nochangeserror"
 	"github.com/Interhyp/metadata-service/internal/acorn/repository"
 	"github.com/Interhyp/metadata-service/internal/repository/notifier"
 	"github.com/Interhyp/metadata-service/internal/types"
-	"github.com/StephanHCB/go-backend-service-common/api/apierrors"
 )
 
 // --- business logic ---

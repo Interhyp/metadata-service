@@ -3,15 +3,15 @@ package webhookctl
 import (
 	"context"
 	"fmt"
+	"github.com/Interhyp/go-backend-service-common/web/util/contexthelper"
 	"github.com/Interhyp/metadata-service/internal/acorn/controller"
 	"github.com/Interhyp/metadata-service/internal/acorn/service"
-	"github.com/StephanHCB/go-backend-service-common/web/util/contexthelper"
 	bitbucketserver "github.com/go-playground/webhooks/v6/bitbucket-server"
 	"net/http"
 
+	librepo "github.com/Interhyp/go-backend-service-common/acorns/repository"
 	"github.com/Interhyp/metadata-service/internal/web/util"
 	aulogging "github.com/StephanHCB/go-autumn-logging"
-	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
 	"github.com/go-chi/chi/v5"
 )
 

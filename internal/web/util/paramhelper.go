@@ -3,9 +3,9 @@ package util
 import (
 	"context"
 	"encoding/json"
+	"github.com/Interhyp/go-backend-service-common/api/apierrors"
 	"github.com/Interhyp/metadata-service/api"
 	aulogging "github.com/StephanHCB/go-autumn-logging"
-	"github.com/StephanHCB/go-backend-service-common/api/apierrors"
 	"github.com/go-chi/chi/v5"
 	"net/http"
 	"time"

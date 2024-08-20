@@ -7,12 +7,12 @@ import (
 
 	"github.com/Interhyp/metadata-service/internal/acorn/config"
 
+	librepo "github.com/Interhyp/go-backend-service-common/acorns/repository"
+	"github.com/Interhyp/go-backend-service-common/docs"
+	libconfig "github.com/Interhyp/go-backend-service-common/repository/config"
+	"github.com/Interhyp/go-backend-service-common/repository/logging"
 	auconfigenv "github.com/StephanHCB/go-autumn-config-env"
 	goauzerolog "github.com/StephanHCB/go-autumn-logging-zerolog"
-	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
-	"github.com/StephanHCB/go-backend-service-common/docs"
-	libconfig "github.com/StephanHCB/go-backend-service-common/repository/config"
-	"github.com/StephanHCB/go-backend-service-common/repository/logging"
 	"github.com/rs/zerolog/log"
 	"github.com/stretchr/testify/require"
 )

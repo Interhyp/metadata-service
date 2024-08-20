@@ -6,7 +6,7 @@ import (
 	"github.com/Interhyp/metadata-service/internal/types"
 	"github.com/Roshick/go-autumn-kafka/pkg/kafka"
 
-	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
+	librepo "github.com/Interhyp/go-backend-service-common/acorns/repository"
 )
 
 type CustomConfiguration interface {

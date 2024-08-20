@@ -3,6 +3,7 @@ package bbclient
 import (
 	"context"
 	"fmt"
+	librepo "github.com/Interhyp/go-backend-service-common/acorns/repository"
 	"github.com/Interhyp/metadata-service/internal/acorn/config"
 	"github.com/Interhyp/metadata-service/internal/acorn/errors/httperror"
 	"github.com/Interhyp/metadata-service/internal/acorn/repository"
@@ -17,7 +18,6 @@ import (
 	aurestrecorder "github.com/StephanHCB/go-autumn-restclient/implementation/recorder"
 	aurestlogging "github.com/StephanHCB/go-autumn-restclient/implementation/requestlogging"
 	aurestretry "github.com/StephanHCB/go-autumn-restclient/implementation/retry"
-	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
 	"github.com/go-http-utils/headers"
 	"net/http"
 	"net/url"

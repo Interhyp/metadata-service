@@ -2,7 +2,7 @@ package vaultmock
 
 import (
 	"context"
-	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
+	librepo "github.com/Interhyp/go-backend-service-common/acorns/repository"
 )
 
 type VaultImpl struct {

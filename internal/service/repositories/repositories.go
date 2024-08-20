@@ -6,14 +6,14 @@ import (
 	"net/url"
 	"strings"
 
+	librepo "github.com/Interhyp/go-backend-service-common/acorns/repository"
+	"github.com/Interhyp/go-backend-service-common/api/apierrors"
 	"github.com/Interhyp/metadata-service/api"
 	"github.com/Interhyp/metadata-service/internal/acorn/config"
 	"github.com/Interhyp/metadata-service/internal/acorn/repository"
 	"github.com/Interhyp/metadata-service/internal/acorn/service"
 	"github.com/Interhyp/metadata-service/internal/service/util"
 	auzerolog "github.com/StephanHCB/go-autumn-logging-zerolog"
-	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
-	"github.com/StephanHCB/go-backend-service-common/api/apierrors"
 )
 
 type Impl struct {

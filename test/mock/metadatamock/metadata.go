@@ -13,7 +13,7 @@ import (
 	"github.com/Interhyp/metadata-service/internal/acorn/errors/nochangeserror"
 	"github.com/Interhyp/metadata-service/internal/acorn/repository"
 
-	"github.com/StephanHCB/go-backend-service-common/api/apierrors"
+	"github.com/Interhyp/go-backend-service-common/api/apierrors"
 	"github.com/go-git/go-billy/v5"
 	"github.com/go-git/go-billy/v5/memfs"
 )

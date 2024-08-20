@@ -3,12 +3,12 @@ package prvalidator
 import (
 	"context"
 	"fmt"
+	librepo "github.com/Interhyp/go-backend-service-common/acorns/repository"
 	openapi "github.com/Interhyp/metadata-service/api"
 	"github.com/Interhyp/metadata-service/internal/acorn/config"
 	"github.com/Interhyp/metadata-service/internal/acorn/repository"
 	"github.com/Interhyp/metadata-service/internal/acorn/service"
 	aulogging "github.com/StephanHCB/go-autumn-logging"
-	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
 	"gopkg.in/yaml.v3"
 	"strings"
 )

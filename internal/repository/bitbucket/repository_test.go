@@ -2,6 +2,8 @@ package bitbucket
 
 import (
 	"context"
+	libconfig "github.com/Interhyp/go-backend-service-common/repository/config"
+	"github.com/Interhyp/go-backend-service-common/repository/logging"
 	configint "github.com/Interhyp/metadata-service/internal/acorn/config"
 	"github.com/Interhyp/metadata-service/internal/acorn/errors/httperror"
 	"github.com/Interhyp/metadata-service/internal/acorn/repository"
@@ -9,8 +11,6 @@ import (
 	"github.com/Interhyp/metadata-service/test/mock/bbclientmock"
 	"github.com/Interhyp/metadata-service/test/mock/vaultmock"
 	auconfigenv "github.com/StephanHCB/go-autumn-config-env"
-	libconfig "github.com/StephanHCB/go-backend-service-common/repository/config"
-	"github.com/StephanHCB/go-backend-service-common/repository/logging"
 	"github.com/stretchr/testify/require"
 	"testing"
 )

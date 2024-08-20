@@ -8,12 +8,12 @@ import (
 	"time"
 
 	"github.com/IBM/sarama"
+	librepo "github.com/Interhyp/go-backend-service-common/acorns/repository"
 	"github.com/Interhyp/metadata-service/internal/acorn/config"
 	"github.com/Interhyp/metadata-service/internal/acorn/repository"
 	"github.com/Roshick/go-autumn-kafka/pkg/kafka"
 	aulogging "github.com/StephanHCB/go-autumn-logging"
 	auzerolog "github.com/StephanHCB/go-autumn-logging-zerolog"
-	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
 	"github.com/rcrowley/go-metrics"
 )
 import _ "github.com/go-git/go-git/v5"

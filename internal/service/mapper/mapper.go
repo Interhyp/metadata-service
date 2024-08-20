@@ -2,11 +2,11 @@ package mapper
 
 import (
 	"context"
+	librepo "github.com/Interhyp/go-backend-service-common/acorns/repository"
 	"github.com/Interhyp/metadata-service/internal/acorn/config"
 	"github.com/Interhyp/metadata-service/internal/acorn/repository"
 	"github.com/Interhyp/metadata-service/internal/acorn/service"
 	auzerolog "github.com/StephanHCB/go-autumn-logging-zerolog"
-	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
 	"strings"
 	"sync"
 )

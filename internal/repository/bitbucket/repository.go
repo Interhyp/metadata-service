@@ -3,6 +3,7 @@ package bitbucket
 import (
 	"context"
 	"fmt"
+	librepo "github.com/Interhyp/go-backend-service-common/acorns/repository"
 	"github.com/Interhyp/metadata-service/internal/acorn/config"
 	"github.com/Interhyp/metadata-service/internal/acorn/errors/httperror"
 	"github.com/Interhyp/metadata-service/internal/acorn/repository"
@@ -10,7 +11,6 @@ import (
 	"github.com/Interhyp/metadata-service/internal/repository/bitbucket/bbclientint"
 	aulogging "github.com/StephanHCB/go-autumn-logging"
 	auzerolog "github.com/StephanHCB/go-autumn-logging-zerolog"
-	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
 	"net/http"
 	"sort"
 )

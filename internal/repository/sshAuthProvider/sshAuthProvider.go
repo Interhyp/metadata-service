@@ -6,8 +6,8 @@ import (
 	"github.com/Interhyp/metadata-service/internal/acorn/repository"
 	auzerolog "github.com/StephanHCB/go-autumn-logging-zerolog"
 
+	librepo "github.com/Interhyp/go-backend-service-common/acorns/repository"
 	aulogging "github.com/StephanHCB/go-autumn-logging"
-	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
 	"github.com/go-git/go-git/v5/plumbing/transport/ssh"
 )
 

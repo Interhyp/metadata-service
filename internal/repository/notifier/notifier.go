@@ -3,14 +3,14 @@ package notifier
 import (
 	"context"
 	"fmt"
+	librepo "github.com/Interhyp/go-backend-service-common/acorns/repository"
+	"github.com/Interhyp/go-backend-service-common/web/util/contexthelper"
 	openapi "github.com/Interhyp/metadata-service/api"
 	"github.com/Interhyp/metadata-service/internal/acorn/config"
 	"github.com/Interhyp/metadata-service/internal/acorn/repository"
 	notifierclient "github.com/Interhyp/metadata-service/internal/repository/notifier/client/notifier"
 	"github.com/Interhyp/metadata-service/internal/types"
 	auzerolog "github.com/StephanHCB/go-autumn-logging-zerolog"
-	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
-	"github.com/StephanHCB/go-backend-service-common/web/util/contexthelper"
 	"time"
 )
 

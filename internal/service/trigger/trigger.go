@@ -3,11 +3,11 @@ package trigger
 import (
 	"context"
 	"fmt"
+	librepo "github.com/Interhyp/go-backend-service-common/acorns/repository"
+	"github.com/Interhyp/go-backend-service-common/web/middleware/requestid"
 	"github.com/Interhyp/metadata-service/internal/acorn/config"
 	"github.com/Interhyp/metadata-service/internal/acorn/service"
 	auzerolog "github.com/StephanHCB/go-autumn-logging-zerolog"
-	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
-	"github.com/StephanHCB/go-backend-service-common/web/middleware/requestid"
 	"github.com/robfig/cron/v3"
 	"github.com/rs/zerolog/log"
 	"time"

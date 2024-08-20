@@ -2,6 +2,10 @@ package acceptance
 
 import (
 	"context"
+	libconfig "github.com/Interhyp/go-backend-service-common/repository/config"
+	"github.com/Interhyp/go-backend-service-common/repository/logging"
+	"github.com/Interhyp/go-backend-service-common/repository/timestamp"
+	"github.com/Interhyp/go-backend-service-common/web/middleware/security"
 	"github.com/Interhyp/metadata-service/internal/repository/config"
 	"github.com/Interhyp/metadata-service/internal/repository/notifier"
 	"github.com/Interhyp/metadata-service/internal/service/trigger"
@@ -15,10 +19,6 @@ import (
 	"github.com/Interhyp/metadata-service/test/mock/notifiermock"
 	"github.com/Interhyp/metadata-service/test/mock/vaultmock"
 	auconfigenv "github.com/StephanHCB/go-autumn-config-env"
-	libconfig "github.com/StephanHCB/go-backend-service-common/repository/config"
-	"github.com/StephanHCB/go-backend-service-common/repository/logging"
-	"github.com/StephanHCB/go-backend-service-common/repository/timestamp"
-	"github.com/StephanHCB/go-backend-service-common/web/middleware/security"
 	"github.com/rs/zerolog/log"
 	"net/http/httptest"
 	"time"
