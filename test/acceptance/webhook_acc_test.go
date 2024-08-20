@@ -3,8 +3,8 @@ package acceptance
 import (
 	"bytes"
 	"encoding/json"
+	"github.com/Interhyp/go-backend-service-common/docs"
 	"github.com/Interhyp/metadata-service/internal/acorn/repository"
-	"github.com/StephanHCB/go-backend-service-common/docs"
 	bitbucketserver "github.com/go-playground/webhooks/v6/bitbucket-server"
 	"github.com/stretchr/testify/require"
 	"net/http"

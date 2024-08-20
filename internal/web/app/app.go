@@ -1,6 +1,13 @@
 package app
 
 import (
+	libcontroller "github.com/Interhyp/go-backend-service-common/acorns/controller"
+	librepo "github.com/Interhyp/go-backend-service-common/acorns/repository"
+	"github.com/Interhyp/go-backend-service-common/repository/logging"
+	"github.com/Interhyp/go-backend-service-common/repository/timestamp"
+	"github.com/Interhyp/go-backend-service-common/repository/vault"
+	"github.com/Interhyp/go-backend-service-common/web/controller/healthctl"
+	"github.com/Interhyp/go-backend-service-common/web/controller/swaggerctl"
 	"github.com/Interhyp/metadata-service/internal/acorn/application"
 	configrepo "github.com/Interhyp/metadata-service/internal/acorn/config"
 	"github.com/Interhyp/metadata-service/internal/acorn/controller"
@@ -27,13 +34,6 @@ import (
 	"github.com/Interhyp/metadata-service/internal/web/controller/servicectl"
 	"github.com/Interhyp/metadata-service/internal/web/controller/webhookctl"
 	"github.com/Interhyp/metadata-service/internal/web/server"
-	libcontroller "github.com/StephanHCB/go-backend-service-common/acorns/controller"
-	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
-	"github.com/StephanHCB/go-backend-service-common/repository/logging"
-	"github.com/StephanHCB/go-backend-service-common/repository/timestamp"
-	"github.com/StephanHCB/go-backend-service-common/repository/vault"
-	"github.com/StephanHCB/go-backend-service-common/web/controller/healthctl"
-	"github.com/StephanHCB/go-backend-service-common/web/controller/swaggerctl"
 	"time"
 )
 

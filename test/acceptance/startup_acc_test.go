@@ -1,7 +1,7 @@
 package acceptance
 
 import (
-	"github.com/StephanHCB/go-backend-service-common/docs"
+	"github.com/Interhyp/go-backend-service-common/docs"
 	"github.com/stretchr/testify/require"
 	"net/http"
 	"testing"

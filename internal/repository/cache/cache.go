@@ -2,12 +2,12 @@ package cache
 
 import (
 	"context"
+	librepo "github.com/Interhyp/go-backend-service-common/acorns/repository"
 	openapi "github.com/Interhyp/metadata-service/api"
 	"github.com/Interhyp/metadata-service/internal/acorn/config"
 	"github.com/Interhyp/metadata-service/internal/acorn/repository"
 	libcache "github.com/Roshick/go-autumn-synchronisation/pkg/cache"
 	auzerolog "github.com/StephanHCB/go-autumn-logging-zerolog"
-	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
 	"time"
 )
 

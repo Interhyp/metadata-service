@@ -8,10 +8,10 @@ import (
 	"github.com/Interhyp/metadata-service/api"
 	"github.com/Interhyp/metadata-service/test/mock/configmock"
 
+	"github.com/Interhyp/go-backend-service-common/api/apierrors"
+	"github.com/Interhyp/go-backend-service-common/docs"
+	"github.com/Interhyp/go-backend-service-common/repository/timestamp"
 	auloggingapi "github.com/StephanHCB/go-autumn-logging/api"
-	"github.com/StephanHCB/go-backend-service-common/api/apierrors"
-	"github.com/StephanHCB/go-backend-service-common/docs"
-	"github.com/StephanHCB/go-backend-service-common/repository/timestamp"
 	"github.com/stretchr/testify/require"
 )
 

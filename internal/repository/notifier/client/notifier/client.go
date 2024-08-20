@@ -8,13 +8,13 @@ import (
 	"net/http"
 	"time"
 
+	librepo "github.com/Interhyp/go-backend-service-common/acorns/repository"
 	aurestbreakerprometheus "github.com/StephanHCB/go-autumn-restclient-circuitbreaker-prometheus"
 	aurestbreaker "github.com/StephanHCB/go-autumn-restclient-circuitbreaker/implementation/breaker"
 	aurestclientprometheus "github.com/StephanHCB/go-autumn-restclient-prometheus"
 	aurestclientapi "github.com/StephanHCB/go-autumn-restclient/api"
 	auresthttpclient "github.com/StephanHCB/go-autumn-restclient/implementation/httpclient"
 	aurestlogging "github.com/StephanHCB/go-autumn-restclient/implementation/requestlogging"
-	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
 )
 
 type NotifierClient interface {

@@ -4,6 +4,7 @@ go 1.21
 
 require (
 	github.com/IBM/sarama v1.43.3
+	github.com/Interhyp/go-backend-service-common v0.12.0
 	github.com/Roshick/go-autumn-kafka v0.7.2
 	github.com/Roshick/go-autumn-synchronisation v0.7.0
 	github.com/StephanHCB/go-autumn-config-api v0.2.2
@@ -15,7 +16,6 @@ require (
 	github.com/StephanHCB/go-autumn-restclient-circuitbreaker v0.5.0
 	github.com/StephanHCB/go-autumn-restclient-circuitbreaker-prometheus v0.2.0
 	github.com/StephanHCB/go-autumn-restclient-prometheus v0.2.0
-	github.com/StephanHCB/go-backend-service-common v0.11.0
 	github.com/go-chi/chi/v5 v5.1.0
 	github.com/go-git/go-billy/v5 v5.5.0
 	github.com/go-git/go-git/v5 v5.12.0
@@ -29,7 +29,6 @@ require (
 	github.com/rs/zerolog v1.33.0
 	github.com/stretchr/testify v1.9.0
 	gopkg.in/yaml.v3 v3.0.1
-
 )
 
 require (

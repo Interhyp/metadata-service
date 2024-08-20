@@ -2,8 +2,8 @@ package service
 
 import (
 	"context"
+	"github.com/Interhyp/go-backend-service-common/api/apierrors"
 	"github.com/Interhyp/metadata-service/api"
-	"github.com/StephanHCB/go-backend-service-common/api/apierrors"
 )
 
 // Repositories provides the business logic for repository metadata.

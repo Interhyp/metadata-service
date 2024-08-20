@@ -7,14 +7,14 @@ import (
 	"strconv"
 	"strings"
 
+	librepo "github.com/Interhyp/go-backend-service-common/acorns/repository"
+	libconfig "github.com/Interhyp/go-backend-service-common/repository/config"
+	"github.com/Interhyp/go-backend-service-common/repository/vault"
 	"github.com/Interhyp/metadata-service/internal/acorn/config"
 	openapi "github.com/Interhyp/metadata-service/internal/types"
 	"github.com/Roshick/go-autumn-kafka/pkg/kafka"
 	auconfigapi "github.com/StephanHCB/go-autumn-config-api"
 	auconfigenv "github.com/StephanHCB/go-autumn-config-env"
-	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
-	libconfig "github.com/StephanHCB/go-backend-service-common/repository/config"
-	"github.com/StephanHCB/go-backend-service-common/repository/vault"
 )
 
 type CustomConfigImpl struct {

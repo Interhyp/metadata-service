@@ -10,10 +10,10 @@ import (
 	"github.com/Interhyp/metadata-service/internal/acorn/service"
 	"net/http"
 
+	librepo "github.com/Interhyp/go-backend-service-common/acorns/repository"
+	"github.com/Interhyp/go-backend-service-common/api/apierrors"
+	"github.com/Interhyp/go-backend-service-common/web/middleware/security"
 	"github.com/Interhyp/metadata-service/internal/web/util"
-	librepo "github.com/StephanHCB/go-backend-service-common/acorns/repository"
-	"github.com/StephanHCB/go-backend-service-common/api/apierrors"
-	"github.com/StephanHCB/go-backend-service-common/web/middleware/security"
 	"github.com/go-chi/chi/v5"
 )
 
