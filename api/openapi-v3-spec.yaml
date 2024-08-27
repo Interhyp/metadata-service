@@ -1671,6 +1671,11 @@ components:
     ServiceSpecDto:
       type: object
       properties:
+        system:
+          description: A reference to the system that the component belongs to
+          type: string
+          examples:
+            - some-system
         dependsOn:
           description: A relation denoting a dependency on another entity
           type: array

@@ -13,6 +13,8 @@ package openapi
 
 // ServiceSpecDto struct for ServiceSpecDto
 type ServiceSpecDto struct {
+	// A reference to the system that the component belongs to
+	System *string `yaml:"system,omitempty" json:"system,omitempty"`
 	// A relation denoting a dependency on another entity
 	DependsOn []string `yaml:"dependsOn,omitempty" json:"dependsOn,omitempty"`
 	// A relation with an API, provided by this entity
