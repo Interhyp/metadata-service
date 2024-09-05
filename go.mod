@@ -23,7 +23,7 @@ require (
 	github.com/go-playground/webhooks/v6 v6.4.0
 	github.com/lestrrat-go/jwx/v2 v2.1.1
 	github.com/pkg/errors v0.9.1
-	github.com/prometheus/client_golang v1.20.0
+	github.com/prometheus/client_golang v1.20.2
 	github.com/rcrowley/go-metrics v0.0.0-20201227073835-cf1acfcdf475
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/rs/zerolog v1.33.0
