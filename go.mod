@@ -6,7 +6,7 @@ require (
 	github.com/IBM/sarama v1.43.3
 	github.com/Interhyp/go-backend-service-common v0.12.0
 	github.com/Roshick/go-autumn-kafka v0.7.2
-	github.com/Roshick/go-autumn-synchronisation v0.7.0
+	github.com/Roshick/go-autumn-synchronisation v0.7.1
 	github.com/StephanHCB/go-autumn-config-api v0.2.2
 	github.com/StephanHCB/go-autumn-config-env v0.2.3
 	github.com/StephanHCB/go-autumn-logging v0.4.0
