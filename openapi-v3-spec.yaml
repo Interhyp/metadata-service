@@ -1433,6 +1433,9 @@ components:
             type: string
         spec:
           $ref: '#/components/schemas/ServiceSpecDto'
+        postPromotes:
+          description: Post promote dependencies.
+          $ref: '#/components/schemas/PostPromote'
         timeStamp:
           description: 'ISO-8601 UTC date time at which this information was originally committed. When sending an update, include the original timestamp you got so we can detect concurrent updates.'
           type: string
@@ -1529,6 +1532,9 @@ components:
             type: string
         spec:
           $ref: '#/components/schemas/ServiceSpecDto'
+        postPromotes:
+          description: Post promote dependencies.
+          $ref: '#/components/schemas/PostPromote'
         jiraIssue:
           description: 'The jira issue to use for committing a change, or the last jira issue used.'
           type: string
@@ -1603,6 +1609,9 @@ components:
             type: string
         spec:
           $ref: '#/components/schemas/ServiceSpecDto'
+        postPromotes:
+          description: Post promote dependencies.
+          $ref: '#/components/schemas/PostPromote'
         timeStamp:
           description: 'ISO-8601 UTC date time at which this information was originally committed. When sending an update, include the original timestamp you got so we can detect concurrent updates.'
           type: string
@@ -1699,6 +1708,36 @@ components:
           examples:
             - - some-api
               - other-api
+    PostPromote:
+      type: object
+      properties:
+        binaries:
+          type: array
+          items:
+            $ref: '#/components/schemas/Binary'
+    Binary:
+      type: object
+      description: Parameters to identify a binary in e.g. nexus
+      required:
+        - groupId
+        - artifactId
+        - versionPrefix
+      properties:
+        groupId:
+          description: The group id of binary
+          type: string
+        artifactId:
+          description: The artifact id of binary
+          type: string
+        versionPrefix:
+          description: The version prefix of binary
+          type: string
+        classifier:
+          description: The classifier of binary
+          type: string
+        fileType:
+          description: The file type of binary e.g. tar.gz
+          type: string
     Notification:
       description: Schema of the Dto sent to all configured downstreams upon a change of service.
       type: object
