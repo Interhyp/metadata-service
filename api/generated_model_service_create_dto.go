@@ -32,6 +32,8 @@ type ServiceCreateDto struct {
 	Tags            []string          `yaml:"tags,omitempty" json:"tags,omitempty"`
 	Labels          map[string]string `yaml:"labels,omitempty" json:"labels,omitempty"`
 	Spec            *ServiceSpecDto   `yaml:"spec,omitempty" json:"spec,omitempty"`
+	// Post promote dependencies.
+	PostPromotes *PostPromote `yaml:"postPromotes,omitempty" json:"postPromotes,omitempty"`
 	// The jira issue to use for committing a change, or the last jira issue used.
 	JiraIssue string `yaml:"-" json:"jiraIssue"`
 }

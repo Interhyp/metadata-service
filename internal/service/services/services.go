@@ -158,6 +158,7 @@ func (s *Impl) mapServiceCreateDtoToServiceDto(serviceCreateDto openapi.ServiceC
 		Spec:            serviceCreateDto.Spec,
 		Tags:            serviceCreateDto.Tags,
 		Labels:          serviceCreateDto.Labels,
+		PostPromotes:    serviceCreateDto.PostPromotes,
 	}
 }
 
@@ -359,6 +360,7 @@ func patchService(current openapi.ServiceDto, patch openapi.ServicePatchDto) ope
 		Spec:            patchServiceSpec(patch.Spec, current.Spec),
 		Tags:            patchStringSlice(patch.Tags, current.Tags),
 		Labels:          patchMapSlice(patch.Labels, current.Labels),
+		PostPromotes:    patchPostPromotes(patch.PostPromotes, current.PostPromotes),
 	}
 }
 
@@ -403,6 +405,14 @@ func patchMapSlice(patch map[string]string, original map[string]string) map[stri
 		return patch
 	} else {
 		return original
+	}
+}
+
+func patchPostPromotes(patch *openapi.PostPromote, original *openapi.PostPromote) *openapi.PostPromote {
+	if patch == nil {
+		return original
+	} else {
+		return patch
 	}
 }
 

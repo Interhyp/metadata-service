@@ -32,6 +32,8 @@ type ServiceDto struct {
 	Tags            []string          `yaml:"tags,omitempty" json:"tags,omitempty"`
 	Labels          map[string]string `yaml:"labels,omitempty" json:"labels,omitempty"`
 	Spec            *ServiceSpecDto   `yaml:"spec,omitempty" json:"spec,omitempty"`
+	// Post promote dependencies.
+	PostPromotes *PostPromote `yaml:"postPromotes,omitempty" json:"postPromotes,omitempty"`
 	// ISO-8601 UTC date time at which this information was originally committed. When sending an update, include the original timestamp you got so we can detect concurrent updates.
 	TimeStamp string `yaml:"-" json:"timeStamp"`
 	// The git commit hash this information was originally committed under. When sending an update, include the original commitHash you got so we can detect concurrent updates.
