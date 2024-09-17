@@ -27,8 +27,10 @@ type RepositoryConfigurationPatchDto struct {
 	// Set the required approvals counter.
 	RequireApprovals *int32 `yaml:"requireApprovals,omitempty" json:"requireApprovals,omitempty"`
 	// Exclude merge commits from commit checks.
-	ExcludeMergeCommits *bool                               `yaml:"excludeMergeCommits,omitempty" json:"excludeMergeCommits,omitempty"`
-	Webhooks            *RepositoryConfigurationWebhooksDto `yaml:"webhooks,omitempty" json:"webhooks,omitempty"`
+	ExcludeMergeCommits *bool `yaml:"excludeMergeCommits,omitempty" json:"excludeMergeCommits,omitempty"`
+	// Exclude users from commit checks.
+	ExcludeMergeCheckUsers []ExcludeMergeCheckUserDto          `yaml:"excludeMergeCheckUsers,omitempty" json:"excludeMergeCheckUsers,omitempty"`
+	Webhooks               *RepositoryConfigurationWebhooksDto `yaml:"webhooks,omitempty" json:"webhooks,omitempty"`
 	// Map of string (group name e.g. some-owner) of strings (list of approvers), one approval for each group is required.
 	Approvers map[string][]string `yaml:"approvers,omitempty" json:"approvers,omitempty"`
 	// List of strings (list of watchers, either usernames or group identifier), which are added as reviewers but require no approval.
