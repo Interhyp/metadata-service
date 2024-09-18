@@ -183,6 +183,10 @@ func (s *Impl) updateIndividualRepositories(ctx context.Context, repositoryKeysM
 				if firstError == nil {
 					firstError = err
 				}
+				if isContextCancelledOrTimeout(ctx) {
+					// no use continuing the loop, everything will fail at this point
+					return firstError
+				}
 			}
 		}
 	}
