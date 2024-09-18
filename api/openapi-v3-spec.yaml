@@ -2044,6 +2044,11 @@ components:
         excludeMergeCommits:
           description: Exclude merge commits from commit checks.
           type: boolean
+        excludeMergeCheckUsers:
+          description: Exclude users from commit checks.
+          type: array
+          items:
+            $ref: '#/components/schemas/ExcludeMergeCheckUserDto'
         webhooks:
           $ref: '#/components/schemas/RepositoryConfigurationWebhooksDto'
         approvers:
@@ -2122,6 +2127,11 @@ components:
         excludeMergeCommits:
           description: Exclude merge commits from commit checks.
           type: boolean
+        excludeMergeCheckUsers:
+          description: Exclude users from commit checks.
+          type: array
+          items:
+            $ref: '#/components/schemas/ExcludeMergeCheckUserDto'
         webhooks:
           $ref: '#/components/schemas/RepositoryConfigurationWebhooksDto'
         approvers:
@@ -2210,6 +2220,13 @@ components:
           type: string
       required:
         - refMatcher
+    ExcludeMergeCheckUserDto:
+      type: object
+      required: [ name ]
+      properties:
+        name:
+          description: Name of merge check exclude user
+          type: string
     RepositoryConfigurationWebhooksDto:
       description: Webhooks configured to the repository.
       type: object

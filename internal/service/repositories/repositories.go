@@ -458,6 +458,7 @@ func patchConfiguration(patch *openapi.RepositoryConfigurationPatchDto, original
 			CommitMessageType:       patchStringPtr(patch.CommitMessageType, original.CommitMessageType),
 			RequireSuccessfulBuilds: patchPtr[int32](patch.RequireSuccessfulBuilds, original.RequireSuccessfulBuilds),
 			ExcludeMergeCommits:     patchPtr[bool](patch.ExcludeMergeCommits, original.ExcludeMergeCommits),
+			ExcludeMergeCheckUsers:  patchExcludeMergeCheckUsers(patch.ExcludeMergeCheckUsers, original.ExcludeMergeCheckUsers),
 			Webhooks:                patchWebhooks(patch.Webhooks, original.Webhooks),
 			Approvers:               patchApprovers(patch.Approvers, original.Approvers),
 			Watchers:                patchStringSlice(patch.Watchers, original.Watchers),
@@ -500,6 +501,19 @@ func patchLabels(patch map[string]string, original map[string]string) map[string
 			return nil
 		}
 		return patch
+	} else {
+		return original
+	}
+}
+
+func patchExcludeMergeCheckUsers(patch []openapi.ExcludeMergeCheckUserDto, original []openapi.ExcludeMergeCheckUserDto) []openapi.ExcludeMergeCheckUserDto {
+	if patch != nil {
+		if len(patch) == 0 {
+			// remove
+			return nil
+		} else {
+			return patch
+		}
 	} else {
 		return original
 	}
