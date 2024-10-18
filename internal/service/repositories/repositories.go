@@ -717,11 +717,22 @@ func (s *Impl) expandProtectedRefsExemptionLists(ctx context.Context, pr []opena
 		return pr
 	}
 	for i, protectedRef := range pr {
+		protectedRef.ExemptionsRoles = s.filterTeams(protectedRef.Exemptions)
 		protectedRef.Exemptions = s.expandUserGroups(ctx, protectedRef.Exemptions)
 		pr[i] = protectedRef
 	}
 	return pr
+}
 
+func (s *Impl) filterTeams(exemptions []string) []string {
+	var filteredTeams = make([]string, 0)
+	for _, exemption := range exemptions {
+		isGroup, _, _ := util.ParseGroupOwnerAndGroupName(exemption)
+		if isGroup {
+			filteredTeams = append(filteredTeams, exemption)
+		}
+	}
+	return filteredTeams
 }
 
 func sliceContains[T comparable](haystack []T, needle T) bool {

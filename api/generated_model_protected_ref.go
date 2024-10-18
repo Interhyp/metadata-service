@@ -17,4 +17,6 @@ type ProtectedRef struct {
 	Pattern string `yaml:"pattern" json:"pattern" validate:"regexp=^(?!refs\\/(heads|tags)\\/).*$"`
 	// list of users, teams or apps for whom this protection does not apply
 	Exemptions []string `yaml:"exemptions,omitempty" json:"exemptions,omitempty"`
+	// list of teams for whom this protection does not apply
+	ExemptionsRoles []string `yaml:"exemptionsRoles,omitempty" json:"exemptionsRoles,omitempty"`
 }

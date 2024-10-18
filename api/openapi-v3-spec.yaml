@@ -2338,6 +2338,12 @@ components:
           items:
             type: string
             description: 'A user, team or app identifier. Teams are identified by leading @<OWNER>. prefix, apps are identified by app: prefix.'
+        exemptionsRoles:
+          description: list of teams for whom this protection does not apply
+          type: array
+          items:
+            type: string
+            description: 'A team identifier. Teams are identified by leading @<OWNER>. prefix'
     ErrorDto:
       type: object
       properties:
