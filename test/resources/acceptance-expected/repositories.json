@@ -59,6 +59,9 @@
                   "some-other-user",
                   "a-very-special-user"
                 ],
+                "exemptionsRoles": [
+                  "@some-owner.users"
+                ],
                 "pattern": ":MAINLINE:"
               }
             ]
