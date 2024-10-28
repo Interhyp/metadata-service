@@ -25,6 +25,8 @@ function generate_apimodel {
     -g go-autumrest
 }
 
+DOWNSTREAM_API_DIRECTORY=../internal/client
+
 function generate_downstream {
   P_DOWNSTREAM_NAME=$1
   P_SPEC_FILE_NAME=$2
@@ -42,6 +44,7 @@ function generate_downstream {
 }
 
 generate_apimodel
+generate_downstream bitbucket bitbucket-v8.19.json BuildsAndDeployments:PullRequests:Repository:User
 
 # -------------------------------------- customization -----------------------------------------
 # omit certain fields from yaml representations, which we use internally to save to files in git

@@ -1,0 +1,56 @@
+{
+  "method": "GET",
+  "requestUrl": "localhost/rest/api/latest/projects/er/repos/metadata/browse/owners/test-owner-dev/owner.info.yaml?at=0221b127f58baf5304d98b1fa7a2535f8db68583",
+  "requestBody": "",
+  "parsedResponse": {
+    "Body": {
+      "lines": [
+        {
+          "text": "contact: email@localhost.com"
+        },
+        {
+          "text": "productOwner: po-user"
+        },
+        {
+          "text": "groups:"
+        },
+        {
+          "text": "    users:"
+        },
+        {
+          "text": "        - user-one"
+        },
+        {
+          "text": "        - user-two"
+        },
+        {
+          "text": "        - user-three"
+        },
+        {
+          "text": "defaultJiraProject: some-project"
+        },
+        {
+          "text": "displayName: some owner"
+        },
+        {
+          "text": "links:"
+        },
+        {
+          "text": "    - url: www.google.com"
+        },
+        {
+          "text": "      title: \"Google\""
+        }
+      ],
+      "start": 0,
+      "size": 16,
+      "isLastPage": true,
+      "limit": 500,
+      "nextPageStart": null
+    },
+    "Status": 200,
+    "Header": {
+    },
+    "Time": "2024-10-22T11:29:55.5326883+02:00"
+  }
+}

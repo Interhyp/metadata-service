@@ -97,7 +97,7 @@ func (r *Impl) Teardown() {
 
 const insecureSkipTLS = false
 
-var UseHTTP = true
+var UseHTTP = false
 
 func (r *Impl) pathsTouchedInCommit(ctx context.Context, commit *object.Commit) ([]string, error) {
 	result := make([]string, 0)

@@ -86,7 +86,7 @@ func (s *Impl) GetRepository(ctx context.Context, repoKey string) (openapi.Repos
 		for approversGroupName, approversGroup := range approversGroupsMap {
 			users, groups := util.SplitUsersAndGroups(approversGroup)
 			if len(users) > 0 {
-				filteredExistingUsers, err2 := s.Bitbucket.FilterExistingUsernames(ctx, users)
+				filteredExistingUsers, err2 := s.filterExistingUsernames(ctx, users)
 				if err2 == nil {
 					userDifference := util.Difference(users, filteredExistingUsers)
 					if len(userDifference) > 0 {

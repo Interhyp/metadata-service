@@ -32,9 +32,27 @@ VAULT_SECRETS_CONFIG: >-
       {"vaultKey": "KAFKA_PASSWORD"},
       {"vaultKey": "METADATA_CHANGE_EVENTS_CONNECTION_STRING"},
       {"vaultKey": "SSH_PRIVATE_KEY"},
-      {"vaultKey": "SSH_PRIVATE_KEY_PASSWORD"}
+      {"vaultKey": "SSH_PRIVATE_KEY_PASSWORD"},
+      {"vaultKey": "BITBUCKET_ACCESS_TOKEN"},
+      {"vaultKey": "GITHUB_ACCESS_TOKEN"}
     ]
   }
+
+VCS_CONFIGS: |
+  {
+    "bitbucket": {
+      "platform": "BITBUCKET_DATACENTER",
+      "apiBaseURL": <YOU MUST ADD YOUR BITBUCKET DATACENTER URL>,
+      "accessTokenEnvVar": "BITBUCKET_ACCESS_TOKEN"
+    },
+    "github": {
+      "platform": "GITHUB",
+      "apiBaseURL": "https://api.github.com",
+      "accessTokenEnvVar": "GITHUB_ACCESS_TOKEN"
+    }
+  }
+
+WEBHOOKS_PROCESS_ASYNC: false
 
 AUTH_OIDC_KEY_SET_URL: https://login.microsoftonline.com/<YOU MUST ADD CLIENT ID HERE>/discovery/v2.0/keys
 AUTH_OIDC_TOKEN_AUDIENCE: <YOU MUST ADD TOKEN AUDIENCE HERE>

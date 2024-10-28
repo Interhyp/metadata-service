@@ -59,15 +59,20 @@ type CustomConfigImpl struct {
 	VRedisPassword                  string
 	VPullRequestBuildUrl            string
 	VPullRequestBuildKey            string
+	VVCSConfig                      map[string]config.VCSConfig
+	VWebhooksProcessAsync           bool
+	VUserPrefix                     string
 
 	VKafkaConfig           *kafka.Config
 	BitbucketGitUrlMatcher *regexp.Regexp
+	GitHubGitUrlMatcher    *regexp.Regexp
 }
 
 func New() (librepo.Configuration, config.CustomConfiguration) {
 	instance := &CustomConfigImpl{
 		VKafkaConfig:           kafka.NewConfig(),
 		BitbucketGitUrlMatcher: regexp.MustCompile(`/([^/]+)/([^/]+).git$`),
+		GitHubGitUrlMatcher:    regexp.MustCompile(`(/|:)([^/]+)/([^/]+).git$`),
 	}
 	configItems := make([]auconfigapi.ConfigItem, 0)
 	configItems = append(configItems, CustomConfigItems...)
@@ -122,6 +127,9 @@ func (c *CustomConfigImpl) Obtain(getter func(key string) string) {
 	c.VRedisPassword = getter(config.KeyRedisPassword)
 	c.VPullRequestBuildUrl = getter(config.KeyPullRequestBuildUrl)
 	c.VPullRequestBuildKey = getter(config.KeyPullRequestBuildKey)
+	c.VVCSConfig, _ = parseVCSConfigs(getter(config.KeyVCSConfigs), getter)
+	c.VWebhooksProcessAsync, _ = toBoolean(getter(config.KeyWebhooksProcessAsync))
+	c.VUserPrefix = getter(config.KeyUserPrefix)
 
 	c.VKafkaConfig.Obtain(getter)
 }
@@ -141,6 +149,14 @@ func toUint16(s string) uint16 {
 func toUint32(s string) uint32 {
 	val, _ := auconfigenv.AToUint(s)
 	return uint32(val)
+}
+
+func toBoolean(value string) (bool, error) {
+	boolValue, err := strconv.ParseBool(value)
+	if err != nil {
+		return false, fmt.Errorf("value %s is not a valid boolean", value)
+	}
+	return boolValue, nil
 }
 
 func parseNotificationConsumerConfigs(rawJson string) (map[string]config.NotificationConsumerConfig, error) {
@@ -229,4 +245,57 @@ func parseAllowedFileCategories(rawJson string) ([]string, error) {
 	}
 
 	return result, nil
+}
+
+type rawVCSConfig struct {
+	Platform          string  `json:"platform"`
+	APIBaseURL        string  `json:"apiBaseURL"`
+	AccessToken       *string `json:"accessToken,omitempty"`
+	AccessTokenEnvVar *string `json:"accessTokenEnvVar,omitempty"`
+}
+
+func parseVCSConfigs(jsonString string, getter func(string) string) (map[string]config.VCSConfig, error) {
+	var vcsConfigsRaw map[string]rawVCSConfig
+	if err := json.Unmarshal([]byte(jsonString), &vcsConfigsRaw); err != nil {
+		return nil, err
+	}
+
+	vcsConfigs := make(map[string]config.VCSConfig, 0)
+	for key, raw := range vcsConfigsRaw {
+		var accessToken string
+		// We do not support accessing vcs without access token
+		if raw.AccessTokenEnvVar != nil {
+			accessToken = getter(*raw.AccessTokenEnvVar)
+			if accessToken == "" {
+				return nil, fmt.Errorf("vcs %s: access-token variable %s is empty", key, *raw.AccessTokenEnvVar)
+			}
+		} else if raw.AccessToken != nil && *raw.AccessToken != "" {
+			accessToken = *raw.AccessToken
+		} else {
+			return nil, fmt.Errorf("vcs %s: neither access-token environment variable or access-token value is set", key)
+		}
+
+		platform, err := parseVCSPlatform(raw.Platform)
+		if err != nil {
+			return nil, fmt.Errorf("vcs %s: %s", key, err.Error())
+		}
+
+		vcsConfigs[key] = config.VCSConfig{
+			Platform:    platform,
+			APIBaseURL:  raw.APIBaseURL,
+			AccessToken: accessToken,
+		}
+	}
+	return vcsConfigs, nil
+}
+
+func parseVCSPlatform(value string) (config.VCSPlatform, error) {
+	switch value {
+	case "BITBUCKET_DATACENTER":
+		return config.VCSPlatformBitbucketDatacenter, nil
+	case "GITHUB":
+		return config.VCSPlatformGitHub, nil
+	default:
+		return config.VCSPlatformUnknown, fmt.Errorf("invalid vcs platform: '%s'", value)
+	}
 }

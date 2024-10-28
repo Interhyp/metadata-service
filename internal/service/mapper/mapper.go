@@ -6,6 +6,7 @@ import (
 	"github.com/Interhyp/metadata-service/internal/acorn/config"
 	"github.com/Interhyp/metadata-service/internal/acorn/repository"
 	"github.com/Interhyp/metadata-service/internal/acorn/service"
+	"github.com/Interhyp/metadata-service/internal/service/vcswebhookshandler"
 	auzerolog "github.com/StephanHCB/go-autumn-logging-zerolog"
 	"strings"
 	"sync"
@@ -16,7 +17,7 @@ type Impl struct {
 	CustomConfiguration config.CustomConfiguration
 	Logging             librepo.Logging
 	Metadata            repository.Metadata
-	Bitbucket           repository.Bitbucket
+	VcsPlatforms        map[string]vcswebhookshandler.VCSPlatform
 	Timestamp           librepo.Timestamp
 
 	muOwnerCaches        sync.Mutex
@@ -30,15 +31,14 @@ func New(
 	logging librepo.Logging,
 	timestamp librepo.Timestamp,
 	metadata repository.Metadata,
-	bitbucket repository.Bitbucket,
-) service.Mapper {
+	vcsPlatforms map[string]vcswebhookshandler.VCSPlatform) service.Mapper {
 	return &Impl{
 		Configuration:       configuration,
 		CustomConfiguration: customConfig,
 		Logging:             logging,
 		Timestamp:           timestamp,
 		Metadata:            metadata,
-		Bitbucket:           bitbucket,
+		VcsPlatforms:        vcsPlatforms,
 	}
 }
 

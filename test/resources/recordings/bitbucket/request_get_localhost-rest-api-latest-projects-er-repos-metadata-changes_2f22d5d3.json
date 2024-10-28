@@ -1,0 +1,53 @@
+{
+  "method": "GET",
+  "requestUrl": "localhost/rest/api/latest/projects/er/repos/metadata/changes?limit=1000&since=85dcfccd2b20b6766c497f51bd860d7509b68f99&start=0&until=0221b127f58baf5304d98b1fa7a2535f8db68599",
+  "requestBody": "",
+  "parsedResponse": {
+    "Body": {
+      "fromHash": "85dcfccd2b20b6766c497f51bd860d7509b68f10",
+      "toHash": "0221b127f58baf5304d98b1fa7a2535f8db68583",
+      "properties": {},
+      "values": [
+        {
+          "contentId": "87fd90378563c17945e02f5fa3793e3b888614ed",
+          "fromContentId": "1528215b49816a19356b86bfdb6e22aaf9b821c7",
+          "path": {
+            "components": [
+              "owners",
+              "invalid-test-owner-dev",
+              "owner.info.yaml"
+            ],
+            "parent": "owners/invalid-test-owner-dev",
+            "name": "owner.info.yaml",
+            "extension": "yaml",
+            "toString": "owners/invalid-test-owner-dev/owner.info.yaml"
+          },
+          "executable": false,
+          "percentUnchanged": -1,
+          "type": "MODIFY",
+          "nodeType": "FILE",
+          "srcExecutable": false,
+          "links": {
+            "self": [
+              {
+                "href": "https://localhost.com/bitbucket/projects/ER/repos/metadata/commits/0221b127f58baf5304d98b1fa7a2535f8db68583#owners/test-owner-dev/owner.info.yaml"
+              }
+            ]
+          },
+          "properties": {
+            "gitChangeType": "MODIFY"
+          }
+        }
+      ],
+      "size": 1,
+      "isLastPage": true,
+      "start": 0,
+      "limit": 1000,
+      "nextPageStart": null
+    },
+    "Status": 200,
+    "Header": {
+    },
+    "Time": "2024-10-22T11:29:55.5326883+02:00"
+  }
+}

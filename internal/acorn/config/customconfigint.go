@@ -9,6 +9,20 @@ import (
 	librepo "github.com/Interhyp/go-backend-service-common/acorns/repository"
 )
 
+type VCSPlatform int64
+
+const (
+	VCSPlatformBitbucketDatacenter VCSPlatform = iota
+	VCSPlatformGitHub
+	VCSPlatformUnknown
+)
+
+type VCSConfig struct {
+	Platform    VCSPlatform
+	APIBaseURL  string
+	AccessToken string
+}
+
 type CustomConfiguration interface {
 	BasicAuthUsername() string
 	BasicAuthPassword() string
@@ -62,6 +76,10 @@ type CustomConfiguration interface {
 	NotificationConsumerConfigs() map[string]NotificationConsumerConfig
 
 	AllowedFileCategories() []string
+
+	VCSConfigs() map[string]VCSConfig
+	WebhooksProcessAsync() bool
+	UserPrefix() string
 
 	Kafka() *kafka.Config
 	KafkaGroupIdOverride() string
@@ -125,4 +143,7 @@ const (
 	KeyRedisPassword                  = "REDIS_PASSWORD"
 	KeyPullRequestBuildUrl            = "PULL_REQUEST_BUILD_URL"
 	KeyPullRequestBuildKey            = "PULL_REQUEST_BUILD_KEY"
+	KeyVCSConfigs                     = "VCS_CONFIGS"
+	KeyWebhooksProcessAsync           = "WEBHOOKS_PROCESS_ASYNC"
+	KeyUserPrefix                     = "USER_PREFIX"
 )
