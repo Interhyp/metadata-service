@@ -1,0 +1,153 @@
+{
+  "method": "GET",
+  "requestUrl": "localhost/rest/api/latest/projects/er/repos/metadata/pull-requests/42",
+  "requestBody": "",
+  "parsedResponse": {
+    "Body": {
+      "id": 64,
+      "version": 0,
+      "title": "test",
+      "state": "OPEN",
+      "open": true,
+      "closed": false,
+      "draft": false,
+      "createdDate": 1729835672873,
+      "updatedDate": 1729835672873,
+      "fromRef": {
+        "id": "refs/heads/feature-branch",
+        "displayId": "feature-branch",
+        "latestCommit": "0221b127f58baf5304d98b1fa7a2535f8db68583",
+        "type": "BRANCH",
+        "repository": {
+          "slug": "metadata",
+          "id": 3882,
+          "name": "metadata",
+          "hierarchyId": "467081fc5f57deed19c4",
+          "scmId": "git",
+          "state": "AVAILABLE",
+          "statusMessage": "Available",
+          "forkable": true,
+          "project": {
+            "key": "ER",
+            "id": 125,
+            "name": "er",
+            "description": "ER",
+            "public": false,
+            "type": "NORMAL",
+            "links": {
+              "self": [
+                {
+                  "href": "localhost/bitbucket/projects/ER"
+                }
+              ]
+            }
+          },
+          "public": false,
+          "archived": false,
+          "links": {
+            "clone": [
+              {
+                "href": "ssh://git@localhost.com:7999/er/metadata.git",
+                "name": "ssh"
+              },
+              {
+                "href": "https://localhost.com/bitbucket/scm/er/metadata.git",
+                "name": "http"
+              }
+            ],
+            "self": [
+              {
+                "href": "https://localhost.com/bitbucket/projects/ER/repos/metadata/browse"
+              }
+            ]
+          }
+        }
+      },
+      "toRef": {
+        "id": "refs/heads/main",
+        "displayId": "main",
+        "latestCommit": "85dcfccd2b20b6766c497f51bd860d7509b68f10",
+        "type": "BRANCH",
+        "repository": {
+          "slug": "metadata",
+          "id": 3882,
+          "name": "metadata",
+          "hierarchyId": "467081fc5f57deed19c4",
+          "scmId": "git",
+          "state": "AVAILABLE",
+          "statusMessage": "Available",
+          "forkable": true,
+          "project": {
+            "key": "ER",
+            "id": 125,
+            "name": "Projekt: Entwicklungs-und Releasetechnologie",
+            "description": "Repositories im Bereich ER",
+            "public": false,
+            "type": "NORMAL",
+            "links": {
+              "self": [
+                {
+                  "href": "https://localhost.com/bitbucket/projects/ER"
+                }
+              ]
+            }
+          },
+          "public": false,
+          "archived": false,
+          "links": {
+            "clone": [
+              {
+                "href": "ssh://git@localhost.com:7999/er/metadata.git",
+                "name": "ssh"
+              },
+              {
+                "href": "https://localhost.com/bitbucket/scm/er/metadata.git",
+                "name": "http"
+              }
+            ],
+            "self": [
+              {
+                "href": "https://localhost.com/bitbucket/projects/ER/repos/metadata/browse"
+              }
+            ]
+          }
+        }
+      },
+      "locked": false,
+      "author": {
+        "user": {
+          "name": "some-user",
+          "emailAddress": "some-user@localhost.com",
+          "active": true,
+          "displayName": "User, Some",
+          "id": 305,
+          "slug": "some-user",
+          "type": "NORMAL",
+          "links": {
+            "self": [
+              {
+                "href": "https://localhost.com/bitbucket/users/some-user"
+              }
+            ]
+          }
+        },
+        "role": "AUTHOR",
+        "approved": false,
+        "status": "UNAPPROVED"
+      },
+      "reviewers": [],
+      "participants": [],
+      "links": {
+        "self": [
+          {
+            "href": "https://localhost.com/bitbucket/projects/ER/repos/metadata/pull-requests/64"
+          }
+        ]
+      }
+    },
+    "Status": 200,
+    "Header": {
+    },
+    "Time": "2024-10-22T11:29:55.5326883+02:00"
+  }
+}

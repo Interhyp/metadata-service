@@ -1143,6 +1143,38 @@ paths:
           description: Internal Server Error
       tags:
         - webhook
+  /webhooks/vcs/{vcsKey}:
+    post:
+      tags:
+        - webhooks
+      operationId: postWebhook
+      parameters:
+        - name: vcsKey
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '204':
+          description: Success
+        '400':
+          description: Bad Request
+        '404':
+          description: Deployment Repository or Git Reference Not found
+        '422':
+          description: Bad Deployment Repository
+        '500':
+          description: Internal Server Error
+          content:
+            "*/*":
+              schema:
+                "$ref": "#/components/schemas/ErrorDto"
 components:
   schemas:
     OwnerDto:

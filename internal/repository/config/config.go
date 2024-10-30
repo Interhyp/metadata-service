@@ -303,4 +303,25 @@ var CustomConfigItems = []auconfigapi.ConfigItem{
 		Description: "Key to use for pull request builds.",
 		Validate:    auconfigapi.ConfigNeedsNoValidation,
 	},
+	{
+		Key:         config.KeyVCSConfigs,
+		EnvName:     config.KeyVCSConfigs,
+		Description: "Version control system configuration settings",
+		Default:     "{}",
+		Validate:    auconfigenv.ObtainNotEmptyValidator(),
+	},
+	{
+		Key:         config.KeyWebhooksProcessAsync,
+		EnvName:     config.KeyWebhooksProcessAsync,
+		Description: "Webhooks handling async",
+		Default:     "true",
+		Validate:    auconfigapi.ConfigNeedsNoValidation,
+	},
+	{
+		Key:         config.KeyUserPrefix,
+		EnvName:     config.KeyUserPrefix,
+		Description: "User prefix",
+		Default:     "",
+		Validate:    auconfigapi.ConfigNeedsNoValidation,
+	},
 }

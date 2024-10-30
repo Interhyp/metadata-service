@@ -10,6 +10,20 @@ import (
 type MockConfig struct {
 }
 
+func (c *MockConfig) UserPrefix() string {
+	return ""
+}
+
+func (c *MockConfig) VCSConfigs() map[string]config.VCSConfig {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (c *MockConfig) WebhooksProcessAsync() bool {
+	//TODO implement me
+	panic("implement me")
+}
+
 func (c *MockConfig) BasicAuthUsername() string {
 	//TODO implement me
 	panic("implement me")

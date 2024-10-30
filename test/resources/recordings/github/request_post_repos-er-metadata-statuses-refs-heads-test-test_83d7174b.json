@@ -1,0 +1,12 @@
+{
+  "method": "POST",
+  "requestUrl": "https://api.github.com/repos/er/metadata/statuses/refs/heads/test-test",
+  "requestBody": "BUILD STATUS IN-PROGRESS",
+  "parsedResponse": {
+    "Body": {},
+    "Status": 200,
+    "Header": {
+    },
+    "Time": "2024-10-22T11:29:55.5326883+02:00"
+  }
+}

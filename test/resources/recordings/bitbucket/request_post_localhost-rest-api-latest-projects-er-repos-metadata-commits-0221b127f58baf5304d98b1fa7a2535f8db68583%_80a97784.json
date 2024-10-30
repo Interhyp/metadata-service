@@ -1,0 +1,12 @@
+{
+  "method": "POST",
+  "requestUrl": "localhost/rest/api/latest/projects/er/repos/metadata/commits/0221b127f58baf5304d98b1fa7a2535f8db68583/builds",
+  "requestBody": "BUILD STATUS SUCCESS",
+  "parsedResponse": {
+    "Body": {},
+    "Status": 200,
+    "Header": {
+    },
+    "Time": "2024-10-22T11:29:55.5326883+02:00"
+  }
+}

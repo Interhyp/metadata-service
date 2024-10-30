@@ -179,10 +179,18 @@ func (c *CustomConfigImpl) MetadataRepoProject() string {
 		if len(match) == 3 {
 			return match[1]
 		}
+		match = c.GitHubGitUrlMatcher.FindStringSubmatch(sshUrl)
+		if len(match) == 4 {
+			return match[2]
+		}
 	}
 	httpUrl := c.MetadataRepoUrl()
 	if httpUrl != "" {
-		match := c.BitbucketGitUrlMatcher.FindStringSubmatch(sshUrl)
+		match := c.BitbucketGitUrlMatcher.FindStringSubmatch(httpUrl)
+		if len(match) == 3 {
+			return match[1]
+		}
+		match = c.GitHubGitUrlMatcher.FindStringSubmatch(httpUrl)
 		if len(match) == 3 {
 			return match[1]
 		}
@@ -197,10 +205,18 @@ func (c *CustomConfigImpl) MetadataRepoName() string {
 		if len(match) == 3 {
 			return match[2]
 		}
+		match = c.GitHubGitUrlMatcher.FindStringSubmatch(sshUrl)
+		if len(match) == 4 {
+			return match[3]
+		}
 	}
 	httpUrl := c.MetadataRepoUrl()
 	if httpUrl != "" {
-		match := c.BitbucketGitUrlMatcher.FindStringSubmatch(sshUrl)
+		match := c.BitbucketGitUrlMatcher.FindStringSubmatch(httpUrl)
+		if len(match) == 3 {
+			return match[2]
+		}
+		match = c.GitHubGitUrlMatcher.FindStringSubmatch(httpUrl)
 		if len(match) == 3 {
 			return match[2]
 		}
@@ -214,4 +230,16 @@ func (c *CustomConfigImpl) PullRequestBuildUrl() string {
 
 func (c *CustomConfigImpl) PullRequestBuildKey() string {
 	return c.VPullRequestBuildKey
+}
+
+func (c *CustomConfigImpl) VCSConfigs() map[string]config.VCSConfig {
+	return c.VVCSConfig
+}
+
+func (c *CustomConfigImpl) WebhooksProcessAsync() bool {
+	return c.VWebhooksProcessAsync
+}
+
+func (c *CustomConfigImpl) UserPrefix() string {
+	return c.VUserPrefix
 }
