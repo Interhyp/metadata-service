@@ -175,24 +175,16 @@ func (c *CustomConfigImpl) RedisPassword() string {
 func (c *CustomConfigImpl) MetadataRepoProject() string {
 	sshUrl := c.SSHMetadataRepositoryUrl()
 	if sshUrl != "" {
-		match := c.BitbucketGitUrlMatcher.FindStringSubmatch(sshUrl)
-		if len(match) == 3 {
-			return match[1]
-		}
-		match = c.GitHubGitUrlMatcher.FindStringSubmatch(sshUrl)
+		match := c.GitUrlMatcher.FindStringSubmatch(sshUrl)
 		if len(match) == 4 {
 			return match[2]
 		}
 	}
 	httpUrl := c.MetadataRepoUrl()
 	if httpUrl != "" {
-		match := c.BitbucketGitUrlMatcher.FindStringSubmatch(httpUrl)
-		if len(match) == 3 {
-			return match[1]
-		}
-		match = c.GitHubGitUrlMatcher.FindStringSubmatch(httpUrl)
-		if len(match) == 3 {
-			return match[1]
+		match := c.GitUrlMatcher.FindStringSubmatch(httpUrl)
+		if len(match) == 4 {
+			return match[2]
 		}
 	}
 	return ""
@@ -201,24 +193,16 @@ func (c *CustomConfigImpl) MetadataRepoProject() string {
 func (c *CustomConfigImpl) MetadataRepoName() string {
 	sshUrl := c.SSHMetadataRepositoryUrl()
 	if sshUrl != "" {
-		match := c.BitbucketGitUrlMatcher.FindStringSubmatch(sshUrl)
-		if len(match) == 3 {
-			return match[2]
-		}
-		match = c.GitHubGitUrlMatcher.FindStringSubmatch(sshUrl)
+		match := c.GitUrlMatcher.FindStringSubmatch(sshUrl)
 		if len(match) == 4 {
 			return match[3]
 		}
 	}
 	httpUrl := c.MetadataRepoUrl()
 	if httpUrl != "" {
-		match := c.BitbucketGitUrlMatcher.FindStringSubmatch(httpUrl)
-		if len(match) == 3 {
-			return match[2]
-		}
-		match = c.GitHubGitUrlMatcher.FindStringSubmatch(httpUrl)
-		if len(match) == 3 {
-			return match[2]
+		match := c.GitUrlMatcher.FindStringSubmatch(httpUrl)
+		if len(match) == 4 {
+			return match[3]
 		}
 	}
 	return ""

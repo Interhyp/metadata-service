@@ -64,7 +64,7 @@ func (s *Impl) processGroupMap(ctx context.Context, groupsMap map[string][]strin
 				}
 				groupsMap[groupName] = append(filteredExistingUsers, groups...)
 			} else {
-				s.Logging.Logger().Ctx(ctx).Error().Printf("Error checking existing bitbucket users: %s", err.Error())
+				s.Logging.Logger().Ctx(ctx).Error().Printf("Error checking existing vcs users: %s", err.Error())
 			}
 
 			if len(groupsMap[groupName]) <= 0 && len(users) > 0 {

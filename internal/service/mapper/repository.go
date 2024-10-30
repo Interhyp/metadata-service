@@ -94,7 +94,7 @@ func (s *Impl) GetRepository(ctx context.Context, repoKey string) (openapi.Repos
 					}
 					approversGroupsMap[approversGroupName] = append(filteredExistingUsers, groups...)
 				} else {
-					s.Logging.Logger().Ctx(ctx).Error().Printf("Error checking existing bitbucket users: %s", err2.Error())
+					s.Logging.Logger().Ctx(ctx).Error().Printf("Error checking existing vcs users: %s", err2.Error())
 				}
 
 				if len(approversGroupsMap[approversGroupName]) <= 0 && len(users) > 0 {

@@ -1112,37 +1112,6 @@ paths:
                 $ref: '#/components/schemas/ErrorDto'
       tags:
         - management
-  /webhook:
-    post:
-      operationId: gitNotify
-      description: webhook notification endpoint to be configured in the git server to notify the service that it should check for new commits
-      responses:
-        '204':
-          description: No content
-        '500':
-          description: Internal Server Error
-      tags:
-        - webhook
-  /webhook/bitbucket:
-    post:
-      operationId: gitNotifyBitBucket
-      description: 'webhook notification endpoint to be configured in bitbucket server to notify the service that it should check for new commits, or that a PR needs to be validated'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              additionalProperties: true
-      responses:
-        '204':
-          description: No content
-        '400':
-          description: Payload parse failure - need to send a valid BitBucket webhook payload
-        '500':
-          description: Internal Server Error
-      tags:
-        - webhook
   /webhooks/vcs/{vcsKey}:
     post:
       tags:

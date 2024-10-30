@@ -63,16 +63,14 @@ type CustomConfigImpl struct {
 	VWebhooksProcessAsync           bool
 	VUserPrefix                     string
 
-	VKafkaConfig           *kafka.Config
-	BitbucketGitUrlMatcher *regexp.Regexp
-	GitHubGitUrlMatcher    *regexp.Regexp
+	VKafkaConfig  *kafka.Config
+	GitUrlMatcher *regexp.Regexp
 }
 
 func New() (librepo.Configuration, config.CustomConfiguration) {
 	instance := &CustomConfigImpl{
-		VKafkaConfig:           kafka.NewConfig(),
-		BitbucketGitUrlMatcher: regexp.MustCompile(`/([^/]+)/([^/]+).git$`),
-		GitHubGitUrlMatcher:    regexp.MustCompile(`(/|:)([^/]+)/([^/]+).git$`),
+		VKafkaConfig:  kafka.NewConfig(),
+		GitUrlMatcher: regexp.MustCompile(`(/|:)([^/]+)/([^/]+).git$`),
 	}
 	configItems := make([]auconfigapi.ConfigItem, 0)
 	configItems = append(configItems, CustomConfigItems...)

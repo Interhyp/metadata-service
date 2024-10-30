@@ -36,9 +36,6 @@ type Impl struct {
 
 	Updater service.Updater
 
-	//Provider          service.DeploymentRepositoryProvider
-	//ManifestProcessor service.ImageExtractor
-
 	vcsPlatforms map[string]VCSPlatform
 }
 
