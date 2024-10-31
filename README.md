@@ -353,7 +353,7 @@ The api docs URL is /v3/api-docs (in case the swagger ui does not automatically 
 
 [GitHub webhooks forwarding documentation](https://docs.github.com/en/webhooks/testing-and-troubleshooting-webhooks/using-the-github-cli-to-forward-webhooks-for-testing)
 
-e.g: `gh webhook foward --repo=interhyp-intern-test/service-metadata-test --url=http://localhost:8080/webhooks/vcs/github --events=pull_request,push`
+e.g: `gh webhook foward --repo=<YOUR_ORGANIZATION>/<YOUR_REPOSITORY> --url=http://localhost:8080/webhooks/vcs/github --events=pull_request,push`
 
 ### List dependency tree
 

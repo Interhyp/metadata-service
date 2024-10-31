@@ -110,13 +110,13 @@ func (a *ApplicationWithMocksImpl) Create() error {
 	}
 	bitbucketPlayback := aurestplayback.New("../resources/recordings/bitbucket", opts)
 	bitbucketCapture := aurestcapture.New(bitbucketPlayback)
-	bitbucketClient, _ := bitbucketclient.NewClient("localhost", "access-token")
+	bitbucketClient, _ := bitbucketclient.NewClient("localhost", "access-token", a.CustomConfig)
 	bitbucketClient.Client = bitbucketCapture
 
 	githubPlayback := aurestplayback.New("../resources/recordings/github", opts)
 	githubCapture := aurestcapture.NewRoundTripper(githubPlayback)
 	client := http.Client{Transport: githubCapture}
-	githubClient, _ := githubclient.NewClient(&client, "access-token")
+	githubClient, _ := githubclient.NewClient(&client, "access-token", a.CustomConfig)
 
 	vcsPlatforms := make(map[string]vcswebhookshandler.VCSPlatform)
 	vcsPlatforms["bitbucket_datacenter"] = vcswebhookshandler.VCSPlatform{
