@@ -261,7 +261,7 @@ func (a *ApplicationImpl) createVCSPlatforms() error {
 		for key, vcsConfig := range a.CustomConfig.VCSConfigs() {
 			switch vcsConfig.Platform {
 			case configrepo.VCSPlatformBitbucketDatacenter:
-				client, err := bitbucketclient.NewClient(vcsConfig.APIBaseURL, vcsConfig.AccessToken)
+				client, err := bitbucketclient.NewClient(vcsConfig.APIBaseURL, vcsConfig.AccessToken, a.CustomConfig)
 				if err != nil {
 					return err
 				}
@@ -270,7 +270,7 @@ func (a *ApplicationImpl) createVCSPlatforms() error {
 					VCS:      bitbucketclient.New(client, a.Logging),
 				}
 			case configrepo.VCSPlatformGitHub:
-				client, err := githubclient.NewClient(nil, vcsConfig.AccessToken)
+				client, err := githubclient.NewClient(nil, vcsConfig.AccessToken, a.CustomConfig)
 				if err != nil {
 					return err
 				}

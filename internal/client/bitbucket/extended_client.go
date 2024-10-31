@@ -4,19 +4,21 @@ import (
 	"context"
 	"fmt"
 	"github.com/Interhyp/go-backend-service-common/web/middleware/requestid"
+	"github.com/Interhyp/metadata-service/internal/acorn/config"
 	"github.com/Interhyp/metadata-service/pkg/recorder"
 	auapmclient "github.com/StephanHCB/go-autumn-restclient-apm/implementation/client"
 	aurestclientapi "github.com/StephanHCB/go-autumn-restclient/api"
+	aurestcaching "github.com/StephanHCB/go-autumn-restclient/implementation/caching"
 	aurestrecorder "github.com/StephanHCB/go-autumn-restclient/implementation/recorder"
 	"github.com/go-http-utils/headers"
 	"net/http"
 	urlUtil "net/url"
 	"strings"
+	"time"
 )
 
-func NewClient(baseURL string, accessToken string) (*ApiClient, error) {
+func NewClient(baseURL string, accessToken string, customConfig config.CustomConfiguration) (*ApiClient, error) {
 	clientConfig := DefaultApiClientConfig(fmt.Sprintf("%s/rest", baseURL))
-	clientConfig.CachingConfigurer = nil
 	clientConfig.RequestManipulator = func(ctx context.Context, request *http.Request) {
 		request.Header.Set(headers.Accept, aurestclientapi.ContentTypeApplicationJson)
 
@@ -31,6 +33,19 @@ func NewClient(baseURL string, accessToken string) (*ApiClient, error) {
 		return aurestrecorder.New(client, aurestrecorder.RecorderOptions{
 			ConstructFilenameFunc: recorder.ConstructFilenameV4,
 		})
+	}
+	clientConfig.CachingConfigurer = func(client aurestclientapi.Client, cacheRetentionSeconds time.Duration, cacheSize int) aurestclientapi.Client {
+		return aurestcaching.New(
+			client,
+			func(ctx context.Context, method string, url string, requestBody interface{}) bool {
+				return method == http.MethodGet && strings.Contains(url, fmt.Sprintf("%s/rest/api/latest/users", baseURL))
+			},
+			func(ctx context.Context, method string, url string, requestBody interface{}, response *aurestclientapi.ParsedResponse) bool {
+				return response != nil && response.Status == http.StatusOK && strings.Contains(url, fmt.Sprintf("%s/rest/api/latest/users", baseURL))
+			},
+			nil,
+			time.Duration(customConfig.BitbucketCacheRetentionSeconds())*time.Second,
+			customConfig.BitbucketCacheSize())
 	}
 
 	return NewApiClientConfigured(clientConfig)
