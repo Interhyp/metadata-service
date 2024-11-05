@@ -31,8 +31,8 @@ github.com/StephanHCB/go-autumn-restclient-circuitbreaker v0.5.0 h1:enGcKHKDa1Cc
 github.com/StephanHCB/go-autumn-restclient-circuitbreaker v0.5.0/go.mod h1:Sb2Fau+PCZ+D2ESFuvjXdWX488ptjGjj1SbaxpRb0r4=
 github.com/StephanHCB/go-autumn-restclient-circuitbreaker-prometheus v0.2.0 h1:aqCGJ+zlwTby7Qjt0hX2Q+SOlfj6KSFNOqoZNh8rw6M=
 github.com/StephanHCB/go-autumn-restclient-circuitbreaker-prometheus v0.2.0/go.mod h1:6o+LwKeLMh5mQb+WOk1/+RI/Txb0j66QCIGvjcbeQhg=
-github.com/StephanHCB/go-autumn-restclient-prometheus v0.3.0 h1:rIF1N4KJk6ZO6+xxsz6+sD8HzQWvNWufPm6K2vkcJ+U=
-github.com/StephanHCB/go-autumn-restclient-prometheus v0.3.0/go.mod h1:o16L6jhBel94ingm16iWSZgrTHa3iAG7PV2e7Qigklw=
+github.com/StephanHCB/go-autumn-restclient-prometheus v0.4.0 h1:5ohlYFrQq0dIS8mJDJ9keP4OTttKSYwiiumtJqTX6uI=
+github.com/StephanHCB/go-autumn-restclient-prometheus v0.4.0/go.mod h1:JcqHLVN5JFdDjL36O/hFdDMInNpbxUMfBbZTkdyfGh0=
 github.com/StephanHCB/go-autumn-web-swagger-ui v0.3.3 h1:09gZKOO8ZMDknikt1tRpx/5BEc37yp053Sc/R8zP3HI=
 github.com/StephanHCB/go-autumn-web-swagger-ui v0.3.3/go.mod h1:EBtCQXF8JhoADnadezundz2xWEdFPmx2NUTgZYtUE0M=
 github.com/anmitsu/go-shlex v0.0.0-20200514113438-38f4b401e2be h1:9AeTilPcZAjCFIImctFaOjnTIavg87rW78vTPkQqLI8=
