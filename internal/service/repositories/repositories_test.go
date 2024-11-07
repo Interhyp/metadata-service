@@ -68,6 +68,7 @@ func createRepositoryConfigurationPatchDtoFromConfigurationDto(input *openapi.Re
 	return &openapi.RepositoryConfigurationPatchDto{
 		AccessKeys:              input.AccessKeys,
 		CommitMessageType:       input.CommitMessageType,
+		ActionsAccess:           input.ActionsAccess,
 		RequireSuccessfulBuilds: input.RequireSuccessfulBuilds,
 		Webhooks:                input.Webhooks,
 		Approvers:               input.Approvers,
@@ -139,6 +140,7 @@ func TestPatchRepository_ReplaceAll(t *testing.T) {
 			BranchNameRegex:         ptr("(testing_[^_-]+_[^-]+$)"),
 			CommitMessageRegex:      ptr("(([A-Z][A-Z_0-9]+-[0-9]+))(.|\\n)*"),
 			CommitMessageType:       ptr("DEFAULT"),
+			ActionsAccess:           ptr("ENTERPRISE"),
 			RequireSuccessfulBuilds: i(2),
 			Webhooks: &openapi.RepositoryConfigurationWebhooksDto{
 				Additional: []openapi.RepositoryConfigurationWebhookDto{
@@ -173,6 +175,7 @@ func TestPatchRepository_ReplaceAll(t *testing.T) {
 			BranchNameRegex:         ptr("(testing_[^_-]+_[^-]+$)"),
 			CommitMessageRegex:      ptr("(([A-Z][A-Z_0-9]+-[0-9]+))(.|\\n)*"),
 			CommitMessageType:       ptr("DEFAULT"),
+			ActionsAccess:           ptr("ENTERPRISE"),
 			RequireIssue:            ptr(false),
 			RequireSuccessfulBuilds: i(2),
 			Webhooks: &openapi.RepositoryConfigurationWebhooksDto{
@@ -205,6 +208,7 @@ func TestPatchRepository_ClearFields(t *testing.T) {
 		Configuration: &openapi.RepositoryConfigurationPatchDto{
 			AccessKeys:        []openapi.RepositoryConfigurationAccessKeyDto{},
 			CommitMessageType: ptr(""),
+			ActionsAccess:     ptr(""),
 			Webhooks: &openapi.RepositoryConfigurationWebhooksDto{
 				Additional: []openapi.RepositoryConfigurationWebhookDto{},
 			},
@@ -223,6 +227,7 @@ func TestPatchRepository_ClearFields(t *testing.T) {
 		Configuration: &openapi.RepositoryConfigurationDto{
 			AccessKeys:              nil,
 			CommitMessageType:       nil,
+			ActionsAccess:           nil,
 			RequireIssue:            ptr(false),
 			RequireSuccessfulBuilds: i(1),
 			Webhooks: &openapi.RepositoryConfigurationWebhooksDto{

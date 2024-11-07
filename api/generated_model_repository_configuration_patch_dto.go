@@ -39,4 +39,6 @@ type RepositoryConfigurationPatchDto struct {
 	Archived *bool `yaml:"archived,omitempty" json:"archived,omitempty"`
 	// Repository will not be configured, also not archived.
 	Unmanaged *bool `yaml:"unmanaged,omitempty" json:"unmanaged,omitempty"`
+	// Control how the repository is used by GitHub Actions workflows in other repositories
+	ActionsAccess *string `yaml:"actionsAccess,omitempty" json:"actionsAccess,omitempty"`
 }
