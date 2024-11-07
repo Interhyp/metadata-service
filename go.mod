@@ -14,7 +14,7 @@ require (
 	github.com/StephanHCB/go-autumn-restclient v0.9.0
 	github.com/StephanHCB/go-autumn-restclient-apm v0.3.0
 	github.com/StephanHCB/go-autumn-restclient-circuitbreaker v0.5.0
-	github.com/StephanHCB/go-autumn-restclient-circuitbreaker-prometheus v0.2.0
+	github.com/StephanHCB/go-autumn-restclient-circuitbreaker-prometheus v0.3.0
 	github.com/StephanHCB/go-autumn-restclient-prometheus v0.4.0
 	github.com/go-chi/chi/v5 v5.1.0
 	github.com/go-git/go-billy/v5 v5.6.0
