@@ -463,6 +463,7 @@ func patchConfiguration(patch *openapi.RepositoryConfigurationPatchDto, original
 			Approvers:               patchApprovers(patch.Approvers, original.Approvers),
 			Watchers:                patchStringSlice(patch.Watchers, original.Watchers),
 			Archived:                patchPtr[bool](patch.Archived, original.Archived),
+			ActionsAccess:           patchStringPtr(patch.ActionsAccess, original.ActionsAccess),
 			// fields not allowed for patching carry over from original
 			RequireIssue:      original.RequireIssue,
 			RequireConditions: original.RequireConditions,

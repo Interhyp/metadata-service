@@ -2089,6 +2089,14 @@ components:
                 refMatcher: main
           additionalProperties:
             $ref: '#/components/schemas/ConditionReferenceDto'
+        actionsAccess:
+          description: Control how the repository is used by GitHub Actions workflows in other repositories
+          type: string
+          enum:
+            - NONE
+            - ORGANIZATION
+            - ENTERPRISE
+          example: NOT_ACCESSIBLE
     RepositoryConfigurationPatchDto:
       description: Attributes to configure the repository. If a configuration exists there are also some configured defaults for the repository.
       type: object
@@ -2159,6 +2167,14 @@ components:
         unmanaged:
           description: 'Repository will not be configured, also not archived.'
           type: boolean
+        actionsAccess:
+          description: Control how the repository is used by GitHub Actions workflows in other repositories
+          type: string
+          enum:
+            - NONE
+            - ORGANIZATION
+            - ENTERPRISE
+          example: NOT_ACCESSIBLE
     MergeStrategy:
       type: object
       properties:
