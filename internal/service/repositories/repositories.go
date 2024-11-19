@@ -662,7 +662,7 @@ func validateUrl(messages []string, repoUrl string) []string {
 	if repoUrl == "" {
 		messages = append(messages, "field url is mandatory")
 	} else {
-		if !strings.HasPrefix(repoUrl, "ssh://") {
+		if !(strings.HasPrefix(repoUrl, "ssh://") || strings.HasPrefix(repoUrl, "git@github.com")) {
 			messages = append(messages, "field url must contain ssh git url")
 		}
 	}
