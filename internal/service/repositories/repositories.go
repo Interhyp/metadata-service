@@ -156,16 +156,16 @@ func (s *Impl) GetRepository(ctx context.Context, repoKey string) (openapi.Repos
 
 	if err == nil && repositoryDto.Configuration != nil {
 		repoConfig := *repositoryDto.Configuration
+		repoConfig.RawApprovers = s.copyApprovers(repoConfig.Approvers)
 		s.expandApprovers(ctx, repoConfig.Approvers)
 		if repoConfig.Watchers != nil {
+			repoConfig.RawWatchers = s.copyStringList(repoConfig.Watchers)
 			repoConfig.Watchers = s.expandUserGroups(ctx, repoConfig.Watchers)
-			repositoryDto.Configuration = &repoConfig
 		}
 		if repoConfig.RefProtections != nil {
 			repoConfig.RefProtections = s.expandRefProtectionsExemptionLists(ctx, repoConfig.RefProtections)
-			repositoryDto.Configuration = &repoConfig
 		}
-
+		repositoryDto.Configuration = &repoConfig
 	}
 
 	if err == nil && repositoryDto.Filecategory != nil {
@@ -208,6 +208,26 @@ func (s *Impl) expandUserGroups(ctx context.Context, userList []string) []string
 		}
 	}
 	return util.RemoveDuplicateStr(filteredApprovers)
+}
+
+func (s *Impl) copyApprovers(approvers map[string][]string) map[string][]string {
+	if approvers != nil {
+		copyApprovers := map[string][]string{}
+		for name, approversList := range approvers {
+			copyApprovers[name] = s.copyStringList(approversList)
+		}
+		return copyApprovers
+	}
+	return nil
+}
+
+func (s *Impl) copyStringList(list []string) []string {
+	if len(list) > 0 {
+		copyList := make([]string, len(list))
+		copy(copyList, list)
+		return copyList
+	}
+	return nil
 }
 
 func (s *Impl) CreateRepository(ctx context.Context, key string, repositoryCreateDto openapi.RepositoryCreateDto) (openapi.RepositoryDto, error) {

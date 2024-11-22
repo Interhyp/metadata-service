@@ -38,6 +38,11 @@
             }
           ]
         },
+        "rawApprovers": {
+          "testing": [
+            "some-user"
+          ]
+        },
         "requireIssue": true
       },
       "generator": "third-party-software",

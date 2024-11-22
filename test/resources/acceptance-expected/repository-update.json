@@ -15,7 +15,11 @@
     "commitMessageType": "SEMANTIC",
     "requireIssue": false,
     "requireSuccessfulBuilds": 1,
-    "requireConditions":{"snyk-key":{"refMatcher":"master"}},
+    "requireConditions": {
+      "snyk-key": {
+        "refMatcher": "master"
+      }
+    },
     "webhooks": {
       "additional": [
         {

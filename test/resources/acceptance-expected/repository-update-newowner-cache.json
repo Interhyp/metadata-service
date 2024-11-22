@@ -13,6 +13,11 @@
       ]
     },
     "commitMessageType": "SEMANTIC",
+    "rawApprovers": {
+      "testing": [
+        "some-user"
+      ]
+    },
     "requireConditions": {
       "snyk-key": {
         "refMatcher": "master"
@@ -40,7 +45,7 @@
   },
   "jiraIssue": "ISSUE-2345",
   "mainline": "master",
-  "owner": "some-owner",
+  "owner": "deleteme",
   "timeStamp": "2022-11-06T18:14:10Z",
   "unittest": false,
   "url": "ssh://git@bitbucket.some-organisation.com:7999/helm/karma-wrapper.git"

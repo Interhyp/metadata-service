@@ -140,7 +140,7 @@ func TestPOSTRepository_Success(t *testing.T) {
 
 	docs.Then("And the repository has been cached and can be read again")
 	readAgain, err := tstPerformGet("/rest/api/v1/repositories/new-repository.api", tstUnauthenticated())
-	tstAssert(t, readAgain, err, http.StatusOK, "repository-create.json")
+	tstAssert(t, readAgain, err, http.StatusOK, "repository-create-cache.json")
 
 	docs.Then("And a kafka message notifying other instances of the creation has been sent")
 	require.Equal(t, 1, len(kafkaImpl.Recording))
@@ -363,7 +363,7 @@ func TestPUTRepository_Success(t *testing.T) {
 
 	docs.Then("And the repository has been cached and can be read again")
 	readAgain, err := tstPerformGet("/rest/api/v1/repositories/karma-wrapper.helm-chart", tstUnauthenticated())
-	tstAssert(t, readAgain, err, http.StatusOK, "repository-update.json")
+	tstAssert(t, readAgain, err, http.StatusOK, "repository-update-cache.json")
 
 	docs.Then("And a kafka message notifying other instances of the update has been sent")
 	require.Equal(t, 1, len(kafkaImpl.Recording))
@@ -617,7 +617,7 @@ func TestPUTRepository_ChangeOwner(t *testing.T) {
 
 	docs.Then("And the repository has been cached and can be read again, returning the correct owner")
 	readAgain, err := tstPerformGet("/rest/api/v1/repositories/karma-wrapper.helm-chart", tstUnauthenticated())
-	tstAssert(t, readAgain, err, http.StatusOK, "repository-update-newowner.json")
+	tstAssert(t, readAgain, err, http.StatusOK, "repository-update-newowner-cache.json")
 
 	docs.Then("And a kafka message notifying other instances of the update has been sent")
 	require.Equal(t, 1, len(kafkaImpl.Recording))

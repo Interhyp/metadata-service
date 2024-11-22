@@ -2061,8 +2061,26 @@ components:
             type: array
             items:
               type: string
+        rawApprovers:
+          description: 'Raw data of approvers'
+          type: object
+          examples:
+            - some-owner: { }
+          additionalProperties:
+            type: array
+            items:
+              type: string
         watchers:
           description: 'List of strings (list of watchers, either usernames or group identifier), which are added as reviewers but require no approval.'
+          type: array
+          items:
+            type: string
+          examples:
+            - - someUser
+              - anotherUser
+              - '@owner.users'
+        rawWatchers:
+          description: 'Raw data of watchers'
           type: array
           items:
             type: string

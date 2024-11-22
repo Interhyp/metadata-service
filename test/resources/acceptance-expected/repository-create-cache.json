@@ -13,6 +13,11 @@
       ]
     },
     "commitMessageType": "SEMANTIC",
+    "rawApprovers": {
+      "testing": [
+        "some-user"
+      ]
+    },
     "requireConditions": {
       "snyk-key": {
         "refMatcher": "master"

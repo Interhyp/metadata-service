@@ -37,11 +37,19 @@
         }
       ]
     },
+    "rawApprovers": {
+      "testing": [
+        "@some-owner.users"
+      ]
+    },
+    "rawWatchers": [
+      "@some-owner.users"
+    ],
     "refProtections": {
       "branches": {
         "requirePR": [
           {
-            "exemptions":  [
+            "exemptions": [
               "some-other-user",
               "a-very-special-user"
             ],
