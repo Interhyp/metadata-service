@@ -51,6 +51,14 @@
             }
           ]
         },
+        "rawApprovers": {
+          "testing": [
+            "@some-owner.users"
+          ]
+        },
+        "rawWatchers": [
+          "@some-owner.users"
+        ],
         "refProtections": {
           "branches": {
             "requirePR": [
@@ -116,6 +124,11 @@
             {
               "id": "squash"
             }
+          ]
+        },
+        "rawApprovers": {
+          "testing": [
+            "some-user"
           ]
         },
         "requireIssue": true

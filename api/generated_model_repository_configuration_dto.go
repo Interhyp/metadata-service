@@ -34,8 +34,12 @@ type RepositoryConfigurationDto struct {
 	Webhooks               *RepositoryConfigurationWebhooksDto `yaml:"webhooks,omitempty" json:"webhooks,omitempty"`
 	// Map of string (group name e.g. some-owner) of strings (list of approvers), one approval for each group is required.
 	Approvers map[string][]string `yaml:"approvers,omitempty" json:"approvers,omitempty"`
+	// Raw data of approvers
+	RawApprovers map[string][]string `yaml:"rawApprovers,omitempty" json:"rawApprovers,omitempty"`
 	// List of strings (list of watchers, either usernames or group identifier), which are added as reviewers but require no approval.
 	Watchers []string `yaml:"watchers,omitempty" json:"watchers,omitempty"`
+	// Raw data of watchers
+	RawWatchers []string `yaml:"rawWatchers,omitempty" json:"rawWatchers,omitempty"`
 	// Moves the repository into the archive.
 	Archived *bool `yaml:"archived,omitempty" json:"archived,omitempty"`
 	// Repository will not be configured, also not archived.
