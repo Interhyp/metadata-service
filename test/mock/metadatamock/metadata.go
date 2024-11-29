@@ -179,9 +179,6 @@ configuration:
 const deployment2 = `mainline: main
 url: ssh://git@bitbucket.some-organisation.com:7999/PROJECT/whatever-deployment.git
 generator: third-party-software
-filecategory:
-  forbidden-key:
-    - some/interesting/file.txt
 `
 
 const implementation = `mainline: master

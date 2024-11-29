@@ -22,8 +22,6 @@ type RepositoryCreateDto struct {
 	// this repository contains unit tests (currently ignored except for helm charts)
 	Unittest      *bool                       `yaml:"unittest,omitempty" json:"unittest,omitempty"`
 	Configuration *RepositoryConfigurationDto `yaml:"configuration,omitempty" json:"configuration,omitempty"`
-	// Assign a category to a list of files, e.g. to mark them for caching purposes. The key is the category name, and the value is a list of paths. Files are considered to have that category if their path is in the list.
-	Filecategory map[string][]string `yaml:"filecategory,omitempty" json:"filecategory,omitempty"`
 	// The jira issue to use for committing a change, or the last jira issue used.
 	JiraIssue string `yaml:"-" json:"jiraIssue"`
 	// A map of arbitrary string labels attached to this repository.

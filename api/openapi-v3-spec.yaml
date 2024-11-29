@@ -1820,8 +1820,6 @@ components:
           default: false
         configuration:
           $ref: '#/components/schemas/RepositoryConfigurationDto'
-        filecategory:
-          $ref: '#/components/schemas/RepositoryFileCategoriesDto'
         timeStamp:
           description: 'ISO-8601 UTC date time at which this information was originally committed. When sending an update, include the original timestamp you got so we can detect concurrent updates.'
           type: string
@@ -1875,8 +1873,6 @@ components:
           default: false
         configuration:
           $ref: '#/components/schemas/RepositoryConfigurationDto'
-        filecategory:
-          $ref: '#/components/schemas/RepositoryFileCategoriesDto'
         jiraIssue:
           description: 'The jira issue to use for committing a change, or the last jira issue used.'
           type: string
@@ -1918,8 +1914,6 @@ components:
           default: false
         configuration:
           $ref: '#/components/schemas/RepositoryConfigurationPatchDto'
-        filecategory:
-          $ref: '#/components/schemas/RepositoryFileCategoriesDto'
         timeStamp:
           description: 'ISO-8601 UTC date time at which this information was originally committed. When sending an update, include the original timestamp you got so we can detect concurrent updates.'
           type: string
@@ -2234,17 +2228,6 @@ components:
         - text
       properties:
         text:
-          type: string
-    RepositoryFileCategoriesDto:
-      description: 'Assign a category to a list of files, e.g. to mark them for caching purposes. The key is the category name, and the value is a list of paths. Files are considered to have that category if their path is in the list.'
-      type: object
-      examples:
-        - cache-template:
-            - templates/template1.yaml
-            - another/path/template2.json
-      additionalProperties:
-        type: array
-        items:
           type: string
     ConditionReferenceDto:
       description: Configuration of conditional build references.

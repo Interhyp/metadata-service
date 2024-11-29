@@ -54,7 +54,6 @@ type CustomConfigImpl struct {
 	VRepositoryTypes                string
 	VRepositoryKeySeparator         string
 	VNotificationConsumerConfigs    map[string]config.NotificationConsumerConfig
-	VAllowedFileCategories          []string
 	VRedisUrl                       string
 	VRedisPassword                  string
 	VPullRequestBuildUrl            string
@@ -120,7 +119,6 @@ func (c *CustomConfigImpl) Obtain(getter func(key string) string) {
 	c.VRepositoryTypes = getter(config.KeyRepositoryTypes)
 	c.VRepositoryKeySeparator = getter(config.KeyRepositoryKeySeparator)
 	c.VNotificationConsumerConfigs, _ = parseNotificationConsumerConfigs(getter(config.KeyNotificationConsumerConfigs))
-	c.VAllowedFileCategories, _ = parseAllowedFileCategories(getter(config.KeyAllowedFileCategories))
 	c.VRedisUrl = getter(config.KeyRedisUrl)
 	c.VRedisPassword = getter(config.KeyRedisPassword)
 	c.VPullRequestBuildUrl = getter(config.KeyPullRequestBuildUrl)
@@ -229,19 +227,6 @@ func parseNotificationConsumerConfigs(rawJson string) (map[string]config.Notific
 	if len(errors) > 0 {
 		return nil, fmt.Errorf(strings.Join(errors, " "))
 	}
-	return result, nil
-}
-
-func parseAllowedFileCategories(rawJson string) ([]string, error) {
-	result := make([]string, 0)
-	if rawJson == "" {
-		return result, nil
-	}
-
-	if err := json.Unmarshal([]byte(rawJson), &result); err != nil {
-		return nil, err
-	}
-
 	return result, nil
 }
 

@@ -229,9 +229,6 @@ func tstUpdatedServicePayload(name string) openapi.NotificationPayload {
 // repository
 
 func tstRepository() openapi.RepositoryDto {
-	fc := map[string][]string{
-		"cached-template": {"cached-templates/tpl1.yaml", "more/cached/templates/tpl2.yaml"},
-	}
 	return openapi.RepositoryDto{
 		Owner:    "some-owner",
 		Url:      "ssh://git@bitbucket.some-organisation.com:7999/helm/karma-wrapper.git",
@@ -259,10 +256,9 @@ func tstRepository() openapi.RepositoryDto {
 			},
 			Approvers: map[string][]string{"testing": {"some-user"}},
 		},
-		Filecategory: fc,
-		TimeStamp:    "2022-11-06T18:14:10Z",
-		CommitHash:   "6c8ac2c35791edf9979623c717a243fc53400000",
-		JiraIssue:    "ISSUE-2345",
+		TimeStamp:  "2022-11-06T18:14:10Z",
+		CommitHash: "6c8ac2c35791edf9979623c717a243fc53400000",
+		JiraIssue:  "ISSUE-2345",
 	}
 }
 
@@ -353,10 +349,6 @@ configuration:
     requireConditions:
         snyk-key:
             refMatcher: master
-filecategory:
-    cached-template:
-        - cached-templates/tpl1.yaml
-        - more/cached/templates/tpl2.yaml
 `
 }
 
