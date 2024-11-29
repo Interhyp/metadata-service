@@ -156,10 +156,6 @@ func (c *CustomConfigImpl) NotificationConsumerConfigs() map[string]config.Notif
 	return c.VNotificationConsumerConfigs
 }
 
-func (c *CustomConfigImpl) AllowedFileCategories() []string {
-	return c.VAllowedFileCategories
-}
-
 func (c *CustomConfigImpl) Kafka() *kafka.Config {
 	return c.VKafkaConfig
 }

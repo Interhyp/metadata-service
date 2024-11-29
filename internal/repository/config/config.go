@@ -265,17 +265,6 @@ var CustomConfigItems = []auconfigapi.ConfigItem{
 		},
 	},
 	{
-		Key:         config.KeyAllowedFileCategories,
-		EnvName:     config.KeyAllowedFileCategories,
-		Default:     "",
-		Description: "allowed filecategory keys",
-		Validate: func(key string) error {
-			value := auconfigenv.Get(key)
-			_, err := parseAllowedFileCategories(value)
-			return err
-		},
-	},
-	{
 		Key:         config.KeyRedisUrl,
 		EnvName:     config.KeyRedisUrl,
 		Default:     "",

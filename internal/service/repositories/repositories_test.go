@@ -32,7 +32,6 @@ func createRepositoryDto() openapi.RepositoryDto {
 		Generator:     ptr("generator"),
 		Unittest:      ptr(true),
 		Configuration: createRepositoryConfigurationDto(),
-		Filecategory:  map[string][]string{"a": {"path/a.yaml"}},
 		Labels:        map[string]string{"label": "originalValue"},
 		TimeStamp:     "ts",
 		CommitHash:    "hash",
@@ -155,10 +154,9 @@ func TestPatchRepository_ReplaceAll(t *testing.T) {
 			Approvers: map[string][]string{"group": {"newapprover1"}},
 			Archived:  ptr(true),
 		},
-		Filecategory: map[string][]string{"b": {"b.yaml", "b.json"}},
-		Labels:       map[string]string{"label": "patchedValue"},
-		TimeStamp:    "newts",
-		CommitHash:   "newhash",
+		Labels:     map[string]string{"label": "patchedValue"},
+		TimeStamp:  "newts",
+		CommitHash: "newhash",
 	}, openapi.RepositoryDto{
 		Owner:     "newowner",
 		Url:       "newurl",
@@ -191,10 +189,9 @@ func TestPatchRepository_ReplaceAll(t *testing.T) {
 			Approvers: map[string][]string{"group": {"newapprover1"}},
 			Archived:  ptr(true),
 		},
-		Filecategory: map[string][]string{"b": {"b.yaml", "b.json"}},
-		Labels:       map[string]string{"label": "patchedValue"},
-		TimeStamp:    "newts",
-		CommitHash:   "newhash",
+		Labels:     map[string]string{"label": "patchedValue"},
+		TimeStamp:  "newts",
+		CommitHash: "newhash",
 	})
 }
 
@@ -214,10 +211,9 @@ func TestPatchRepository_ClearFields(t *testing.T) {
 			},
 			Approvers: map[string][]string{},
 		},
-		Filecategory: map[string][]string{},
-		Labels:       map[string]string{},
-		TimeStamp:    "",
-		CommitHash:   "",
+		Labels:     map[string]string{},
+		TimeStamp:  "",
+		CommitHash: "",
 	}, openapi.RepositoryDto{
 		Owner:     "",
 		Url:       "",
@@ -236,10 +232,9 @@ func TestPatchRepository_ClearFields(t *testing.T) {
 			Approvers: nil,
 			Archived:  ptr(false),
 		},
-		Filecategory: nil,
-		Labels:       nil,
-		TimeStamp:    "",
-		CommitHash:   "",
+		Labels:     nil,
+		TimeStamp:  "",
+		CommitHash: "",
 	})
 }
 

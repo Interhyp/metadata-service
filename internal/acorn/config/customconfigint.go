@@ -75,8 +75,6 @@ type CustomConfiguration interface {
 
 	NotificationConsumerConfigs() map[string]NotificationConsumerConfig
 
-	AllowedFileCategories() []string
-
 	VCSConfigs() map[string]VCSConfig
 	WebhooksProcessAsync() bool
 	UserPrefix() string
@@ -138,7 +136,6 @@ const (
 	KeyRepositoryKeySeparator         = "REPOSITORY_KEY_SEPARATOR"
 	KeyRepositoryTypes                = "REPOSITORY_TYPES"
 	KeyNotificationConsumerConfigs    = "NOTIFICATION_CONSUMER_CONFIGS"
-	KeyAllowedFileCategories          = "ALLOWED_FILE_CATEGORIES"
 	KeyRedisUrl                       = "REDIS_URL"
 	KeyRedisPassword                  = "REDIS_PASSWORD"
 	KeyPullRequestBuildUrl            = "PULL_REQUEST_BUILD_URL"

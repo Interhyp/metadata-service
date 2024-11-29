@@ -53,5 +53,3 @@ NOTIFICATION_CONSUMER_CONFIGS: >-
       "url": "https://valid.url.com/for/a/webhook"
     }
   }
-
-ALLOWED_FILE_CATEGORIES: '["a","b"'
