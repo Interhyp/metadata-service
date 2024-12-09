@@ -127,7 +127,6 @@ func tstService(name string) openapi.ServiceDto {
 			name + ".implementation",
 		},
 		AlertTarget:     "squad_nothing@some-organisation.com",
-		DevelopmentOnly: ptr(false),
 		OperationType:   nil,
 		TimeStamp:       "2022-11-06T18:14:10Z",
 		CommitHash:      "6c8ac2c35791edf9979623c717a243fc53400000",
@@ -148,12 +147,11 @@ func tstServiceUnchanged(name string) openapi.ServiceDto {
 			name + ".helm-deployment",
 			name + ".implementation",
 		},
-		AlertTarget:     "https://webhook.com/9asdflk29d4m39g",
-		DevelopmentOnly: ptr(false),
-		OperationType:   nil,
-		TimeStamp:       "2022-11-06T18:14:10Z",
-		CommitHash:      "6c8ac2c35791edf9979623c717a243fc53400000",
-		JiraIssue:       "ISSUE-2345",
+		AlertTarget:   "https://webhook.com/9asdflk29d4m39g",
+		OperationType: nil,
+		TimeStamp:     "2022-11-06T18:14:10Z",
+		CommitHash:    "6c8ac2c35791edf9979623c717a243fc53400000",
+		JiraIssue:     "ISSUE-2345",
 	}
 }
 
@@ -184,7 +182,6 @@ repositories:
     - ` + name + `/helm-deployment
     - ` + name + `/implementation
 alertTarget: squad_nothing@some-organisation.com
-developmentOnly: false
 internetExposed: true
 lifecycle: experimental
 `
@@ -198,7 +195,6 @@ repositories:
     - ` + name + `/helm-deployment
     - ` + name + `/implementation
 alertTarget: https://webhook.com/9asdflk29d4m39g
-developmentOnly: false
 `
 }
 

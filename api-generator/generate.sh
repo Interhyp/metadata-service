@@ -6,11 +6,12 @@ if [ -d "api-generator" ]; then
   cd api-generator
 fi
 
-GENERATOR=openapi-generator-cli-7.7.1_INTERHYP.jar
+GENERATOR_VERSION=7.7.1_INTERHYP
+GENERATOR_NAME=openapi-generator-cli
+GENERATOR=$GENERATOR_NAME-$GENERATOR_VERSION.jar
 
 if [ ! -f "$GENERATOR" ]; then
-  echo "Please download https://github.com/Interhyp/openapi-generator/blob/new_generator_rebased/bin/openapi-generator-cli-7.7.1_INTERHYP.jar using your browser and save as $GENERATOR"
-  exit 1
+  curl -k https://raw.githubusercontent.com/Interhyp/openapi-generator/refs/heads/new_generator_rebased/bin/$GENERATOR > $GENERATOR
 fi
 
 API_MODEL_PACKAGE_NAME=openapi

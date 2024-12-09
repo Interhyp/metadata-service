@@ -23,8 +23,6 @@ type ServiceDto struct {
 	Repositories []string `yaml:"repositories" json:"repositories"`
 	// The default channel used to send any alerts of the service to. Can be an email address or a Teams webhook URL
 	AlertTarget string `yaml:"alertTarget" json:"alertTarget"`
-	// True for services that will be permanently deployed to the Development environment only.
-	DevelopmentOnly *bool `yaml:"developmentOnly,omitempty" json:"developmentOnly,omitempty"`
 	// The operation type of the service. 'WORKLOAD' follows the default deployment strategy of one instance per environment, 'PLATFORM' one instance per cluster or node and 'APPLICATION' is a standalone application that is not deployed via the common strategies.
 	OperationType *string `yaml:"operationType,omitempty" json:"operationType,omitempty"`
 	// The value defines if the service is available from the internet and the time period in which security holes must be processed.
