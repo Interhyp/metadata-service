@@ -43,17 +43,19 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - uses: go-semantic-release/action@v1
+      - id: semantic-release
+        uses: go-semantic-release/action@v1
         with:
           hooks: goreleaser
           prerelease: false
           allow-initial-development-versions: true # remove to trigger an initial 1.0.0 release
           changelog-generator-opt: "emojis=true"
           github-token: ${{ secrets.GITHUB_TOKEN }}
-      - run: |
+      - if: steps.semantic-release.outputs.version != ''
+        run: |
           TAG=${{ steps.semantic-release.outputs.version }}
           IMAGE=${{ needs.build.outputs.image }}
           
           docker pull $IMAGE
-          docker tag $IMAGE ghcr.io/${{ github.repository }}:$TAG
-          docker push ghcr.io/${{ github.repository }}:${{ steps.semantic-release.outputs.version }}
+          docker tag $IMAGE $IMAGE:$TAG
+          docker push $IMAGE:$TAG
