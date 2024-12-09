@@ -1,16 +1,6 @@
-ARG GOLANG_VERSION=1-buster
-ARG PACT_VERSION=1.88.63
+ARG GOLANG_VERSION=1
 
 FROM golang:${GOLANG_VERSION} as build
-ARG PACT_VERSION
-
-# Install pact contract testing standalone binaries (includes Ruby)
-RUN curl -LO https://github.com/pact-foundation/pact-ruby-standalone/releases/download/v${PACT_VERSION}/pact-${PACT_VERSION}-linux-x86_64.tar.gz; \
-    tar -C /usr/local -xzf pact-${PACT_VERSION}-linux-x86_64.tar.gz; \
-    rm pact-${PACT_VERSION}-linux-x86_64.tar.gz; \
-    mkdir -p /app
-
-ENV PATH /usr/local/pact/bin:$PATH
 
 COPY . /app
 WORKDIR /app
