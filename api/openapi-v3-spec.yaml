@@ -2187,6 +2187,14 @@ components:
             - ORGANIZATION
             - ENTERPRISE
           example: NOT_ACCESSIBLE
+        requireConditions:
+          description: Configuration of conditional builds as map of structs (key name e.g. some-key) of target references.
+          type: object
+          examples:
+            - some-key:
+                refMatcher: main
+          additionalProperties:
+            $ref: '#/components/schemas/ConditionReferenceDto'
     MergeStrategy:
       type: object
       properties:

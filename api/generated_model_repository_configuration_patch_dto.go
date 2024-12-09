@@ -41,4 +41,6 @@ type RepositoryConfigurationPatchDto struct {
 	Unmanaged *bool `yaml:"unmanaged,omitempty" json:"unmanaged,omitempty"`
 	// Control how the repository is used by GitHub Actions workflows in other repositories
 	ActionsAccess *string `yaml:"actionsAccess,omitempty" json:"actionsAccess,omitempty"`
+	// Configuration of conditional builds as map of structs (key name e.g. some-key) of target references.
+	RequireConditions map[string]ConditionReferenceDto `yaml:"requireConditions,omitempty" json:"requireConditions,omitempty"`
 }
