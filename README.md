@@ -270,16 +270,6 @@ Clone this outside your GOPATH (on linux, defaults to ~/go)
 
 _Tip: On Windows, you should NOT place the GOPATH in your profile, because a large body of source code goes there._
 
-### contract test setup
-
-This service uses [pact-go](https://github.com/pact-foundation/pact-go) for consumer driven contract tests.
-We only interact with the vault api, so we are a _consumer_, and there is no pact-aware implementation
-for the _producer_ side, instead this repository just comes with the relevant recordings,
-which were manually created.
-
-Download and install the pact command line tools and add them to your path as described in the
-[pact-go manual](https://github.com/pact-foundation/pact-go#installation).
-
 ### generate api model classes
 
 **The generated models are checked in, so you only need to run this step if there is a change in the openapi specs.**
@@ -296,7 +286,7 @@ In a git bash (or on Linux), run `./api-generator/generate.sh`.
 
 We have _given-when-then_ style acceptance tests.
 
-Run all tests, including the acceptance and contract tests (will need to have pact installed):
+Run all tests, including the acceptance:
 
 `go test -coverpkg='./internal/...' -v './...'`
 
