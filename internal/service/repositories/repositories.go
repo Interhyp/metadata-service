@@ -447,22 +447,95 @@ func patchConfiguration(patch *openapi.RepositoryConfigurationPatchDto, original
 		}
 		return &openapi.RepositoryConfigurationDto{
 			AccessKeys:              patchAccessKeys(patch.AccessKeys, original.AccessKeys),
+			MergeConfig:             patchMergeConfig(patch.MergeConfig, original.MergeConfig),
+			DefaultTasks:            patchSlice(patch.DefaultTasks, original.DefaultTasks),
 			BranchNameRegex:         patchStringPtr(patch.BranchNameRegex, original.BranchNameRegex),
 			CommitMessageRegex:      patchStringPtr(patch.CommitMessageRegex, original.CommitMessageRegex),
 			CommitMessageType:       patchStringPtr(patch.CommitMessageType, original.CommitMessageType),
 			RequireSuccessfulBuilds: patchPtr[int32](patch.RequireSuccessfulBuilds, original.RequireSuccessfulBuilds),
+			RequireApprovals:        patchPtr[int32](patch.RequireApprovals, original.RequireApprovals),
 			ExcludeMergeCommits:     patchPtr[bool](patch.ExcludeMergeCommits, original.ExcludeMergeCommits),
 			ExcludeMergeCheckUsers:  patchExcludeMergeCheckUsers(patch.ExcludeMergeCheckUsers, original.ExcludeMergeCheckUsers),
 			Webhooks:                patchWebhooks(patch.Webhooks, original.Webhooks),
 			Approvers:               patchApprovers(patch.Approvers, original.Approvers),
-			Watchers:                patchStringSlice(patch.Watchers, original.Watchers),
+			Watchers:                patchSlice(patch.Watchers, original.Watchers),
 			Archived:                patchPtr[bool](patch.Archived, original.Archived),
-			ActionsAccess:           patchStringPtr(patch.ActionsAccess, original.ActionsAccess),
+			Unmanaged:               patchPtr[bool](patch.Unmanaged, original.Unmanaged),
+			RefProtections:          patchRefProtections(patch.RefProtections, original.RefProtections),
+			RequireIssue:            patchPtr[bool](patch.RequireIssue, original.RequireIssue),
 			RequireConditions:       patchRequireConditions(patch.RequireConditions, original.RequireConditions),
-			// fields not allowed for patching carry over from original
-			RequireIssue:   original.RequireIssue,
-			RefProtections: original.RefProtections,
+			ActionsAccess:           patchStringPtr(patch.ActionsAccess, original.ActionsAccess),
 		}
+	} else {
+		return original
+	}
+}
+
+func patchMergeConfig(patch *openapi.RepositoryConfigurationDtoMergeConfig, original *openapi.RepositoryConfigurationDtoMergeConfig) *openapi.RepositoryConfigurationDtoMergeConfig {
+	if patch != nil {
+		if original == nil {
+			return patch
+		} else {
+			return &openapi.RepositoryConfigurationDtoMergeConfig{
+				DefaultStrategy: patchPtr(patch.DefaultStrategy, original.DefaultStrategy),
+				Strategies:      patchSlice(patch.Strategies, original.Strategies),
+			}
+		}
+	} else {
+		return original
+	}
+}
+
+func patchRefProtections(patch *openapi.RefProtections, original *openapi.RefProtections) *openapi.RefProtections {
+	if patch != nil {
+		if original == nil {
+			return patch
+		} else {
+			return &openapi.RefProtections{
+				Branches: patchRefProtectionsBranches(patch.Branches, original.Branches),
+				Tags:     patchRefProtectionsTags(patch.Tags, original.Tags),
+			}
+		}
+	} else {
+		return original
+	}
+}
+
+func patchRefProtectionsBranches(patch *openapi.RefProtectionsBranches, original *openapi.RefProtectionsBranches) *openapi.RefProtectionsBranches {
+	if patch != nil {
+		return &openapi.RefProtectionsBranches{
+			RequirePR:         patchSlice(patch.RequirePR, original.RequirePR),
+			PreventAllChanges: patchSlice(patch.PreventAllChanges, original.PreventAllChanges),
+			PreventCreation:   patchSlice(patch.PreventCreation, original.PreventCreation),
+			PreventDeletion:   patchSlice(patch.PreventDeletion, original.PreventDeletion),
+			PreventPush:       patchSlice(patch.PreventPush, original.PreventPush),
+			PreventForcePush:  patchSlice(patch.PreventForcePush, original.PreventForcePush),
+		}
+	} else {
+		return original
+	}
+}
+
+func patchRefProtectionsTags(patch *openapi.RefProtectionsTags, original *openapi.RefProtectionsTags) *openapi.RefProtectionsTags {
+	if patch != nil {
+		return &openapi.RefProtectionsTags{
+			PreventAllChanges: patchSlice(patch.PreventAllChanges, original.PreventAllChanges),
+			PreventCreation:   patchSlice(patch.PreventCreation, original.PreventCreation),
+			PreventDeletion:   patchSlice(patch.PreventDeletion, original.PreventDeletion),
+			PreventForcePush:  patchSlice(patch.PreventForcePush, original.PreventForcePush),
+		}
+	} else {
+		return original
+	}
+}
+
+func patchRequireConditions(patch map[string]openapi.ConditionReferenceDto, original map[string]openapi.ConditionReferenceDto) map[string]openapi.ConditionReferenceDto {
+	if patch != nil {
+		if len(patch) == 0 {
+			// remove
+			return nil
+		}
+		return patch
 	} else {
 		return original
 	}
@@ -549,20 +622,7 @@ func patchAccessKeys(patch []openapi.RepositoryConfigurationAccessKeyDto, origin
 	}
 }
 
-func patchRequireConditions(patch map[string]openapi.ConditionReferenceDto, original map[string]openapi.ConditionReferenceDto) map[string]openapi.ConditionReferenceDto {
-	if patch != nil {
-		if len(patch) == 0 {
-			// remove
-			return nil
-		} else {
-			return patch
-		}
-	} else {
-		return original
-	}
-}
-
-func patchStringSlice(patch []string, original []string) []string {
+func patchSlice[E any](patch []E, original []E) []E {
 	if patch != nil {
 		if len(patch) == 0 {
 			// remove

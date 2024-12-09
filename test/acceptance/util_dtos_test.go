@@ -3,6 +3,7 @@ package acceptance
 import (
 	"github.com/Interhyp/metadata-service/api"
 	"github.com/Interhyp/metadata-service/internal/repository/notifier"
+	"github.com/Interhyp/metadata-service/internal/util"
 )
 
 func ptr[T interface{}](v T) *T {
@@ -281,7 +282,18 @@ func tstRepositoryPatch() openapi.RepositoryPatchDto {
 	return openapi.RepositoryPatchDto{
 		Mainline: ptr("main"),
 		Configuration: &openapi.RepositoryConfigurationPatchDto{
-			BranchNameRegex: ptr("testing_.*"),
+			BranchNameRegex:   ptr("testing_.*"),
+			RequireIssue:      ptr(true),
+			RequireConditions: make(map[string]openapi.ConditionReferenceDto),
+			RefProtections: &openapi.RefProtections{
+				Branches: &openapi.RefProtectionsBranches{
+					RequirePR: []openapi.ProtectedRef{
+						{
+							Pattern: ".*",
+						},
+					},
+				},
+			},
 		},
 		TimeStamp:  "2022-11-06T18:14:10Z",
 		CommitHash: "6c8ac2c35791edf9979623c717a243fc53400000",
@@ -357,6 +369,11 @@ mainline: main
 unittest: false
 configuration:
     branchNameRegex: testing_.*
+    refProtections:
+        branches:
+            requirePR:
+                - pattern: .*
+    requireIssue: true
 `
 }
 
@@ -393,6 +410,14 @@ func tstUpdatedRepositoryPayload() openapi.NotificationPayload {
 	repo.CommitHash = "6c8ac2c35791edf9979623c717a2430000000000"
 	repo.Configuration = &openapi.RepositoryConfigurationDto{
 		BranchNameRegex: ptr("testing_.*"),
+		RequireIssue:    util.Ptr(true),
+		RefProtections: &openapi.RefProtections{
+			Branches: &openapi.RefProtectionsBranches{
+				RequirePR: []openapi.ProtectedRef{
+					{Pattern: ".*"},
+				},
+			},
+		},
 	}
 	return notifier.AsPayload(repo)
 }
