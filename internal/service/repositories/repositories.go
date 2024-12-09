@@ -458,10 +458,10 @@ func patchConfiguration(patch *openapi.RepositoryConfigurationPatchDto, original
 			Watchers:                patchStringSlice(patch.Watchers, original.Watchers),
 			Archived:                patchPtr[bool](patch.Archived, original.Archived),
 			ActionsAccess:           patchStringPtr(patch.ActionsAccess, original.ActionsAccess),
+			RequireConditions:       patchRequireConditions(patch.RequireConditions, original.RequireConditions),
 			// fields not allowed for patching carry over from original
-			RequireIssue:      original.RequireIssue,
-			RequireConditions: original.RequireConditions,
-			RefProtections:    original.RefProtections,
+			RequireIssue:   original.RequireIssue,
+			RefProtections: original.RefProtections,
 		}
 	} else {
 		return original
@@ -537,6 +537,19 @@ func patchAdditionalWebhooks(patch []openapi.RepositoryConfigurationWebhookDto, 
 }
 
 func patchAccessKeys(patch []openapi.RepositoryConfigurationAccessKeyDto, original []openapi.RepositoryConfigurationAccessKeyDto) []openapi.RepositoryConfigurationAccessKeyDto {
+	if patch != nil {
+		if len(patch) == 0 {
+			// remove
+			return nil
+		} else {
+			return patch
+		}
+	} else {
+		return original
+	}
+}
+
+func patchRequireConditions(patch map[string]openapi.ConditionReferenceDto, original map[string]openapi.ConditionReferenceDto) map[string]openapi.ConditionReferenceDto {
 	if patch != nil {
 		if len(patch) == 0 {
 			// remove

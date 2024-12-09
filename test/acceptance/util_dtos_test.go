@@ -300,8 +300,7 @@ func tstRepositoryPatchWithIgnoredConfigurationFields() interface{} {
 	}{
 		Mainline: ptr("main"),
 		Configuration: &openapi.RepositoryConfigurationDto{
-			RequireIssue:      ptr(true),
-			RequireConditions: make(map[string]openapi.ConditionReferenceDto),
+			RequireIssue: ptr(true),
 			RefProtections: &openapi.RefProtections{
 				Branches: &openapi.RefProtectionsBranches{
 					RequirePR: []openapi.ProtectedRef{
