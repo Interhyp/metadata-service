@@ -45,11 +45,13 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - uses: go-semantic-release/action@v1
         with:
-          hooks: goreleaser
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           prerelease: false
           allow-initial-development-versions: true # remove to trigger an initial 1.0.0 release
           changelog-generator-opt: "emojis=true"
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          hooks: goreleaser
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - id: meta
         uses: docker/metadata-action@v5
         with:
