@@ -14,8 +14,9 @@ package openapi
 // RepositoryConfigurationPatchDto Attributes to configure the repository. If a configuration exists there are also some configured defaults for the repository.
 type RepositoryConfigurationPatchDto struct {
 	// Ssh-Keys configured on the repository.
-	AccessKeys  []RepositoryConfigurationAccessKeyDto  `yaml:"accessKeys,omitempty" json:"accessKeys,omitempty"`
-	MergeConfig *RepositoryConfigurationDtoMergeConfig `yaml:"mergeConfig,omitempty" json:"mergeConfig,omitempty"`
+	AccessKeys   []RepositoryConfigurationAccessKeyDto   `yaml:"accessKeys,omitempty" json:"accessKeys,omitempty"`
+	MergeConfig  *RepositoryConfigurationDtoMergeConfig  `yaml:"mergeConfig,omitempty" json:"mergeConfig,omitempty"`
+	DefaultTasks []RepositoryConfigurationDefaultTaskDto `yaml:"defaultTasks,omitempty" json:"defaultTasks,omitempty"`
 	// Use an explicit branch name regex.
 	BranchNameRegex *string `yaml:"branchNameRegex,omitempty" json:"branchNameRegex,omitempty"`
 	// Use an explicit commit message regex.
@@ -38,9 +39,12 @@ type RepositoryConfigurationPatchDto struct {
 	// Moves the repository into the archive.
 	Archived *bool `yaml:"archived,omitempty" json:"archived,omitempty"`
 	// Repository will not be configured, also not archived.
-	Unmanaged *bool `yaml:"unmanaged,omitempty" json:"unmanaged,omitempty"`
-	// Control how the repository is used by GitHub Actions workflows in other repositories
-	ActionsAccess *string `yaml:"actionsAccess,omitempty" json:"actionsAccess,omitempty"`
+	Unmanaged      *bool           `yaml:"unmanaged,omitempty" json:"unmanaged,omitempty"`
+	RefProtections *RefProtections `yaml:"refProtections,omitempty" json:"refProtections,omitempty"`
+	// Configures JQL matcher with query: issuetype in (Story, Bug) AND 'Risk Level' is not EMPTY
+	RequireIssue *bool `yaml:"requireIssue,omitempty" json:"requireIssue,omitempty"`
 	// Configuration of conditional builds as map of structs (key name e.g. some-key) of target references.
 	RequireConditions map[string]ConditionReferenceDto `yaml:"requireConditions,omitempty" json:"requireConditions,omitempty"`
+	// Control how the repository is used by GitHub Actions workflows in other repositories
+	ActionsAccess *string `yaml:"actionsAccess,omitempty" json:"actionsAccess,omitempty"`
 }

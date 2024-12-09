@@ -2127,6 +2127,10 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/MergeStrategy'
+        defaultTasks:
+          type: array
+          items:
+            $ref: '#/components/schemas/RepositoryConfigurationDefaultTaskDto'
         branchNameRegex:
           description: Use an explicit branch name regex.
           type: string
@@ -2179,14 +2183,11 @@ components:
         unmanaged:
           description: 'Repository will not be configured, also not archived.'
           type: boolean
-        actionsAccess:
-          description: Control how the repository is used by GitHub Actions workflows in other repositories
-          type: string
-          enum:
-            - NONE
-            - ORGANIZATION
-            - ENTERPRISE
-          example: NOT_ACCESSIBLE
+        refProtections:
+          $ref: '#/components/schemas/RefProtections'
+        requireIssue:
+          description: 'Configures JQL matcher with query: issuetype in (Story, Bug) AND ''Risk Level'' is not EMPTY'
+          type: boolean
         requireConditions:
           description: Configuration of conditional builds as map of structs (key name e.g. some-key) of target references.
           type: object
@@ -2195,6 +2196,14 @@ components:
                 refMatcher: main
           additionalProperties:
             $ref: '#/components/schemas/ConditionReferenceDto'
+        actionsAccess:
+          description: Control how the repository is used by GitHub Actions workflows in other repositories
+          type: string
+          enum:
+            - NONE
+            - ORGANIZATION
+            - ENTERPRISE
+          example: NOT_ACCESSIBLE
     MergeStrategy:
       type: object
       properties:

@@ -683,40 +683,6 @@ func TestPATCHRepository_Success(t *testing.T) {
 	hasSentNotification(t, "receivesRepository", "karma-wrapper.helm-chart", types.ModifiedEvent, types.RepositoryPayload, &payload)
 }
 
-func TestPATCHRepository_UnsupportedConfigurationFieldsAreIgnored(t *testing.T) {
-	tstReset()
-
-	docs.Given("Given an authenticated admin user")
-	token := tstValidAdminToken()
-
-	docs.When("When they perform a patch changing unsupported fields in the configuration of an existing repository")
-	body := tstRepositoryPatchWithIgnoredConfigurationFields()
-	response, err := tstPerformPatch("/rest/api/v1/repositories/karma-wrapper.helm-chart", token, &body)
-
-	docs.Then("Then the request is successful and the response is as expected")
-	tstAssert(t, response, err, http.StatusOK, "repository-patch.json")
-
-	docs.Then("And the repository has been correctly written, committed and pushed")
-	filename := "owners/some-owner/repositories/karma-wrapper.helm-chart.yaml"
-	require.Equal(t, tstRepositoryExpectedYamlKarmaWrapper(), metadataImpl.ReadContents(filename))
-	require.True(t, metadataImpl.FilesCommitted[filename])
-	require.True(t, metadataImpl.Pushed)
-
-	docs.Then("And the repository has been cached and can be read again")
-	readAgain, err := tstPerformGet("/rest/api/v1/repositories/karma-wrapper.helm-chart", tstUnauthenticated())
-	tstAssert(t, readAgain, err, http.StatusOK, "repository-patch.json")
-
-	docs.Then("And a kafka message notifying other instances of the update has been sent")
-	require.Equal(t, 1, len(kafkaImpl.Recording))
-	actual, _ := json.Marshal(kafkaImpl.Recording[0])
-	require.Equal(t, tstRepositoryExpectedKafka("karma-wrapper.helm-chart"), string(actual))
-
-	docs.Then("And a notification has been sent to all matching owners")
-	payload := tstUpdatedRepositoryPayload()
-	hasSentNotification(t, "receivesModified", "karma-wrapper.helm-chart", types.ModifiedEvent, types.RepositoryPayload, &payload)
-	hasSentNotification(t, "receivesRepository", "karma-wrapper.helm-chart", types.ModifiedEvent, types.RepositoryPayload, &payload)
-}
-
 func TestPATCHRepository_NoChangeSuccess(t *testing.T) {
 	tstReset()
 

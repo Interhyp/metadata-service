@@ -1,7 +1,17 @@
 {
   "commitHash": "6c8ac2c35791edf9979623c717a2430000000000",
   "configuration": {
-    "branchNameRegex": "testing_.*"
+    "branchNameRegex": "testing_.*",
+    "refProtections": {
+      "branches": {
+        "requirePR": [
+          {
+            "pattern": ".*"
+          }
+        ]
+      }
+    },
+    "requireIssue": true
   },
   "jiraIssue": "ISSUE-2345",
   "mainline": "main",
