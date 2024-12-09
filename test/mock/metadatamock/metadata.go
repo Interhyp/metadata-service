@@ -78,7 +78,6 @@ repositories:
 - some-service-backend/helm-deployment
 - some-service-backend/implementation
 alertTarget: https://webhook.com/9asdflk29d4m39g
-developmentOnly: false
 `
 
 const deployment = `mainline: main
@@ -126,7 +125,6 @@ repositories:
 - some-service-backend-with-expandable-groups/helm-deployment
 - some-service-backend/implementation
 alertTarget: https://webhook.com/9asdflk29d4m39g
-developmentOnly: false
 `
 
 const expandableGroupsDeployment = `mainline: main

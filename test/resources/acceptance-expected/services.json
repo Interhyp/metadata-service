@@ -3,7 +3,6 @@
     "some-service-backend": {
       "alertTarget": "https://webhook.com/9asdflk29d4m39g",
       "commitHash": "6c8ac2c35791edf9979623c717a243fc53400000",
-      "developmentOnly": false,
       "jiraIssue": "ISSUE-0000",
       "owner": "some-owner",
       "quicklinks": [
@@ -21,7 +20,6 @@
     "some-service-backend-with-expandable-groups": {
       "alertTarget": "https://webhook.com/9asdflk29d4m39g",
       "commitHash": "6c8ac2c35791edf9979623c717a243fc53400000",
-      "developmentOnly": false,
       "jiraIssue": "ISSUE-0000",
       "owner": "some-owner",
       "quicklinks": [
