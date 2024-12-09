@@ -43,7 +43,8 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - uses: go-semantic-release/action@v1
+      - id: semantic-release
+        uses: go-semantic-release/action@v1
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           prerelease: false
@@ -52,16 +53,15 @@ jobs:
           hooks: goreleaser
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - id: meta
-        uses: docker/metadata-action@v5
+      - id: repository-id
+        uses: ASzc/change-string-case-action@v6
         with:
-          images: ghcr.io/${{ github.repository }}
-          tags: |
-            type=semver,pattern={{version}}
-      - run: |
-          TARGET=${{ steps.meta.outputs.tags }}
+          string: ${{ github.repository }}
+      - if: steps.semantic-release.outputs.version != ''
+        run: |
+          TARGET=ghcr.io/${{ steps.repository-id.outputs.lowercase }}:${{ steps.semantic-release.outputs.version }}
           SOURCE=${{ needs.build.outputs.image }}
-          
+
           docker pull $SOURCE
           docker tag $SOURCE $TARGET
           docker push $TARGET
