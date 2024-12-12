@@ -25,11 +25,18 @@ jobs:
         images: ghcr.io/${{ github.repository }}
         tags: |
           type=ref,event=branch,pattern=snapshot-{{sha}}
-    - uses: docker/build-push-action@v5
+        labels: |
+          org.opencontainers.image.source=git@github.com:${{ github.repository }}.git
+          org.opencontainers.image.version=${{ github.ref }}
+          org.opencontainers.image.revision=${{ github.sha }}
+          de.interhyp.image.servicename=metadata-service
+    - id: build-push
+      uses: docker/build-push-action@v5
       with:
         context: .
         push: true
         tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
 
   release:
     name: 🚀 Release
