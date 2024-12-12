@@ -27,7 +27,7 @@ jobs:
           type=ref,event=branch,pattern=snapshot-{{sha}}
         labels: |
           org.opencontainers.image.source=git@github.com:${{ github.repository }}.git
-          org.opencontainers.image.version=${{ github.ref }}
+          org.opencontainers.image.version=${{ github.head_ref || github.ref_name }}
           org.opencontainers.image.revision=${{ github.sha }}
           de.interhyp.image.servicename=metadata-service
     - id: build-push
