@@ -16,5 +16,8 @@ func NewClient(client *http.Client, accessToken string, customConfig config.Cust
 			return method == http.MethodGet && matcher.MatchString(url)
 		},
 	).Client()
+	if 1==1 {
+		
+	}
 	return github.NewClient(cacheClient).WithAuthToken(accessToken), nil
 }
