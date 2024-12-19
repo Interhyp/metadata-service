@@ -230,7 +230,7 @@ func (a *ApplicationImpl) ConstructServices() error {
 	}
 
 	if a.VCSWebhooksHandler == nil {
-		a.VCSWebhooksHandler = vcswebhookshandler.New(a.Config, a.Logging, a.Timestamp, a.Updater, *a.VCSPlatforms)
+		a.VCSWebhooksHandler = vcswebhookshandler.New(a.Config, a.Logging, a.Timestamp, a.Repositories, a.Updater, *a.VCSPlatforms)
 	}
 
 	return nil
