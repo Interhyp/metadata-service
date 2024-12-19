@@ -14,6 +14,7 @@ the [![Use Template](https://img.shields.io/badge/use%20-template-blue?TODO?logo
 
 ## Getting Started
 
+
 > ⚠ The service requires a [Vault][vault] instance to get the secrets required for committing changes into
 > the [metadata-repository][template].
 
