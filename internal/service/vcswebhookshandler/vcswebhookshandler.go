@@ -33,6 +33,7 @@ type Impl struct {
 	CustomConfiguration config.CustomConfiguration
 	Logging             librepo.Logging
 	Timestamp           librepo.Timestamp
+	Repositories        service.Repositories
 
 	Updater service.Updater
 
@@ -43,6 +44,7 @@ func New(
 	configuration librepo.Configuration,
 	logging librepo.Logging,
 	timestamp librepo.Timestamp,
+	repositories service.Repositories,
 	updater service.Updater,
 	vcsPlatforms map[string]VCSPlatform,
 ) service.VCSWebhooksHandler {
@@ -51,6 +53,7 @@ func New(
 		Logging:             logging,
 		Timestamp:           timestamp,
 		Updater:             updater,
+		Repositories:        repositories,
 		vcsPlatforms:        vcsPlatforms,
 	}
 }
@@ -209,7 +212,7 @@ func (h *Impl) validateYamlFile(ctx context.Context, path string, contents strin
 		} else if strings.Contains(path, "/services/") {
 			return parseStrict(ctx, path, contents, &openapi.ServiceDto{})
 		} else if strings.Contains(path, "/repositories/") {
-			return parseStrict(ctx, path, contents, &openapi.RepositoryDto{})
+			return h.verifyRepository(ctx, path, contents)
 		} else {
 			aulogging.Logger.Ctx(ctx).Info().Printf("ignoring changed file %s in pull request (neither owner info, nor service nor repository)", path)
 			return nil
@@ -218,6 +221,35 @@ func (h *Impl) validateYamlFile(ctx context.Context, path string, contents strin
 		aulogging.Logger.Ctx(ctx).Info().Printf("ignoring changed file %s in pull request (not in owners/ or not .yaml)", path)
 		return nil
 	}
+}
+
+func (h *Impl) verifyRepository(ctx context.Context, path string, contents string) error {
+	repositoryDto := &openapi.RepositoryDto{}
+	err := parseStrict(ctx, path, contents, repositoryDto)
+	if err == nil {
+		_, after, found := strings.Cut(path, "/repositories/")
+		repoKey, isYaml := strings.CutSuffix(after, ".yaml")
+		if found && isYaml {
+			err = h.verifyRepositoryData(ctx, repoKey, repositoryDto)
+		}
+	}
+	return err
+}
+
+func (h *Impl) verifyRepositoryData(ctx context.Context, dtoKey string, dtoRepo *openapi.RepositoryDto) error {
+	repositories, err := h.Repositories.GetRepositories(ctx, "", "", "", "")
+	if err == nil {
+		for repoKey, repo := range repositories.Repositories {
+			if repoKey == dtoKey {
+				continue
+			}
+			if repo.Url == dtoRepo.Url {
+				err = fmt.Errorf("url of the repository '%s' clashes with existing repository '%s'", dtoKey, repoKey)
+				break
+			}
+		}
+	}
+	return err
 }
 
 func parseStrict[T openapi.OwnerDto | openapi.ServiceDto | openapi.RepositoryDto](_ context.Context, path string, contents string, resultPtr *T) error {
