@@ -14,5 +14,8 @@ updates:
       - "dependencies"
     reviewers:
       - "Interhyp/technical-excellence"
+    commit-message:
+      prefix: "fix"
+      include: "scope"
     pull-request-branch-name:
       separator: "-"
