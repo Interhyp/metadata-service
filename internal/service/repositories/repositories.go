@@ -93,6 +93,7 @@ func (s *Impl) validRepositoryType(repoType string) bool {
 func (s *Impl) GetRepositories(ctx context.Context,
 	ownerAliasFilter string, serviceNameFilter string,
 	nameFilter string, typeFilter string,
+	urlFilter string,
 ) (openapi.RepositoryListDto, error) {
 	result := openapi.RepositoryListDto{
 		Repositories: make(map[string]openapi.RepositoryDto),
@@ -138,10 +139,12 @@ func (s *Impl) GetRepositories(ctx context.Context,
 					keyType = keyComponents[1]
 				}
 
-				if ownerAliasFilter == "" || ownerAliasFilter == repository.Owner {
-					if nameFilter == "" || nameFilter == keyName {
-						if typeFilter == "" || typeFilter == keyType {
-							result.Repositories[key] = repository
+				if urlFilter == "" || urlFilter == repository.Url {
+					if ownerAliasFilter == "" || ownerAliasFilter == repository.Owner {
+						if nameFilter == "" || nameFilter == keyName {
+							if typeFilter == "" || typeFilter == keyType {
+								result.Repositories[key] = repository
+							}
 						}
 					}
 				}

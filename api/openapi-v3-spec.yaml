@@ -722,6 +722,13 @@ paths:
       summary: get repositories
       description: 'Obtain a list of repositories, potentially filtered by owner alias or service name'
       parameters:
+        - name: url
+          in: query
+          description: 'Optional - allows filtering the output by repository url. Must match `^[a-z](-?:?@?.?\/?[a-z0-9]+)*$`.'
+          required: false
+          schema:
+            type: string
+          example: git@github.com:some-org/some-repo.git
         - name: owner
           in: query
           description: 'Optional - the alias of an owner. If present, only repositories with this owner are returned. Must match `^[a-z](-?[a-z0-9]+)*$`.'
