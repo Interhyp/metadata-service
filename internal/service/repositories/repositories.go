@@ -139,10 +139,10 @@ func (s *Impl) GetRepositories(ctx context.Context,
 					keyType = keyComponents[1]
 				}
 
-				if ownerAliasFilter == "" || ownerAliasFilter == repository.Owner {
-					if nameFilter == "" || nameFilter == keyName {
-						if typeFilter == "" || typeFilter == keyType {
-							if urlFilter == "" || urlFilter == repository.Url {
+				if urlFilter == "" || urlFilter == repository.Url {
+					if ownerAliasFilter == "" || ownerAliasFilter == repository.Owner {
+						if nameFilter == "" || nameFilter == keyName {
+							if typeFilter == "" || typeFilter == keyType {
 								result.Repositories[key] = repository
 							}
 						}
