@@ -20,6 +20,7 @@ const ownerParam = "owner"
 const serviceParam = "service"
 const nameParam = "name"
 const typeParam = "type"
+const urlParam = "url"
 
 type Impl struct {
 	Configuration       librepo.Configuration
@@ -69,10 +70,12 @@ func (c *Impl) GetRepositories(w http.ResponseWriter, r *http.Request) {
 	serviceNameFilter := util.StringQueryParam(r, serviceParam)
 	nameFilter := util.StringQueryParam(r, nameParam)
 	typeFilter := util.StringQueryParam(r, typeParam)
+	urlFilter := util.StringQueryParam(r, urlParam)
 
 	repositories, err := c.Repositories.GetRepositories(ctx,
 		ownerAliasFilter, serviceNameFilter,
-		nameFilter, typeFilter)
+		nameFilter, typeFilter,
+		urlFilter)
 	if err != nil {
 		if apierrors.IsNotFoundError(err) {
 			// acceptable case - no matching repositories, so return empty list

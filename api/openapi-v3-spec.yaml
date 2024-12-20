@@ -750,6 +750,13 @@ paths:
           schema:
             type: string
           example: helm-chart
+        - name: url
+          in: query
+          description: 'Optional - allows filtering the output by repository url. Must match `^[a-z](-?:?@?.?\/?[a-z0-9]+)*$`.'
+          required: false
+          schema:
+            type: string
+          example: git@github.com:some-org/some-repo.git
       responses:
         '200':
           description: Success

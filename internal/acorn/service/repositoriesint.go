@@ -16,7 +16,8 @@ type Repositories interface {
 
 	GetRepositories(ctx context.Context,
 		ownerAliasFilter string, serviceNameFilter string,
-		nameFilter string, typeFilter string) (openapi.RepositoryListDto, error)
+		nameFilter string, typeFilter string,
+		urlFilter string) (openapi.RepositoryListDto, error)
 	GetRepository(ctx context.Context, repoKey string) (openapi.RepositoryDto, error)
 
 	// CreateRepository returns the repository as it was created, with commit hash and timestamp filled in.

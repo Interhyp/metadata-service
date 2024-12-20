@@ -237,7 +237,7 @@ func (h *Impl) verifyRepository(ctx context.Context, path string, contents strin
 }
 
 func (h *Impl) verifyRepositoryData(ctx context.Context, dtoKey string, dtoRepo *openapi.RepositoryDto) error {
-	repositories, err := h.Repositories.GetRepositories(ctx, "", "", "", "")
+	repositories, err := h.Repositories.GetRepositories(ctx, "", "", "", "", "")
 	if err == nil {
 		for repoKey, repo := range repositories.Repositories {
 			if repoKey == dtoKey {
