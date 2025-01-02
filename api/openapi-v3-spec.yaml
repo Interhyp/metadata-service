@@ -1807,6 +1807,13 @@ components:
     RepositoryDto:
       type: object
       properties:
+        type:
+          description: The type of the repository as determined by its key.
+          type: string
+          examples:
+            - none
+            - implementation
+            - helm-deployment
         owner:
           description: The alias of the repository owner
           type: string

@@ -3,6 +3,7 @@ package repositories
 import (
 	"context"
 	"fmt"
+	internalutil "github.com/Interhyp/metadata-service/internal/util"
 	"net/url"
 	"strings"
 
@@ -324,6 +325,10 @@ func (s *Impl) UpdateRepository(ctx context.Context, key string, repositoryDto o
 		}
 
 		result = repositoryWritten
+		splitKey := strings.Split(key, ".")
+		if len(splitKey) > 1 {
+			result.Type = internalutil.Ptr(splitKey[1])
+		}
 		return nil
 	})
 	return result, err
@@ -430,6 +435,7 @@ func (s *Impl) validateRepositoryPatchDto(ctx context.Context, key string, patch
 
 func patchRepository(current openapi.RepositoryDto, patch openapi.RepositoryPatchDto) openapi.RepositoryDto {
 	return openapi.RepositoryDto{
+		Type:          current.Type,
 		Owner:         patchString(patch.Owner, current.Owner),
 		Url:           patchString(patch.Url, current.Url),
 		Mainline:      patchString(patch.Mainline, current.Mainline),

@@ -396,12 +396,14 @@ func tstDelete() openapi.DeletionDto {
 
 func tstNewRepositoryPayload() openapi.NotificationPayload {
 	repo := tstRepository()
+	repo.Type = ptr("helm-chart")
 	repo.CommitHash = "6c8ac2c35791edf9979623c717a2430000000000"
 	return notifier.AsPayload(repo)
 }
 
 func tstUpdatedRepositoryPayload() openapi.NotificationPayload {
 	repo := tstRepositoryUnchanged()
+	repo.Type = ptr("helm-chart")
 	repo.Mainline = "main"
 	repo.CommitHash = "6c8ac2c35791edf9979623c717a2430000000000"
 	repo.Configuration = &openapi.RepositoryConfigurationDto{

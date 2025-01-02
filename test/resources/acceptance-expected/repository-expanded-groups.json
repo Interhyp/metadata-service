@@ -72,5 +72,6 @@
   "mainline": "main",
   "owner": "some-owner",
   "timeStamp": "2022-11-06T18:14:10Z",
+  "type": "helm-deployment",
   "url": "ssh://git@bitbucket.some-organisation.com:7999/PROJECT/some-service-backend-with-expandable-groups-deployment.git"
 }
