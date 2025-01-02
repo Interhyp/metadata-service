@@ -13,6 +13,8 @@ package openapi
 
 // RepositoryDto struct for RepositoryDto
 type RepositoryDto struct {
+	// The type of the repository as determined by its key.
+	Type *string `yaml:"-" json:"type,omitempty"`
 	// The alias of the repository owner
 	Owner       string  `yaml:"-" json:"owner"`
 	Description *string `yaml:"description,omitempty" json:"description,omitempty"`

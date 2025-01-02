@@ -55,6 +55,7 @@ for i in ../api/*.go; do
     sed -i'' -e 's/yaml:"commitHash"/yaml:"-"/g' $i
     sed -i'' -e 's/yaml:"jiraIssue"/yaml:"-"/g' $i
     sed -i'' -e 's/yaml:"owner"/yaml:"-"/g' $i
+    sed -i'' -e 's/yaml:"type,omitempty"/yaml:"-"/g' $i
 done
 
 # ------------------------------------ end customization ---------------------------------------

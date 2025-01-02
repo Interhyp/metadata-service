@@ -13,13 +13,13 @@
       ]
     },
     "commitMessageType": "SEMANTIC",
-    "requireIssue": false,
-    "requireSuccessfulBuilds": 1,
     "requireConditions": {
       "snyk-key": {
         "refMatcher": "master"
       }
     },
+    "requireIssue": false,
+    "requireSuccessfulBuilds": 1,
     "webhooks": {
       "additional": [
         {
@@ -36,6 +36,7 @@
   "mainline": "master",
   "owner": "some-owner",
   "timeStamp": "2022-11-06T18:14:10Z",
+  "type": "helm-chart",
   "unittest": false,
   "url": "ssh://git@bitbucket.some-organisation.com:7999/helm/karma-wrapper.git"
 }

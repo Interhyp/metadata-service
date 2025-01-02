@@ -8,6 +8,7 @@ import (
 	"github.com/Interhyp/metadata-service/api"
 	"github.com/Interhyp/metadata-service/internal/acorn/errors/nochangeserror"
 	"github.com/Interhyp/metadata-service/internal/service/util"
+	internalutil "github.com/Interhyp/metadata-service/internal/util"
 	"sort"
 	"strings"
 )
@@ -80,6 +81,11 @@ func (s *Impl) GetRepository(ctx context.Context, repoKey string) (openapi.Repos
 
 	fullPath := fmt.Sprintf("owners/%s/repositories/%s.yaml", ownerAlias, repoKey)
 	err = GetT[openapi.RepositoryDto](ctx, s, &result, fullPath)
+
+	splitKey := strings.Split(repoKey, ".")
+	if len(splitKey) > 1 {
+		result.Type = internalutil.Ptr(splitKey[1])
+	}
 
 	if err == nil && result.Configuration != nil && result.Configuration.Approvers != nil {
 		approversGroupsMap := result.Configuration.Approvers

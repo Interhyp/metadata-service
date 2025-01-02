@@ -149,6 +149,7 @@ func TestPOSTRepository_Success(t *testing.T) {
 
 	docs.Then("And a notification has been sent to all matching owners")
 	payload := tstNewRepositoryPayload()
+	payload.Repository.Type = ptr("api")
 	hasSentNotification(t, "receivesCreate", "new-repository.api", types.CreatedEvent, types.RepositoryPayload, &payload)
 	hasSentNotification(t, "receivesRepository", "new-repository.api", types.CreatedEvent, types.RepositoryPayload, &payload)
 }
