@@ -1171,8 +1171,13 @@ components:
           type: string
           examples:
             - kschlangenheld
+        members:
+          description: A list of users which constitute this owner
+          type: array
+          items:
+            type: string
         groups:
-          description: 'Map of string (group name e.g. some-owner) of strings (list of usernames), one username for each group is required.'
+          description: 'Collection of arbitrary user groups which can be referenced in service configurations. Map of string (group name e.g. some-owner) of strings (list of usernames), one username for each group is required.'
           type: object
           examples:
             - some-owner: { }
@@ -1254,6 +1259,11 @@ components:
           examples:
             - - kschlangenheld
               - someotheruser
+        members:
+          description: A list of users which constitute this owner
+          type: array
+          items:
+            type: string
         groups:
           description: 'Map of string (group name e.g. some-owner) of strings (list of usernames), one username for each group is required.'
           type: object
@@ -1304,6 +1314,11 @@ components:
           type: string
           examples:
             - kschlangenheld
+        members:
+          description: A list of users which constitute this owner
+          type: array
+          items:
+            type: string
         groups:
           description: 'Map of string (group name e.g. some-owner) of strings (list of usernames), one username for each group is required.'
           type: object

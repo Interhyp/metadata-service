@@ -136,6 +136,7 @@ func (s *Impl) mapOwnerCreateDtoToOwnerDto(ownerCreateDto openapi.OwnerCreateDto
 		ProductOwner:       ownerCreateDto.ProductOwner,
 		JiraIssue:          ownerCreateDto.JiraIssue,
 		DefaultJiraProject: ownerCreateDto.DefaultJiraProject,
+		Members:            ownerCreateDto.Members,
 		Groups:             ownerCreateDto.Groups,
 		DisplayName:        ownerCreateDto.DisplayName,
 		Links:              ownerCreateDto.Links,
@@ -279,6 +280,7 @@ func patchOwner(current openapi.OwnerDto, patch openapi.OwnerPatchDto) openapi.O
 		TeamsChannelURL:    patchStringPtr(patch.TeamsChannelURL, current.TeamsChannelURL),
 		ProductOwner:       patchStringPtr(patch.ProductOwner, current.ProductOwner),
 		DefaultJiraProject: patchStringPtr(patch.DefaultJiraProject, current.DefaultJiraProject),
+		Members:            patchMembers(patch.Members, current.Members),
 		Groups:             patchStringToStringArrayMapPtr(patch.Groups, current.Groups),
 		TimeStamp:          patch.TimeStamp,
 		CommitHash:         patch.CommitHash,
@@ -318,6 +320,15 @@ func patchLinksSlice(patch []openapi.Link, original []openapi.Link) []openapi.Li
 		} else {
 			return patch
 		}
+	} else {
+		return original
+	}
+}
+
+func patchMembers(patch []string, original []string) []string {
+	if len(patch) > 0 {
+		// have at least one member to prevent empty owners
+		return patch
 	} else {
 		return original
 	}
