@@ -18,7 +18,7 @@ require (
 	github.com/StephanHCB/go-autumn-restclient-prometheus v0.4.0
 	github.com/go-chi/chi/v5 v5.2.0
 	github.com/go-git/go-billy/v5 v5.6.1
-	github.com/go-git/go-git/v5 v5.12.0
+	github.com/go-git/go-git/v5 v5.13.0
 	github.com/go-http-utils/headers v0.0.0-20181008091004-fed159eddc2a
 	github.com/go-playground/webhooks/v6 v6.4.0
 	github.com/google/go-github/v66 v66.0.0
@@ -36,7 +36,7 @@ require (
 require (
 	dario.cat/mergo v1.0.0 // indirect
 	github.com/Microsoft/go-winio v0.6.1 // indirect
-	github.com/ProtonMail/go-crypto v1.0.0 // indirect
+	github.com/ProtonMail/go-crypto v1.1.3 // indirect
 	github.com/StephanHCB/go-autumn-acorn-registry v0.3.2 // indirect
 	github.com/StephanHCB/go-autumn-web-swagger-ui v0.3.3 // indirect
 	github.com/armon/go-radix v1.0.0 // indirect
@@ -90,7 +90,7 @@ require (
 	github.com/sergi/go-diff v1.3.2-0.20230802210424-5b0b94c5c0d3 // indirect
 	github.com/shurcooL/httpfs v0.0.0-20190707220628-8d4bc4ba7749 // indirect
 	github.com/shurcooL/vfsgen v0.0.0-20200824052919-0d455de96546 // indirect
-	github.com/skeema/knownhosts v1.2.2 // indirect
+	github.com/skeema/knownhosts v1.3.0 // indirect
 	github.com/sony/gobreaker v1.0.0 // indirect
 	github.com/tidwall/tinylru v1.2.1 // indirect
 	github.com/xanzy/ssh-agent v0.3.3 // indirect
