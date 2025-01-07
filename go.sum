@@ -11,8 +11,8 @@ github.com/ProtonMail/go-crypto v1.0.0 h1:LRuvITjQWX+WIfr930YHG2HNfjR1uOfyf5vE0k
 github.com/ProtonMail/go-crypto v1.0.0/go.mod h1:EjAoLdwvbIOoOQr3ihjnSoLZRtE8azugULFRteWMNc0=
 github.com/Roshick/go-autumn-kafka v0.7.4 h1:yVoPmPeX+dpyXhFb+s/XfB8B5Eaw366/0OyDJjGtyoY=
 github.com/Roshick/go-autumn-kafka v0.7.4/go.mod h1:bJg17k18qXVVWczYeWCGmGE1rxHwoKbtR0We9x1LsVY=
-github.com/Roshick/go-autumn-synchronisation v0.7.4 h1:BxwhgtQI4Lqk4dUnK2VczFbFnQke2uPZ80kgGD+PyNo=
-github.com/Roshick/go-autumn-synchronisation v0.7.4/go.mod h1:cKfOnKr1o2oCQ5MmPCNVRbHjxGSkCmzJJMW2KqrY8hI=
+github.com/Roshick/go-autumn-synchronisation v0.7.5 h1:/HqG3S8Cx+2yPkIYKZIe2DOng+eYGF/1kWCSNpSOarY=
+github.com/Roshick/go-autumn-synchronisation v0.7.5/go.mod h1:Zytfkb16g87fEv3x4g4LwFwxYtgL3xj0R3s7wbiFbqw=
 github.com/StephanHCB/go-autumn-acorn-registry v0.3.2 h1:eW+KndxdD8p+TdQ6HsqXLdqkowlcWb9qkVeUjdchAfA=
 github.com/StephanHCB/go-autumn-acorn-registry v0.3.2/go.mod h1:KB7wPWOEy2n8VGNw75H4w7wBSWSrgwNNJNmet/F+9RI=
 github.com/StephanHCB/go-autumn-config-api v0.2.2 h1:A+DO0JT0dc/4e/UN6XwYCE7VNCXHL5Xlg8UrAqTbNXE=
@@ -192,8 +192,8 @@ github.com/prometheus/procfs v0.15.1 h1:YagwOFzUgYfKKHX6Dr+sHT7km/hxC76UB0leargg
 github.com/prometheus/procfs v0.15.1/go.mod h1:fB45yRUv8NstnjriLhBQLuOUt+WW4BsoGhij/e3PBqk=
 github.com/rcrowley/go-metrics v0.0.0-20201227073835-cf1acfcdf475 h1:N/ElC8H3+5XpJzTSTfLsJV/mx9Q9g7kxmchpfZyxgzM=
 github.com/rcrowley/go-metrics v0.0.0-20201227073835-cf1acfcdf475/go.mod h1:bCqnVzQkZxMG4s8nGwiZ5l3QUCyqpo9Y+/ZMZ9VjZe4=
-github.com/redis/rueidis v1.0.51 h1:NZ1KIncPIQtjrp+GDLynrLKBiPU106EN5cJHOFSqvDM=
-github.com/redis/rueidis v1.0.51/go.mod h1:by+34b0cFXndxtYmPAHpoTHO5NkosDlBvhexoTURIxM=
+github.com/redis/rueidis v1.0.52 h1:VFlucmx/QHzGD7FYlK8l+W/HYz4aK+2eIOrCVjDwwag=
+github.com/redis/rueidis v1.0.52/go.mod h1:by+34b0cFXndxtYmPAHpoTHO5NkosDlBvhexoTURIxM=
 github.com/robfig/cron/v3 v3.0.1 h1:WdRxkvbJztn8LMz/QEvLN5sBU+xKpSqwwUO1Pjr4qDs=
 github.com/robfig/cron/v3 v3.0.1/go.mod h1:eQICP3HwyT7UooqI/z+Ov+PtYAWygg1TEWWzGIFLtro=
 github.com/rogpeppe/go-internal v1.12.0 h1:exVL4IDcn6na9z1rAb56Vxr+CgyK3nn3O+epU5NdKM8=

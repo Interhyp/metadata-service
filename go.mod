@@ -6,7 +6,7 @@ require (
 	github.com/IBM/sarama v1.44.0
 	github.com/Interhyp/go-backend-service-common v0.12.1
 	github.com/Roshick/go-autumn-kafka v0.7.4
-	github.com/Roshick/go-autumn-synchronisation v0.7.4
+	github.com/Roshick/go-autumn-synchronisation v0.7.5
 	github.com/StephanHCB/go-autumn-config-api v0.2.2
 	github.com/StephanHCB/go-autumn-config-env v0.2.3
 	github.com/StephanHCB/go-autumn-logging v0.4.0
@@ -85,7 +85,7 @@ require (
 	github.com/prometheus/client_model v0.6.1 // indirect
 	github.com/prometheus/common v0.55.0 // indirect
 	github.com/prometheus/procfs v0.15.1 // indirect
-	github.com/redis/rueidis v1.0.51 // indirect
+	github.com/redis/rueidis v1.0.52 // indirect
 	github.com/segmentio/asm v1.2.0 // indirect
 	github.com/sergi/go-diff v1.3.2-0.20230802210424-5b0b94c5c0d3 // indirect
 	github.com/shurcooL/httpfs v0.0.0-20190707220628-8d4bc4ba7749 // indirect
