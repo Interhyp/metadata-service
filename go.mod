@@ -18,7 +18,7 @@ require (
 	github.com/StephanHCB/go-autumn-restclient-prometheus v0.4.0
 	github.com/go-chi/chi/v5 v5.2.0
 	github.com/go-git/go-billy/v5 v5.6.1
-	github.com/go-git/go-git/v5 v5.13.0
+	github.com/go-git/go-git/v5 v5.13.1
 	github.com/go-http-utils/headers v0.0.0-20181008091004-fed159eddc2a
 	github.com/go-playground/webhooks/v6 v6.4.0
 	github.com/google/go-github/v66 v66.0.0
