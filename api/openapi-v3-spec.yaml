@@ -2046,6 +2046,7 @@ components:
           enum:
             - DEFAULT
             - SEMANTIC
+            - SNOW_AND_INCIDENTS
         requireSuccessfulBuilds:
           description: Set the required successful builds counter.
           type: integer
@@ -2159,6 +2160,7 @@ components:
           enum:
             - DEFAULT
             - SEMANTIC
+            - SNOW_AND_INCIDENTS
         requireSuccessfulBuilds:
           description: Set the required successful builds counter.
           type: integer
