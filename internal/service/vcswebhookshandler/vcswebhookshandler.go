@@ -168,9 +168,11 @@ func (h *Impl) createPullRequestCommentSafely(
 }
 
 func (h *Impl) validate(ctx context.Context, vcs repository.VcsPlugin, id uint64, toRef string, fromRef string) error {
+	var downstreamErrorMessage string
 	fileInfos, prHead, err := h.getChangedFilesOnPullRequest(ctx, vcs, strconv.FormatUint(id, 10), toRef)
 	if err != nil {
-		return fmt.Errorf("error getting changed files on pull request: %v", err)
+		downstreamErrorMessage = fmt.Sprintf("error getting changed files on pull request %d", id)
+		h.Logging.Logger().Ctx(ctx).Warn().WithErr(err).Printf("error getting changed files on pull request: %v", err)
 	}
 
 	var errorMessages []string
@@ -186,9 +188,12 @@ func (h *Impl) validate(ctx context.Context, vcs repository.VcsPlugin, id uint64
 		message = "# yaml validation failure\n\nThere were validation errors in changed files. Please fix yaml syntax and/or remove unknown fields:\n\n" +
 			strings.Join(errorMessages, "\n\n") + "\n"
 	}
+	if downstreamErrorMessage != "" {
+		message = "# validation failure\n\nThere were errors getting files for yaml validation. Please rebase against main."
+	}
 	h.createPullRequestCommentSafely(ctx, vcs, strconv.FormatUint(id, 10), message)
 	status := repository.CommitBuildStatusFailed
-	if len(errorMessages) == 0 {
+	if len(errorMessages) == 0 && downstreamErrorMessage == "" {
 		status = repository.CommitBuildStatusSuccess
 	}
 	h.setCommitStatusSafely(ctx, vcs, prHead, status)

@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/md5"
 	"encoding/hex"
+	"encoding/json"
 	"fmt"
 	libconfig "github.com/Interhyp/go-backend-service-common/repository/config"
 	"github.com/Interhyp/go-backend-service-common/repository/logging"
@@ -30,6 +31,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"net/url"
+	"reflect"
 	"strings"
 	"time"
 )
@@ -78,7 +80,20 @@ func ConstructFilenameV4WithBody(method string, requestUrl string, body interfac
 	p = strings.TrimRight(p, "-")
 
 	if body != nil {
-		parsedUrl.RawQuery = fmt.Sprintf("%v", body)
+		v := reflect.ValueOf(body)
+		if v.Kind() == reflect.Ptr {
+			v = v.Elem()
+		}
+		readerField := v.FieldByName("Reader")
+		if v.Kind() == reflect.Struct && !readerField.IsValid() {
+			json, err := json.Marshal(body)
+			if err != nil {
+				return "", err
+			}
+			parsedUrl.RawQuery = string(json)
+		} else if readerField.IsValid() {
+			parsedUrl.RawQuery = fmt.Sprintf("%v", body)
+		}
 	} else if parsedUrl.RawQuery != "" {
 		parsedUrl.RawQuery = fmt.Sprintf("%v", parsedUrl.Query())
 	}

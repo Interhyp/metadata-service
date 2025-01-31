@@ -1,0 +1,13 @@
+{
+  "method": "GET",
+  "requestUrl": "localhost/rest/api/latest/projects/er/repos/metadata/owners/invalid-downstream/owner.info.yaml",
+  "requestBody": "",
+  "parsedResponse": {
+    "Body": {
+    },
+    "Status": 404,
+    "Header": {
+    },
+    "Time": "2024-10-22T11:29:55.5326883+02:00"
+  }
+}

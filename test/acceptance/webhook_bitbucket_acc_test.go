@@ -100,3 +100,41 @@ func TestPOSTWebhookBitbucket_InvalidPayload(t *testing.T) {
 	docs.Then("Then the request fails and the error response is as expected")
 	tstAssert(t, response, err, http.StatusBadRequest, "webhook-invalid.json")
 }
+
+func TestPOSTWebhookBitbucket_InvalidDownstream(t *testing.T) {
+	tstReset()
+
+	docs.When("When BitBucket sends a webhook with valid payload")
+	body := bitbucketserver.PullRequestOpenedPayload{
+		Date:     bitbucketserver.Date(time.Now()),
+		EventKey: bitbucketserver.PullRequestOpenedEvent,
+		Actor:    bitbucketserver.User{
+			// don't care
+		},
+		PullRequest: bitbucketserver.PullRequest{
+			ID:          44,
+			Title:       "some pr title",
+			Description: "some pr description",
+			FromRef: bitbucketserver.RepositoryReference{
+				ID: "e2d2000000000000000000000000000000000009", // pr head
+			},
+			ToRef: bitbucketserver.RepositoryReference{
+				ID: "e100000000000000000000000000000000000009", // mainline
+			},
+			Locked: false,
+			Author: bitbucketserver.PullRequestParticipant{},
+		},
+	}
+	bodyBytes, err := json.Marshal(&body)
+	require.Nil(t, err)
+	request, err := http.NewRequest(http.MethodPost, ts.URL+"/webhooks/vcs/bitbucket_datacenter", bytes.NewReader(bodyBytes))
+	require.Nil(t, err)
+	request.Header.Set("X-Event-Key", string(bitbucketserver.PullRequestOpenedEvent))
+	rawResponse, err := http.DefaultClient.Do(request)
+	require.Nil(t, err)
+	response, err := tstWebResponseFromResponse(rawResponse)
+	require.Nil(t, err)
+
+	docs.Then("Then the request is successful")
+	tstAssertNoBody(t, response, err, http.StatusNoContent)
+}

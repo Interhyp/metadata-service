@@ -50,7 +50,7 @@ func (r *Impl) SetCommitStatusFailed(ctx context.Context, projectKey, repoSlug, 
 
 func (r *Impl) CreatePullRequestComment(ctx context.Context, projectKey, repoSlug, pullRequestID, text string) error {
 	comment := RestComment{
-		Text: &text,
+		Text: util.Ptr(text),
 	}
 	_, response, err := r.pullRequestsAPI.CreateComment2(ctx, projectKey, pullRequestID, repoSlug, comment)
 	if err != nil {
