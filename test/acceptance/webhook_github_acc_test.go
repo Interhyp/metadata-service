@@ -68,6 +68,26 @@ func TestPOSTWebhookGitHub_InvalidPayload(t *testing.T) {
 	tstAssert(t, response, err, http.StatusBadRequest, "webhook-invalid.json")
 }
 
+func TestPOSTWebhookGitHub_InvalidDownstream(t *testing.T) {
+	tstReset()
+
+	docs.When("When GitHub sends a webhook with valid payload")
+	body := createGithubPullRequestPayload("refs/heads/test-invalid-downstream", "refs/heads/main")
+
+	bodyBytes, err := json.Marshal(&body)
+	require.Nil(t, err)
+	request, err := http.NewRequest(http.MethodPost, ts.URL+"/webhooks/vcs/github", bytes.NewReader(bodyBytes))
+	require.Nil(t, err)
+	request.Header.Set("X-GitHub-Event", string(github.PullRequestEvent))
+	rawResponse, err := http.DefaultClient.Do(request)
+	require.Nil(t, err)
+	response, err := tstWebResponseFromResponse(rawResponse)
+	require.Nil(t, err)
+
+	docs.Then("Then the request is successful")
+	tstAssertNoBody(t, response, err, http.StatusNoContent)
+}
+
 func createGithubPullRequestPayload(fromRef string, toRef string) github.PullRequestPayload {
 	s := fmt.Sprintf(`{"action": "opened", "pull_request": {"number": 4711, "head": {"sha": "%s"}, "base": {"sha": "%s"}}, "repository": {"name": "some-repo", "ssh_url": "ssh://git@github.com:Someorg/some-service-deployment.git", "owner": {"login": "some-org"}}}`, fromRef, toRef)
 	data := github.PullRequestPayload{}

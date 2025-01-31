@@ -1,0 +1,13 @@
+{
+  "method": "GET",
+  "requestUrl": "https://api.github.com/repos/er/metadata/contents/owners/test-owner-dev/owner.info.yaml?ref=refs%2Fheads%2Ftest-invalid-downstream",
+  "requestBody": "{}",
+  "parsedResponse": {
+    "Body": {
+    },
+    "Status": 404,
+    "Header": {
+    },
+    "Time": "2024-10-22T11:29:55.5326883+02:00"
+  }
+}

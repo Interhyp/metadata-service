@@ -20,6 +20,8 @@ OWNER_ALIAS_FILTER_REGEX: .*
 
 REPOSITORY_TYPES: 'implementation,helm-deployment,api,helm-chart'
 
+WEBHOOKS_PROCESS_ASYNC: false
+
 NOTIFICATION_CONSUMER_CONFIGS: >-
   {
     "receivesDelete": {
