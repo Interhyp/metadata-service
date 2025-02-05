@@ -2271,6 +2271,12 @@ components:
         refMatcher:
           description: Reference of a branch.
           type: string
+        exemptions:
+          description: list of users or groups for which this protection does not apply.
+          type: array
+          items:
+            type: string
+            description: 'A user or group. Groups are denoted by @<OWNERNAME>.<GROUPNAME>.'
       required:
         - refMatcher
     ExcludeMergeCheckUserDto:
@@ -2386,17 +2392,17 @@ components:
           pattern: '^(?!refs\/(heads|tags)\/).*$'
           description: "fnmatch pattern to define protected refs. Must not start with refs/heads/ or refs/tags/. Special value :MAINLINE: matches the currently configured mainline for branch protections."
         exemptions:
-          description: list of users, teams or apps for whom this protection does not apply
+          description: list of users or groups for which this protection does not apply.
           type: array
           items:
             type: string
-            description: 'A user, team or app identifier. Teams are identified by leading @<OWNER>. prefix, apps are identified by app: prefix.'
+            description: 'A user or a group identifier. Groups are identified by @<OWNERNAME>.<GROUPNAME>. Group identifiers will be resolved for this field during read operations.'
         exemptionsRoles:
-          description: list of teams for whom this protection does not apply
+          description: list of group identifiers for which this protection does not apply. This field is read-only and will be filled automatically from the exemptions fields.
           type: array
           items:
             type: string
-            description: 'A team identifier. Teams are identified by leading @<OWNER>. prefix'
+            description: 'A group identifier. Groups are identified by @<OWNERNAME>.<GROUPNAME>.'
     ErrorDto:
       type: object
       properties:

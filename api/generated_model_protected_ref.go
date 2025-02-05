@@ -15,8 +15,8 @@ package openapi
 type ProtectedRef struct {
 	// fnmatch pattern to define protected refs. Must not start with refs/heads/ or refs/tags/. Special value :MAINLINE: matches the currently configured mainline for branch protections.
 	Pattern string `yaml:"pattern" json:"pattern" validate:"regexp=^(?!refs\\/(heads|tags)\\/).*$"`
-	// list of users, teams or apps for whom this protection does not apply
+	// list of users, groups, NPAs or app ids for whom this protection does not apply. Individual users are not supported for Github.
 	Exemptions []string `yaml:"exemptions,omitempty" json:"exemptions,omitempty"`
-	// list of teams for whom this protection does not apply
+	// list of groups for whom this protection does not apply. This field is read-only and will be filled automatically from the exemptions fields.
 	ExemptionsRoles []string `yaml:"exemptionsRoles,omitempty" json:"exemptionsRoles,omitempty"`
 }
