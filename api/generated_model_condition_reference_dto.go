@@ -15,4 +15,6 @@ package openapi
 type ConditionReferenceDto struct {
 	// Reference of a branch.
 	RefMatcher string `yaml:"refMatcher" json:"refMatcher"`
+	// list of groups, NPAs or app ids for whom this protection does not apply. Individual users are not supported.
+	Exemptions []string `yaml:"exemptions,omitempty" json:"exemptions,omitempty"`
 }
