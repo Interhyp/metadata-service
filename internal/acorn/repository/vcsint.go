@@ -12,8 +12,6 @@ type VcsPlugin interface {
 	CreatePullRequestComment(ctx context.Context, repoPath, repoName, pullRequestID, text string) error
 
 	GetChangedFilesOnPullRequest(ctx context.Context, repoPath, repoName, pullRequestID, toRef string) ([]File, string, error)
-
-	GetUser(ctx context.Context, username string) (string, error)
 }
 
 type CommitBuildStatus string

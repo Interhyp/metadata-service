@@ -153,11 +153,3 @@ func (r *Impl) getFileContentsAt(ctx context.Context, repoPath string, repoName 
 
 	return contents.String(), nil
 }
-
-func (r *Impl) GetUser(ctx context.Context, username string) (string, error) {
-	response, _, err := r.userApi.GetUser(ctx, username)
-	if err != nil {
-		return "", err
-	}
-	return *response.Name, nil
-}

@@ -219,7 +219,3 @@ func (c *CustomConfigImpl) VCSConfigs() map[string]config.VCSConfig {
 func (c *CustomConfigImpl) WebhooksProcessAsync() bool {
 	return c.VWebhooksProcessAsync
 }
-
-func (c *CustomConfigImpl) UserPrefix() string {
-	return c.VUserPrefix
-}

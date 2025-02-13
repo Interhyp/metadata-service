@@ -2,13 +2,11 @@ package githubclient
 
 import (
 	"context"
-	"fmt"
 	"github.com/Interhyp/metadata-service/internal/acorn/config"
 	"github.com/Interhyp/metadata-service/internal/acorn/repository"
 	"github.com/Interhyp/metadata-service/internal/util"
 	"github.com/google/go-github/v66/github"
 	"strconv"
-	"strings"
 )
 
 type Impl struct {
@@ -88,16 +86,4 @@ func (r *Impl) GetChangedFilesOnPullRequest(ctx context.Context, repoPath, repoN
 		})
 	}
 	return result, toRef, nil
-}
-
-func (r *Impl) GetUser(ctx context.Context, username string) (string, error) {
-	prefix := r.CustomConfig.UserPrefix()
-	user, _, err := r.client.Users.Get(ctx, fmt.Sprintf("%s%s", username, prefix))
-	if err != nil {
-		return "", err
-	}
-	if prefix != "" {
-		return strings.Split(*user.Login, prefix)[0], nil
-	}
-	return *user.Login, nil
 }

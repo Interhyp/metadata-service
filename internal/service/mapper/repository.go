@@ -92,16 +92,7 @@ func (s *Impl) GetRepository(ctx context.Context, repoKey string) (openapi.Repos
 		for approversGroupName, approversGroup := range approversGroupsMap {
 			users, groups := util.SplitUsersAndGroups(approversGroup)
 			if len(users) > 0 {
-				filteredExistingUsers, err2 := s.filterExistingUsernames(ctx, users)
-				if err2 == nil {
-					userDifference := util.Difference(users, filteredExistingUsers)
-					if len(userDifference) > 0 {
-						s.Logging.Logger().Ctx(ctx).Warn().Printf("Found unknown users in configuration: %v", userDifference)
-					}
-					approversGroupsMap[approversGroupName] = append(filteredExistingUsers, groups...)
-				} else {
-					s.Logging.Logger().Ctx(ctx).Error().Printf("Error checking existing vcs users: %s", err2.Error())
-				}
+				approversGroupsMap[approversGroupName] = append(users, groups...)
 
 				if len(approversGroupsMap[approversGroupName]) <= 0 && len(users) > 0 {
 					s.Logging.Logger().Ctx(ctx).Warn().Printf("Fallback to predefined reviewers")
