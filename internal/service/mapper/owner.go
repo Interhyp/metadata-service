@@ -162,7 +162,8 @@ func (s *Impl) getExisingUsers(ctx context.Context, usernames []string) ([]strin
 	for _, username := range usernames {
 		bbUser, err := vcs.GetUser(ctx, username)
 		if err != nil {
-			if httperror.Is(err) && err.(*httperror.Impl).Status() == http.StatusNotFound {
+			if httperror.Is(err) && err.(*httperror.Impl).Status() == http.StatusNotFound ||
+				strings.Contains(err.Error(), "404") {
 				s.Logging.Logger().Ctx(ctx).Warn().Printf("bitbucket user %s does not exist", username)
 				continue
 			}
