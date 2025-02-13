@@ -190,7 +190,7 @@ func getMatchingVCS(s *Impl) (repository.VcsPlugin, error) {
 		}
 		vcs = &platform.VCS
 	} else {
-		return nil, fmt.Errorf("unknown vcs for repository url %s", s.CustomConfiguration.MetadataRepoUrl())
+		return nil, fmt.Errorf("unknown vcs for repository url  %s", s.CustomConfiguration.MetadataRepoUrl())
 	}
 	return *vcs, nil
 }
