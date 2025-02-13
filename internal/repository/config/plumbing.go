@@ -60,7 +60,6 @@ type CustomConfigImpl struct {
 	VPullRequestBuildKey            string
 	VVCSConfig                      map[string]config.VCSConfig
 	VWebhooksProcessAsync           bool
-	VUserPrefix                     string
 
 	VKafkaConfig  *kafka.Config
 	GitUrlMatcher *regexp.Regexp
@@ -125,7 +124,6 @@ func (c *CustomConfigImpl) Obtain(getter func(key string) string) {
 	c.VPullRequestBuildKey = getter(config.KeyPullRequestBuildKey)
 	c.VVCSConfig, _ = parseVCSConfigs(getter(config.KeyVCSConfigs), getter)
 	c.VWebhooksProcessAsync, _ = toBoolean(getter(config.KeyWebhooksProcessAsync))
-	c.VUserPrefix = getter(config.KeyUserPrefix)
 
 	c.VKafkaConfig.Obtain(getter)
 }

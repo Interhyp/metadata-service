@@ -306,11 +306,4 @@ var CustomConfigItems = []auconfigapi.ConfigItem{
 		Default:     "true",
 		Validate:    auconfigapi.ConfigNeedsNoValidation,
 	},
-	{
-		Key:         config.KeyUserPrefix,
-		EnvName:     config.KeyUserPrefix,
-		Description: "User prefix",
-		Default:     "",
-		Validate:    auconfigapi.ConfigNeedsNoValidation,
-	},
 }

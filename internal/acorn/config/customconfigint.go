@@ -77,7 +77,6 @@ type CustomConfiguration interface {
 
 	VCSConfigs() map[string]VCSConfig
 	WebhooksProcessAsync() bool
-	UserPrefix() string
 
 	Kafka() *kafka.Config
 	KafkaGroupIdOverride() string
@@ -142,5 +141,4 @@ const (
 	KeyPullRequestBuildKey            = "PULL_REQUEST_BUILD_KEY"
 	KeyVCSConfigs                     = "VCS_CONFIGS"
 	KeyWebhooksProcessAsync           = "WEBHOOKS_PROCESS_ASYNC"
-	KeyUserPrefix                     = "USER_PREFIX"
 )
