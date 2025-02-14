@@ -1,0 +1,20 @@
+name: 'Semantic Commit Message Checker'
+on:
+  push:
+    branches-ignore:
+      - main
+
+jobs:
+  check-commit-message:
+    name: Check Commit Message
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check valid types
+        uses: gsactions/commit-message-checker@v1
+        with:
+          pattern: '^(((fix|feat|docs|style|perf|refactor|test|build|chore|ci|revert)\([\w_-]+\)))!{0,1}: .*'
+          error: 'Your commit message should match one of these types (build|chore|ci|docs|feat|fix|perf|refactor|revert|style|test) in header.'
+          excludeDescription: 'true'
+          excludeTitle: 'true'
+          checkAllCommitMessages: 'true'
+          accessToken: ${{ secrets.GITHUB_TOKEN }}
