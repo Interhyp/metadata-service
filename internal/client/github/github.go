@@ -2,22 +2,19 @@ package githubclient
 
 import (
 	"context"
-	"github.com/Interhyp/metadata-service/internal/acorn/config"
 	"github.com/Interhyp/metadata-service/internal/acorn/repository"
 	"github.com/Interhyp/metadata-service/internal/util"
-	"github.com/google/go-github/v66/github"
+	"github.com/google/go-github/v69/github"
 	"strconv"
 )
 
 type Impl struct {
-	CustomConfig config.CustomConfiguration
-	client       *github.Client
+	client *github.Client
 }
 
-func New(client *github.Client, customConfig config.CustomConfiguration) *Impl {
+func New(client *github.Client) *Impl {
 	return &Impl{
-		CustomConfig: customConfig,
-		client:       client,
+		client: client,
 	}
 }
 

@@ -54,7 +54,7 @@ func (s *Impl) processGroupMap(ctx context.Context, groupsMap map[string][]strin
 
 			if len(groupsMap[groupName]) <= 0 && len(users) > 0 {
 				s.Logging.Logger().Ctx(ctx).Warn().Printf("Fallback to predefined reviewers")
-				groupsMap[groupName] = append(groupsMap[groupName], s.CustomConfiguration.BitbucketReviewerFallback())
+				groupsMap[groupName] = append(groupsMap[groupName], s.CustomConfiguration.ReviewerFallback())
 			}
 		}
 	}

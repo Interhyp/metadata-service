@@ -10,12 +10,10 @@ import (
 	"github.com/Interhyp/go-backend-service-common/repository/logging"
 	"github.com/Interhyp/go-backend-service-common/repository/timestamp"
 	"github.com/Interhyp/go-backend-service-common/web/middleware/security"
-	bitbucketclient "github.com/Interhyp/metadata-service/internal/client/bitbucket"
 	githubclient "github.com/Interhyp/metadata-service/internal/client/github"
 	"github.com/Interhyp/metadata-service/internal/repository/config"
 	"github.com/Interhyp/metadata-service/internal/repository/notifier"
 	"github.com/Interhyp/metadata-service/internal/service/trigger"
-	"github.com/Interhyp/metadata-service/internal/service/vcswebhookshandler"
 	"github.com/Interhyp/metadata-service/internal/web/app"
 	"github.com/Interhyp/metadata-service/internal/web/server"
 	"github.com/Interhyp/metadata-service/test/mock/idpmock"
@@ -27,6 +25,7 @@ import (
 	aurestcapture "github.com/StephanHCB/go-autumn-restclient/implementation/capture"
 	aurestplayback "github.com/StephanHCB/go-autumn-restclient/implementation/playback"
 	aurestrecorder "github.com/StephanHCB/go-autumn-restclient/implementation/recorder"
+	gogithub "github.com/google/go-github/v69/github"
 	"github.com/rs/zerolog/log"
 	"net/http"
 	"net/http/httptest"
@@ -123,26 +122,10 @@ func (a *ApplicationWithMocksImpl) Create() error {
 	opts := aurestplayback.PlaybackOptions{
 		ConstructFilenameCandidates: []aurestrecorder.ConstructFilenameFunction{ConstructFilenameV4WithBody},
 	}
-	bitbucketPlayback := aurestplayback.New("../resources/recordings/bitbucket", opts)
-	bitbucketCapture := aurestcapture.New(bitbucketPlayback)
-	bitbucketClient, _ := bitbucketclient.NewClient("localhost", "access-token", a.CustomConfig)
-	bitbucketClient.Client = bitbucketCapture
 
 	githubPlayback := aurestplayback.New("../resources/recordings/github", opts)
 	githubCapture := aurestcapture.NewRoundTripper(githubPlayback)
-	client := http.Client{Transport: githubCapture}
-	githubClient, _ := githubclient.NewClient(&client, "access-token", a.CustomConfig)
-
-	vcsPlatforms := make(map[string]vcswebhookshandler.VCSPlatform)
-	vcsPlatforms["bitbucket_datacenter"] = vcswebhookshandler.VCSPlatform{
-		Platform: 0,
-		VCS:      bitbucketclient.New(bitbucketClient, nil),
-	}
-	vcsPlatforms["github"] = vcswebhookshandler.VCSPlatform{
-		Platform: 1,
-		VCS:      githubclient.New(githubClient, nil),
-	}
-	a.VCSPlatforms = &vcsPlatforms
+	a.Github = githubclient.New(gogithub.NewClient(&http.Client{Transport: githubCapture}))
 
 	if err := a.ConstructServices(); err != nil {
 		return err

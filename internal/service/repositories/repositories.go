@@ -265,7 +265,6 @@ func (s *Impl) mapRepoCreateDtoToRepoDto(repositoryCreateDto openapi.RepositoryC
 		Mainline:      repositoryCreateDto.Mainline,
 		Configuration: repositoryCreateDto.Configuration,
 		Generator:     repositoryCreateDto.Generator,
-		Unittest:      repositoryCreateDto.Unittest,
 		Labels:        repositoryCreateDto.Labels,
 	}
 }
@@ -440,7 +439,6 @@ func patchRepository(current openapi.RepositoryDto, patch openapi.RepositoryPatc
 		Url:           patchString(patch.Url, current.Url),
 		Mainline:      patchString(patch.Mainline, current.Mainline),
 		Generator:     patchStringPtr(patch.Generator, current.Generator),
-		Unittest:      patchPtr[bool](patch.Unittest, current.Unittest),
 		Configuration: patchConfiguration(patch.Configuration, current.Configuration),
 		Labels:        patchLabels(patch.Labels, current.Labels),
 		TimeStamp:     patch.TimeStamp,

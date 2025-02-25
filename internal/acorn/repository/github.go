@@ -2,7 +2,7 @@ package repository
 
 import "context"
 
-type VcsPlugin interface {
+type Github interface {
 	SetCommitStatusInProgress(ctx context.Context, repoPath, repoName, commitID, url string, statusKey string) error
 
 	SetCommitStatusSucceeded(ctx context.Context, repoPath, repoName, commitID, url string, statusKey string) error

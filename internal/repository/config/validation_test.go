@@ -122,9 +122,7 @@ func TestAccessors(t *testing.T) {
 
 	require.Equal(t, "some-basic-auth-username", config.Custom(cut).BasicAuthUsername())
 	require.Equal(t, "some-basic-auth-password", config.Custom(cut).BasicAuthPassword())
-	require.Equal(t, "some-bitbucket-username", config.Custom(cut).BitbucketUsername())
-	require.Equal(t, "some-bitbucket-password", config.Custom(cut).BitbucketPassword())
-	require.Equal(t, "username", config.Custom(cut).BitbucketReviewerFallback())
+	require.Equal(t, "username", config.Custom(cut).ReviewerFallback())
 	require.Equal(t, "Body, Some", config.Custom(cut).GitCommitterName())
 	require.Equal(t, "somebody@somewhere.com", config.Custom(cut).GitCommitterEmail())
 	require.Equal(t, "http://keyset", config.Custom(cut).AuthOidcKeySetUrl())

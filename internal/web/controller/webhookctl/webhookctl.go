@@ -13,25 +13,21 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-const (
-	vcsKeyParam = "vcsKey"
-)
-
 type Impl struct {
-	Logging            librepo.Logging
-	Timestamp          librepo.Timestamp
-	VCSWebhooksHandler service.VCSWebhooksHandler
+	Logging         librepo.Logging
+	Timestamp       librepo.Timestamp
+	WebhooksHandler service.WebhooksHandler
 }
 
 func New(
 	logging librepo.Logging,
 	timestamp librepo.Timestamp,
-	vcswebhookshandler service.VCSWebhooksHandler,
+	webhookshandler service.WebhooksHandler,
 ) controller.WebhookController {
 	return &Impl{
-		Logging:            logging,
-		Timestamp:          timestamp,
-		VCSWebhooksHandler: vcswebhookshandler,
+		Logging:         logging,
+		Timestamp:       timestamp,
+		WebhooksHandler: webhookshandler,
 	}
 }
 
@@ -40,23 +36,15 @@ func (c *Impl) IsWebhookController() bool {
 }
 
 func (c *Impl) WireUp(_ context.Context, router chi.Router) {
-	router.Post(fmt.Sprintf("/webhooks/vcs/{%s}", vcsKeyParam), c.PostVCSWebhook)
+	router.Post(fmt.Sprintf("/webhooks/vcs/github"), c.PostGithubWebhook)
 }
 
 // --- handlers ---
 
-func (c *Impl) PostVCSWebhook(w http.ResponseWriter, r *http.Request) {
+func (c *Impl) PostGithubWebhook(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
-	vcsKey, err := util.NonEmptyStringPathParam(ctx, r, vcsKeyParam, c.Timestamp)
-	if err != nil {
-		apierrors.HandleError(ctx, w, r, err,
-			apierrors.IsBadRequestError,
-		)
-		return
-	}
-
-	if err := c.VCSWebhooksHandler.HandleEvent(ctx, vcsKey, r); err != nil {
+	if err := c.WebhooksHandler.HandleEvent(ctx, r); err != nil {
 		apierrors.HandleError(ctx, w, r, err,
 			apierrors.IsBadRequestError,
 			apierrors.IsBadGatewayError,

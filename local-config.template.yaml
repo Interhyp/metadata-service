@@ -6,14 +6,6 @@ LOGSTYLE: plain
 #BASIC_AUTH_USERNAME: <YOU MUST ADD ANY USERNAME HERE IF VAULT IS DISABLED - SEE README>
 #BASIC_AUTH_PASSWORD: <YOU MUST ADD ANY PASSWORD HERE IF VAULT IS DISABLED - SEE README>
 
-BITBUCKET_USERNAME: <YOU MUST ADD THE USERNAME HERE - SEE README>
-#BITBUCKET_PASSWORD: <YOU MUST ADD THE PASSWORD HERE IF VAULT IS DISABLED - SEE README>
-
-BITBUCKET_SERVER: https://bitbucket.subdomain.com
-BITBUCKET_CACHE_SIZE: 1000
-BITBUCKET_CACHE_RETENTION_SECONDS: 3600
-BITBUCKET_REVIEWER_FALLBACK: <ADD YOUR FALLBACK USER HERE>
-
 # Url to this service, used as link in Pull Request validation builds
 PULL_REQUEST_BUILD_URL: https://metadata-service.example.com
 
@@ -28,29 +20,16 @@ VAULT_SECRETS_CONFIG: >-
     "some/path/to/secrets": [
       {"vaultKey": "BASIC_AUTH_USERNAME"},
       {"vaultKey": "BASIC_AUTH_PASSWORD"},
-      {"vaultKey": "BITBUCKET_PASSWORD"},
       {"vaultKey": "KAFKA_PASSWORD"},
       {"vaultKey": "METADATA_CHANGE_EVENTS_CONNECTION_STRING"},
       {"vaultKey": "SSH_PRIVATE_KEY"},
       {"vaultKey": "SSH_PRIVATE_KEY_PASSWORD"},
-      {"vaultKey": "BITBUCKET_ACCESS_TOKEN"},
-      {"vaultKey": "GITHUB_ACCESS_TOKEN"}
+      {"vaultKey": "GITHUB_APP_JWT_SIGNING_KEY_PEM"}
     ]
   }
 
-VCS_CONFIGS: |
-  {
-    "bitbucket": {
-      "platform": "BITBUCKET_DATACENTER",
-      "apiBaseURL": <YOU MUST ADD YOUR BITBUCKET DATACENTER URL>,
-      "accessTokenEnvVar": "BITBUCKET_ACCESS_TOKEN"
-    },
-    "github": {
-      "platform": "GITHUB",
-      "apiBaseURL": "https://api.github.com",
-      "accessTokenEnvVar": "GITHUB_ACCESS_TOKEN"
-    }
-  }
+GITHUB_APP_ID: <YOU MUST ADD YOUR GITHUB APP ID HERE>
+GITHUB_APP_INSTALLATION_ID: <YOU MUST ADD YOUR GITHUB APP INSTALLATION ID HERE>
 
 WEBHOOKS_PROCESS_ASYNC: false
 

@@ -1,17 +1,18 @@
-package vcswebhookshandler
+package webhookshandler
 
 import (
 	"context"
 	"fmt"
 	librepo "github.com/Interhyp/go-backend-service-common/acorns/repository"
+	"github.com/Interhyp/go-backend-service-common/api/apierrors"
 	"github.com/Interhyp/go-backend-service-common/web/util/contexthelper"
 	openapi "github.com/Interhyp/metadata-service/api"
 	"github.com/Interhyp/metadata-service/internal/acorn/config"
 	"github.com/Interhyp/metadata-service/internal/acorn/repository"
 	"github.com/Interhyp/metadata-service/internal/acorn/service"
 	aulogging "github.com/StephanHCB/go-autumn-logging"
-	bitbucketserver "github.com/go-playground/webhooks/v6/bitbucket-server"
 	githubhook "github.com/go-playground/webhooks/v6/github"
+	gogithub "github.com/google/go-github/v69/github"
 	"github.com/google/uuid"
 	"gopkg.in/yaml.v3"
 	"net/http"
@@ -24,20 +25,15 @@ const (
 	webhookContextTimeout = 10 * time.Minute
 )
 
-type VCSPlatform struct {
-	Platform config.VCSPlatform
-	VCS      repository.VcsPlugin
-}
-
 type Impl struct {
 	CustomConfiguration config.CustomConfiguration
 	Logging             librepo.Logging
 	Timestamp           librepo.Timestamp
 	Repositories        service.Repositories
+	Github              repository.Github
 
-	Updater service.Updater
-
-	vcsPlatforms map[string]VCSPlatform
+	Updater  service.Updater
+	ghClient *gogithub.Client
 }
 
 func New(
@@ -46,37 +42,31 @@ func New(
 	timestamp librepo.Timestamp,
 	repositories service.Repositories,
 	updater service.Updater,
-	vcsPlatforms map[string]VCSPlatform,
-) service.VCSWebhooksHandler {
+	Github repository.Github,
+) service.WebhooksHandler {
 	return &Impl{
 		CustomConfiguration: config.Custom(configuration),
 		Logging:             logging,
 		Timestamp:           timestamp,
 		Updater:             updater,
 		Repositories:        repositories,
-		vcsPlatforms:        vcsPlatforms,
+		Github:              Github,
 	}
 }
 
 func (h *Impl) HandleEvent(
 	ctx context.Context,
-	vcsKey string,
 	r *http.Request,
 ) error {
-	aulogging.Logger.Ctx(ctx).Info().Printf("received webhook from VCS")
+	aulogging.Logger.Ctx(ctx).Info().Printf("received webhook from Github")
 
-	vcsPlatform, ok := h.vcsPlatforms[vcsKey]
-	if !ok {
-		return NewErrVCSConfigurationNotFound(vcsKey)
-	}
-
-	payload, err := h.parsePayload(ctx, r, vcsPlatform.Platform)
+	payload, err := h.parsePayload(r)
 	if err != nil {
 		return err
 	}
 
 	if h.CustomConfiguration.WebhooksProcessAsync() {
-		transactionName := fmt.Sprintf("vcs-webhook-%s", uuid.NewString())
+		transactionName := fmt.Sprintf("github-webhook-%s", uuid.NewString())
 		asyncCtx, asyncCtxCancel := contexthelper.AsyncCopyRequestContext(ctx, transactionName, "backgroundJob")
 		asyncCtx, asyncTimeoutCtxCancel := context.WithTimeout(asyncCtx, webhookContextTimeout)
 		go func() {
@@ -85,47 +75,27 @@ func (h *Impl) HandleEvent(
 				asyncTimeoutCtxCancel()
 			}()
 
-			if innerErr := h.processPayload(asyncCtx, vcsPlatform.VCS, payload); err != nil {
-				aulogging.Logger.Ctx(ctx).Warn().WithErr(innerErr).Print("failed to asynchronously process vcs webhook")
+			if innerErr := h.processPayload(asyncCtx, payload); err != nil {
+				aulogging.Logger.Ctx(ctx).Warn().WithErr(innerErr).Print("failed to asynchronously process Github webhook")
 			}
 		}()
 	} else {
 		timeoutCtx, timeoutCtxCancel := context.WithTimeout(ctx, webhookContextTimeout)
 		defer timeoutCtxCancel()
 
-		return h.processPayload(timeoutCtx, vcsPlatform.VCS, payload)
+		return h.processPayload(timeoutCtx, payload)
 	}
 
 	return nil
 }
 
-func (h *Impl) parsePayload(ctx context.Context, r *http.Request, platform config.VCSPlatform) (any, error) {
-	switch platform {
-	case config.VCSPlatformBitbucketDatacenter:
-		return h.parseBitbucketPayload(ctx, r)
-	case config.VCSPlatformGitHub:
-		return h.parseGitHubPayload(r)
-	default:
-		return nil, fmt.Errorf("failed to parse payload: unsupported or unknown vcs platform")
-	}
-}
-
 func (h *Impl) processPayload(
 	ctx context.Context,
-	vcs repository.VcsPlugin,
 	payload any,
 ) error {
 	switch payload.(type) {
-	case bitbucketserver.PullRequestOpenedPayload:
-		return h.processBitbucketRepositoryPullRequestEvent(ctx, vcs, payload)
-	case bitbucketserver.RepositoryReferenceChangedPayload:
-		return h.processBitbucketRepositoryPullRequestEvent(ctx, vcs, payload)
-	case bitbucketserver.PullRequestModifiedPayload:
-		return h.processBitbucketRepositoryPullRequestEvent(ctx, vcs, payload)
-	case bitbucketserver.PullRequestFromReferenceUpdatedPayload:
-		return h.processBitbucketRepositoryPullRequestEvent(ctx, vcs, payload)
 	case githubhook.PullRequestPayload:
-		return h.processGitHubPullRequestEvent(ctx, vcs, payload.(githubhook.PullRequestPayload))
+		return h.processGitHubPullRequestEvent(ctx, payload.(githubhook.PullRequestPayload))
 	case githubhook.PushPayload:
 		return h.processGitHubPushEvent(ctx, payload.(githubhook.PushPayload))
 	default:
@@ -135,21 +105,20 @@ func (h *Impl) processPayload(
 
 func (h *Impl) setCommitStatusSafely(
 	ctx context.Context,
-	vcs repository.VcsPlugin,
 	commitID string,
 	status repository.CommitBuildStatus,
 ) {
 	switch status {
 	case repository.CommitBuildStatusInProgress:
-		if err := vcs.SetCommitStatusInProgress(ctx, h.CustomConfiguration.MetadataRepoProject(), h.CustomConfiguration.MetadataRepoName(), commitID, h.CustomConfiguration.PullRequestBuildUrl(), h.CustomConfiguration.PullRequestBuildKey()); err != nil {
+		if err := h.Github.SetCommitStatusInProgress(ctx, h.CustomConfiguration.MetadataRepoProject(), h.CustomConfiguration.MetadataRepoName(), commitID, h.CustomConfiguration.PullRequestBuildUrl(), h.CustomConfiguration.PullRequestBuildKey()); err != nil {
 			aulogging.Logger.Ctx(ctx).Warn().WithErr(err).Printf("failed to create 'in-progress' commit status for commit %s in workload repository", commitID)
 		}
 	case repository.CommitBuildStatusSuccess:
-		if err := vcs.SetCommitStatusSucceeded(ctx, h.CustomConfiguration.MetadataRepoProject(), h.CustomConfiguration.MetadataRepoName(), commitID, h.CustomConfiguration.PullRequestBuildUrl(), h.CustomConfiguration.PullRequestBuildKey()); err != nil {
+		if err := h.Github.SetCommitStatusSucceeded(ctx, h.CustomConfiguration.MetadataRepoProject(), h.CustomConfiguration.MetadataRepoName(), commitID, h.CustomConfiguration.PullRequestBuildUrl(), h.CustomConfiguration.PullRequestBuildKey()); err != nil {
 			aulogging.Logger.Ctx(ctx).Warn().WithErr(err).Printf("failed to create 'succeeded' commit status for commit %s in workload repository", commitID)
 		}
 	case repository.CommitBuildStatusFailed:
-		if err := vcs.SetCommitStatusFailed(ctx, h.CustomConfiguration.MetadataRepoProject(), h.CustomConfiguration.MetadataRepoName(), commitID, h.CustomConfiguration.PullRequestBuildUrl(), h.CustomConfiguration.PullRequestBuildKey()); err != nil {
+		if err := h.Github.SetCommitStatusFailed(ctx, h.CustomConfiguration.MetadataRepoProject(), h.CustomConfiguration.MetadataRepoName(), commitID, h.CustomConfiguration.PullRequestBuildUrl(), h.CustomConfiguration.PullRequestBuildKey()); err != nil {
 			aulogging.Logger.Ctx(ctx).Warn().WithErr(err).Printf("failed to create 'failed' commit status for commit %s in workload repository", commitID)
 		}
 	}
@@ -157,19 +126,18 @@ func (h *Impl) setCommitStatusSafely(
 
 func (h *Impl) createPullRequestCommentSafely(
 	ctx context.Context,
-	vcs repository.VcsPlugin,
 	pullRequestID string,
 	text string,
 ) {
-	err := vcs.CreatePullRequestComment(ctx, h.CustomConfiguration.MetadataRepoProject(), h.CustomConfiguration.MetadataRepoName(), pullRequestID, text)
+	err := h.Github.CreatePullRequestComment(ctx, h.CustomConfiguration.MetadataRepoProject(), h.CustomConfiguration.MetadataRepoName(), pullRequestID, text)
 	if err != nil {
 		aulogging.Logger.Ctx(ctx).Warn().WithErr(err).Printf("failed to create pull-request comment for pull-request %s in workload repository", pullRequestID)
 	}
 }
 
-func (h *Impl) validate(ctx context.Context, vcs repository.VcsPlugin, id uint64, toRef string, fromRef string) error {
+func (h *Impl) validate(ctx context.Context, id uint64, toRef string, fromRef string) error {
 	var downstreamErrorMessage string
-	fileInfos, prHead, err := h.getChangedFilesOnPullRequest(ctx, vcs, strconv.FormatUint(id, 10), toRef)
+	fileInfos, prHead, err := h.getChangedFilesOnPullRequest(ctx, strconv.FormatUint(id, 10), toRef)
 	if err != nil {
 		downstreamErrorMessage = fmt.Sprintf("error getting changed files on pull request %d", id)
 		h.Logging.Logger().Ctx(ctx).Warn().WithErr(err).Printf("error getting changed files on pull request: %v", err)
@@ -191,23 +159,22 @@ func (h *Impl) validate(ctx context.Context, vcs repository.VcsPlugin, id uint64
 	if downstreamErrorMessage != "" {
 		message = "# validation failure\n\nThere were errors getting files for yaml validation. Please rebase against main."
 	}
-	h.createPullRequestCommentSafely(ctx, vcs, strconv.FormatUint(id, 10), message)
+	h.createPullRequestCommentSafely(ctx, strconv.FormatUint(id, 10), message)
 	status := repository.CommitBuildStatusFailed
 	if len(errorMessages) == 0 && downstreamErrorMessage == "" {
 		status = repository.CommitBuildStatusSuccess
 	}
-	h.setCommitStatusSafely(ctx, vcs, prHead, status)
+	h.setCommitStatusSafely(ctx, prHead, status)
 
 	return nil
 }
 
 func (h *Impl) getChangedFilesOnPullRequest(
 	ctx context.Context,
-	vcs repository.VcsPlugin,
 	pullRequestID string,
 	toRef string,
 ) ([]repository.File, string, error) {
-	return vcs.GetChangedFilesOnPullRequest(ctx, h.CustomConfiguration.MetadataRepoProject(), h.CustomConfiguration.MetadataRepoName(), pullRequestID, toRef)
+	return h.Github.GetChangedFilesOnPullRequest(ctx, h.CustomConfiguration.MetadataRepoProject(), h.CustomConfiguration.MetadataRepoName(), pullRequestID, toRef)
 }
 
 func (h *Impl) validateYamlFile(ctx context.Context, path string, contents string) error {
@@ -264,5 +231,73 @@ func parseStrict[T openapi.OwnerDto | openapi.ServiceDto | openapi.RepositoryDto
 	if err != nil {
 		return fmt.Errorf(" - failed to parse `%s`:\n   %s", path, strings.ReplaceAll(err.Error(), "\n", "\n   "))
 	}
+	return nil
+}
+
+func (h *Impl) parsePayload(r *http.Request) (any, error) {
+	hook, _ := githubhook.New()
+
+	body, err := hook.Parse(r, githubhook.PushEvent, githubhook.PullRequestEvent)
+	if err != nil {
+		return nil, apierrors.NewBadRequestError("webhook.payload.invalid", "parse payload error", err, h.Timestamp.Now())
+	}
+	return body, nil
+}
+
+func (h *Impl) processGitHubPushEvent(
+	ctx context.Context,
+	payload githubhook.PushPayload,
+) error {
+	if len(payload.Commits) < 1 || payload.Commits[0].ID == "" {
+		aulogging.Logger.Ctx(ctx).Error().Printf("bad request while processing Github webhook - got reference changed with invalid info - ignoring webhook")
+		return nil // error here
+	}
+	aulogging.Logger.Ctx(ctx).Info().Printf("got repository reference changed, refreshing caches")
+
+	err := h.Updater.PerformFullUpdateWithNotifications(ctx)
+	if err != nil {
+		aulogging.Logger.Ctx(ctx).Error().WithErr(err).Printf("webhook error")
+	}
+	return nil
+}
+
+func (h *Impl) processGitHubPullRequestEvent(
+	ctx context.Context,
+	payload githubhook.PullRequestPayload,
+) error {
+	switch payload.Action {
+	case "opened":
+		fallthrough
+	case "reopened":
+		fallthrough
+	case "synchronize":
+		fallthrough
+	case "edited":
+		return h.validateWorkloadPullRequest(ctx, payload)
+	}
+	return nil
+}
+
+func (h *Impl) validateWorkloadPullRequest(ctx context.Context, payload githubhook.PullRequestPayload) error {
+	operation := payload.Action
+	description := fmt.Sprintf("id: %d, toRef: %s, fromRef: %s", payload.PullRequest.Number, payload.PullRequest.Base.Sha, payload.PullRequest.Head.Sha)
+	if payload.PullRequest.Number == 0 || payload.PullRequest.Head.Sha == "" || payload.PullRequest.Base.Sha == "" {
+		errorMsg := fmt.Sprintf("bad request while processing Github webhook - got pull request %s with invalid info (%s) - ignoring webhook", operation, description)
+		aulogging.Logger.Ctx(ctx).Error().Printf(errorMsg)
+		return fmt.Errorf(errorMsg)
+	}
+	aulogging.Logger.Ctx(ctx).Info().Printf("got pull request %s (%s)", operation, description)
+
+	sourceCommitID := payload.PullRequest.Head.Sha
+	//TODO implement using checks
+	h.setCommitStatusSafely(ctx, sourceCommitID, repository.CommitBuildStatusInProgress)
+	err := h.validate(ctx, uint64(payload.PullRequest.Number), payload.PullRequest.Head.Sha, payload.PullRequest.Base.Sha)
+	if err != nil {
+		errorMsg := fmt.Sprintf("error while processing Github webhook: pull request %s (%s): %s", operation, description, err.Error())
+		aulogging.Logger.Ctx(ctx).Error().WithErr(err).Printf(errorMsg)
+		return fmt.Errorf(errorMsg)
+	}
+
+	aulogging.Logger.Ctx(ctx).Info().Printf("successfully processed pull request %s (%s) event", operation, description)
 	return nil
 }

@@ -1,7 +1,6 @@
 package app
 
 import (
-	"fmt"
 	libcontroller "github.com/Interhyp/go-backend-service-common/acorns/controller"
 	librepo "github.com/Interhyp/go-backend-service-common/acorns/repository"
 	"github.com/Interhyp/go-backend-service-common/repository/logging"
@@ -14,7 +13,6 @@ import (
 	"github.com/Interhyp/metadata-service/internal/acorn/controller"
 	"github.com/Interhyp/metadata-service/internal/acorn/repository"
 	"github.com/Interhyp/metadata-service/internal/acorn/service"
-	bitbucketclient "github.com/Interhyp/metadata-service/internal/client/bitbucket"
 	githubclient "github.com/Interhyp/metadata-service/internal/client/github"
 	"github.com/Interhyp/metadata-service/internal/repository/cache"
 	"github.com/Interhyp/metadata-service/internal/repository/config"
@@ -30,12 +28,15 @@ import (
 	"github.com/Interhyp/metadata-service/internal/service/services"
 	"github.com/Interhyp/metadata-service/internal/service/trigger"
 	"github.com/Interhyp/metadata-service/internal/service/updater"
-	"github.com/Interhyp/metadata-service/internal/service/vcswebhookshandler"
+	"github.com/Interhyp/metadata-service/internal/service/webhookshandler"
 	"github.com/Interhyp/metadata-service/internal/web/controller/ownerctl"
 	"github.com/Interhyp/metadata-service/internal/web/controller/repositoryctl"
 	"github.com/Interhyp/metadata-service/internal/web/controller/servicectl"
 	"github.com/Interhyp/metadata-service/internal/web/controller/webhookctl"
 	"github.com/Interhyp/metadata-service/internal/web/server"
+	"github.com/bradleyfalzon/ghinstallation/v2"
+	gogithub "github.com/google/go-github/v69/github"
+	"net/http"
 	"time"
 )
 
@@ -53,16 +54,16 @@ type ApplicationImpl struct {
 	SshAuthProvider  repository.SshAuthProvider
 	Notifier         repository.Notifier
 	Cache            repository.Cache
+	Github           repository.Github
 
 	// services (business logic)
-	Mapper             service.Mapper
-	Trigger            service.Trigger
-	Updater            service.Updater
-	Owners             service.Owners
-	Services           service.Services
-	Repositories       service.Repositories
-	VCSPlatforms       *map[string]vcswebhookshandler.VCSPlatform
-	VCSWebhooksHandler service.VCSWebhooksHandler
+	Mapper          service.Mapper
+	Trigger         service.Trigger
+	Updater         service.Updater
+	Owners          service.Owners
+	Services        service.Services
+	Repositories    service.Repositories
+	WebhooksHandler service.WebhooksHandler
 
 	// controllers (incoming connectors)
 	HealthCtl     libcontroller.HealthController
@@ -189,7 +190,7 @@ func (a *ApplicationImpl) ConstructRepositories() error {
 		return err
 	}
 
-	if err := a.createVCSPlatforms(); err != nil {
+	if err := a.createGithub(); err != nil {
 		return err
 	}
 
@@ -199,7 +200,7 @@ func (a *ApplicationImpl) ConstructRepositories() error {
 func (a *ApplicationImpl) ConstructServices() error {
 	// construct the business logic components(must ensure correct order yourself)
 
-	a.Mapper = mapper.New(a.Config, a.CustomConfig, a.Logging, a.Timestamp, a.Metadata, *a.VCSPlatforms)
+	a.Mapper = mapper.New(a.Config, a.CustomConfig, a.Logging, a.Timestamp, a.Metadata)
 	if err := a.Mapper.Setup(); err != nil {
 		return err
 	}
@@ -229,8 +230,8 @@ func (a *ApplicationImpl) ConstructServices() error {
 		return err
 	}
 
-	if a.VCSWebhooksHandler == nil {
-		a.VCSWebhooksHandler = vcswebhookshandler.New(a.Config, a.Logging, a.Timestamp, a.Repositories, a.Updater, *a.VCSPlatforms)
+	if a.WebhooksHandler == nil {
+		a.WebhooksHandler = webhookshandler.New(a.Config, a.Logging, a.Timestamp, a.Repositories, a.Updater, a.Github)
 	}
 
 	return nil
@@ -244,7 +245,7 @@ func (a *ApplicationImpl) ConstructControllers() error {
 	a.OwnerCtl = ownerctl.New(a.Config, a.CustomConfig, a.Logging, a.Timestamp, a.Owners)
 	a.ServiceCtl = servicectl.New(a.Config, a.CustomConfig, a.Logging, a.Timestamp, a.Services)
 	a.RepositoryCtl = repositoryctl.New(a.Config, a.CustomConfig, a.Logging, a.Timestamp, a.Repositories)
-	a.WebhookCtl = webhookctl.New(a.Logging, a.Timestamp, a.VCSWebhooksHandler)
+	a.WebhookCtl = webhookctl.New(a.Logging, a.Timestamp, a.WebhooksHandler)
 
 	a.Server = server.New(a.Config, a.CustomConfig, a.Logging, a.IdentityProvider,
 		a.HealthCtl, a.SwaggerCtl, a.OwnerCtl, a.ServiceCtl, a.RepositoryCtl, a.WebhookCtl)
@@ -255,34 +256,13 @@ func (a *ApplicationImpl) ConstructControllers() error {
 	return nil
 }
 
-func (a *ApplicationImpl) createVCSPlatforms() error {
-	if a.VCSPlatforms == nil {
-		vcsPlatforms := make(map[string]vcswebhookshandler.VCSPlatform)
-		for key, vcsConfig := range a.CustomConfig.VCSConfigs() {
-			switch vcsConfig.Platform {
-			case configrepo.VCSPlatformBitbucketDatacenter:
-				client, err := bitbucketclient.NewClient(vcsConfig.APIBaseURL, vcsConfig.AccessToken, a.CustomConfig)
-				if err != nil {
-					return err
-				}
-				vcsPlatforms[key] = vcswebhookshandler.VCSPlatform{
-					Platform: vcsConfig.Platform,
-					VCS:      bitbucketclient.New(client, a.Logging),
-				}
-			case configrepo.VCSPlatformGitHub:
-				client, err := githubclient.NewClient(nil, vcsConfig.AccessToken, a.CustomConfig)
-				if err != nil {
-					return err
-				}
-				vcsPlatforms[key] = vcswebhookshandler.VCSPlatform{
-					Platform: vcsConfig.Platform,
-					VCS:      githubclient.New(client, a.CustomConfig),
-				}
-			default:
-				return fmt.Errorf("vcs config '%s' contains an unsupported vcs platform", key)
-			}
+func (a *ApplicationImpl) createGithub() error {
+	if a.Github == nil {
+		authTr, err := ghinstallation.New(http.DefaultTransport, a.CustomConfig.GithubAppId(), a.CustomConfig.GithubAppInstallationId(), a.CustomConfig.GithubAppJwtSigningKeyPEM())
+		if err != nil {
+			return err
 		}
-		a.VCSPlatforms = &vcsPlatforms
+		a.Github = githubclient.New(gogithub.NewClient(&http.Client{Transport: authTr}))
 	}
 	return nil
 }
