@@ -34,7 +34,9 @@ import (
 	"github.com/Interhyp/metadata-service/internal/web/controller/servicectl"
 	"github.com/Interhyp/metadata-service/internal/web/controller/webhookctl"
 	"github.com/Interhyp/metadata-service/internal/web/server"
+	aurestrecorder "github.com/StephanHCB/go-autumn-restclient/implementation/recorder"
 	"github.com/bradleyfalzon/ghinstallation/v2"
+	"github.com/gofri/go-github-pagination/githubpagination"
 	gogithub "github.com/google/go-github/v69/github"
 	"net/http"
 	"time"
@@ -258,11 +260,16 @@ func (a *ApplicationImpl) ConstructControllers() error {
 
 func (a *ApplicationImpl) createGithub() error {
 	if a.Github == nil {
-		authTr, err := ghinstallation.New(http.DefaultTransport, a.CustomConfig.GithubAppId(), a.CustomConfig.GithubAppInstallationId(), a.CustomConfig.GithubAppJwtSigningKeyPEM())
+		recorder := aurestrecorder.NewRecorderRoundTripper(http.DefaultTransport)
+		authTr, err := ghinstallation.New(recorder, a.CustomConfig.GithubAppId(), a.CustomConfig.GithubAppInstallationId(), a.CustomConfig.GithubAppJwtSigningKeyPEM())
+		paginator := githubpagination.NewClient(authTr,
+			githubpagination.WithPerPage(100),
+			githubpagination.WithMaxNumOfPages(10),
+		)
 		if err != nil {
 			return err
 		}
-		a.Github = githubclient.New(gogithub.NewClient(&http.Client{Transport: authTr}))
+		a.Github = githubclient.New(gogithub.NewClient(paginator))
 	}
 	return nil
 }

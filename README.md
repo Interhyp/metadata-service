@@ -233,34 +233,24 @@ Note: You can use the Vault integration configuration to read the password from 
     ],
 ```
 
-## VCS configuration
+## Github App configuration
 
-If you wish to use pull request validation with your VCS (Bitbucket Datacenter, GitHub), set the environment variable
-`VCS_CONFIGS` to a JSON document
-as follows (displayed in prettyprinted form for readability):
+This service validates changes to its repository by performing check runs for all commits. Check runs are triggered by 
+webhooks sent by Github to Github apps. 
 
-```
-  {
-    "github": {
-      "platform": "GITHUB",
-      "apiBaseURL": "https://api.github.com",
-      "accessTokenEnvVar": "GITHUB_ACCESS_TOKEN"
-    }
-  }
-```
+Therefore, this service requires the configuration of a Github App. To do this, follow these steps:
 
-This assumes of course that the password is provided in the specified environment variable. On Localhost, you
-can simply set "password" in the JSON.
-
-Note: You can use the Vault integration configuration to read the password from Vault by including it in
-`VAULT_SECRETS_CONFIG`, similar to:
-
-```
-   [...]
-    "some/vault/path": [
-      {"vaultKey": "GITHUB_ACCESS_TOKEN"}
-    ],
-```
+1. Create a new Github app and configure its webhook url to point to this service.
+2. Configure the following repository permissions:
+   - Checks: Read and write
+   - Contents: Read-only
+3. Configure the following events for the app:
+   - Check suite
+   - Check run
+   - Push 
+4. Create a new JWT signing key for the Github app (this downloads the private key)
+5. Install the app into the organization containing the governed repository and grant the app access to its repo.
+6. Add the app id, the installation id and the JWT signing key to the configuration of this service.
 
 ## architecture
 

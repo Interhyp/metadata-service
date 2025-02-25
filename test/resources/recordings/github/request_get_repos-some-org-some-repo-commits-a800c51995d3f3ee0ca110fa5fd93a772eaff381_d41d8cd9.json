@@ -1,0 +1,84 @@
+{
+    "method": "GET",
+    "requestUrl": "https://api.github.com/repos/interhyp-intern-test/service-metadata/commits/a800c51995d3f3ee0ca110fa5fd93a772eaff381?per_page=100",
+    "requestBody": "",
+    "parsedResponse": {
+        "Body": "{\n  \"sha\": \"a800c51995d3f3ee0ca110fa5fd93a772eaff381\",\n  \"commit\": {\n    \"author\": {\n      \"name\": \"Some, Author\",\n      \"email\": \"Some.Author@company.com\",\n      \"date\": \"2025-02-25T13:19:31Z\"\n    },\n    \"committer\": {\n      \"name\": \"GitHub\",\n      \"email\": \"noreply@github.com\",\n      \"date\": \"2025-02-25T13:19:31Z\"\n    },\n    \"message\": \"test commit\",\n    \"tree\": {\n      \"sha\": \"36f39f2e2eb5cb2aebd7c73fd804b6c0171c9c91\"\n    },\n    \"comment_count\": 0\n  },\n  \"author\": {\n    \"login\": \"some_author\"\n  },\n  \"committer\": {\n    \"login\": \"web-flow\"\n  },\n  \"parents\": [\n    {\n      \"sha\": \"c608f5c195adb6607b46c67ce446c97174a062d0\"\n    }\n  ],\n  \"stats\": {\n    \"total\": 3,\n    \"additions\": 1,\n    \"deletions\": 2\n  },\n  \"files\": [\n    {\n      \"sha\": \"b30837091b73ab2e50c540bf7aa22c6432befc29\",\n      \"filename\": \"owners-test/owner-dev/owner.info.yaml\",\n      \"status\": \"modified\",\n      \"additions\": 1,\n      \"deletions\": 2,\n      \"changes\": 3,\n      \"patch\": \"@@ -12,6 +12,5 @@ defaultJiraProject: RELTEC\\n members:\\n   - first\\n   - second\\n-  - third\\n   - fourth\\n-  - fifth\\n\\\\ No newline at end of file\\n+  - fifth\"\n    }\n  ]\n}",
+        "Status": 200,
+        "Header": {
+            "Access-Control-Allow-Origin": [
+                "*"
+            ],
+            "Access-Control-Expose-Headers": [
+                "ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset"
+            ],
+            "Cache-Control": [
+                "private, max-age=60, s-maxage=60"
+            ],
+            "Content-Security-Policy": [
+                "default-src 'none'"
+            ],
+            "Content-Type": [
+                "application/json; charset=utf-8"
+            ],
+            "Date": [
+                "Tue, 25 Feb 2025 13:44:39 GMT"
+            ],
+            "Etag": [
+                "W/\"05f7528e369ff8764439b7411be2bf69116af4237e184daee408b5b73f9ff561\""
+            ],
+            "Last-Modified": [
+                "Tue, 25 Feb 2025 13:19:31 GMT"
+            ],
+            "Referrer-Policy": [
+                "origin-when-cross-origin, strict-origin-when-cross-origin"
+            ],
+            "Server": [
+                "github.com"
+            ],
+            "Strict-Transport-Security": [
+                "max-age=31536000; includeSubdomains; preload"
+            ],
+            "Vary": [
+                "Accept, Authorization, Cookie, X-GitHub-OTP,Accept-Encoding, Accept, X-Requested-With"
+            ],
+            "X-Accepted-Github-Permissions": [
+                "contents=read"
+            ],
+            "X-Content-Type-Options": [
+                "nosniff"
+            ],
+            "X-Frame-Options": [
+                "deny"
+            ],
+            "X-Github-Api-Version-Selected": [
+                "2022-11-28"
+            ],
+            "X-Github-Media-Type": [
+                "github.v3; format=json"
+            ],
+            "X-Github-Request-Id": [
+                "16D9:1993E9:319ABC:32A4E6:67BDC946"
+            ],
+            "X-Ratelimit-Limit": [
+                "15000"
+            ],
+            "X-Ratelimit-Remaining": [
+                "14987"
+            ],
+            "X-Ratelimit-Reset": [
+                "1740493304"
+            ],
+            "X-Ratelimit-Resource": [
+                "core"
+            ],
+            "X-Ratelimit-Used": [
+                "13"
+            ],
+            "X-Xss-Protection": [
+                "0"
+            ]
+        },
+        "Time": "2025-02-25T14:44:37.961377418+01:00"
+    }
+}

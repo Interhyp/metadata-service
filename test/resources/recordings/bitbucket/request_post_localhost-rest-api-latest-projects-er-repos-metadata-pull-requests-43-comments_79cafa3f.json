@@ -1,9 +1,0 @@
-{
-  "method": "GET",
-  "requestUrl": "localhost/rest/api/latest/projects/er/repos/metadata/pull-requests/43/comments",
-  "requestBody": "COMMENT yaml parse error",
-  "parsedResponse": {},
-  "Status": 200,
-  "Header": {},
-  "Time": "2024-10-22T11:29:55.5326883+02:00"
-}

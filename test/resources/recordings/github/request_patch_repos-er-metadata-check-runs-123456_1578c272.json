@@ -1,0 +1,81 @@
+{
+    "method": "PATCH",
+    "requestUrl": "https://api.github.com/repos/interhyp-intern-test/service-metadata/check-runs/37785412926?per_page=100",
+    "requestBody": "{\"name\":\"only-valid-metadata-changes\",\"status\":\"completed\",\"conclusion\":\"success\",\"output\":{\"title\":\"Passed YAML validation\",\"summary\":\"All changed files are valid.\",\"text\":\"\"}}\n",
+    "parsedResponse": {
+        "Body": "{\n  \"id\": 123456,\n  \"name\": \"only-valid-metadata-changes\",\n  \"head_sha\": \"a800c51995d3f3ee0ca110fa5fd93a772eaff381\",\n  \"status\": \"completed\",\n  \"conclusion\": \"success\",\n  \"started_at\": \"2025-02-25T13:44:38Z\",\n  \"completed_at\": \"2025-02-25T13:44:39Z\",\n  \"output\": {\n    \"title\": \"Passed YAML validation\",\n    \"summary\": \"All changed files are valid.\",\n    \"text\": \"\",\n    \"annotations_count\": 0,\n  },\n  \"check_suite\": {\n    \"id\": 123456789\n  },\n  \"app\": {\n    \"id\": 12345,\n    \"slug\": \"metadata-dev\",\n    \"owner\": {\n      \"login\": \"some-app-owner\",\n      \"id\": 1234567      \n    },\n    \"name\": \"metadata dev\",\n    \"description\": \"\",\n    \"permissions\": {\n      \"checks\": \"write\",\n      \"contents\": \"read\",\n      \"metadata\": \"read\"\n    },\n    \"events\": [\n      \"check_run\",\n      \"check_suite\",\n      \"pull_request\"\n    ]\n  },\n  \"pull_requests\": [\n    {\n      \"id\": 12345678987654321,\n      \"number\": 15,\n      \"head\": {\n        \"ref\": \"some-ref\",\n        \"sha\": \"a800c51995d3f3ee0ca110fa5fd93a772eaff381\",\n        \"repo\": {\n          \"id\": 123456789123456789,\n          \"name\": \"service-metadata\"\n        }\n      },\n      \"base\": {\n        \"ref\": \"main\",\n        \"sha\": \"c608f5c195adb6607b46c67ce446c97174a062d0\",\n        \"repo\": {\n          \"id\": 123456789123456789,\n          \"name\": \"service-metadata\"\n        }\n      }\n    }\n  ]\n}",
+        "Status": 200,
+        "Header": {
+            "Access-Control-Allow-Origin": [
+                "*"
+            ],
+            "Access-Control-Expose-Headers": [
+                "ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset"
+            ],
+            "Cache-Control": [
+                "private, max-age=60, s-maxage=60"
+            ],
+            "Content-Security-Policy": [
+                "default-src 'none'"
+            ],
+            "Content-Type": [
+                "application/json; charset=utf-8"
+            ],
+            "Date": [
+                "Tue, 25 Feb 2025 13:44:39 GMT"
+            ],
+            "Etag": [
+                "W/\"16896af1d94ce9d76b0ae8236e5cce0a1e8f8a1a9c3330854a4ecae2428548cd\""
+            ],
+            "Referrer-Policy": [
+                "origin-when-cross-origin, strict-origin-when-cross-origin"
+            ],
+            "Server": [
+                "github.com"
+            ],
+            "Strict-Transport-Security": [
+                "max-age=31536000; includeSubdomains; preload"
+            ],
+            "Vary": [
+                "Accept, Authorization, Cookie, X-GitHub-OTP,Accept-Encoding, Accept, X-Requested-With"
+            ],
+            "X-Accepted-Github-Permissions": [
+                "checks=write"
+            ],
+            "X-Content-Type-Options": [
+                "nosniff"
+            ],
+            "X-Frame-Options": [
+                "deny"
+            ],
+            "X-Github-Api-Version-Selected": [
+                "2022-11-28"
+            ],
+            "X-Github-Media-Type": [
+                "github.v3; param=antiope-preview; format=json"
+            ],
+            "X-Github-Request-Id": [
+                "16D9:1993E9:319D57:32A73E:67BDC947"
+            ],
+            "X-Ratelimit-Limit": [
+                "15000"
+            ],
+            "X-Ratelimit-Remaining": [
+                "14985"
+            ],
+            "X-Ratelimit-Reset": [
+                "1740493304"
+            ],
+            "X-Ratelimit-Resource": [
+                "core"
+            ],
+            "X-Ratelimit-Used": [
+                "15"
+            ],
+            "X-Xss-Protection": [
+                "0"
+            ]
+        },
+        "Time": "2025-02-25T14:44:38.616101676+01:00"
+    }
+}
