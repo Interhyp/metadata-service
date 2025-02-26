@@ -1,0 +1,84 @@
+{
+    "method": "GET",
+    "requestUrl": "https://api.github.com/repos/interhyp-intern-test/service-metadata/contents/owners/techex/owner.info.yaml?per_page=100\u0026ref=a800c51995d3f3ee0ca110fa5fd93a772eaff381",
+    "requestBody": "",
+    "parsedResponse": {
+        "Body": "{\n  \"name\": \"owner.info.yaml\",\n  \"path\": \"owners-test/owner-dev/owner.info.yaml\",\n  \"sha\": \"b30837091b73ab2e50c540bf7aa22c6432befc29\",\n  \"size\": 479,\n  \"type\": \"file\",\n  \"content\": \"Y29udGFjdDogc29tZS1tYWlsQGNvbXBhbnkuY29tCnRlYW1zQ2hhbm5lbFVSTDogaHR0cHM6Ly90ZWFtcy5taWNyb3NvZnQuY29tL2wvY2hhbm5lbC8wMDAwMDAwMDAwMDAwCnByb2R1Y3RPd25lcjogcHJvZHVjdE93bmVyCmdyb3VwczoKICB1c2VyczoKICAgIC0gZmlyc3QKICAgIC0gc2Vjb25kCiAgICAtIHRoaXJkCiAgICAtIGZvdXJ0aAogICAgLSBmaWZ0aApkZWZhdWx0SmlyYVByb2plY3Q6IFJFTFRFQwptZW1iZXJzOgogIC0gZmlyc3QKICAtIHNlY29uZAogIC0gdGhpcmQKICAtIGZvdXJ0aAo=\\n\",\n  \"encoding\": \"base64\"\n}",
+        "Status": 200,
+        "Header": {
+            "Access-Control-Allow-Origin": [
+                "*"
+            ],
+            "Access-Control-Expose-Headers": [
+                "ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset"
+            ],
+            "Cache-Control": [
+                "private, max-age=60, s-maxage=60"
+            ],
+            "Content-Security-Policy": [
+                "default-src 'none'"
+            ],
+            "Content-Type": [
+                "application/json; charset=utf-8"
+            ],
+            "Date": [
+                "Tue, 25 Feb 2025 13:44:39 GMT"
+            ],
+            "Etag": [
+                "W/\"b30837091b73ab2e50c540bf7aa22c6432befc29\""
+            ],
+            "Last-Modified": [
+                "Tue, 25 Feb 2025 13:19:31 GMT"
+            ],
+            "Referrer-Policy": [
+                "origin-when-cross-origin, strict-origin-when-cross-origin"
+            ],
+            "Server": [
+                "github.com"
+            ],
+            "Strict-Transport-Security": [
+                "max-age=31536000; includeSubdomains; preload"
+            ],
+            "Vary": [
+                "Accept, Authorization, Cookie, X-GitHub-OTP,Accept-Encoding, Accept, X-Requested-With"
+            ],
+            "X-Accepted-Github-Permissions": [
+                "contents=read"
+            ],
+            "X-Content-Type-Options": [
+                "nosniff"
+            ],
+            "X-Frame-Options": [
+                "deny"
+            ],
+            "X-Github-Api-Version-Selected": [
+                "2022-11-28"
+            ],
+            "X-Github-Media-Type": [
+                "github.v3; format=json"
+            ],
+            "X-Github-Request-Id": [
+                "16D9:1993E9:319BF1:32A62E:67BDC947"
+            ],
+            "X-Ratelimit-Limit": [
+                "15000"
+            ],
+            "X-Ratelimit-Remaining": [
+                "14986"
+            ],
+            "X-Ratelimit-Reset": [
+                "1740493304"
+            ],
+            "X-Ratelimit-Resource": [
+                "core"
+            ],
+            "X-Ratelimit-Used": [
+                "14"
+            ],
+            "X-Xss-Protection": [
+                "0"
+            ]
+        },
+        "Time": "2025-02-25T14:44:38.189141927+01:00"
+    }
+}

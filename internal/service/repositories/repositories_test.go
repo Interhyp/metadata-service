@@ -30,7 +30,6 @@ func createRepositoryDto() openapi.RepositoryDto {
 		Url:           "url",
 		Mainline:      "mainline",
 		Generator:     ptr("generator"),
-		Unittest:      ptr(true),
 		Configuration: createRepositoryConfigurationDto(),
 		Labels:        map[string]string{"label": "originalValue"},
 		TimeStamp:     "ts",
@@ -112,7 +111,6 @@ func TestPatchRepository_WithConfig_And_EmptyOriginal(t *testing.T) {
 		beforePatch,
 		openapi.RepositoryPatchDto{
 			//Generator:     expected.Generator,
-			Unittest:      expected.Unittest,
 			Configuration: createRepositoryConfigurationPatchDtoFromConfigurationDto(expected.Configuration),
 			TimeStamp:     expected.TimeStamp,
 			CommitHash:    expected.CommitHash,
@@ -128,7 +126,6 @@ func TestPatchRepository_ReplaceAll(t *testing.T) {
 		Url:       ptr("newurl"),
 		Mainline:  ptr("newmainline"),
 		Generator: ptr("newgenerator"),
-		Unittest:  ptr(false),
 		Configuration: &openapi.RepositoryConfigurationPatchDto{
 			AccessKeys: []openapi.RepositoryConfigurationAccessKeyDto{
 				{
@@ -162,7 +159,6 @@ func TestPatchRepository_ReplaceAll(t *testing.T) {
 		Url:       "newurl",
 		Mainline:  "newmainline",
 		Generator: ptr("newgenerator"),
-		Unittest:  ptr(false),
 		Configuration: &openapi.RepositoryConfigurationDto{
 			AccessKeys: []openapi.RepositoryConfigurationAccessKeyDto{
 				{
@@ -219,7 +215,6 @@ func TestPatchRepository_ClearFields(t *testing.T) {
 		Url:       "",
 		Mainline:  "",
 		Generator: nil,
-		Unittest:  ptr(true),
 		Configuration: &openapi.RepositoryConfigurationDto{
 			AccessKeys:              nil,
 			CommitMessageType:       nil,

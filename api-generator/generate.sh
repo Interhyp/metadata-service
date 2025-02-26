@@ -45,7 +45,6 @@ function generate_downstream {
 }
 
 generate_apimodel
-generate_downstream bitbucket bitbucket-v8.19.json BuildsAndDeployments:PullRequests:Repository:User
 
 # -------------------------------------- customization -----------------------------------------
 # omit certain fields from yaml representations, which we use internally to save to files in git

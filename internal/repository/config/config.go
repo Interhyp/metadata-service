@@ -1,11 +1,11 @@
 package config
 
 import (
-	"math"
-
+	"fmt"
 	"github.com/Interhyp/metadata-service/internal/acorn/config"
 	auconfigapi "github.com/StephanHCB/go-autumn-config-api"
 	auconfigenv "github.com/StephanHCB/go-autumn-config-env"
+	"strconv"
 )
 
 var CustomConfigItems = []auconfigapi.ConfigItem{
@@ -45,43 +45,8 @@ var CustomConfigItems = []auconfigapi.ConfigItem{
 		Validate:    auconfigenv.ObtainNotEmptyValidator(),
 	},
 	{
-		Key:         config.KeyBitbucketUsername,
-		EnvName:     config.KeyBitbucketUsername,
-		Default:     "",
-		Description: "bitbucket username for api and git clone service-metadata access",
-		Validate:    auconfigenv.ObtainNotEmptyValidator(),
-	},
-	{
-		Key:         config.KeyBitbucketPassword,
-		EnvName:     config.KeyBitbucketPassword,
-		Default:     "",
-		Description: "bitbucket password for api and git clone service-metadata access",
-		Validate:    auconfigenv.ObtainNotEmptyValidator(),
-	},
-	{
-		Key:         config.KeyBitbucketServer,
-		EnvName:     config.KeyBitbucketServer,
-		Default:     "https://bitbucket.com",
-		Description: "base URL to the bitbucket server, including protocol",
-		Validate:    auconfigenv.ObtainPatternValidator("^https?://.*$"),
-	},
-	{
-		Key:         config.KeyBitbucketCacheSize,
-		EnvName:     config.KeyBitbucketCacheSize,
-		Default:     "1000",
-		Description: "size of the cache for bitbucket api items",
-		Validate:    auconfigenv.ObtainUintRangeValidator(10, 1000),
-	},
-	{
-		Key:         config.KeyBitbucketCacheRetentionSeconds,
-		EnvName:     config.KeyBitbucketCacheRetentionSeconds,
-		Default:     "3600",
-		Description: "seconds to keep items in the bitbucket api cache (only used for bitbucket users)",
-		Validate:    auconfigenv.ObtainUintRangeValidator(60, math.MaxUint32),
-	},
-	{
-		Key:         config.KeyBitbucketReviewerFallback,
-		EnvName:     config.KeyBitbucketReviewerFallback,
+		Key:         config.KeyReviewerFallback,
+		EnvName:     config.KeyReviewerFallback,
 		Default:     "",
 		Description: "default fallback reviewer username or groupname",
 		Validate:    auconfigenv.ObtainNotEmptyValidator(),
@@ -293,11 +258,24 @@ var CustomConfigItems = []auconfigapi.ConfigItem{
 		Validate:    auconfigapi.ConfigNeedsNoValidation,
 	},
 	{
-		Key:         config.KeyVCSConfigs,
-		EnvName:     config.KeyVCSConfigs,
-		Description: "Version control system configuration settings",
-		Default:     "{}",
-		Validate:    auconfigenv.ObtainNotEmptyValidator(),
+		Key:         config.KeyGithubAppId,
+		EnvName:     config.KeyGithubAppId,
+		Default:     "",
+		Description: "github app id",
+		Validate:    ObtainPositiveInt64Validator(),
+	},
+	{
+		Key:         config.KeyGithubAppInstallationId,
+		EnvName:     config.KeyGithubAppInstallationId,
+		Default:     "",
+		Description: "github app installation id",
+		Validate:    ObtainPositiveInt64Validator(),
+	},
+	{
+		Key:         config.KeyGithubAppJwtSigningKeyPEM,
+		EnvName:     config.KeyGithubAppJwtSigningKeyPEM,
+		Default:     "",
+		Description: "github app signing key PEM",
 	},
 	{
 		Key:         config.KeyWebhooksProcessAsync,
@@ -306,4 +284,18 @@ var CustomConfigItems = []auconfigapi.ConfigItem{
 		Default:     "true",
 		Validate:    auconfigapi.ConfigNeedsNoValidation,
 	},
+}
+
+func ObtainPositiveInt64Validator() func(key string) error {
+	return func(key string) error {
+		value := auconfigenv.Get(key)
+		i, err := strconv.ParseInt(value, 10, 64)
+		if err != nil {
+			return fmt.Errorf("invalid value for %s: %w", key, err)
+		}
+		if err == nil && i < 0 {
+			return fmt.Errorf("%s must be a positive integer", key)
+		}
+		return nil
+	}
 }

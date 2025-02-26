@@ -2,80 +2,71 @@ package githubclient
 
 import (
 	"context"
-	"github.com/Interhyp/metadata-service/internal/acorn/config"
+	"fmt"
 	"github.com/Interhyp/metadata-service/internal/acorn/repository"
-	"github.com/Interhyp/metadata-service/internal/util"
-	"github.com/google/go-github/v66/github"
-	"strconv"
+	"github.com/google/go-github/v69/github"
 )
 
 type Impl struct {
-	CustomConfig config.CustomConfiguration
-	client       *github.Client
+	client *github.Client
 }
 
-func New(client *github.Client, customConfig config.CustomConfiguration) *Impl {
+func New(client *github.Client) *Impl {
 	return &Impl{
-		CustomConfig: customConfig,
-		client:       client,
+		client: client,
 	}
 }
 
-func (r *Impl) SetCommitStatusInProgress(ctx context.Context, owner, repoName, commitID, url string, statusKey string) error {
-	_, _, err := r.client.Repositories.CreateStatus(ctx, owner, repoName, commitID, &github.RepoStatus{
-		State:   util.Ptr("pending"),
-		Context: &statusKey,
-		URL:     &url,
+func (r *Impl) StartCheckRun(ctx context.Context, owner, repoName, checkName, sha string) (int64, error) {
+	result, _, err := r.client.Checks.CreateCheckRun(ctx, owner, repoName, github.CreateCheckRunOptions{
+		Name:    checkName,
+		HeadSHA: sha,
+		Status:  github.Ptr("in_progress"),
 	})
-	return err
+	if err != nil {
+		return -1, err
+	}
+	if result.ID == nil {
+		return -1, fmt.Errorf("creating check run '%s' for %s/%s @ %s returned no id", checkName, owner, repoName, sha)
+	}
+	return result.GetID(), err
 }
 
-func (r *Impl) SetCommitStatusSucceeded(ctx context.Context, owner, repoName, commitID, url string, statusKey string) error {
-	_, _, err := r.client.Repositories.CreateStatus(ctx, owner, repoName, commitID, &github.RepoStatus{
-		State:   util.Ptr("success"),
-		Context: &statusKey,
-		URL:     &url,
+func (r *Impl) ConcludeCheckRun(ctx context.Context, owner, repoName, checkName string, checkRunId int64, conclusion repository.CheckRunConclusion, details repository.CheckRunDetails) error {
+	_, _, err := r.client.Checks.UpdateCheckRun(ctx, owner, repoName, checkRunId, github.UpdateCheckRunOptions{
+		Name:       checkName,
+		ExternalID: nil,
+		Status:     github.Ptr("completed"),
+		Conclusion: github.Ptr(string(conclusion)),
+		Output: &github.CheckRunOutput{
+			Title:   github.Ptr(details.Title),
+			Summary: github.Ptr(details.Summary),
+			Text:    github.Ptr(details.BodyText),
+		},
 	})
-	return err
-}
-
-func (r *Impl) SetCommitStatusFailed(ctx context.Context, owner, repoName, commitID, url string, statusKey string) error {
-	_, _, err := r.client.Repositories.CreateStatus(ctx, owner, repoName, commitID, &github.RepoStatus{
-		State:   util.Ptr("failure"),
-		Context: &statusKey,
-		URL:     &url,
-	})
-	return err
-}
-
-func (r *Impl) CreatePullRequestComment(ctx context.Context, owner, repoName, pullRequestID, text string) error {
-	id, err := strconv.Atoi(pullRequestID)
 	if err != nil {
 		return err
 	}
-	_, _, err = r.client.Issues.CreateComment(ctx, owner, repoName, id, &github.IssueComment{
-		Body: &text,
-	})
+
 	return err
 }
 
-func (r *Impl) GetChangedFilesOnPullRequest(ctx context.Context, repoPath, repoName, pullRequestID, toRef string) ([]repository.File, string, error) {
-	prId, _ := strconv.Atoi(pullRequestID)
-	changes, _, err := r.client.PullRequests.ListFiles(ctx, repoPath, repoName, prId, &github.ListOptions{})
+func (r *Impl) GetChangedFilesForCommit(ctx context.Context, owner, repo, sha string) ([]repository.File, error) {
+	commit, _, err := r.client.Repositories.GetCommit(ctx, owner, repo, sha, nil)
 	if err != nil {
-		return nil, "", err
+		return nil, err
 	}
 
 	result := make([]repository.File, 0)
-	for _, change := range changes {
-		contents, _, _, err := r.client.Repositories.GetContents(ctx, repoPath, repoName, change.GetFilename(), &github.RepositoryContentGetOptions{
-			Ref: toRef,
+	for _, change := range commit.Files {
+		contents, _, _, err := r.client.Repositories.GetContents(ctx, owner, repo, change.GetFilename(), &github.RepositoryContentGetOptions{
+			Ref: sha,
 		})
 		if err != nil {
 			// ignore go to next changed file
 			continue
 		}
-		content, _ := contents.GetContent()
+		content, err := contents.GetContent()
 		if err != nil || content == "" {
 			// ignore go to next changed file
 			continue
@@ -85,5 +76,5 @@ func (r *Impl) GetChangedFilesOnPullRequest(ctx context.Context, repoPath, repoN
 			Contents: content,
 		})
 	}
-	return result, toRef, nil
+	return result, nil
 }

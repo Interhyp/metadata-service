@@ -230,7 +230,6 @@ func tstRepository() openapi.RepositoryDto {
 		Owner:    "some-owner",
 		Url:      "ssh://git@bitbucket.some-organisation.com:7999/helm/karma-wrapper.git",
 		Mainline: "master",
-		Unittest: ptr(false),
 		Configuration: &openapi.RepositoryConfigurationDto{
 			AccessKeys: []openapi.RepositoryConfigurationAccessKeyDto{
 				{
@@ -264,7 +263,6 @@ func tstRepositoryUnchanged() openapi.RepositoryDto {
 		Owner:    "some-owner",
 		Url:      "ssh://git@bitbucket.some-organisation.com:7999/helm/karma-wrapper.git",
 		Mainline: "master",
-		Unittest: ptr(false),
 		Configuration: &openapi.RepositoryConfigurationDto{
 			BranchNameRegex: ptr("testing_.*"),
 		},
@@ -336,7 +334,6 @@ func tstRepositoryUnchangedPatch() openapi.RepositoryPatchDto {
 func tstRepositoryExpectedYaml() string {
 	return `url: ssh://git@bitbucket.some-organisation.com:7999/helm/karma-wrapper.git
 mainline: master
-unittest: false
 configuration:
     accessKeys:
         - key: KEY
@@ -362,7 +359,6 @@ configuration:
 func tstRepositoryExpectedYamlKarmaWrapper() string {
 	return `url: ssh://git@bitbucket.some-organisation.com:7999/helm/karma-wrapper.git
 mainline: main
-unittest: false
 configuration:
     branchNameRegex: testing_.*
     refProtections:
@@ -376,7 +372,6 @@ configuration:
 func tstRepositoryUnchangedExpectedYaml() string {
 	return `url: ssh://git@bitbucket.some-organisation.com:7999/helm/karma-wrapper.git
 mainline: master
-unittest: false
 configuration:
     branchNameRegex: testing_.*
 `
