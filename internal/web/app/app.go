@@ -13,9 +13,9 @@ import (
 	"github.com/Interhyp/metadata-service/internal/acorn/controller"
 	"github.com/Interhyp/metadata-service/internal/acorn/repository"
 	"github.com/Interhyp/metadata-service/internal/acorn/service"
-	githubclient "github.com/Interhyp/metadata-service/internal/client/github"
 	"github.com/Interhyp/metadata-service/internal/repository/cache"
 	"github.com/Interhyp/metadata-service/internal/repository/config"
+	"github.com/Interhyp/metadata-service/internal/repository/github"
 	"github.com/Interhyp/metadata-service/internal/repository/hostip"
 	"github.com/Interhyp/metadata-service/internal/repository/idp"
 	"github.com/Interhyp/metadata-service/internal/repository/kafka"
@@ -28,6 +28,7 @@ import (
 	"github.com/Interhyp/metadata-service/internal/service/services"
 	"github.com/Interhyp/metadata-service/internal/service/trigger"
 	"github.com/Interhyp/metadata-service/internal/service/updater"
+	"github.com/Interhyp/metadata-service/internal/service/validator"
 	"github.com/Interhyp/metadata-service/internal/service/webhookshandler"
 	"github.com/Interhyp/metadata-service/internal/web/controller/ownerctl"
 	"github.com/Interhyp/metadata-service/internal/web/controller/repositoryctl"
@@ -62,6 +63,7 @@ type ApplicationImpl struct {
 	Mapper          service.Mapper
 	Trigger         service.Trigger
 	Updater         service.Updater
+	Validator       service.Validator
 	Owners          service.Owners
 	Services        service.Services
 	Repositories    service.Repositories
@@ -211,7 +213,6 @@ func (a *ApplicationImpl) ConstructServices() error {
 	if err := a.Updater.Setup(); err != nil {
 		return err
 	}
-
 	a.Trigger = trigger.New(a.Config, a.CustomConfig, a.Logging, a.Timestamp, a.Updater)
 	if err := a.Trigger.Setup(); err != nil {
 		return err
@@ -232,8 +233,10 @@ func (a *ApplicationImpl) ConstructServices() error {
 		return err
 	}
 
+	a.Validator = validator.New(a.Config, a.Repositories, a.Github, a.SshAuthProvider)
+
 	if a.WebhooksHandler == nil {
-		a.WebhooksHandler = webhookshandler.New(a.Config, a.Logging, a.Timestamp, a.Repositories, a.Updater, a.Github)
+		a.WebhooksHandler = webhookshandler.New(a.Config, a.Timestamp, a.Updater, a.Validator)
 	}
 
 	return nil
@@ -269,7 +272,7 @@ func (a *ApplicationImpl) createGithub() error {
 		if err != nil {
 			return err
 		}
-		a.Github = githubclient.New(gogithub.NewClient(paginator))
+		a.Github = githubclient.New(a.Timestamp, gogithub.NewClient(paginator))
 	}
 	return nil
 }

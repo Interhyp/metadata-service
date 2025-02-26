@@ -11,7 +11,7 @@ import (
 	"testing"
 )
 
-func TestPOSTWebhookGitHub_Success(t *testing.T) {
+func TestPOSTWebhookGitHub_CheckSuite_Success(t *testing.T) {
 	tstReset()
 
 	docs.When("When GitHub sends a webhook with valid payload")
@@ -31,7 +31,27 @@ func TestPOSTWebhookGitHub_Success(t *testing.T) {
 	tstAssertNoBody(t, response, err, http.StatusNoContent)
 }
 
-func TestPOSTWebhookGitHub_InvalidPayload(t *testing.T) {
+func TestPOSTWebhookGitHub_Push_Success(t *testing.T) {
+	tstReset()
+
+	docs.When("When GitHub sends a webhook with valid payload")
+	body := createGithubPushPayload("some-commit-id")
+
+	bodyBytes, err := json.Marshal(&body)
+	require.Nil(t, err)
+	request, err := http.NewRequest(http.MethodPost, ts.URL+"/webhooks/vcs/github", bytes.NewReader(bodyBytes))
+	require.Nil(t, err)
+	request.Header.Set("X-GitHub-Event", string(github.PushEvent))
+	rawResponse, err := http.DefaultClient.Do(request)
+	require.Nil(t, err)
+	response, err := tstWebResponseFromResponse(rawResponse)
+	require.Nil(t, err)
+
+	docs.Then("Then the request is successful")
+	tstAssertNoBody(t, response, err, http.StatusNoContent)
+}
+
+func TestPOSTWebhookGitHub_InvalidCheckSuitePayload(t *testing.T) {
 	tstReset()
 
 	docs.When("When they send a webhook with invalid payload")
@@ -47,9 +67,32 @@ func TestPOSTWebhookGitHub_InvalidPayload(t *testing.T) {
 	tstAssert(t, response, err, http.StatusBadRequest, "webhook-invalid.json")
 }
 
+func TestPOSTWebhookGitHub_InvalidPushPayload(t *testing.T) {
+	tstReset()
+
+	docs.When("When they send a webhook with invalid payload")
+	request, err := http.NewRequest(http.MethodPost, ts.URL+"/webhooks/vcs/github", bytes.NewReader([]byte("")))
+	require.Nil(t, err)
+	request.Header.Set("X-GitHub-Event", string(github.PushEvent))
+	rawResponse, err := http.DefaultClient.Do(request)
+	require.Nil(t, err)
+	response, err := tstWebResponseFromResponse(rawResponse)
+	require.Nil(t, err)
+
+	docs.Then("Then the request fails and the error response is as expected")
+	tstAssert(t, response, err, http.StatusBadRequest, "webhook-invalid.json")
+}
+
 func createGithubCheckSuitePayload(sha string) github.CheckSuitePayload {
 	s := fmt.Sprintf(`{"action": "requested", "check_suite": {"head_sha": "%s"}, "repository": {"name": "some-repo", "ssh_url": "ssh://git@github.com:Someorg/some-service-deployment.git", "owner": {"login": "some-org"}}}`, sha)
 	data := github.CheckSuitePayload{}
+	_ = json.Unmarshal([]byte(s), &data)
+	return data
+}
+
+func createGithubPushPayload(commitId string) github.PushPayload {
+	s := fmt.Sprintf(`{"commits": {"id": "%s"}}`, commitId)
+	data := github.PushPayload{}
 	_ = json.Unmarshal([]byte(s), &data)
 	return data
 }

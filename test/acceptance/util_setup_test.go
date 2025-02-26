@@ -10,12 +10,15 @@ import (
 	"github.com/Interhyp/go-backend-service-common/repository/logging"
 	"github.com/Interhyp/go-backend-service-common/repository/timestamp"
 	"github.com/Interhyp/go-backend-service-common/web/middleware/security"
-	githubclient "github.com/Interhyp/metadata-service/internal/client/github"
+	"github.com/Interhyp/metadata-service/internal/acorn/repository"
 	"github.com/Interhyp/metadata-service/internal/repository/config"
+	"github.com/Interhyp/metadata-service/internal/repository/github"
 	"github.com/Interhyp/metadata-service/internal/repository/notifier"
 	"github.com/Interhyp/metadata-service/internal/service/trigger"
+	"github.com/Interhyp/metadata-service/internal/service/validator"
 	"github.com/Interhyp/metadata-service/internal/web/app"
 	"github.com/Interhyp/metadata-service/internal/web/server"
+	"github.com/Interhyp/metadata-service/test/mock/checkoutmock"
 	"github.com/Interhyp/metadata-service/test/mock/idpmock"
 	"github.com/Interhyp/metadata-service/test/mock/kafkamock"
 	"github.com/Interhyp/metadata-service/test/mock/metadatamock"
@@ -25,6 +28,7 @@ import (
 	aurestcapture "github.com/StephanHCB/go-autumn-restclient/implementation/capture"
 	aurestplayback "github.com/StephanHCB/go-autumn-restclient/implementation/playback"
 	aurestrecorder "github.com/StephanHCB/go-autumn-restclient/implementation/recorder"
+	"github.com/go-git/go-billy/v5"
 	gogithub "github.com/google/go-github/v69/github"
 	"github.com/rs/zerolog/log"
 	"net/http"
@@ -125,7 +129,7 @@ func (a *ApplicationWithMocksImpl) Create() error {
 
 	githubPlayback := aurestplayback.New("../resources/recordings/github", opts)
 	githubCapture := aurestcapture.NewRoundTripper(githubPlayback)
-	a.Github = githubclient.New(gogithub.NewClient(&http.Client{Transport: githubCapture}))
+	a.Github = githubclient.New(a.Timestamp, gogithub.NewClient(&http.Client{Transport: githubCapture}))
 
 	if err := a.ConstructServices(); err != nil {
 		return err
@@ -172,6 +176,10 @@ func tstSetup(configPath string) error {
 	err = application.Create()
 	if err != nil {
 		return err
+	}
+
+	application.Validator.(*validator.Impl).CheckoutFunction = func(_ context.Context, _ repository.SshAuthProvider, _, _ string) (billy.Filesystem, error) {
+		return checkoutmock.New()
 	}
 
 	application.Trigger.(*trigger.Impl).SkipStart = true // do not start cron job
