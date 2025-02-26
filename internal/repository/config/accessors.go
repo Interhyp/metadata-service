@@ -29,28 +29,8 @@ func (c *CustomConfigImpl) SSHMetadataRepositoryUrl() string {
 	return c.VSSHMetadataRepoUrl
 }
 
-func (c *CustomConfigImpl) BitbucketUsername() string {
-	return c.VBitbucketUsername
-}
-
-func (c *CustomConfigImpl) BitbucketPassword() string {
-	return c.VBitbucketPassword
-}
-
-func (c *CustomConfigImpl) BitbucketServer() string {
-	return c.VBitbucketServer
-}
-
-func (c *CustomConfigImpl) BitbucketCacheSize() int {
-	return c.VBitbucketCacheSize
-}
-
-func (c *CustomConfigImpl) BitbucketCacheRetentionSeconds() uint32 {
-	return c.VBitbucketCacheRetentionSeconds
-}
-
-func (c *CustomConfigImpl) BitbucketReviewerFallback() string {
-	return c.VBitbucketReviewerFallback
+func (c *CustomConfigImpl) ReviewerFallback() string {
+	return c.VReviewerFallback
 }
 
 func (c *CustomConfigImpl) GitCommitterName() string {
@@ -212,10 +192,18 @@ func (c *CustomConfigImpl) PullRequestBuildKey() string {
 	return c.VPullRequestBuildKey
 }
 
-func (c *CustomConfigImpl) VCSConfigs() map[string]config.VCSConfig {
-	return c.VVCSConfig
-}
-
 func (c *CustomConfigImpl) WebhooksProcessAsync() bool {
 	return c.VWebhooksProcessAsync
+}
+
+func (c *CustomConfigImpl) GithubAppId() int64 {
+	return c.VGithubAppId
+}
+
+func (c *CustomConfigImpl) GithubAppInstallationId() int64 {
+	return c.VGithubAppInstallationId
+}
+
+func (c *CustomConfigImpl) GithubAppJwtSigningKeyPEM() []byte {
+	return c.VGithubAppJwtSigningKeyPEM
 }

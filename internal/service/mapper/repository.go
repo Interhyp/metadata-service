@@ -96,7 +96,7 @@ func (s *Impl) GetRepository(ctx context.Context, repoKey string) (openapi.Repos
 
 				if len(approversGroupsMap[approversGroupName]) <= 0 && len(users) > 0 {
 					s.Logging.Logger().Ctx(ctx).Warn().Printf("Fallback to predefined reviewers")
-					approversGroupsMap[approversGroupName] = append(approversGroupsMap[approversGroupName], s.CustomConfiguration.BitbucketReviewerFallback())
+					approversGroupsMap[approversGroupName] = append(approversGroupsMap[approversGroupName], s.CustomConfiguration.ReviewerFallback())
 				}
 			}
 		}

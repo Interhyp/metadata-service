@@ -18,9 +18,7 @@ type RepositoryCreateDto struct {
 	Url      string `yaml:"url" json:"url"`
 	Mainline string `yaml:"mainline" json:"mainline"`
 	// the generator used for the initial contents of this repository
-	Generator *string `yaml:"generator,omitempty" json:"generator,omitempty"`
-	// this repository contains unit tests (currently ignored except for helm charts)
-	Unittest      *bool                       `yaml:"unittest,omitempty" json:"unittest,omitempty"`
+	Generator     *string                     `yaml:"generator,omitempty" json:"generator,omitempty"`
 	Configuration *RepositoryConfigurationDto `yaml:"configuration,omitempty" json:"configuration,omitempty"`
 	// The jira issue to use for committing a change, or the last jira issue used.
 	JiraIssue string `yaml:"-" json:"jiraIssue"`

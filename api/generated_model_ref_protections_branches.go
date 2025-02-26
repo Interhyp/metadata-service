@@ -17,11 +17,11 @@ type RefProtectionsBranches struct {
 	RequirePR []ProtectedRef `yaml:"requirePR,omitempty" json:"requirePR,omitempty"`
 	// Prevents all changes of the protected refs.
 	PreventAllChanges []ProtectedRef `yaml:"preventAllChanges,omitempty" json:"preventAllChanges,omitempty"`
-	// Prevents creation of the protected refs. Results in preventAllChanges for BitBucket.
+	// Prevents creation of the protected refs.
 	PreventCreation []ProtectedRef `yaml:"preventCreation,omitempty" json:"preventCreation,omitempty"`
 	// Prevents deletion of the protected refs.
 	PreventDeletion []ProtectedRef `yaml:"preventDeletion,omitempty" json:"preventDeletion,omitempty"`
-	// Prevents pushes to the protected refs. Results in preventAllChanges for BitBucket.
+	// Prevents pushes to the protected refs.
 	PreventPush []ProtectedRef `yaml:"preventPush,omitempty" json:"preventPush,omitempty"`
 	// Prevents force pushes to the protected refs for users with push permission.
 	PreventForcePush []ProtectedRef `yaml:"preventForcePush,omitempty" json:"preventForcePush,omitempty"`

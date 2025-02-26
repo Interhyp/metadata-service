@@ -1119,17 +1119,11 @@ paths:
                 $ref: '#/components/schemas/ErrorDto'
       tags:
         - management
-  /webhooks/vcs/{vcsKey}:
+  /webhooks/vcs/github:
     post:
       tags:
         - webhooks
       operationId: postWebhook
-      parameters:
-        - name: vcsKey
-          in: path
-          required: true
-          schema:
-            type: string
       requestBody:
         required: true
         content:
@@ -1830,10 +1824,6 @@ components:
           type: string
           examples:
             - java-spring-cloud
-        unittest:
-          description: this repository contains unit tests (currently ignored except for helm charts)
-          type: boolean
-          default: false
         configuration:
           $ref: '#/components/schemas/RepositoryConfigurationDto'
         timeStamp:
@@ -1883,10 +1873,6 @@ components:
           type: string
           examples:
             - java-spring-cloud
-        unittest:
-          description: this repository contains unit tests (currently ignored except for helm charts)
-          type: boolean
-          default: false
         configuration:
           $ref: '#/components/schemas/RepositoryConfigurationDto'
         jiraIssue:
@@ -1924,10 +1910,6 @@ components:
           type: string
           examples:
             - java-spring-cloud
-        unittest:
-          description: this repository contains unit tests (currently ignored except for helm charts)
-          type: boolean
-          default: false
         configuration:
           $ref: '#/components/schemas/RepositoryConfigurationPatchDto'
         timeStamp:
@@ -2341,7 +2323,7 @@ components:
               items:
                 $ref: '#/components/schemas/ProtectedRef'
             preventCreation:
-              description: Prevents creation of the protected refs. Results in preventAllChanges for BitBucket.
+              description: Prevents creation of the protected refs.
               type: array
               items:
                 $ref: '#/components/schemas/ProtectedRef'
@@ -2351,7 +2333,7 @@ components:
               items:
                 $ref: '#/components/schemas/ProtectedRef'
             preventPush:
-              description: Prevents pushes to the protected refs. Results in preventAllChanges for BitBucket.
+              description: Prevents pushes to the protected refs.
               type: array
               items:
                 $ref: '#/components/schemas/ProtectedRef'
@@ -2369,7 +2351,7 @@ components:
               items:
                 $ref: '#/components/schemas/ProtectedRef'
             preventCreation:
-              description: Prevents creation of the protected refs. Results in preventAllChanges for BitBucket.
+              description: Prevents creation of the protected refs.
               type: array
               items:
                 $ref: '#/components/schemas/ProtectedRef'

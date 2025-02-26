@@ -18,48 +18,45 @@ import (
 )
 
 type CustomConfigImpl struct {
-	VBasicAuthUsername              string
-	VBasicAuthPassword              string
-	VSSHPrivateKey                  string
-	VSSHPrivateKeyPassword          string
-	VSSHMetadataRepoUrl             string
-	VBitbucketUsername              string
-	VBitbucketPassword              string
-	VBitbucketServer                string
-	VBitbucketCacheSize             int
-	VBitbucketCacheRetentionSeconds uint32
-	VBitbucketReviewerFallback      string
-	VGitCommitterName               string
-	VGitCommitterEmail              string
-	VAuthOidcKeySetUrl              string
-	VAuthOidcTokenAudience          string
-	VAuthGroupWrite                 string
-	VKafkaGroupIdOverride           string
-	VMetadataRepoUrl                string
-	VMetadataRepoMainline           string
-	VUpdateJobIntervalCronPart      string
-	VUpdateJobTimeoutSeconds        uint16
-	VAlertTargetRegex               *regexp.Regexp
-	VElasticApmDisabled             bool
-	VOwnerAliasPermittedRegex       *regexp.Regexp
-	VOwnerAliasProhibitedRegex      *regexp.Regexp
-	VOwnerAliasMaxLength            uint16
-	VOwnerAliasFilterRegex          *regexp.Regexp
-	VServiceNamePermittedRegex      *regexp.Regexp
-	VServiceNameProhibitedRegex     *regexp.Regexp
-	VServiceNameMaxLength           uint16
-	VRepositoryNamePermittedRegex   *regexp.Regexp
-	VRepositoryNameProhibitedRegex  *regexp.Regexp
-	VRepositoryNameMaxLength        uint16
-	VRepositoryTypes                string
-	VRepositoryKeySeparator         string
-	VNotificationConsumerConfigs    map[string]config.NotificationConsumerConfig
-	VRedisUrl                       string
-	VRedisPassword                  string
-	VPullRequestBuildUrl            string
-	VPullRequestBuildKey            string
-	VVCSConfig                      map[string]config.VCSConfig
-	VWebhooksProcessAsync           bool
+	VBasicAuthUsername             string
+	VBasicAuthPassword             string
+	VSSHPrivateKey                 string
+	VSSHPrivateKeyPassword         string
+	VSSHMetadataRepoUrl            string
+	VReviewerFallback              string
+	VGitCommitterName              string
+	VGitCommitterEmail             string
+	VAuthOidcKeySetUrl             string
+	VAuthOidcTokenAudience         string
+	VAuthGroupWrite                string
+	VKafkaGroupIdOverride          string
+	VMetadataRepoUrl               string
+	VMetadataRepoMainline          string
+	VUpdateJobIntervalCronPart     string
+	VUpdateJobTimeoutSeconds       uint16
+	VAlertTargetRegex              *regexp.Regexp
+	VElasticApmDisabled            bool
+	VOwnerAliasPermittedRegex      *regexp.Regexp
+	VOwnerAliasProhibitedRegex     *regexp.Regexp
+	VOwnerAliasMaxLength           uint16
+	VOwnerAliasFilterRegex         *regexp.Regexp
+	VServiceNamePermittedRegex     *regexp.Regexp
+	VServiceNameProhibitedRegex    *regexp.Regexp
+	VServiceNameMaxLength          uint16
+	VRepositoryNamePermittedRegex  *regexp.Regexp
+	VRepositoryNameProhibitedRegex *regexp.Regexp
+	VRepositoryNameMaxLength       uint16
+	VRepositoryTypes               string
+	VRepositoryKeySeparator        string
+	VNotificationConsumerConfigs   map[string]config.NotificationConsumerConfig
+	VRedisUrl                      string
+	VRedisPassword                 string
+	VPullRequestBuildUrl           string
+	VPullRequestBuildKey           string
+	VWebhooksProcessAsync          bool
+	VGithubAppId                   int64
+	VGithubAppInstallationId       int64
+	VGithubAppJwtSigningKeyPEM     []byte
 
 	VKafkaConfig  *kafka.Config
 	GitUrlMatcher *regexp.Regexp
@@ -87,12 +84,7 @@ func (c *CustomConfigImpl) Obtain(getter func(key string) string) {
 	c.VSSHPrivateKey = getter(config.KeySSHPrivateKey)
 	c.VSSHPrivateKeyPassword = getter(config.KeySSHPrivateKeyPassword)
 	c.VSSHMetadataRepoUrl = getter(config.KeySSHMetadataRepositoryUrl)
-	c.VBitbucketUsername = getter(config.KeyBitbucketUsername)
-	c.VBitbucketPassword = getter(config.KeyBitbucketPassword)
-	c.VBitbucketServer = getter(config.KeyBitbucketServer)
-	c.VBitbucketCacheSize = toInt(getter(config.KeyBitbucketCacheSize))
-	c.VBitbucketCacheRetentionSeconds = toUint32(getter(config.KeyBitbucketCacheRetentionSeconds))
-	c.VBitbucketReviewerFallback = getter(config.KeyBitbucketReviewerFallback)
+	c.VReviewerFallback = getter(config.KeyReviewerFallback)
 	c.VGitCommitterName = getter(config.KeyGitCommitterName)
 	c.VGitCommitterEmail = getter(config.KeyGitCommitterEmail)
 	c.VKafkaGroupIdOverride = getter(config.KeyKafkaGroupIdOverride)
@@ -122,9 +114,10 @@ func (c *CustomConfigImpl) Obtain(getter func(key string) string) {
 	c.VRedisPassword = getter(config.KeyRedisPassword)
 	c.VPullRequestBuildUrl = getter(config.KeyPullRequestBuildUrl)
 	c.VPullRequestBuildKey = getter(config.KeyPullRequestBuildKey)
-	c.VVCSConfig, _ = parseVCSConfigs(getter(config.KeyVCSConfigs), getter)
 	c.VWebhooksProcessAsync, _ = toBoolean(getter(config.KeyWebhooksProcessAsync))
-
+	c.VGithubAppId, _ = strconv.ParseInt(getter(config.KeyGithubAppId), 10, 64)
+	c.VGithubAppInstallationId, _ = strconv.ParseInt(getter(config.KeyGithubAppInstallationId), 10, 64)
+	c.VGithubAppJwtSigningKeyPEM = []byte(getter(config.KeyGithubAppJwtSigningKeyPEM))
 	c.VKafkaConfig.Obtain(getter)
 }
 
@@ -226,57 +219,4 @@ func parseNotificationConsumerConfigs(rawJson string) (map[string]config.Notific
 		return nil, fmt.Errorf(strings.Join(errors, " "))
 	}
 	return result, nil
-}
-
-type rawVCSConfig struct {
-	Platform          string  `json:"platform"`
-	APIBaseURL        string  `json:"apiBaseURL"`
-	AccessToken       *string `json:"accessToken,omitempty"`
-	AccessTokenEnvVar *string `json:"accessTokenEnvVar,omitempty"`
-}
-
-func parseVCSConfigs(jsonString string, getter func(string) string) (map[string]config.VCSConfig, error) {
-	var vcsConfigsRaw map[string]rawVCSConfig
-	if err := json.Unmarshal([]byte(jsonString), &vcsConfigsRaw); err != nil {
-		return nil, err
-	}
-
-	vcsConfigs := make(map[string]config.VCSConfig, 0)
-	for key, raw := range vcsConfigsRaw {
-		var accessToken string
-		// We do not support accessing vcs without access token
-		if raw.AccessTokenEnvVar != nil {
-			accessToken = getter(*raw.AccessTokenEnvVar)
-			if accessToken == "" {
-				return nil, fmt.Errorf("vcs %s: access-token variable %s is empty", key, *raw.AccessTokenEnvVar)
-			}
-		} else if raw.AccessToken != nil && *raw.AccessToken != "" {
-			accessToken = *raw.AccessToken
-		} else {
-			return nil, fmt.Errorf("vcs %s: neither access-token environment variable or access-token value is set", key)
-		}
-
-		platform, err := parseVCSPlatform(raw.Platform)
-		if err != nil {
-			return nil, fmt.Errorf("vcs %s: %s", key, err.Error())
-		}
-
-		vcsConfigs[key] = config.VCSConfig{
-			Platform:    platform,
-			APIBaseURL:  raw.APIBaseURL,
-			AccessToken: accessToken,
-		}
-	}
-	return vcsConfigs, nil
-}
-
-func parseVCSPlatform(value string) (config.VCSPlatform, error) {
-	switch value {
-	case "BITBUCKET_DATACENTER":
-		return config.VCSPlatformBitbucketDatacenter, nil
-	case "GITHUB":
-		return config.VCSPlatformGitHub, nil
-	default:
-		return config.VCSPlatformUnknown, fmt.Errorf("invalid vcs platform: '%s'", value)
-	}
 }

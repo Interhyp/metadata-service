@@ -22,7 +22,6 @@ import (
 	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/go-git/go-git/v5/plumbing/object"
 	"github.com/go-git/go-git/v5/plumbing/storer"
-	"github.com/go-git/go-git/v5/plumbing/transport/http"
 	"github.com/go-git/go-git/v5/storage/memory"
 )
 
@@ -248,15 +247,6 @@ func (r *Impl) Clone(ctx context.Context) error {
 		ReferenceName: plumbing.ReferenceName(r.CustomConfiguration.MetadataRepoMainline()),
 	}
 
-	if UseHTTP {
-		cloneOpts.Auth = &http.BasicAuth{
-			Username: r.CustomConfiguration.BitbucketUsername(),
-			Password: r.CustomConfiguration.BitbucketPassword(),
-		}
-		cloneOpts.URL = r.CustomConfiguration.MetadataRepoUrl()
-		cloneOpts.InsecureSkipTLS = insecureSkipTLS
-	}
-
 	repo, err := git.CloneContext(childCtxWithTimeout, memory.NewStorage(), memfs.New(), &cloneOpts)
 	if err != nil {
 		r.Logging.Logger().Ctx(ctx).Warn().Print("git clone failed - console output was: ", r.sanitizedConsoleOutput())
@@ -305,14 +295,6 @@ func (r *Impl) Pull(ctx context.Context) error {
 		Progress:      r, // implements io.Writer, sends to Debug logging
 		RemoteName:    "origin",
 		ReferenceName: plumbing.ReferenceName(r.CustomConfiguration.MetadataRepoMainline()),
-	}
-
-	if UseHTTP {
-		pullOpts.Auth = &http.BasicAuth{
-			Username: r.CustomConfiguration.BitbucketUsername(),
-			Password: r.CustomConfiguration.BitbucketPassword(),
-		}
-		pullOpts.InsecureSkipTLS = insecureSkipTLS
 	}
 
 	err = tree.PullContext(childCtxWithTimeout, &pullOpts)
@@ -414,14 +396,6 @@ func (r *Impl) Push(ctx context.Context) error {
 		Auth:       sshAuth,
 		Progress:   r, // implements io.Writer, sends to Debug logging
 		RemoteName: "origin",
-	}
-
-	if UseHTTP {
-		pushOpts.Auth = &http.BasicAuth{
-			Username: r.CustomConfiguration.BitbucketUsername(),
-			Password: r.CustomConfiguration.BitbucketPassword(),
-		}
-		pushOpts.InsecureSkipTLS = insecureSkipTLS
 	}
 
 	err = r.GitRepo.PushContext(childCtxWithTimeout, &pushOpts)

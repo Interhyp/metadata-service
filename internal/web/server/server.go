@@ -117,7 +117,6 @@ func (s *Impl) WireUp(ctx context.Context) {
 				"GET /rest/api/v1/services.*",
 				"GET /rest/api/v1/repositories.*",
 				"POST /webhooks/.*",
-				"POST /webhook/bitbucket",
 				// health (provides just up)
 				"GET /",
 				"GET /health",

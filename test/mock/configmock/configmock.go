@@ -14,11 +14,6 @@ func (c *MockConfig) UserPrefix() string {
 	return ""
 }
 
-func (c *MockConfig) VCSConfigs() map[string]config.VCSConfig {
-	//TODO implement me
-	panic("implement me")
-}
-
 func (c *MockConfig) WebhooksProcessAsync() bool {
 	//TODO implement me
 	panic("implement me")
@@ -102,32 +97,7 @@ func (c *MockConfig) MetadataRepoUrl() string {
 	panic("implement me")
 }
 
-func (c *MockConfig) BitbucketUsername() string {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (c *MockConfig) BitbucketPassword() string {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (c *MockConfig) BitbucketServer() string {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (c *MockConfig) BitbucketCacheSize() int {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (c *MockConfig) BitbucketCacheRetentionSeconds() uint32 {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (c *MockConfig) BitbucketReviewerFallback() string {
+func (c *MockConfig) ReviewerFallback() string {
 	//TODO implement me
 	panic("implement me")
 }
@@ -282,4 +252,43 @@ func (c *MockConfig) PullRequestBuildUrl() string {
 
 func (c *MockConfig) PullRequestBuildKey() string {
 	return "metadata-service"
+}
+
+func (c *MockConfig) GithubAppId() int64 {
+	return int64(1)
+}
+
+func (c *MockConfig) GithubAppInstallationId() int64 {
+	return int64(1)
+}
+
+func (c *MockConfig) GithubAppJwtSigningKeyPEM() []byte {
+	return []byte(`-----BEGIN PRIVATE KEY-----
+MIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQDWyiEOZQ1CEjRL
+qysxSc4WMm7mNaQMndu9R45ZcmsimNAnH14J2Ooj2j5/andNBo51QiuRiJea2nZZ
+/SLD4pcd4lxRbDvY7QhLY0O8MnpHg3V2DnsJctkR8LOwwuHRORyjCYMripltk9Cj
+DeTwfU1AFuf9F2zYYbay03rWOc1exZFHC0eWEhJN9r0MVE99N0MVfGbb8l5BgfPP
+BQH7/B1A8AlqqaVnPwGUBa2jw78e5edsLbQAPt/3FWKbkOshE52WbkCes021bUwj
+5j8wJhi4+UmrUvNvELLi4+thp1tU/xZ+Lu880xm7ajF1DKXo/CHPEQ7HDrjfwcdk
+2LdmgfJTAgMBAAECggEAXQD57ks4Qe8zAL7VvYpZN8hPt9PrPGFQKDXnP/joxfrI
+SuBsrjPkMnEKVc6qaMpZfhGQXvx3tOA6lf2jg5FGYPTGh6UnhucgC9CoIEH1K6kS
+//MGOJGnx3pjvDquYBNsQHZae0yQ4d863JekFbQT8pfYjQELKuionOcwjblKoWl8
+YgiA496qVG18EOVnS3kHj5H1wJD2Xf3ptLKI+bjXAfXaiBn4fGdlqE4fHuZLHd8d
+5lAcl5TU2s6G2KyXJyvMeD82/fUep+oTnRTHMtEqqDlFXmqKC6AIJm16t/IaGo4c
+Ym87dbYJwHD+0kERMpMqykre/AlmWlL2Lq0lL8WtgQKBgQDcBqK8gR3tVgChRve7
+cep5ocJYjm2RRBqbwzeOpM4tSnlJnlpIfGFLw3YFFGFsKja6aV7pr4LHk1EIslVo
+y2lbQnRIEGk0jGx9PgSp4dd5lsAnW/wBnwmEBNhEN1nL3lya2lXfKwUTyEXNyaXX
+vcXaiMt3fwzD/27SjvdoYMhogQKBgQD56FJTHqofl1K2I4n/nCMtGqxq2MzU1Gif
+h4NVxpD2Gn70P3h0MX+0M9wfgT1T7JFMsI1VRazncsLoDDsb9r5+EPOYY0+wv4Uy
+83awKUazglYGEBDHHRdbDJkx3gsp583aY73yJrGGh5IcuW0UfhY32mKukgcj5uSn
+Wvn13uvQ0wKBgAbTSd8RHk2Lem+GVQ8ChKSLSQ0YNfvooe6tCp8pK6AqDEMlX2Wa
+PiZshM+5hyAk2xfDRwd2w1bPkhbz+URL8xO6pwLJR4oyxPbJorlmYRnLfGB8MQAX
+3+Kxh8ft86IoXrULCtjma7zmXIv6smNT5rxVvAIT9eBqnxR3DOO3BOCBAoGAKHNi
+X/Hmt5ZW3QSDocw0JWjb36+X+BsplCjrKUcqz6saQY7EgIpCkXiTeMYCl0MDgdZS
+CittAUmiIs1YA/68dstnopLwoztc5BJkc786onPGWNTg4lnjHem8IkY+qFnNCDx8
+0mVQ9uWa0OtyrI58Ki4/KuKYJUeKW0xuiU27/eECgYBZS8SpocgTeHSs6tC4mYr/
+GHC84dc4JrBll9zVtW3amw5+eUU31h48mEEFM4Sph4YlMIEenNiy0+6QAr3P212B
++r5dw0/D3o4wp7VYaieS11g2ZrMgLVFbKCvyH4rNdPn6QgSsxK22SnoPDkiJAbMS
+0TEd3w/5KBsZU2kLdnQ0/Q==
+-----END PRIVATE KEY-----`)
 }
