@@ -7,11 +7,9 @@ import (
 	"github.com/Interhyp/go-backend-service-common/api/apierrors"
 	"github.com/Interhyp/go-backend-service-common/web/util/contexthelper"
 	"github.com/Interhyp/metadata-service/internal/acorn/config"
-	"github.com/Interhyp/metadata-service/internal/acorn/repository"
 	"github.com/Interhyp/metadata-service/internal/acorn/service"
 	aulogging "github.com/StephanHCB/go-autumn-logging"
 	githubhook "github.com/go-playground/webhooks/v6/github"
-	gogithub "github.com/google/go-github/v69/github"
 	"github.com/google/uuid"
 	"net/http"
 	"time"
@@ -19,35 +17,28 @@ import (
 
 const (
 	webhookContextTimeout = 10 * time.Minute
-	checkname             = "only-valid-metadata-changes"
 )
 
 type Impl struct {
 	CustomConfiguration config.CustomConfiguration
-	Logging             librepo.Logging
 	Timestamp           librepo.Timestamp
-	Repositories        service.Repositories
-	Github              repository.Github
 
-	Updater  service.Updater
-	ghClient *gogithub.Client
+	Updater   service.Updater
+	Validator service.Validator
 }
 
 func New(
 	configuration librepo.Configuration,
-	logging librepo.Logging,
 	timestamp librepo.Timestamp,
-	repositories service.Repositories,
 	updater service.Updater,
-	Github repository.Github,
+	validator service.Validator,
+
 ) service.WebhooksHandler {
 	return &Impl{
 		CustomConfiguration: config.Custom(configuration),
-		Logging:             logging,
 		Timestamp:           timestamp,
 		Updater:             updater,
-		Repositories:        repositories,
-		Github:              Github,
+		Validator:           validator,
 	}
 }
 
@@ -137,7 +128,7 @@ func (h *Impl) processGitHubCheckSuiteEvent(
 	case "requested":
 		fallthrough
 	case "rerequested":
-		return h.performValidationCheckRun(ctx, payload.Repository.Owner.Login, payload.Repository.Name, payload.CheckSuite.HeadSHA)
+		return h.Validator.PerformValidationCheckRun(ctx, payload.Repository.Owner.Login, payload.Repository.Name, payload.CheckSuite.HeadSHA)
 	}
 	return nil
 }
@@ -148,7 +139,7 @@ func (h *Impl) processGitHubCheckRunEvent(
 ) error {
 	switch payload.Action {
 	case "rerequested":
-		return h.performValidationCheckRun(ctx, payload.Repository.Owner.Login, payload.Repository.Name, payload.CheckRun.HeadSHA)
+		return h.Validator.PerformValidationCheckRun(ctx, payload.Repository.Owner.Login, payload.Repository.Name, payload.CheckRun.HeadSHA)
 	}
 	return nil
 }

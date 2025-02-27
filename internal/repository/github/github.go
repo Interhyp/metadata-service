@@ -3,17 +3,20 @@ package githubclient
 import (
 	"context"
 	"fmt"
+	librepo "github.com/Interhyp/go-backend-service-common/acorns/repository"
 	"github.com/Interhyp/metadata-service/internal/acorn/repository"
 	"github.com/google/go-github/v69/github"
 )
 
 type Impl struct {
-	client *github.Client
+	client    *github.Client
+	Timestamp librepo.Timestamp
 }
 
-func New(client *github.Client) *Impl {
+func New(timestamp librepo.Timestamp, client *github.Client) *Impl {
 	return &Impl{
-		client: client,
+		Timestamp: timestamp,
+		client:    client,
 	}
 }
 
@@ -21,7 +24,10 @@ func (r *Impl) StartCheckRun(ctx context.Context, owner, repoName, checkName, sh
 	result, _, err := r.client.Checks.CreateCheckRun(ctx, owner, repoName, github.CreateCheckRunOptions{
 		Name:    checkName,
 		HeadSHA: sha,
-		Status:  github.Ptr("in_progress"),
+		StartedAt: &github.Timestamp{
+			Time: r.Timestamp.Now(),
+		},
+		Status: github.Ptr("in_progress"),
 	})
 	if err != nil {
 		return -1, err
@@ -38,6 +44,9 @@ func (r *Impl) ConcludeCheckRun(ctx context.Context, owner, repoName, checkName 
 		ExternalID: nil,
 		Status:     github.Ptr("completed"),
 		Conclusion: github.Ptr(string(conclusion)),
+		CompletedAt: &github.Timestamp{
+			Time: r.Timestamp.Now(),
+		},
 		Output: &github.CheckRunOutput{
 			Title:   github.Ptr(details.Title),
 			Summary: github.Ptr(details.Summary),
