@@ -89,11 +89,11 @@ func ConstructFilenameV4WithBody(method string, requestUrl string, body interfac
 		}
 		readerField := v.FieldByName("Reader")
 		if v.Kind() == reflect.Struct && !readerField.IsValid() {
-			json, err := json.Marshal(body)
+			jsonBytes, err := json.Marshal(body)
 			if err != nil {
 				return "", err
 			}
-			parsedUrl.RawQuery = string(json)
+			parsedUrl.RawQuery = string(jsonBytes)
 		} else if readerField.IsValid() {
 			parsedUrl.RawQuery = fmt.Sprintf("%v", body)
 		}
@@ -189,7 +189,7 @@ func tstSetup(configPath string) error {
 
 	security.Now = fakeNow
 
-	for identifier, _ := range notifierImpl.Clients {
+	for identifier := range notifierImpl.Clients {
 		notifierImpl.Clients[identifier] = &notifiermock.NotifierClientMock{SentNotifications: make([]string, 0)}
 	}
 

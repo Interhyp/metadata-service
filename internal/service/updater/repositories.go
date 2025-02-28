@@ -194,19 +194,19 @@ func (s *Impl) updateIndividualRepositories(ctx context.Context, repositoryKeysM
 }
 
 func (s *Impl) RefreshRepository(ctx context.Context, key string) error {
-	repository, err := s.Mapper.GetRepository(ctx, key)
+	repo, err := s.Mapper.GetRepository(ctx, key)
 	if err != nil {
 		return err
 	}
 
-	s.Cache.PutRepository(ctx, key, repository)
+	s.Cache.PutRepository(ctx, key, repo)
 	s.Logging.Logger().Ctx(ctx).Debug().Printf("repository %s updated in cache per request", key)
 
 	return nil
 }
 
 func (s *Impl) updateIndividualRepository(ctx context.Context, key string, isNew bool) error {
-	repository, err := s.Mapper.GetRepository(ctx, key)
+	repo, err := s.Mapper.GetRepository(ctx, key)
 	if err != nil {
 		if isNew {
 			s.Logging.Logger().Ctx(ctx).Warn().Printf("failed to get initial info for repository %s from metadata - repository will NOT be present until next run: %s", key, err.Error())
@@ -218,16 +218,16 @@ func (s *Impl) updateIndividualRepository(ctx context.Context, key string, isNew
 		return err
 	} else {
 		cached, cacheErr := s.Cache.GetRepository(ctx, key)
-		s.Cache.PutRepository(ctx, key, repository)
+		s.Cache.PutRepository(ctx, key, repo)
 		if isNew {
-			err = s.Notifier.PublishCreation(ctx, key, notifier.AsPayload(repository))
+			err = s.Notifier.PublishCreation(ctx, key, notifier.AsPayload(repo))
 			if err != nil {
 				s.Logging.Logger().Ctx(ctx).Warn().WithErr(err).Printf("error publishing creation of repository %s", key)
 			}
 			s.Logging.Logger().Ctx(ctx).Info().Printf("new repository %s added to cache", key)
 		} else {
-			if cacheErr == nil && !equalExceptCacheInfo(cached, repository) {
-				err = s.Notifier.PublishModification(ctx, key, notifier.AsPayload(repository))
+			if cacheErr == nil && !equalExceptCacheInfo(cached, repo) {
+				err = s.Notifier.PublishModification(ctx, key, notifier.AsPayload(repo))
 				if err != nil {
 					s.Logging.Logger().Ctx(ctx).Warn().WithErr(err).Printf("error publishing modification of repository %s", key)
 				}
