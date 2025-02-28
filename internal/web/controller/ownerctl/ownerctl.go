@@ -217,8 +217,8 @@ func (c *Impl) validOwnerAlias(ctx context.Context, owner string) apierrors.Anno
 	c.Logging.Logger().Ctx(ctx).Info().Printf("owner parameter %v invalid", url.QueryEscape(owner))
 	permitted := c.CustomConfiguration.OwnerAliasPermittedRegex().String()
 	prohibited := c.CustomConfiguration.OwnerAliasProhibitedRegex().String()
-	max := c.CustomConfiguration.OwnerAliasMaxLength()
-	return apierrors.NewBadRequestError("owner.invalid.alias", fmt.Sprintf("owner alias must match %s, is not allowed to match %s and may have up to %d characters", permitted, prohibited, max), nil, c.Timestamp.Now())
+	maxLength := c.CustomConfiguration.OwnerAliasMaxLength()
+	return apierrors.NewBadRequestError("owner.invalid.alias", fmt.Sprintf("owner alias must match %s, is not allowed to match %s and may have up to %d characters", permitted, prohibited, maxLength), nil, c.Timestamp.Now())
 }
 
 func (c *Impl) parseBodyToOwnerDto(ctx context.Context, r *http.Request) (openapi.OwnerDto, error) {

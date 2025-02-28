@@ -234,8 +234,8 @@ func (c *Impl) validServiceName(ctx context.Context, name string) apierrors.Anno
 	c.Logging.Logger().Ctx(ctx).Info().Printf("service parameter %v invalid", name)
 	permitted := c.CustomConfiguration.ServiceNamePermittedRegex().String()
 	prohibited := c.CustomConfiguration.ServiceNameProhibitedRegex().String()
-	max := c.CustomConfiguration.ServiceNameMaxLength()
-	return apierrors.NewBadRequestError("service.invalid.name", fmt.Sprintf("service name must match %s, is not allowed to match %s and may have up to %d characters", permitted, prohibited, max), nil, c.Timestamp.Now())
+	maxLength := c.CustomConfiguration.ServiceNameMaxLength()
+	return apierrors.NewBadRequestError("service.invalid.name", fmt.Sprintf("service name must match %s, is not allowed to match %s and may have up to %d characters", permitted, prohibited, maxLength), nil, c.Timestamp.Now())
 }
 
 func (c *Impl) parseBodyToServiceDto(ctx context.Context, r *http.Request) (openapi.ServiceDto, error) {

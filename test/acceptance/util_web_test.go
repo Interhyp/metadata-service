@@ -28,8 +28,8 @@ func tstAssert(t *testing.T, response tstWebResponse, err error, expectedStatus 
 
 	if os.Getenv("REPLACE_TEST_RECORDINGS") != "" {
 		// write recorded value if environment variable set
-		bytes := tstPrettyprintJsonObject(response.body)
-		_ = os.WriteFile(fmt.Sprintf("../resources/acceptance-expected/%s", expectedBodyFile), bytes, 0644)
+		prettyBytes := tstPrettyprintJsonObject(response.body)
+		_ = os.WriteFile(fmt.Sprintf("../resources/acceptance-expected/%s", expectedBodyFile), prettyBytes, 0644)
 	}
 
 	expectedBody := tstReadExpected(expectedBodyFile)
