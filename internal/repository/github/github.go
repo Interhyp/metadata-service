@@ -2,6 +2,7 @@ package githubclient
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	librepo "github.com/Interhyp/go-backend-service-common/acorns/repository"
 	"github.com/Interhyp/metadata-service/internal/acorn/repository"
@@ -38,52 +39,51 @@ func (r *Impl) StartCheckRun(ctx context.Context, owner, repoName, checkName, sh
 	return result.GetID(), err
 }
 
-func (r *Impl) ConcludeCheckRun(ctx context.Context, owner, repoName, checkName string, checkRunId int64, conclusion repository.CheckRunConclusion, details repository.CheckRunDetails) error {
+func (r *Impl) ConcludeCheckRun(ctx context.Context, owner, repoName, checkName string, checkRunId int64, conclusion repository.CheckRunConclusion, output github.CheckRunOutput) error {
+	annotationLimit := 50
+	annotations := output.Annotations
+	errs := make([]error, 0)
+	for len(annotations) > annotationLimit {
+		batch := annotations[:annotationLimit]
+		annotations = annotations[annotationLimit:]
+		_, _, err := r.client.Checks.UpdateCheckRun(ctx, owner, repoName, checkRunId, github.UpdateCheckRunOptions{
+			Name:   checkName,
+			Status: github.Ptr("in_progress"),
+			Output: &github.CheckRunOutput{
+				Title:       output.Title,
+				Summary:     output.Summary,
+				Annotations: batch,
+			},
+		})
+		errs = append(errs, err)
+	}
+	text := output.Text
+	if text != nil {
+		runes := []rune(*text)
+		// If body is longer than 65535 chars, Github returns 422 Invalid request with message "Only 65535 characters are allowed; 79127 were supplied."
+		ghCharLimit := 65535
+		if len(runes) > ghCharLimit {
+			warning := []rune("# :warning: Too many errors for one message. Fix issues below and run check again against fixed commit.\n")
+			maxLength := ghCharLimit - len(warning)
+			updated := string(append(warning, runes[:maxLength]...))
+			text = &updated
+		}
+	}
 	_, _, err := r.client.Checks.UpdateCheckRun(ctx, owner, repoName, checkRunId, github.UpdateCheckRunOptions{
 		Name:       checkName,
-		ExternalID: nil,
 		Status:     github.Ptr("completed"),
 		Conclusion: github.Ptr(string(conclusion)),
 		CompletedAt: &github.Timestamp{
 			Time: r.Timestamp.Now(),
 		},
 		Output: &github.CheckRunOutput{
-			Title:   github.Ptr(details.Title),
-			Summary: github.Ptr(details.Summary),
-			Text:    github.Ptr(details.BodyText),
+			Title:       output.Title,
+			Summary:     output.Summary,
+			Text:        text,
+			Annotations: annotations,
+			Images:      output.Images,
 		},
 	})
-	if err != nil {
-		return err
-	}
-
-	return err
-}
-
-func (r *Impl) GetChangedFilesForCommit(ctx context.Context, owner, repo, sha string) ([]repository.File, error) {
-	commit, _, err := r.client.Repositories.GetCommit(ctx, owner, repo, sha, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	result := make([]repository.File, 0)
-	for _, change := range commit.Files {
-		contents, _, _, err := r.client.Repositories.GetContents(ctx, owner, repo, change.GetFilename(), &github.RepositoryContentGetOptions{
-			Ref: sha,
-		})
-		if err != nil {
-			// ignore go to next changed file
-			continue
-		}
-		content, err := contents.GetContent()
-		if err != nil || content == "" {
-			// ignore go to next changed file
-			continue
-		}
-		result = append(result, repository.File{
-			Path:     change.GetFilename(),
-			Contents: content,
-		})
-	}
-	return result, nil
+	errs = append(errs, err)
+	return errors.Join(errs...)
 }
