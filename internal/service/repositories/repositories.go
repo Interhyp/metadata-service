@@ -69,10 +69,10 @@ func (s *Impl) ValidRepositoryKey(ctx context.Context, key string) apierrors.Ann
 	s.Logging.Logger().Ctx(ctx).Info().Printf("repository parameter %v invalid", url.QueryEscape(key))
 	permitted := s.CustomConfiguration.RepositoryNamePermittedRegex().String()
 	prohibited := s.CustomConfiguration.RepositoryNameProhibitedRegex().String()
-	max := s.CustomConfiguration.RepositoryNameMaxLength()
+	maxLength := s.CustomConfiguration.RepositoryNameMaxLength()
 	repoTypes := s.CustomConfiguration.RepositoryTypes()
 	separator := s.CustomConfiguration.RepositoryKeySeparator()
-	details := fmt.Sprintf("repository name must match %s, is not allowed to match %s and may have up to %d characters; repository type must be one of %v and name and type must be separated by a %s character", permitted, prohibited, max, repoTypes, separator)
+	details := fmt.Sprintf("repository name must match %s, is not allowed to match %s and may have up to %d characters; repository type must be one of %v and name and type must be separated by a %s character", permitted, prohibited, maxLength, repoTypes, separator)
 	return apierrors.NewBadRequestError("repository.invalid", details, nil, s.Timestamp.Now())
 }
 
@@ -109,12 +109,12 @@ func (s *Impl) GetRepositories(ctx context.Context,
 	useReferencedRepositoriesMap := false
 	referencedRepositoriesMap := make(map[string]bool, 0)
 	if serviceNameFilter != "" {
-		service, err := s.Cache.GetService(ctx, serviceNameFilter)
+		svc, err := s.Cache.GetService(ctx, serviceNameFilter)
 		if err != nil {
 			return result, err
 		}
 		useReferencedRepositoriesMap = true
-		for _, repoKey := range service.Repositories {
+		for _, repoKey := range svc.Repositories {
 			referencedRepositoriesMap[repoKey] = true
 		}
 	}
@@ -125,7 +125,7 @@ func (s *Impl) GetRepositories(ctx context.Context,
 	}
 	for _, key := range keys {
 		if !useReferencedRepositoriesMap || referencedRepositoriesMap[key] {
-			repository, err := s.GetRepository(ctx, key)
+			repo, err := s.GetRepository(ctx, key)
 			if err != nil {
 				// repository not found errors are ok, the cache may have been changed concurrently, just drop the entry
 				if !apierrors.IsNotFoundError(err) {
@@ -140,11 +140,11 @@ func (s *Impl) GetRepositories(ctx context.Context,
 					keyType = keyComponents[1]
 				}
 
-				if urlFilter == "" || urlFilter == repository.Url {
-					if ownerAliasFilter == "" || ownerAliasFilter == repository.Owner {
+				if urlFilter == "" || urlFilter == repo.Url {
+					if ownerAliasFilter == "" || ownerAliasFilter == repo.Owner {
 						if nameFilter == "" || nameFilter == keyName {
 							if typeFilter == "" || typeFilter == keyType {
-								result.Repositories[key] = repository
+								result.Repositories[key] = repo
 							}
 						}
 					}

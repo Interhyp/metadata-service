@@ -234,14 +234,14 @@ func (s *Impl) updateIndividualService(ctx context.Context, name string, isNew b
 		if isNew {
 			err = s.Notifier.PublishCreation(ctx, name, notifier.AsPayload(service))
 			if err != nil {
-				s.Logging.Logger().Ctx(ctx).Warn().WithErr(err).Printf("error publishing creation of service %s", service)
+				s.Logging.Logger().Ctx(ctx).Warn().WithErr(err).Printf("error publishing creation of service %s", name)
 			}
 			s.Logging.Logger().Ctx(ctx).Info().Printf("new service %s added to cache", name)
 		} else {
 			if cacheErr == nil && !equalExceptCacheInfo(cached, service) {
 				err = s.Notifier.PublishModification(ctx, name, notifier.AsPayload(service))
 				if err != nil {
-					s.Logging.Logger().Ctx(ctx).Warn().WithErr(err).Printf("error publishing modification of service %s", service)
+					s.Logging.Logger().Ctx(ctx).Warn().WithErr(err).Printf("error publishing modification of service %s", name)
 				}
 			}
 
