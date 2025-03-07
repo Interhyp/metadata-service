@@ -17,4 +17,6 @@ type ConditionReferenceDto struct {
 	RefMatcher string `yaml:"refMatcher" json:"refMatcher"`
 	// list of users or groups for which this protection does not apply.
 	Exemptions []string `yaml:"exemptions,omitempty" json:"exemptions,omitempty"`
+	// The expected source for the required conditional build.
+	Source *string `yaml:"source,omitempty" json:"source,omitempty"`
 }
