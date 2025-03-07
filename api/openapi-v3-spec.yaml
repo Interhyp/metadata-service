@@ -2259,6 +2259,9 @@ components:
           items:
             type: string
             description: 'A user or group. Groups are denoted by @<OWNERNAME>.<GROUPNAME>.'
+        source:
+          type: string
+          description: The expected source for the required conditional build.
       required:
         - refMatcher
     ExcludeMergeCheckUserDto:
