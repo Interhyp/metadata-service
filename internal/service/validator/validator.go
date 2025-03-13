@@ -153,13 +153,9 @@ func checkRunErrorResult(ctx context.Context, summary string, err error) (reposi
 }
 
 func (h *Impl) validateFiles(ctx context.Context, filesys billy.Filesystem) (gogithub.CheckRunOutput, error) {
-	repositories, err := h.Repositories.GetRepositories(ctx, "", "", "", "", "")
-	if err != nil {
-		return gogithub.CheckRunOutput{}, err
-	}
-	johnnie := NewValidationWalker(filesys, repositories)
+	johnnie := NewValidationWalker(filesys)
 
-	err = util.Walk(filesys, "/", johnnie.WalkerFunc)
+	err := util.Walk(filesys, "/", johnnie.WalkerFunc)
 	if err != nil {
 		return gogithub.CheckRunOutput{}, err
 	}

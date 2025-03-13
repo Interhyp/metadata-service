@@ -2,7 +2,6 @@ package validator
 
 import (
 	"fmt"
-	openapi "github.com/Interhyp/metadata-service/api"
 	"github.com/google/go-github/v68/github"
 	gogithub "github.com/google/go-github/v69/github"
 	"github.com/stretchr/testify/require"
@@ -21,8 +20,15 @@ func TestValidationWalker_validateYamlFile(t *testing.T) {
 		path     string
 		contents string
 	}
+	type mock struct {
+		walkedRepos walkedRepos
+	}
+	hasMock := func(m mock) bool {
+		return !reflect.DeepEqual(m, mock{walkedRepos: walkedRepos{}})
+	}
 	tests := []struct {
 		name string
+		mock mock
 		args args
 		want want
 	}{
@@ -274,6 +280,14 @@ configuration:
 		},
 		{
 			name: "invalid repo - duplicate url",
+			mock: mock{
+				walkedRepos: walkedRepos{
+					urlToPath: map[string]string{
+						"existing-repo-url": "owners/some-owner/repositories/other-repository.none.yaml",
+					},
+					keyToPath: make(map[string]string),
+				},
+			},
 			args: args{
 				path: "owners/some-owner/repositories/repository.none.yaml",
 				contents: `url: existing-repo-url
@@ -288,7 +302,38 @@ configuration:
 						StartLine:       github.Ptr(1),
 						EndLine:         github.Ptr(1),
 						AnnotationLevel: github.Ptr("failure"),
-						Message:         github.Ptr("Repository url already used by existing-repo"),
+						Message:         github.Ptr("Repository url already used by owners/some-owner/repositories/other-repository.none.yaml"),
+					},
+				},
+				ignored: make(map[string]string),
+				errors:  make(map[string]error),
+			},
+		},
+		{
+			name: "invalid repo - duplicate key",
+			mock: mock{
+				walkedRepos: walkedRepos{
+					urlToPath: make(map[string]string),
+					keyToPath: map[string]string{
+						"repository.none": "owners/some-other-owner/repositories/repository.none.yaml",
+					},
+				},
+			},
+			args: args{
+				path: "owners/some-owner/repositories/repository.none.yaml",
+				contents: `url: existing-repo-url
+mainline: master
+configuration:
+  requireSuccessfulBuilds: 2`,
+			},
+			want: want{
+				result: []*gogithub.CheckRunAnnotation{
+					{
+						Path:            github.Ptr("owners/some-owner/repositories/repository.none.yaml"),
+						StartLine:       github.Ptr(1),
+						EndLine:         github.Ptr(1),
+						AnnotationLevel: github.Ptr("failure"),
+						Message:         github.Ptr("Repository key already used by owners/some-other-owner/repositories/repository.none.yaml"),
 					},
 				},
 				ignored: make(map[string]string),
@@ -298,13 +343,10 @@ configuration:
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			v := NewValidationWalker(nil, openapi.RepositoryListDto{
-				Repositories: map[string]openapi.RepositoryDto{
-					"existing-repo": {
-						Url: "existing-repo-url",
-					},
-				},
-			})
+			v := NewValidationWalker(nil)
+			if hasMock(tt.mock) {
+				v.walkedRepos = tt.mock.walkedRepos
+			}
 			if got := v.validateYamlFile(tt.args.path, tt.args.contents); !reflect.DeepEqual(got, tt.want.result) {
 				t.Errorf("validateYamlFile() = %v, want %v", printAnnotations(got), printAnnotations(tt.want.result))
 			}
