@@ -14,24 +14,28 @@ import (
 	"strings"
 )
 
+type walkedRepos struct {
+	urlToPath map[string]string
+	keyToPath map[string]string
+}
 type ValidationWalker struct {
 	fs                billy.Filesystem
 	Annotations       []*gogithub.CheckRunAnnotation
 	Errors            map[string]error
 	IgnoredWithReason map[string]string
-	repoUrlsToKey     map[string]string
+	walkedRepos       walkedRepos
 }
 
-func NewValidationWalker(filesys billy.Filesystem, repos openapi.RepositoryListDto) *ValidationWalker {
+func NewValidationWalker(filesys billy.Filesystem) *ValidationWalker {
 	validator := ValidationWalker{
 		fs:                filesys,
 		Annotations:       make([]*gogithub.CheckRunAnnotation, 0),
 		Errors:            make(map[string]error),
-		repoUrlsToKey:     make(map[string]string),
 		IgnoredWithReason: make(map[string]string),
-	}
-	for repoKey, repo := range repos.Repositories {
-		validator.repoUrlsToKey[repo.Url] = repoKey
+		walkedRepos: walkedRepos{
+			urlToPath: make(map[string]string),
+			keyToPath: make(map[string]string),
+		},
 	}
 	return &validator
 }
@@ -146,23 +150,49 @@ func (v *ValidationWalker) validateRepositoryFile(path string, contents string) 
 	_, after, found := strings.Cut(path, "/repositories/")
 	repoKey, isYaml := strings.CutSuffix(after, ".yaml")
 	if found && isYaml {
-		for lineNum, line := range strings.Split(contents, "\n") {
-			if strings.HasPrefix(line, "url: ") {
-				url := strings.TrimSpace(strings.ReplaceAll(line, "url: ", ""))
-				if otherRepoKey, found := v.repoUrlsToKey[url]; found && otherRepoKey != repoKey {
-					parseAnnotations = append(parseAnnotations, &gogithub.CheckRunAnnotation{
-						Path: gogithub.Ptr(path),
-						// line numbers start with 1
-						// see https://docs.github.com/en/enterprise-cloud@latest/rest/checks/runs?apiVersion=2022-11-28#update-a-check-run
-						StartLine:       gogithub.Ptr(lineNum + 1),
-						EndLine:         gogithub.Ptr(lineNum + 1),
-						AnnotationLevel: gogithub.Ptr("failure"),
-						Message:         gogithub.Ptr(fmt.Sprintf("Repository url already used by %s", otherRepoKey)),
-					})
-				}
-			}
+		if annotation := v.checkKeyDuplication(path, repoKey); annotation != nil {
+			parseAnnotations = append(parseAnnotations, annotation)
+		}
+		if annotation := v.checkUrlDuplication(path, contents); annotation != nil {
+			parseAnnotations = append(parseAnnotations, annotation)
 		}
 	}
 
 	return parseAnnotations
+}
+
+func (v *ValidationWalker) checkKeyDuplication(path string, repoKey string) *gogithub.CheckRunAnnotation {
+	var annotation *gogithub.CheckRunAnnotation
+	if otherFile, isDuplicatedKey := v.walkedRepos.keyToPath[repoKey]; isDuplicatedKey {
+		annotation = &gogithub.CheckRunAnnotation{
+			Path:            gogithub.Ptr(path),
+			StartLine:       gogithub.Ptr(1),
+			EndLine:         gogithub.Ptr(1),
+			AnnotationLevel: gogithub.Ptr("failure"),
+			Message:         gogithub.Ptr(fmt.Sprintf("Repository key already used by %s", otherFile)),
+		}
+	} else {
+		v.walkedRepos.keyToPath[repoKey] = path
+	}
+	return annotation
+}
+
+func (v *ValidationWalker) checkUrlDuplication(path string, contents string) *gogithub.CheckRunAnnotation {
+	for lineNum, line := range strings.Split(contents, "\n") {
+		if strings.HasPrefix(line, "url: ") {
+			url := strings.TrimSpace(strings.ReplaceAll(line, "url: ", ""))
+			if otherFile, isDuplicatedUrl := v.walkedRepos.urlToPath[url]; isDuplicatedUrl {
+				return &gogithub.CheckRunAnnotation{
+					Path:            gogithub.Ptr(path),
+					StartLine:       gogithub.Ptr(lineNum + 1),
+					EndLine:         gogithub.Ptr(lineNum + 1),
+					AnnotationLevel: gogithub.Ptr("failure"),
+					Message:         gogithub.Ptr(fmt.Sprintf("Repository url already used by %s", otherFile)),
+				}
+			} else {
+				v.walkedRepos.urlToPath[url] = path
+			}
+		}
+	}
+	return nil
 }
