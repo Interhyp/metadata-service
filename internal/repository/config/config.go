@@ -24,27 +24,6 @@ var CustomConfigItems = []auconfigapi.ConfigItem{
 		Validate:    auconfigenv.ObtainNotEmptyValidator(),
 	},
 	{
-		Key:         config.KeySSHPrivateKey,
-		EnvName:     config.KeySSHPrivateKey,
-		Description: "ssh private key used to access the vcs",
-		Default:     "",
-		Validate:    auconfigenv.ObtainNotEmptyValidator(),
-	},
-	{
-		Key:         config.KeySSHPrivateKeyPassword,
-		EnvName:     config.KeySSHPrivateKeyPassword,
-		Description: "ssh private key password",
-		Default:     "",
-		Validate:    auconfigapi.ConfigNeedsNoValidation,
-	},
-	{
-		Key:         config.KeySSHMetadataRepositoryUrl,
-		EnvName:     config.KeySSHMetadataRepositoryUrl,
-		Default:     "",
-		Description: "ssh git clone url for service-metadata repository",
-		Validate:    auconfigenv.ObtainNotEmptyValidator(),
-	},
-	{
 		Key:         config.KeyReviewerFallback,
 		EnvName:     config.KeyReviewerFallback,
 		Default:     "",

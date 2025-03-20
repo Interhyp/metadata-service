@@ -13,6 +13,7 @@ import (
 	"github.com/Interhyp/metadata-service/internal/acorn/controller"
 	"github.com/Interhyp/metadata-service/internal/acorn/repository"
 	"github.com/Interhyp/metadata-service/internal/acorn/service"
+	"github.com/Interhyp/metadata-service/internal/repository/authProvider"
 	"github.com/Interhyp/metadata-service/internal/repository/cache"
 	"github.com/Interhyp/metadata-service/internal/repository/config"
 	"github.com/Interhyp/metadata-service/internal/repository/github"
@@ -21,7 +22,6 @@ import (
 	"github.com/Interhyp/metadata-service/internal/repository/kafka"
 	"github.com/Interhyp/metadata-service/internal/repository/metadata"
 	"github.com/Interhyp/metadata-service/internal/repository/notifier"
-	"github.com/Interhyp/metadata-service/internal/repository/sshAuthProvider"
 	"github.com/Interhyp/metadata-service/internal/service/mapper"
 	"github.com/Interhyp/metadata-service/internal/service/owners"
 	"github.com/Interhyp/metadata-service/internal/service/repositories"
@@ -54,9 +54,10 @@ type ApplicationImpl struct {
 	IdentityProvider repository.IdentityProvider
 	HostIP           repository.HostIP
 	Timestamp        librepo.Timestamp
-	SshAuthProvider  repository.SshAuthProvider
+	AuthProvider     repository.AuthProvider
 	Notifier         repository.Notifier
 	Cache            repository.Cache
+	BaseRT           http.RoundTripper
 	Github           repository.Github
 
 	// services (business logic)
@@ -153,13 +154,21 @@ func (a *ApplicationImpl) ConstructConfigLoggingVaultTimestamp() error {
 
 func (a *ApplicationImpl) ConstructRepositories() error {
 	// construct the components that talk to the external world (must ensure correct order yourself), allowing for test overrides where needed
-	a.SshAuthProvider = sshAuthProvider.New(a.Config, a.CustomConfig, a.Logging)
-	if err := a.SshAuthProvider.Setup(); err != nil {
+	if err := a.createGithub(); err != nil {
+		return err
+	}
+
+	authProvider, err := authProvider.New(a.Config, a.CustomConfig, a.Logging, a.BaseRT)
+	if err != nil {
+		return err
+	}
+	a.AuthProvider = authProvider
+	if err := a.AuthProvider.Setup(); err != nil {
 		return err
 	}
 
 	if a.Metadata == nil {
-		a.Metadata = metadata.New(a.Config, a.CustomConfig, a.Logging, a.Timestamp, a.SshAuthProvider)
+		a.Metadata = metadata.New(a.Config, a.CustomConfig, a.Logging, a.Timestamp, a.AuthProvider)
 	}
 	if err := a.Metadata.Setup(); err != nil {
 		return err
@@ -191,10 +200,6 @@ func (a *ApplicationImpl) ConstructRepositories() error {
 
 	a.Cache = cache.New(a.Config, a.CustomConfig, a.Logging, a.Timestamp)
 	if err := a.Cache.Setup(); err != nil {
-		return err
-	}
-
-	if err := a.createGithub(); err != nil {
 		return err
 	}
 
@@ -233,7 +238,7 @@ func (a *ApplicationImpl) ConstructServices() error {
 		return err
 	}
 
-	a.Validator = validator.New(a.Config, a.Repositories, a.Github, a.SshAuthProvider)
+	a.Validator = validator.New(a.Config, a.Repositories, a.Github, a.AuthProvider)
 
 	if a.WebhooksHandler == nil {
 		a.WebhooksHandler = webhookshandler.New(a.Config, a.Timestamp, a.Updater, a.Validator)
@@ -264,6 +269,7 @@ func (a *ApplicationImpl) ConstructControllers() error {
 func (a *ApplicationImpl) createGithub() error {
 	if a.Github == nil {
 		recorder := aurestrecorder.NewRecorderRoundTripper(http.DefaultTransport)
+		a.BaseRT = recorder
 		authTr, err := ghinstallation.New(recorder, a.CustomConfig.GithubAppId(), a.CustomConfig.GithubAppInstallationId(), a.CustomConfig.GithubAppJwtSigningKeyPEM())
 		paginator := githubpagination.NewClient(authTr,
 			githubpagination.WithPerPage(100),

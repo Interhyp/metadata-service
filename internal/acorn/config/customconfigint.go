@@ -19,10 +19,6 @@ type CustomConfiguration interface {
 	BasicAuthUsername() string
 	BasicAuthPassword() string
 
-	SSHPrivateKey() string
-	SSHPrivateKeyPassword() string
-	SSHMetadataRepositoryUrl() string
-
 	ReviewerFallback() string
 	GitCommitterName() string
 	GitCommitterEmail() string
@@ -89,9 +85,6 @@ func Custom(configuration librepo.Configuration) CustomConfiguration {
 const (
 	KeyBasicAuthUsername             = "BASIC_AUTH_USERNAME"
 	KeyBasicAuthPassword             = "BASIC_AUTH_PASSWORD"
-	KeySSHPrivateKey                 = "SSH_PRIVATE_KEY"
-	KeySSHPrivateKeyPassword         = "SSH_PRIVATE_KEY_PASSWORD"
-	KeySSHMetadataRepositoryUrl      = "SSH_METADATA_REPO_URL"
 	KeyReviewerFallback              = "REVIEWER_FALLBACK"
 	KeyGitCommitterName              = "GIT_COMMITTER_NAME"
 	KeyGitCommitterEmail             = "GIT_COMMITTER_EMAIL"
