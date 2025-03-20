@@ -87,3 +87,7 @@ func (r *Impl) ConcludeCheckRun(ctx context.Context, owner, repoName, checkName 
 	errs = append(errs, err)
 	return errors.Join(errs...)
 }
+
+func (r *Impl) CreateInstallationToken(ctx context.Context, installationId int64) (*github.InstallationToken, *github.Response, error) {
+	return r.client.Apps.CreateInstallationToken(ctx, installationId, nil)
+}

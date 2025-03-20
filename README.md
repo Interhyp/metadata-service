@@ -49,9 +49,6 @@ the [`local-config.yaml`][config] can be used to set the variables.
 | `VAULT_AUTH_KUBERNETES_BACKEND`    |                                                       | Authentication path for the kubernetes cluster.                                                                                                                                                                      |
 | `VAULT_SECRETS_CONFIG`             |                                                       | Configuration consisting of vault paths and keys to fetch from the corresponding path. Values will be written to the global configuration object.                                                                    |
 |                                    |                                                       |                                                                                                                                                                                                                      |
-| `SSH_PRIVATE_KEY`                  |                                                       | SSH private key used to authenticate during git operations.                                                                                                                                                          |
-| `SSH_PRIVATE_KEY_PASSWORD`         |                                                       | Password for the SSH private key                                                                                                                                                                                     |
-|                                    |                                                       |                                                                                                                                                                                                                      |
 | `BASIC_AUTH_USERNAME`              |                                                       | Name of the user used for basic authentication to this service. User will be granted admin privileges.                                                                                                               |
 | `BASIC_AUTH_PASSWORD`              |                                                       | Password of the user used for basic authentication to this service. User will be granted admin privileges.                                                                                                           |
 |                                    |                                                       |                                                                                                                                                                                                                      |
@@ -127,12 +124,10 @@ service.
 
 ### Datastore Authentication
 
-The service currently only supports SSH Key based auth fetching and updating the git repository used as
-the [datastore](#datastore). The credentials are configured via `SSH_PRIVATE_KEY` and `SSH_PRIVATE_KEY_PASSWORD` which
-are
-either
-provided as environment variable or via [Vault][vault] using the same keys at the destination defined in
-`VAULT_SERVICE_SECRETS_PATH`.
+The service currently only supports installation token for a GitHub app auth fetching and updating the git repository 
+used as the [datastore](#datastore). The credentials are configured via `GITHUB_APP_ID`, `GITHUB_APP_INSTALLATION_ID` 
+and 'GITHUB_APP_JWT_SIGNING_KEY_PEM' which are either provided as environment variable or via [Vault][vault] using the 
+same keys at the destination defined in `VAULT_SERVICE_SECRETS_PATH`.
 
 ### API Authentication
 

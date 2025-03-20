@@ -22,8 +22,6 @@ VAULT_SECRETS_CONFIG: >-
       {"vaultKey": "BASIC_AUTH_PASSWORD"},
       {"vaultKey": "KAFKA_PASSWORD"},
       {"vaultKey": "METADATA_CHANGE_EVENTS_CONNECTION_STRING"},
-      {"vaultKey": "SSH_PRIVATE_KEY"},
-      {"vaultKey": "SSH_PRIVATE_KEY_PASSWORD"},
       {"vaultKey": "GITHUB_APP_JWT_SIGNING_KEY_PEM"}
     ]
   }
