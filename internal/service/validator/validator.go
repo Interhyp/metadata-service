@@ -29,7 +29,7 @@ const (
 	ValidationTimeout      = 1 * time.Minute
 )
 
-type CheckoutFunc func(ctx context.Context, authProvider repository.SshAuthProvider, repoUrl, sha string) (billy.Filesystem, error)
+type CheckoutFunc func(ctx context.Context, authProvider repository.AuthProvider, repoUrl, sha string) (billy.Filesystem, error)
 type ValidationResult struct {
 	FileErrors map[string]error
 	YamlErrors map[string]error
@@ -43,7 +43,7 @@ type Impl struct {
 	CustomConfiguration config.CustomConfiguration
 	Repositories        service.Repositories
 	Github              repository.Github
-	SshAuthProvider     repository.SshAuthProvider
+	AuthProvider        repository.AuthProvider
 	CheckoutFunction    CheckoutFunc
 
 	ghClient *gogithub.Client
@@ -53,27 +53,22 @@ func New(
 	configuration librepo.Configuration,
 	repositories service.Repositories,
 	github repository.Github,
-	sshAuth repository.SshAuthProvider,
+	authProvider repository.AuthProvider,
 ) *Impl {
 	return &Impl{
 		CustomConfiguration: config.Custom(configuration),
 		Repositories:        repositories,
 		Github:              github,
-		SshAuthProvider:     sshAuth,
+		AuthProvider:        authProvider,
 		CheckoutFunction:    checkoutWithDetachedHeadInMem,
 	}
 }
 
-func checkoutWithDetachedHeadInMem(ctx context.Context, authProvider repository.SshAuthProvider, repoUrl, sha string) (billy.Filesystem, error) {
+func checkoutWithDetachedHeadInMem(ctx context.Context, authProvider repository.AuthProvider, repoUrl, sha string) (billy.Filesystem, error) {
 	aulogging.Logger.Ctx(ctx).Debug().Printf("starting checkout of %s @ %s", repoUrl, sha)
-	sshAuth, err := authProvider.ProvideSshAuth(ctx)
-	if err != nil {
-		return nil, err
-	}
-	aulogging.Logger.Ctx(ctx).Debug().Printf("%s: finished getting ssh auth", repoUrl)
 
 	repoClone, err := git.CloneContext(ctx, memory.NewStorage(), memfs.New(), &git.CloneOptions{
-		Auth:       sshAuth,
+		Auth:       authProvider.ProvideAuth(ctx),
 		URL:        repoUrl,
 		NoCheckout: true,
 	})
@@ -127,7 +122,7 @@ func (h *Impl) PerformValidationCheckRun(ctx context.Context, owner, repo, sha s
 }
 
 func (h *Impl) validate(ctx context.Context, sha string) (repository.CheckRunConclusion, gogithub.CheckRunOutput) {
-	fileSys, err := h.CheckoutFunction(ctx, h.SshAuthProvider, h.CustomConfiguration.SSHMetadataRepositoryUrl(), sha)
+	fileSys, err := h.CheckoutFunction(ctx, h.AuthProvider, h.CustomConfiguration.MetadataRepoUrl(), sha)
 	if err != nil {
 		return checkRunErrorResult(ctx, "Failed to checkout service-metadata repository.", err)
 	}

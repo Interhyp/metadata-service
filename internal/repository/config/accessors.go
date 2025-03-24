@@ -17,18 +17,6 @@ func (c *CustomConfigImpl) BasicAuthPassword() string {
 	return c.VBasicAuthPassword
 }
 
-func (c *CustomConfigImpl) SSHPrivateKey() string {
-	return c.VSSHPrivateKey
-}
-
-func (c *CustomConfigImpl) SSHPrivateKeyPassword() string {
-	return c.VSSHPrivateKeyPassword
-}
-
-func (c *CustomConfigImpl) SSHMetadataRepositoryUrl() string {
-	return c.VSSHMetadataRepoUrl
-}
-
 func (c *CustomConfigImpl) ReviewerFallback() string {
 	return c.VReviewerFallback
 }
@@ -149,13 +137,6 @@ func (c *CustomConfigImpl) RedisPassword() string {
 }
 
 func (c *CustomConfigImpl) MetadataRepoProject() string {
-	sshUrl := c.SSHMetadataRepositoryUrl()
-	if sshUrl != "" {
-		match := c.GitUrlMatcher.FindStringSubmatch(sshUrl)
-		if len(match) == 4 {
-			return match[2]
-		}
-	}
 	httpUrl := c.MetadataRepoUrl()
 	if httpUrl != "" {
 		match := c.GitUrlMatcher.FindStringSubmatch(httpUrl)
@@ -167,13 +148,6 @@ func (c *CustomConfigImpl) MetadataRepoProject() string {
 }
 
 func (c *CustomConfigImpl) MetadataRepoName() string {
-	sshUrl := c.SSHMetadataRepositoryUrl()
-	if sshUrl != "" {
-		match := c.GitUrlMatcher.FindStringSubmatch(sshUrl)
-		if len(match) == 4 {
-			return match[3]
-		}
-	}
 	httpUrl := c.MetadataRepoUrl()
 	if httpUrl != "" {
 		match := c.GitUrlMatcher.FindStringSubmatch(httpUrl)

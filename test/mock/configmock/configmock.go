@@ -87,11 +87,6 @@ func (c *MockConfig) SSHPrivateKeyPassword() string {
 	return "techexgeheim"
 }
 
-func (c *MockConfig) SSHMetadataRepositoryUrl() string {
-	//TODO implement me
-	panic("implement me")
-}
-
 func (c *MockConfig) MetadataRepoUrl() string {
 	//TODO implement me
 	panic("implement me")

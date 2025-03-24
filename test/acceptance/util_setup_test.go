@@ -178,7 +178,7 @@ func tstSetup(configPath string) error {
 		return err
 	}
 
-	application.Validator.(*validator.Impl).CheckoutFunction = func(_ context.Context, _ repository.SshAuthProvider, _, _ string) (billy.Filesystem, error) {
+	application.Validator.(*validator.Impl).CheckoutFunction = func(_ context.Context, _ repository.AuthProvider, _, _ string) (billy.Filesystem, error) {
 		return checkoutmock.New()
 	}
 

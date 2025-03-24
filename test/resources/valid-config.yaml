@@ -8,7 +8,7 @@ AUTH_OIDC_TOKEN_AUDIENCE: some-audience
 AUTH_GROUP_WRITE: admin
 
 SSH_METADATA_REPO_URL: git://er/metadata.git
-METADATA_REPO_URL: http://metadata
+METADATA_REPO_URL: http://host.com/er/metadata.git
 
 UPDATE_JOB_INTERVAL_MINUTES: 5
 
