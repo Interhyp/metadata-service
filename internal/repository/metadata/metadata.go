@@ -31,7 +31,7 @@ type Impl struct {
 	Logging             librepo.Logging
 	Timestamp           librepo.Timestamp
 
-	SshAuthProvider repository.SshAuthProvider
+	AuthProvider repository.AuthProvider
 
 	GitRepo *git.Repository
 
@@ -58,14 +58,14 @@ func New(
 	customConfig config.CustomConfiguration,
 	logging librepo.Logging,
 	timestamp librepo.Timestamp,
-	sshAuth repository.SshAuthProvider,
+	authProvider repository.AuthProvider,
 ) repository.Metadata {
 	return &Impl{
 		Configuration:       configuration,
 		CustomConfiguration: customConfig,
 		Logging:             logging,
 		Timestamp:           timestamp,
-		SshAuthProvider:     sshAuth,
+		AuthProvider:        authProvider,
 
 		CommitCacheByFilePath: make(map[string]repository.CommitInfo),
 		NewCommits:            make([]repository.CommitInfo, 0),
@@ -93,10 +93,6 @@ func (r *Impl) Teardown() {
 	ctx := auzerolog.AddLoggerToCtx(context.Background())
 	r.Discard(ctx)
 }
-
-const insecureSkipTLS = false
-
-var UseHTTP = false
 
 func (r *Impl) pathsTouchedInCommit(ctx context.Context, commit *object.Commit) ([]string, error) {
 	result := make([]string, 0)
@@ -233,17 +229,11 @@ func (r *Impl) Clone(ctx context.Context) error {
 	childCtxWithTimeout, cancel := context.WithTimeout(ctx, 1*time.Minute)
 	defer cancel()
 
-	sshAuth, err := r.SshAuthProvider.ProvideSshAuth(ctx)
-	if err != nil {
-		r.Logging.Logger().Ctx(ctx).Warn().Print("providing sshAuth failed")
-		return err
-	}
-
 	cloneOpts := git.CloneOptions{
-		Auth:          sshAuth,
+		Auth:          r.AuthProvider.ProvideAuth(ctx),
 		NoCheckout:    false,
 		Progress:      r, // implements io.Writer, sends to Debug logging
-		URL:           r.CustomConfiguration.SSHMetadataRepositoryUrl(),
+		URL:           r.CustomConfiguration.MetadataRepoUrl(),
 		ReferenceName: plumbing.ReferenceName(r.CustomConfiguration.MetadataRepoMainline()),
 	}
 
@@ -284,14 +274,8 @@ func (r *Impl) Pull(ctx context.Context) error {
 	childCtxWithTimeout, cancel := context.WithTimeout(ctx, 30*time.Second)
 	defer cancel()
 
-	sshAuth, err := r.SshAuthProvider.ProvideSshAuth(ctx)
-	if err != nil {
-		r.Logging.Logger().Ctx(ctx).Warn().Print("providing sshAuth failed")
-		return err
-	}
-
 	pullOpts := git.PullOptions{
-		Auth:          sshAuth,
+		Auth:          r.AuthProvider.ProvideAuth(ctx),
 		Progress:      r, // implements io.Writer, sends to Debug logging
 		RemoteName:    "origin",
 		ReferenceName: plumbing.ReferenceName(r.CustomConfiguration.MetadataRepoMainline()),
@@ -386,19 +370,13 @@ func (r *Impl) Push(ctx context.Context) error {
 	childCtxWithTimeout, cancel := context.WithTimeout(ctx, 30*time.Second)
 	defer cancel()
 
-	sshAuth, err := r.SshAuthProvider.ProvideSshAuth(ctx)
-	if err != nil {
-		r.Logging.Logger().Ctx(ctx).Warn().Print("providing sshAuth failed")
-		return err
-	}
-
 	pushOpts := git.PushOptions{
-		Auth:       sshAuth,
+		Auth:       r.AuthProvider.ProvideAuth(ctx),
 		Progress:   r, // implements io.Writer, sends to Debug logging
 		RemoteName: "origin",
 	}
 
-	err = r.GitRepo.PushContext(childCtxWithTimeout, &pushOpts)
+	err := r.GitRepo.PushContext(childCtxWithTimeout, &pushOpts)
 	if err != nil && err != git.NoErrAlreadyUpToDate {
 		r.Logging.Logger().Ctx(ctx).Warn().Print("git push failed - console output was: ", r.sanitizedConsoleOutput())
 		r.Logging.Logger().Ctx(ctx).Warn().WithErr(err).Printf("git push failed - returned error: %s", err.Error())

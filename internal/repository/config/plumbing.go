@@ -20,9 +20,6 @@ import (
 type CustomConfigImpl struct {
 	VBasicAuthUsername             string
 	VBasicAuthPassword             string
-	VSSHPrivateKey                 string
-	VSSHPrivateKeyPassword         string
-	VSSHMetadataRepoUrl            string
 	VReviewerFallback              string
 	VGitCommitterName              string
 	VGitCommitterEmail             string
@@ -81,9 +78,6 @@ func New() (librepo.Configuration, config.CustomConfiguration) {
 func (c *CustomConfigImpl) Obtain(getter func(key string) string) {
 	c.VBasicAuthUsername = getter(config.KeyBasicAuthUsername)
 	c.VBasicAuthPassword = getter(config.KeyBasicAuthPassword)
-	c.VSSHPrivateKey = getter(config.KeySSHPrivateKey)
-	c.VSSHPrivateKeyPassword = getter(config.KeySSHPrivateKeyPassword)
-	c.VSSHMetadataRepoUrl = getter(config.KeySSHMetadataRepositoryUrl)
 	c.VReviewerFallback = getter(config.KeyReviewerFallback)
 	c.VGitCommitterName = getter(config.KeyGitCommitterName)
 	c.VGitCommitterEmail = getter(config.KeyGitCommitterEmail)
