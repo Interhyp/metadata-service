@@ -275,6 +275,7 @@ func (s *Impl) validateRepositoryCreateDto(ctx context.Context, key string, dto 
 	messages = validateOwner(messages, dto.Owner)
 	messages = validateUrl(messages, dto.Url)
 	messages = validateMainline(messages, dto.Mainline)
+	messages = validateConfiguration(messages, dto.Configuration)
 
 	if dto.JiraIssue == "" {
 		messages = append(messages, "field jiraIssue is mandatory")
@@ -339,6 +340,7 @@ func (s *Impl) validateExistingRepositoryDto(ctx context.Context, key string, dt
 	messages = validateOwner(messages, dto.Owner)
 	messages = validateUrl(messages, dto.Url)
 	messages = validateMainline(messages, dto.Mainline)
+	messages = validateConfiguration(messages, dto.Configuration)
 
 	if dto.CommitHash == "" {
 		messages = append(messages, "field commitHash is mandatory for updates")
@@ -413,6 +415,7 @@ func (s *Impl) validateRepositoryPatchDto(ctx context.Context, key string, patch
 	messages = validateOwner(messages, dto.Owner)
 	messages = validateUrl(messages, dto.Url)
 	messages = validateMainline(messages, dto.Mainline)
+	messages = validateConfiguration(messages, dto.Configuration)
 
 	if patchDto.CommitHash == "" {
 		messages = append(messages, "field commitHash is mandatory for patching")
@@ -472,6 +475,7 @@ func patchConfiguration(patch *openapi.RepositoryConfigurationPatchDto, original
 			RequireIssue:            patchPtr[bool](patch.RequireIssue, original.RequireIssue),
 			RequireConditions:       patchRequireConditions(patch.RequireConditions, original.RequireConditions),
 			ActionsAccess:           patchStringPtr(patch.ActionsAccess, original.ActionsAccess),
+			PullRequests:            patchPullRequests(patch.PullRequests, original.PullRequests),
 		}
 	} else {
 		return original
@@ -503,6 +507,14 @@ func patchRefProtections(patch *openapi.RefProtections, original *openapi.RefPro
 				Tags:     patchRefProtectionsTags(patch.Tags, original.Tags),
 			}
 		}
+	} else {
+		return original
+	}
+}
+
+func patchPullRequests(patch *openapi.PullRequests, original *openapi.PullRequests) *openapi.PullRequests {
+	if patch != nil {
+		return patch
 	} else {
 		return original
 	}
@@ -725,6 +737,24 @@ func validateOwner(messages []string, ownerAlias string) []string {
 		messages = append(messages, "field owner is mandatory")
 	}
 
+	return messages
+}
+
+func validateConfiguration(messages []string, config *openapi.RepositoryConfigurationDto) []string {
+	if config == nil {
+		return messages
+	}
+	validatePullRequests(messages, config.PullRequests)
+	return messages
+}
+
+func validatePullRequests(messages []string, prs *openapi.PullRequests) []string {
+	if prs == nil {
+		return messages
+	}
+	if (prs.AllowMergeCommits != nil && !*prs.AllowMergeCommits) && (prs.AllowRebaseMerging != nil && !*prs.AllowRebaseMerging) {
+		messages = append(messages, "allowMergeCommits and allowRebaseMerging must not both be false")
+	}
 	return messages
 }
 
