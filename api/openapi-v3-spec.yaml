@@ -2089,6 +2089,8 @@ components:
           type: boolean
         refProtections:
           $ref: '#/components/schemas/RefProtections'
+        pullRequests:
+          $ref: '#/components/schemas/PullRequests'
         requireIssue:
           description: 'Configures JQL matcher with query: issuetype in (Story, Bug) AND ''Risk Level'' is not EMPTY'
           type: boolean
@@ -2204,6 +2206,8 @@ components:
             - ORGANIZATION
             - ENTERPRISE
           example: NOT_ACCESSIBLE
+        pullRequests:
+          $ref: '#/components/schemas/PullRequests'
     MergeStrategy:
       type: object
       properties:
@@ -2308,6 +2312,18 @@ components:
       required:
         - name
         - url
+    PullRequests:
+      type: object
+      description: Configures pull request settings
+      properties:
+        allowMergeCommits:
+          description: Allows merge commits on pull requests
+          type: boolean
+          default: true
+        allowRebaseMerging:
+          description: Allows rebase merging on pull requests
+          type: boolean
+          default: true
     RefProtections:
       type: object
       description: Configures available protections for git refs
