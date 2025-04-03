@@ -263,6 +263,13 @@ var CustomConfigItems = []auconfigapi.ConfigItem{
 		Default:     "true",
 		Validate:    auconfigapi.ConfigNeedsNoValidation,
 	},
+	{
+		Key:         config.KeyYamlIndentation,
+		EnvName:     config.KeyYamlIndentation,
+		Description: "Number of spaces used for indentation of stored yaml files. Possible values are whole numbers between 1 and 10.",
+		Default:     "4",
+		Validate:    auconfigenv.ObtainIntRangeValidator(1, 10),
+	},
 }
 
 func ObtainPositiveInt64Validator() func(key string) error {
