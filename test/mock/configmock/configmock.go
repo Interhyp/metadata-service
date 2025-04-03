@@ -287,3 +287,7 @@ GHC84dc4JrBll9zVtW3amw5+eUU31h48mEEFM4Sph4YlMIEenNiy0+6QAr3P212B
 0TEd3w/5KBsZU2kLdnQ0/Q==
 -----END PRIVATE KEY-----`)
 }
+
+func (c *MockConfig) YamlIndentation() int {
+	return 4
+}

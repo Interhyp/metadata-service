@@ -54,6 +54,7 @@ type CustomConfigImpl struct {
 	VGithubAppId                   int64
 	VGithubAppInstallationId       int64
 	VGithubAppJwtSigningKeyPEM     []byte
+	VYamlIndentation               int
 
 	VKafkaConfig  *kafka.Config
 	GitUrlMatcher *regexp.Regexp
@@ -113,6 +114,7 @@ func (c *CustomConfigImpl) Obtain(getter func(key string) string) {
 	c.VGithubAppInstallationId, _ = strconv.ParseInt(getter(config.KeyGithubAppInstallationId), 10, 64)
 	c.VGithubAppJwtSigningKeyPEM = []byte(getter(config.KeyGithubAppJwtSigningKeyPEM))
 	c.VKafkaConfig.Obtain(getter)
+	c.VYamlIndentation = toInt(getter(config.KeyYamlIndentation))
 }
 
 // used after validation, so known safe
