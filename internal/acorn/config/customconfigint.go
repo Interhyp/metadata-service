@@ -70,6 +70,8 @@ type CustomConfiguration interface {
 	GithubAppId() int64
 	GithubAppInstallationId() int64
 	GithubAppJwtSigningKeyPEM() []byte
+
+	YamlIndentation() int
 }
 
 type NotificationConsumerConfig struct {
@@ -119,4 +121,5 @@ const (
 	KeyGithubAppId                   = "GITHUB_APP_ID"
 	KeyGithubAppInstallationId       = "GITHUB_APP_INSTALLATION_ID"
 	KeyGithubAppJwtSigningKeyPEM     = "GITHUB_APP_JWT_SIGNING_KEY_PEM"
+	KeyYamlIndentation               = "YAML_INDENTATION"
 )

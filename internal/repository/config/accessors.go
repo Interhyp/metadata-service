@@ -181,3 +181,7 @@ func (c *CustomConfigImpl) GithubAppInstallationId() int64 {
 func (c *CustomConfigImpl) GithubAppJwtSigningKeyPEM() []byte {
 	return c.VGithubAppJwtSigningKeyPEM
 }
+
+func (c *CustomConfigImpl) YamlIndentation() int {
+	return c.VYamlIndentation
+}

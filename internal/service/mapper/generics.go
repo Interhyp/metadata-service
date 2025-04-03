@@ -1,6 +1,7 @@
 package mapper
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"github.com/Interhyp/go-backend-service-common/web/middleware/requestid"
@@ -103,7 +104,7 @@ func (s *Impl) resetLocalClone(ctx context.Context) {
 func WriteT[T Dtos](ctx context.Context, s *Impl, resultPtr *T, path string, fileNameNoPath string, description string, jiraIssue string) error {
 	fileName := path + "/" + fileNameNoPath
 
-	yamlBytes, err := yaml.Marshal(*resultPtr)
+	yamlBytes, err := marshalYAML(*resultPtr, s.CustomConfiguration.YamlIndentation())
 	if err != nil {
 		return err
 	}
@@ -173,7 +174,6 @@ func DeleteT[T PatchDtos](ctx context.Context, s *Impl, resultPtr *T, fullPath s
 
 	return nil
 }
-
 func Move(ctx context.Context, s *Impl, v interface{}, oldFullPath string, newPath string, newFileNameNoPath string) error {
 	err := s.Metadata.DeleteFile(oldFullPath)
 	if err != nil {
@@ -185,7 +185,7 @@ func Move(ctx context.Context, s *Impl, v interface{}, oldFullPath string, newPa
 		return err
 	}
 
-	yamlBytes, err := yaml.Marshal(v)
+	yamlBytes, err := marshalYAML(v, s.CustomConfiguration.YamlIndentation())
 	if err != nil {
 		return err
 	}
@@ -196,4 +196,14 @@ func Move(ctx context.Context, s *Impl, v interface{}, oldFullPath string, newPa
 	}
 
 	return nil
+}
+
+func marshalYAML(v interface{}, indentation int) ([]byte, error) {
+	buf := bytes.Buffer{}
+	encoder := yaml.NewEncoder(&buf)
+	defer encoder.Close()
+	encoder.SetIndent(indentation)
+	err := encoder.Encode(&v)
+
+	return buf.Bytes(), err
 }
