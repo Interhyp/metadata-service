@@ -257,6 +257,12 @@ var CustomConfigItems = []auconfigapi.ConfigItem{
 		Description: "github app signing key PEM",
 	},
 	{
+		Key:         config.KeyGithubAppWebhookSecret,
+		EnvName:     config.KeyGithubAppWebhookSecret,
+		Default:     "",
+		Description: "secret for the github App webhooks",
+	},
+	{
 		Key:         config.KeyWebhooksProcessAsync,
 		EnvName:     config.KeyWebhooksProcessAsync,
 		Description: "Webhooks handling async",
@@ -269,6 +275,13 @@ var CustomConfigItems = []auconfigapi.ConfigItem{
 		Description: "Number of spaces used for indentation of stored yaml files. Possible values are whole numbers between 1 and 10.",
 		Default:     "4",
 		Validate:    auconfigenv.ObtainIntRangeValidator(1, 10),
+	},
+	{
+		Key:         config.KeyFormattingActionCommitMsgPrefix,
+		EnvName:     config.KeyFormattingActionCommitMsgPrefix,
+		Description: "Optional commit message prefix for the commits created by the fix-formatting action of the validation CheckRun",
+		Default:     "",
+		Validate:    auconfigapi.ConfigNeedsNoValidation,
 	},
 }
 

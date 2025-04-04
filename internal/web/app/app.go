@@ -22,13 +22,13 @@ import (
 	"github.com/Interhyp/metadata-service/internal/repository/kafka"
 	"github.com/Interhyp/metadata-service/internal/repository/metadata"
 	"github.com/Interhyp/metadata-service/internal/repository/notifier"
+	"github.com/Interhyp/metadata-service/internal/service/check"
 	"github.com/Interhyp/metadata-service/internal/service/mapper"
 	"github.com/Interhyp/metadata-service/internal/service/owners"
 	"github.com/Interhyp/metadata-service/internal/service/repositories"
 	"github.com/Interhyp/metadata-service/internal/service/services"
 	"github.com/Interhyp/metadata-service/internal/service/trigger"
 	"github.com/Interhyp/metadata-service/internal/service/updater"
-	"github.com/Interhyp/metadata-service/internal/service/validator"
 	"github.com/Interhyp/metadata-service/internal/service/webhookshandler"
 	"github.com/Interhyp/metadata-service/internal/web/controller/ownerctl"
 	"github.com/Interhyp/metadata-service/internal/web/controller/repositoryctl"
@@ -64,7 +64,7 @@ type ApplicationImpl struct {
 	Mapper          service.Mapper
 	Trigger         service.Trigger
 	Updater         service.Updater
-	Validator       service.Validator
+	Validator       service.Check
 	Owners          service.Owners
 	Services        service.Services
 	Repositories    service.Repositories
@@ -238,7 +238,7 @@ func (a *ApplicationImpl) ConstructServices() error {
 		return err
 	}
 
-	a.Validator = validator.New(a.Config, a.Repositories, a.Github, a.AuthProvider)
+	a.Validator = check.New(a.Config, a.Repositories, a.Github, a.AuthProvider, a.Timestamp)
 
 	if a.WebhooksHandler == nil {
 		a.WebhooksHandler = webhookshandler.New(a.Config, a.Timestamp, a.Updater, a.Validator)

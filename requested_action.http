@@ -1,27 +1,91 @@
 POST http://localhost:8080/webhooks/vcs/github
 Content-Type: application/json
 User-Agent: GitHub-Hookshot/21a6bf0
-X-GitHub-Delivery: 793cd1d0-1145-11f0-96c4-f60addcf0379
-X-GitHub-Event: check_suite
+X-GitHub-Delivery: eec244d0-1145-11f0-86c9-92581a6c49c8
+X-GitHub-Event: check_run
 X-GitHub-Hook-ID: 534612443
 X-GitHub-Hook-Installation-Target-ID: 1173582
 X-GitHub-Hook-Installation-Target-Type: integration
 
 {
-  "action": "requested",
-  "check_suite": {
-    "id": 36695856017,
-    "node_id": "CS_kwDONFp2Fc8AAAAIiz5TkQ",
-    "head_branch": "test-linting",
+  "action": "requested_action",
+  "check_run": {
+    "id": 39981943119,
+    "name": "only-valid-metadata-changes",
+    "node_id": "CR_kwDONFp2Fc8AAAAJTxwJTw",
     "head_sha": "f68dc7b26d61dd672dd4d7a1531bfaaa4036c8f6",
-    "status": "queued",
-    "conclusion": null,
-    "url": "https://api.github.com/repos/interhyp-intern-test/service-metadata/check-suites/36695856017",
-    "before": "fb246ffd0d6564814b499606bbf21f44987189b9",
-    "after": "f68dc7b26d61dd672dd4d7a1531bfaaa4036c8f6",
-    "pull_requests": [
+    "external_id": "",
+    "url": "https://api.github.com/repos/interhyp-intern-test/service-metadata/check-runs/39981943119",
+    "html_url": "https://github.com/interhyp-intern-test/service-metadata/runs/39981943119",
+    "details_url": "https://metadata.core.dev.interhyp-azure.de/swagger-ui",
+    "status": "completed",
+    "conclusion": "failure",
+    "started_at": "2025-04-04T11:13:16Z",
+    "completed_at": "2025-04-04T11:13:18Z",
+    "output": {
+      "title": "Failed YAML validation",
+      "summary": "There were files failing the validation. See Annotations.",
+      "text": null,
+      "annotations_count": 1,
+      "annotations_url": "https://api.github.com/repos/interhyp-intern-test/service-metadata/check-runs/39981943119/annotations"
+    },
+    "check_suite": {
+      "id": 36695856017,
+      "node_id": "CS_kwDONFp2Fc8AAAAIiz5TkQ",
+      "head_branch": "test-linting",
+      "head_sha": "f68dc7b26d61dd672dd4d7a1531bfaaa4036c8f6",
+      "status": "completed",
+      "conclusion": "failure",
+      "url": "https://api.github.com/repos/interhyp-intern-test/service-metadata/check-suites/36695856017",
+      "before": "fb246ffd0d6564814b499606bbf21f44987189b9",
+      "after": "f68dc7b26d61dd672dd4d7a1531bfaaa4036c8f6",
+      "pull_requests": [
 
-    ],
+      ],
+      "app": {
+        "id": 1173582,
+        "client_id": "Iv23li0X1RdGuCmd16UZ",
+        "slug": "metadata-ihyptst",
+        "node_id": "A_kwPOAAJcp84AEehO",
+        "owner": {
+          "login": "interhyp",
+          "id": 154791,
+          "node_id": "E_kgDOAAJcpw",
+          "avatar_url": "https://avatars.githubusercontent.com/b/154791?v=4",
+          "gravatar_id": "",
+          "url": "",
+          "html_url": "",
+          "followers_url": "",
+          "following_url": "",
+          "gists_url": "",
+          "starred_url": "",
+          "subscriptions_url": "",
+          "organizations_url": "",
+          "repos_url": "",
+          "events_url": "",
+          "received_events_url": "",
+          "type": "enterprise",
+          "site_admin": false
+        },
+        "name": "Metadata [IHYPTST]",
+        "description": "",
+        "external_url": "https://metadata.core.dev.interhyp-azure.de/swagger-ui",
+        "html_url": "https://github.com/apps/metadata-ihyptst",
+        "created_at": "2025-03-11T08:05:22Z",
+        "updated_at": "2025-04-02T10:37:54Z",
+        "permissions": {
+          "checks": "write",
+          "contents": "write",
+          "metadata": "read"
+        },
+        "events": [
+          "check_run",
+          "check_suite"
+        ]
+      },
+      "created_at": "2025-04-04T11:10:53Z",
+      "updated_at": "2025-04-04T11:13:19Z"
+    },
     "app": {
       "id": 1173582,
       "client_id": "Iv23li0X1RdGuCmd16UZ",
@@ -63,26 +127,12 @@ X-GitHub-Hook-Installation-Target-Type: integration
         "check_suite"
       ]
     },
-    "created_at": "2025-04-04T11:10:53Z",
-    "updated_at": "2025-04-04T11:10:53Z",
-    "rerequestable": true,
-    "runs_rerequestable": true,
-    "latest_check_runs_count": 0,
-    "check_runs_url": "https://api.github.com/repos/interhyp-intern-test/service-metadata/check-suites/36695856017/check-runs",
-    "head_commit": {
-      "id": "f68dc7b26d61dd672dd4d7a1531bfaaa4036c8f6",
-      "tree_id": "d80e86b12d325acc8d564169acc2065275dcfe61",
-      "message": "RELTEC-12524: break formatting again",
-      "timestamp": "2025-04-04T11:10:45Z",
-      "author": {
-        "name": "Stollin, Thomas",
-        "email": "thomas.stollin@interhyp.de"
-      },
-      "committer": {
-        "name": "Stollin, Thomas",
-        "email": "thomas.stollin@interhyp.de"
-      }
-    }
+    "pull_requests": [
+
+    ]
+  },
+  "requested_action": {
+    "identifier": "fix-formatting"
   },
   "repository": {
     "id": 878343701,

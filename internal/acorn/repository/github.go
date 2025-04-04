@@ -7,8 +7,8 @@ import (
 
 type Github interface {
 	StartCheckRun(ctx context.Context, owner, repoName, checkName, sha string) (int64, error)
-	ConcludeCheckRun(ctx context.Context, owner, repoName, checkName string, checkRunId int64, conclusion CheckRunConclusion, details gogithub.CheckRunOutput) error
-
+	ConcludeCheckRun(ctx context.Context, owner, repoName, checkName string, checkRunId int64, conclusion CheckRunConclusion, details gogithub.CheckRunOutput, actions ...*gogithub.CheckRunAction) error
+	GetUser(ctx context.Context, username string) (*gogithub.User, error)
 	CreateInstallationToken(ctx context.Context, installationId int64) (*gogithub.InstallationToken, *gogithub.Response, error)
 }
 

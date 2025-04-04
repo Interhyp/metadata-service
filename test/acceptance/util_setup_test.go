@@ -14,8 +14,8 @@ import (
 	"github.com/Interhyp/metadata-service/internal/repository/config"
 	"github.com/Interhyp/metadata-service/internal/repository/github"
 	"github.com/Interhyp/metadata-service/internal/repository/notifier"
+	"github.com/Interhyp/metadata-service/internal/service/check"
 	"github.com/Interhyp/metadata-service/internal/service/trigger"
-	"github.com/Interhyp/metadata-service/internal/service/validator"
 	"github.com/Interhyp/metadata-service/internal/web/app"
 	"github.com/Interhyp/metadata-service/internal/web/server"
 	"github.com/Interhyp/metadata-service/test/mock/checkoutmock"
@@ -178,7 +178,7 @@ func tstSetup(configPath string) error {
 		return err
 	}
 
-	application.Validator.(*validator.Impl).CheckoutFunction = func(_ context.Context, _ repository.AuthProvider, _, _ string) (billy.Filesystem, error) {
+	application.Validator.(*check.Impl).CheckoutFunction = func(_ context.Context, _ repository.AuthProvider, _, _ string) (billy.Filesystem, error) {
 		return checkoutmock.New()
 	}
 

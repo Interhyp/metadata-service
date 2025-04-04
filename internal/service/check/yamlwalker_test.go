@@ -1,4 +1,4 @@
-package validator
+package check
 
 import (
 	"fmt"
@@ -343,7 +343,7 @@ configuration:
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			v := NewValidationWalker(nil)
+			v := MetadataYamlFileWalker(nil)
 			if hasMock(tt.mock) {
 				v.walkedRepos = tt.mock.walkedRepos
 			}

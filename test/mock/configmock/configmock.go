@@ -291,3 +291,11 @@ GHC84dc4JrBll9zVtW3amw5+eUU31h48mEEFM4Sph4YlMIEenNiy0+6QAr3P212B
 func (c *MockConfig) YamlIndentation() int {
 	return 4
 }
+
+func (c *MockConfig) GithubAppWebhookSecret() []byte {
+	return nil
+}
+
+func (c *MockConfig) FormattingActionCommitMsgPrefix() string {
+	return ""
+}

@@ -21,13 +21,16 @@ import (
 
 type AuthProviderFn func(context.Context) (transport.AuthMethod, error)
 
+type Github interface {
+	CreateInstallationToken(ctx context.Context, installationId int64) (*github.InstallationToken, *github.Response, error)
+}
 type AuthProviderImpl struct {
 	Configuration librepo.Configuration
 	Logging       librepo.Logging
 
 	CustomConfiguration config.CustomConfiguration
 
-	Github repository.Github
+	Github Github
 
 	token          *github.InstallationToken
 	authProviderFn AuthProviderFn
