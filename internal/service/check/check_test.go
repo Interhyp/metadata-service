@@ -1,8 +1,8 @@
-package validator
+package check
 
 import (
 	"fmt"
-	"github.com/google/go-github/v69/github"
+	"github.com/google/go-github/v70/github"
 	"reflect"
 	"testing"
 )
@@ -19,7 +19,7 @@ func Test_walkerToCheckRunOutput(t *testing.T) {
 		},
 	}
 	type args struct {
-		johnnie *ValidationWalker
+		johnnie *MetadataWalker
 	}
 	tests := []struct {
 		name string
@@ -29,7 +29,7 @@ func Test_walkerToCheckRunOutput(t *testing.T) {
 		{
 			name: "passed",
 			args: args{
-				johnnie: &ValidationWalker{
+				johnnie: &MetadataWalker{
 					Annotations: make([]*github.CheckRunAnnotation, 0),
 					Errors:      make(map[string]error),
 				},
@@ -47,7 +47,7 @@ func Test_walkerToCheckRunOutput(t *testing.T) {
 		{
 			name: "failed with findings",
 			args: args{
-				johnnie: &ValidationWalker{
+				johnnie: &MetadataWalker{
 					Annotations: annotations,
 					Errors:      make(map[string]error),
 				},
@@ -65,7 +65,7 @@ func Test_walkerToCheckRunOutput(t *testing.T) {
 		{
 			name: "failed with errors",
 			args: args{
-				johnnie: &ValidationWalker{
+				johnnie: &MetadataWalker{
 					Annotations: make([]*github.CheckRunAnnotation, 0),
 					Errors: map[string]error{
 						"some/path/to/a/failed/file.yaml":       fmt.Errorf("first test failure"),
@@ -86,7 +86,7 @@ func Test_walkerToCheckRunOutput(t *testing.T) {
 		{
 			name: "failed with findings and errors",
 			args: args{
-				johnnie: &ValidationWalker{
+				johnnie: &MetadataWalker{
 					Annotations: annotations,
 					Errors: map[string]error{
 						"some/path/to/a/failed/file.yaml":       fmt.Errorf("first test failure"),
@@ -107,7 +107,7 @@ func Test_walkerToCheckRunOutput(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := walkerToCheckRunOutput(tt.args.johnnie); !reflect.DeepEqual(got, tt.want) {
+			if got, _ := walkerToCheckRunOutput(tt.args.johnnie); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("walkerToCheckRunOutput() = %+v, want %+v", printOutput(got), printOutput(tt.want))
 			}
 		})

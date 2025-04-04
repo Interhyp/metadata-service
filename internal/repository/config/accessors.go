@@ -182,6 +182,14 @@ func (c *CustomConfigImpl) GithubAppJwtSigningKeyPEM() []byte {
 	return c.VGithubAppJwtSigningKeyPEM
 }
 
+func (c *CustomConfigImpl) GithubAppWebhookSecret() []byte {
+	return c.VGithubAppWebhookSecret
+}
+
 func (c *CustomConfigImpl) YamlIndentation() int {
 	return c.VYamlIndentation
+}
+
+func (c *CustomConfigImpl) FormattingActionCommitMsgPrefix() string {
+	return c.VFormattingActionCommitMsgPrefix
 }

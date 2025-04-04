@@ -1,0 +1,1 @@
+This folder is ignored via .gitignore. Use it to store files, which shall not be committed, i.e. temp files, test requests.

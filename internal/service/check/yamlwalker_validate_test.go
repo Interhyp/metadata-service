@@ -1,18 +1,17 @@
-package validator
+package check
 
 import (
 	"fmt"
-	"github.com/google/go-github/v68/github"
-	gogithub "github.com/google/go-github/v69/github"
+	"github.com/google/go-github/v70/github"
 	"github.com/stretchr/testify/require"
 	"reflect"
 	"strings"
 	"testing"
 )
 
-func TestValidationWalker_validateYamlFile(t *testing.T) {
+func TestMetadataYamlFileWalker_validateSingleYamlFile(t *testing.T) {
 	type want struct {
-		result  []*gogithub.CheckRunAnnotation
+		result  []*github.CheckRunAnnotation
 		ignored map[string]string
 		errors  map[string]error
 	}
@@ -86,7 +85,8 @@ groups:
     - userA
 displayName: Some Name
 members:
-  - userB`,
+  - userB
+`,
 			},
 			want: want{
 				result:  nil,
@@ -106,10 +106,11 @@ groups
     - userA
 displayName: Some Name
 members:
-  - userB`,
+  - userB
+`,
 			},
 			want: want{
-				result: []*gogithub.CheckRunAnnotation{
+				result: []*github.CheckRunAnnotation{
 					{
 						Path:            github.Ptr("owners/some-owner/owner.info.yaml"),
 						StartLine:       github.Ptr(4),
@@ -134,10 +135,11 @@ group:
     - userA
 displayName: Some Name
 members:
-  - userB`,
+  - userB
+`,
 			},
 			want: want{
-				result: []*gogithub.CheckRunAnnotation{
+				result: []*github.CheckRunAnnotation{
 					{
 						Path:            github.Ptr("owners/some-owner/owner.info.yaml"),
 						StartLine:       github.Ptr(4),
@@ -155,11 +157,12 @@ members:
 			args: args{
 				path: "owners/some-owner/services/service.yaml",
 				contents: `description: test
-quicklinks: [ ]
-repositories: [ ]
+quicklinks: []
+repositories: []
 alertTarget: some@mail.com
 internetExposed: true
-lifecycle: experimental`,
+lifecycle: experimental
+`,
 			},
 			want: want{
 				result:  nil,
@@ -179,7 +182,7 @@ internetExposed: true
 lifecycle: experimental`,
 			},
 			want: want{
-				result: []*gogithub.CheckRunAnnotation{
+				result: []*github.CheckRunAnnotation{
 					{
 						Path:            github.Ptr("owners/some-owner/services/service.yaml"),
 						StartLine:       github.Ptr(4),
@@ -197,14 +200,15 @@ lifecycle: experimental`,
 			args: args{
 				path: "owners/some-owner/services/service.yaml",
 				contents: `description: test
-quicklinks: [ ]
-repositories: [ ]
+quicklinks: []
+repositories: []
 alertTargets: some@mail.com
 internetExposed: true
-lifecycle: experimental`,
+lifecycle: experimental
+`,
 			},
 			want: want{
-				result: []*gogithub.CheckRunAnnotation{
+				result: []*github.CheckRunAnnotation{
 					{
 						Path:            github.Ptr("owners/some-owner/services/service.yaml"),
 						StartLine:       github.Ptr(4),
@@ -224,7 +228,8 @@ lifecycle: experimental`,
 				contents: `url: ssh://git@server.com/owner/repo.git
 mainline: master
 configuration:
-  requireSuccessfulBuilds: 2`,
+  requireSuccessfulBuilds: 2
+`,
 			},
 			want: want{
 				result:  nil,
@@ -242,7 +247,7 @@ configuration:
   requireSuccessfulBuilds: 2`,
 			},
 			want: want{
-				result: []*gogithub.CheckRunAnnotation{
+				result: []*github.CheckRunAnnotation{
 					{
 						Path:            github.Ptr("owners/some-owner/repositories/repository.none.yaml"),
 						StartLine:       github.Ptr(2),
@@ -262,10 +267,11 @@ configuration:
 				contents: `url: ssh://git@server.com/owner/repo.git
 mainlines: master
 configuration:
-  requireSuccessfulBuilds: 2`,
+  requireSuccessfulBuilds: 2
+`,
 			},
 			want: want{
-				result: []*gogithub.CheckRunAnnotation{
+				result: []*github.CheckRunAnnotation{
 					{
 						Path:            github.Ptr("owners/some-owner/repositories/repository.none.yaml"),
 						StartLine:       github.Ptr(2),
@@ -293,10 +299,11 @@ configuration:
 				contents: `url: existing-repo-url
 mainline: master
 configuration:
-  requireSuccessfulBuilds: 2`,
+  requireSuccessfulBuilds: 2
+`,
 			},
 			want: want{
-				result: []*gogithub.CheckRunAnnotation{
+				result: []*github.CheckRunAnnotation{
 					{
 						Path:            github.Ptr("owners/some-owner/repositories/repository.none.yaml"),
 						StartLine:       github.Ptr(1),
@@ -324,10 +331,11 @@ configuration:
 				contents: `url: existing-repo-url
 mainline: master
 configuration:
-  requireSuccessfulBuilds: 2`,
+  requireSuccessfulBuilds: 2
+`,
 			},
 			want: want{
-				result: []*gogithub.CheckRunAnnotation{
+				result: []*github.CheckRunAnnotation{
 					{
 						Path:            github.Ptr("owners/some-owner/repositories/repository.none.yaml"),
 						StartLine:       github.Ptr(1),
@@ -343,12 +351,12 @@ configuration:
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			v := NewValidationWalker(nil)
+			v := MetadataYamlFileWalker(nil, 2)
 			if hasMock(tt.mock) {
 				v.walkedRepos = tt.mock.walkedRepos
 			}
-			if got := v.validateYamlFile(tt.args.path, tt.args.contents); !reflect.DeepEqual(got, tt.want.result) {
-				t.Errorf("validateYamlFile() = %v, want %v", printAnnotations(got), printAnnotations(tt.want.result))
+			if got := v.validateSingleYamlFile(tt.args.path, tt.args.contents); !reflect.DeepEqual(got, tt.want.result) {
+				t.Errorf("validateSingleYamlFile() = %v, want %v", printAnnotations(got), printAnnotations(tt.want.result))
 			}
 			require.Equal(t, tt.want.ignored, v.IgnoredWithReason)
 			require.Equal(t, tt.want.errors, v.Errors)
@@ -356,7 +364,7 @@ configuration:
 	}
 }
 
-func printAnnotations(in []*gogithub.CheckRunAnnotation) string {
+func printAnnotations(in []*github.CheckRunAnnotation) string {
 	sb := strings.Builder{}
 	sb.WriteRune('[')
 	for i, a := range in {
