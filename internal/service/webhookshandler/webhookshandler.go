@@ -9,7 +9,7 @@ import (
 	"github.com/Interhyp/metadata-service/internal/acorn/config"
 	"github.com/Interhyp/metadata-service/internal/acorn/service"
 	aulogging "github.com/StephanHCB/go-autumn-logging"
-	githubhook "github.com/go-playground/webhooks/v6/github"
+	"github.com/google/go-github/v70/github"
 	"github.com/google/uuid"
 	"net/http"
 	"time"
@@ -23,22 +23,22 @@ type Impl struct {
 	CustomConfiguration config.CustomConfiguration
 	Timestamp           librepo.Timestamp
 
-	Updater   service.Updater
-	Validator service.Validator
+	Updater service.Updater
+	Check   service.Check
 }
 
 func New(
 	configuration librepo.Configuration,
 	timestamp librepo.Timestamp,
 	updater service.Updater,
-	validator service.Validator,
+	validator service.Check,
 
 ) service.WebhooksHandler {
 	return &Impl{
 		CustomConfiguration: config.Custom(configuration),
 		Timestamp:           timestamp,
 		Updater:             updater,
-		Validator:           validator,
+		Check:               validator,
 	}
 }
 
@@ -47,12 +47,15 @@ func (h *Impl) HandleEvent(
 	r *http.Request,
 ) error {
 	aulogging.Logger.Ctx(ctx).Info().Printf("received webhook from Github")
-
-	payload, err := h.parsePayload(r)
+	h.CustomConfiguration.GithubAppWebhookSecret()
+	payload, err := github.ValidatePayload(r, h.CustomConfiguration.GithubAppWebhookSecret())
 	if err != nil {
-		return err
+		return apierrors.NewBadRequestError("webhook.payload.invalid", "parse payload error", err, h.Timestamp.Now())
 	}
-
+	event, err := github.ParseWebHook(github.WebHookType(r), payload)
+	if err != nil {
+		return apierrors.NewBadRequestError("webhook.payload.invalid", "parse payload error", err, h.Timestamp.Now())
+	}
 	if h.CustomConfiguration.WebhooksProcessAsync() {
 		transactionName := fmt.Sprintf("github-webhook-%s", uuid.NewString())
 		asyncCtx, asyncCtxCancel := contexthelper.AsyncCopyRequestContext(ctx, transactionName, "backgroundJob")
@@ -63,7 +66,7 @@ func (h *Impl) HandleEvent(
 				asyncTimeoutCtxCancel()
 			}()
 
-			if innerErr := h.processPayload(asyncCtx, payload); err != nil {
+			if innerErr := h.processPayload(asyncCtx, event); err != nil {
 				aulogging.Logger.Ctx(ctx).Warn().WithErr(innerErr).Print("failed to asynchronously process Github webhook")
 			}
 		}()
@@ -71,33 +74,23 @@ func (h *Impl) HandleEvent(
 		timeoutCtx, timeoutCtxCancel := context.WithTimeout(ctx, webhookContextTimeout)
 		defer timeoutCtxCancel()
 
-		return h.processPayload(timeoutCtx, payload)
+		return h.processPayload(timeoutCtx, event)
 	}
 
 	return nil
 }
 
-func (h *Impl) parsePayload(r *http.Request) (any, error) {
-	hook, _ := githubhook.New()
-
-	body, err := hook.Parse(r, githubhook.PushEvent, githubhook.CheckSuiteEvent, githubhook.CheckRunEvent)
-	if err != nil {
-		return nil, apierrors.NewBadRequestError("webhook.payload.invalid", "parse payload error", err, h.Timestamp.Now())
-	}
-	return body, nil
-}
-
 func (h *Impl) processPayload(
 	ctx context.Context,
-	payload any,
+	event any,
 ) error {
-	switch payload.(type) {
-	case githubhook.PushPayload:
-		return h.processGitHubPushEvent(ctx, payload.(githubhook.PushPayload))
-	case githubhook.CheckSuitePayload:
-		return h.processGitHubCheckSuiteEvent(ctx, payload.(githubhook.CheckSuitePayload))
-	case githubhook.CheckRunPayload:
-		return h.processGitHubCheckRunEvent(ctx, payload.(githubhook.CheckRunPayload))
+	switch e := event.(type) {
+	case *github.PushEvent:
+		return h.processGitHubPushEvent(ctx, e)
+	case *github.CheckSuiteEvent:
+		return h.processGitHubCheckSuiteEvent(ctx, e)
+	case *github.CheckRunEvent:
+		return h.processGitHubCheckRunEvent(ctx, e)
 	default:
 		return nil
 	}
@@ -105,9 +98,9 @@ func (h *Impl) processPayload(
 
 func (h *Impl) processGitHubPushEvent(
 	ctx context.Context,
-	payload githubhook.PushPayload,
+	event *github.PushEvent,
 ) error {
-	if len(payload.Commits) < 1 || payload.Commits[0].ID == "" {
+	if len(event.Commits) < 1 || event.Commits[0].GetID() == "" {
 		aulogging.Logger.Ctx(ctx).Error().Printf("bad request while processing Github webhook - got reference changed with invalid info - ignoring webhook")
 		return nil // error here
 	}
@@ -122,24 +115,27 @@ func (h *Impl) processGitHubPushEvent(
 
 func (h *Impl) processGitHubCheckSuiteEvent(
 	ctx context.Context,
-	payload githubhook.CheckSuitePayload,
+	event *github.CheckSuiteEvent,
 ) error {
-	switch payload.Action {
+	switch event.GetAction() {
 	case "requested":
 		fallthrough
 	case "rerequested":
-		return h.Validator.PerformValidationCheckRun(ctx, payload.Repository.Owner.Login, payload.Repository.Name, payload.CheckSuite.HeadSHA)
+		return h.Check.PerformValidationCheckRun(ctx, event.GetRepo().GetOwner().GetLogin(), event.GetRepo().GetName(), event.GetCheckSuite().GetHeadSHA())
 	}
 	return nil
 }
 
 func (h *Impl) processGitHubCheckRunEvent(
 	ctx context.Context,
-	payload githubhook.CheckRunPayload,
+	event *github.CheckRunEvent,
 ) error {
-	switch payload.Action {
+	switch event.GetAction() {
 	case "rerequested":
-		return h.Validator.PerformValidationCheckRun(ctx, payload.Repository.Owner.Login, payload.Repository.Name, payload.CheckRun.HeadSHA)
+		return h.Check.PerformValidationCheckRun(ctx, event.GetRepo().GetOwner().GetLogin(), event.GetRepo().GetName(), event.GetCheckRun().GetHeadSHA())
+	case "requested_action":
+		return h.Check.PerformRequestedAction(ctx, event.GetRequestedAction().Identifier, event.GetCheckRun(), event.GetSender())
 	}
+
 	return nil
 }

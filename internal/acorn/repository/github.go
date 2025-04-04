@@ -2,14 +2,14 @@ package repository
 
 import (
 	"context"
-	gogithub "github.com/google/go-github/v69/github"
+	"github.com/google/go-github/v70/github"
 )
 
 type Github interface {
 	StartCheckRun(ctx context.Context, owner, repoName, checkName, sha string) (int64, error)
-	ConcludeCheckRun(ctx context.Context, owner, repoName, checkName string, checkRunId int64, conclusion CheckRunConclusion, details gogithub.CheckRunOutput) error
-
-	CreateInstallationToken(ctx context.Context, installationId int64) (*gogithub.InstallationToken, *gogithub.Response, error)
+	ConcludeCheckRun(ctx context.Context, owner, repoName, checkName string, checkRunId int64, conclusion CheckRunConclusion, details github.CheckRunOutput, actions ...*github.CheckRunAction) error
+	GetUser(ctx context.Context, username string) (*github.User, error)
+	CreateInstallationToken(ctx context.Context, installationId int64) (*github.InstallationToken, *github.Response, error)
 }
 
 type CheckRunConclusion string

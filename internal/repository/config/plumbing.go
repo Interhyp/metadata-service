@@ -18,43 +18,45 @@ import (
 )
 
 type CustomConfigImpl struct {
-	VBasicAuthUsername             string
-	VBasicAuthPassword             string
-	VReviewerFallback              string
-	VGitCommitterName              string
-	VGitCommitterEmail             string
-	VAuthOidcKeySetUrl             string
-	VAuthOidcTokenAudience         string
-	VAuthGroupWrite                string
-	VKafkaGroupIdOverride          string
-	VMetadataRepoUrl               string
-	VMetadataRepoMainline          string
-	VUpdateJobIntervalCronPart     string
-	VUpdateJobTimeoutSeconds       uint16
-	VAlertTargetRegex              *regexp.Regexp
-	VElasticApmDisabled            bool
-	VOwnerAliasPermittedRegex      *regexp.Regexp
-	VOwnerAliasProhibitedRegex     *regexp.Regexp
-	VOwnerAliasMaxLength           uint16
-	VOwnerAliasFilterRegex         *regexp.Regexp
-	VServiceNamePermittedRegex     *regexp.Regexp
-	VServiceNameProhibitedRegex    *regexp.Regexp
-	VServiceNameMaxLength          uint16
-	VRepositoryNamePermittedRegex  *regexp.Regexp
-	VRepositoryNameProhibitedRegex *regexp.Regexp
-	VRepositoryNameMaxLength       uint16
-	VRepositoryTypes               string
-	VRepositoryKeySeparator        string
-	VNotificationConsumerConfigs   map[string]config.NotificationConsumerConfig
-	VRedisUrl                      string
-	VRedisPassword                 string
-	VPullRequestBuildUrl           string
-	VPullRequestBuildKey           string
-	VWebhooksProcessAsync          bool
-	VGithubAppId                   int64
-	VGithubAppInstallationId       int64
-	VGithubAppJwtSigningKeyPEM     []byte
-	VYamlIndentation               int
+	VBasicAuthUsername               string
+	VBasicAuthPassword               string
+	VReviewerFallback                string
+	VGitCommitterName                string
+	VGitCommitterEmail               string
+	VAuthOidcKeySetUrl               string
+	VAuthOidcTokenAudience           string
+	VAuthGroupWrite                  string
+	VKafkaGroupIdOverride            string
+	VMetadataRepoUrl                 string
+	VMetadataRepoMainline            string
+	VUpdateJobIntervalCronPart       string
+	VUpdateJobTimeoutSeconds         uint16
+	VAlertTargetRegex                *regexp.Regexp
+	VElasticApmDisabled              bool
+	VOwnerAliasPermittedRegex        *regexp.Regexp
+	VOwnerAliasProhibitedRegex       *regexp.Regexp
+	VOwnerAliasMaxLength             uint16
+	VOwnerAliasFilterRegex           *regexp.Regexp
+	VServiceNamePermittedRegex       *regexp.Regexp
+	VServiceNameProhibitedRegex      *regexp.Regexp
+	VServiceNameMaxLength            uint16
+	VRepositoryNamePermittedRegex    *regexp.Regexp
+	VRepositoryNameProhibitedRegex   *regexp.Regexp
+	VRepositoryNameMaxLength         uint16
+	VRepositoryTypes                 string
+	VRepositoryKeySeparator          string
+	VNotificationConsumerConfigs     map[string]config.NotificationConsumerConfig
+	VRedisUrl                        string
+	VRedisPassword                   string
+	VPullRequestBuildUrl             string
+	VPullRequestBuildKey             string
+	VWebhooksProcessAsync            bool
+	VGithubAppId                     int64
+	VGithubAppInstallationId         int64
+	VGithubAppJwtSigningKeyPEM       []byte
+	VGithubAppWebhookSecret          []byte
+	VYamlIndentation                 int
+	VFormattingActionCommitMsgPrefix string
 
 	VKafkaConfig  *kafka.Config
 	GitUrlMatcher *regexp.Regexp
@@ -113,8 +115,10 @@ func (c *CustomConfigImpl) Obtain(getter func(key string) string) {
 	c.VGithubAppId, _ = strconv.ParseInt(getter(config.KeyGithubAppId), 10, 64)
 	c.VGithubAppInstallationId, _ = strconv.ParseInt(getter(config.KeyGithubAppInstallationId), 10, 64)
 	c.VGithubAppJwtSigningKeyPEM = []byte(getter(config.KeyGithubAppJwtSigningKeyPEM))
+	c.VGithubAppWebhookSecret = []byte(getter(config.KeyGithubAppWebhookSecret))
 	c.VKafkaConfig.Obtain(getter)
 	c.VYamlIndentation = toInt(getter(config.KeyYamlIndentation))
+	c.VFormattingActionCommitMsgPrefix = getter(config.KeyFormattingActionCommitMsgPrefix)
 }
 
 // used after validation, so known safe

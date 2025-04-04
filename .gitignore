@@ -95,3 +95,6 @@ replay_pid*
 
 # local config file
 local-config.yaml
+
+.gitignored/*
+.gitignored/**/*

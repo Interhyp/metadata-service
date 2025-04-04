@@ -25,8 +25,8 @@ const service = `quicklinks:
 - title: Swagger UI
   url: /swagger-ui/index.html
 repositories:
-- some-service-backend/helm-deployment
-- some-service-backend/implementation
+  - some-service-backend/helm-deployment
+  - some-service-backend/implementation
 alertTarget: https://webhook.com/9asdflk29d4m39g
 `
 
