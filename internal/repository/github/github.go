@@ -6,7 +6,7 @@ import (
 	"fmt"
 	librepo "github.com/Interhyp/go-backend-service-common/acorns/repository"
 	"github.com/Interhyp/metadata-service/internal/acorn/repository"
-	"github.com/google/go-github/v69/github"
+	"github.com/google/go-github/v70/github"
 )
 
 type Impl struct {
@@ -39,7 +39,7 @@ func (r *Impl) StartCheckRun(ctx context.Context, owner, repoName, checkName, sh
 	return result.GetID(), err
 }
 
-func (r *Impl) ConcludeCheckRun(ctx context.Context, owner, repoName, checkName string, checkRunId int64, conclusion repository.CheckRunConclusion, output github.CheckRunOutput) error {
+func (r *Impl) ConcludeCheckRun(ctx context.Context, owner, repoName, checkName string, checkRunId int64, conclusion repository.CheckRunConclusion, output github.CheckRunOutput, actions ...*github.CheckRunAction) error {
 	annotationLimit := 50
 	annotations := output.Annotations
 	errs := make([]error, 0)
@@ -83,9 +83,15 @@ func (r *Impl) ConcludeCheckRun(ctx context.Context, owner, repoName, checkName 
 			Annotations: annotations,
 			Images:      output.Images,
 		},
+		Actions: actions,
 	})
 	errs = append(errs, err)
 	return errors.Join(errs...)
+}
+
+func (r *Impl) GetUser(ctx context.Context, username string) (*github.User, error) {
+	user, _, err := r.client.Users.Get(ctx, username)
+	return user, err
 }
 
 func (r *Impl) CreateInstallationToken(ctx context.Context, installationId int64) (*github.InstallationToken, *github.Response, error) {

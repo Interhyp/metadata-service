@@ -1,4 +1,4 @@
-package validator
+package check
 
 import (
 	"context"
@@ -11,12 +11,10 @@ import (
 	aulogging "github.com/StephanHCB/go-autumn-logging"
 	"github.com/go-git/go-billy/v5"
 	"github.com/go-git/go-billy/v5/memfs"
-	"github.com/go-git/go-billy/v5/util"
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/go-git/go-git/v5/storage/memory"
-	"github.com/google/go-github/v69/github"
-	gogithub "github.com/google/go-github/v69/github"
+	"github.com/google/go-github/v70/github"
 	"sort"
 	"strings"
 	"time"
@@ -29,14 +27,13 @@ const (
 	ValidationTimeout      = 1 * time.Minute
 )
 
+type Timestamp interface {
+	Now() time.Time
+}
 type CheckoutFunc func(ctx context.Context, authProvider repository.AuthProvider, repoUrl, sha string) (billy.Filesystem, error)
 type ValidationResult struct {
 	FileErrors map[string]error
 	YamlErrors map[string]error
-}
-
-func (v ValidationResult) hasErrors() bool {
-	return len(v.FileErrors)+len(v.YamlErrors) > 0
 }
 
 type Impl struct {
@@ -45,8 +42,7 @@ type Impl struct {
 	Github              repository.Github
 	AuthProvider        repository.AuthProvider
 	CheckoutFunction    CheckoutFunc
-
-	ghClient *gogithub.Client
+	timestamp           Timestamp
 }
 
 func New(
@@ -54,12 +50,14 @@ func New(
 	repositories service.Repositories,
 	github repository.Github,
 	authProvider repository.AuthProvider,
+	timestamp Timestamp,
 ) *Impl {
 	return &Impl{
 		CustomConfiguration: config.Custom(configuration),
 		Repositories:        repositories,
 		Github:              github,
 		AuthProvider:        authProvider,
+		timestamp:           timestamp,
 		CheckoutFunction:    checkoutWithDetachedHeadInMem,
 	}
 }
@@ -112,21 +110,21 @@ func (h *Impl) PerformValidationCheckRun(ctx context.Context, owner, repo, sha s
 	}
 
 	aulogging.Logger.Ctx(ctx).Debug().Printf("starting validation of %s/%s @ %s", owner, repo, sha)
-	conclusion, output := h.validate(independentCtx, sha)
+	conclusion, output, actions := h.validate(independentCtx, sha)
 	aulogging.Logger.Ctx(ctx).Debug().Printf("finished validation of %s/%s @ %s", owner, repo, sha)
 
-	h.concludeCheckRunSafely(independentCtx, checkId, conclusion, output)
+	h.concludeCheckRunSafely(independentCtx, checkId, conclusion, output, actions)
 
 	aulogging.Logger.Ctx(independentCtx).Info().Printf("successfully processed webhook for %s/%s @ %s", owner, repo, sha)
 	return nil
 }
 
-func (h *Impl) validate(ctx context.Context, sha string) (repository.CheckRunConclusion, gogithub.CheckRunOutput) {
+func (h *Impl) validate(ctx context.Context, sha string) (repository.CheckRunConclusion, github.CheckRunOutput, []*github.CheckRunAction) {
 	fileSys, err := h.CheckoutFunction(ctx, h.AuthProvider, h.CustomConfiguration.MetadataRepoUrl(), sha)
 	if err != nil {
 		return checkRunErrorResult(ctx, "Failed to checkout service-metadata repository.", err)
 	}
-	result, err := h.validateFiles(ctx, fileSys)
+	result, actions, err := h.validateFiles(ctx, fileSys)
 	if err != nil {
 		return checkRunErrorResult(ctx, "Failed to validate files.", err)
 	}
@@ -135,34 +133,33 @@ func (h *Impl) validate(ctx context.Context, sha string) (repository.CheckRunCon
 	if len(result.Annotations) > 0 {
 		conclusion = repository.CheckRunFailure
 	}
-	return conclusion, result
+	return conclusion, result, actions
 }
 
-func checkRunErrorResult(ctx context.Context, summary string, err error) (repository.CheckRunConclusion, gogithub.CheckRunOutput) {
+func checkRunErrorResult(ctx context.Context, summary string, err error) (repository.CheckRunConclusion, github.CheckRunOutput, []*github.CheckRunAction) {
 	aulogging.Logger.Ctx(ctx).Warn().WithErr(err).Printf(summary)
-	return repository.CheckRunFailure, gogithub.CheckRunOutput{
-		Title:   gogithub.Ptr(FailedValidationTitle),
-		Summary: gogithub.Ptr(summary),
-		Text:    gogithub.Ptr("The following error occurred:\n\n" + err.Error()),
-	}
+	return repository.CheckRunFailure, github.CheckRunOutput{
+		Title:   github.Ptr(FailedValidationTitle),
+		Summary: github.Ptr(summary),
+		Text:    github.Ptr("The following error occurred:\n\n" + err.Error()),
+	}, nil
 }
 
-func (h *Impl) validateFiles(ctx context.Context, filesys billy.Filesystem) (gogithub.CheckRunOutput, error) {
-	johnnie := NewValidationWalker(filesys)
-
-	err := util.Walk(filesys, "/", johnnie.WalkerFunc)
+func (h *Impl) validateFiles(ctx context.Context, fs billy.Filesystem) (github.CheckRunOutput, []*github.CheckRunAction, error) {
+	johnnie := MetadataYamlFileWalker(fs, h.CustomConfiguration.YamlIndentation())
+	err := johnnie.ValidateMetadata()
 	if err != nil {
-		return gogithub.CheckRunOutput{}, err
+		return github.CheckRunOutput{}, nil, err
 	}
 	for ignored, reason := range johnnie.IgnoredWithReason {
 		aulogging.Logger.Ctx(ctx).Debug().Printf("ignored file %s during validation: %s", ignored, reason)
 	}
 
-	output := walkerToCheckRunOutput(johnnie)
-	return output, nil
+	output, actions := walkerToCheckRunOutput(johnnie)
+	return output, actions, nil
 }
 
-func walkerToCheckRunOutput(johnnie *ValidationWalker) gogithub.CheckRunOutput {
+func walkerToCheckRunOutput(johnnie *MetadataWalker) (github.CheckRunOutput, []*github.CheckRunAction) {
 	title := SuccessValidationTitle
 	summary := "All changed files are valid."
 	var details *string
@@ -181,13 +178,24 @@ func walkerToCheckRunOutput(johnnie *ValidationWalker) gogithub.CheckRunOutput {
 		details = github.Ptr(fmt.Sprintf("The following validation errors occurred:\n%s", errorsToMarkdownList(johnnie.Errors)))
 	}
 
-	output := gogithub.CheckRunOutput{
-		Title:       gogithub.Ptr(title),
-		Summary:     gogithub.Ptr(summary),
+	output := github.CheckRunOutput{
+		Title:       github.Ptr(title),
+		Summary:     github.Ptr(summary),
 		Annotations: johnnie.Annotations,
 		Text:        details,
 	}
-	return output
+
+	var actions []*github.CheckRunAction
+	if johnnie.hasFormatErrors {
+		actions = []*github.CheckRunAction{
+			{
+				Label:       "Fix formatting",
+				Description: "Adds a new commit with fixed formatting.",
+				Identifier:  FixFormattingAction,
+			},
+		}
+	}
+	return output, actions
 }
 
 func errorsToMarkdownList(errors map[string]error) string {
@@ -208,8 +216,9 @@ func (h *Impl) concludeCheckRunSafely(
 	checkRunId int64,
 	conclusion repository.CheckRunConclusion,
 	details github.CheckRunOutput,
+	actions []*github.CheckRunAction,
 ) {
-	err := h.Github.ConcludeCheckRun(ctx, h.CustomConfiguration.MetadataRepoProject(), h.CustomConfiguration.MetadataRepoName(), CheckRunName, checkRunId, conclusion, details)
+	err := h.Github.ConcludeCheckRun(ctx, h.CustomConfiguration.MetadataRepoProject(), h.CustomConfiguration.MetadataRepoName(), CheckRunName, checkRunId, conclusion, details, actions...)
 	if err != nil {
 		aulogging.Logger.Ctx(ctx).Warn().WithErr(err).Printf("failed to conclude check run '%s' with id %d, will try to conclude again with fresh context.", CheckRunName, checkRunId)
 		failedConclusion := repository.CheckRunFailure
@@ -218,10 +227,10 @@ func (h *Impl) concludeCheckRunSafely(
 		} else if errors.Is(err, context.Canceled) {
 			failedConclusion = repository.CheckRunCancelled
 		}
-		_ = h.Github.ConcludeCheckRun(context.Background(), h.CustomConfiguration.MetadataRepoProject(), h.CustomConfiguration.MetadataRepoName(), CheckRunName, checkRunId, failedConclusion, gogithub.CheckRunOutput{
-			Title:   gogithub.Ptr(FailedValidationTitle),
-			Summary: gogithub.Ptr("Failed to finish YAML file validation."),
-			Text:    gogithub.Ptr(fmt.Sprintf("This was caused by error: %s", err.Error())),
+		_ = h.Github.ConcludeCheckRun(context.Background(), h.CustomConfiguration.MetadataRepoProject(), h.CustomConfiguration.MetadataRepoName(), CheckRunName, checkRunId, failedConclusion, github.CheckRunOutput{
+			Title:   github.Ptr(FailedValidationTitle),
+			Summary: github.Ptr("Failed to finish YAML file validation."),
+			Text:    github.Ptr(fmt.Sprintf("This was caused by error: %s", err.Error())),
 		})
 	}
 }

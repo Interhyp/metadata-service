@@ -3,7 +3,7 @@ package githubmock
 import (
 	"context"
 	"github.com/Interhyp/metadata-service/internal/acorn/repository"
-	gogithub "github.com/google/go-github/v69/github"
+	"github.com/google/go-github/v70/github"
 )
 
 type GitHubMock struct{}
@@ -12,10 +12,10 @@ func (this *GitHubMock) StartCheckRun(ctx context.Context, owner, repoName, chec
 	return 0, nil
 }
 
-func (this *GitHubMock) ConcludeCheckRun(ctx context.Context, owner, repoName, checkName string, checkRunId int64, conclusion repository.CheckRunConclusion, details gogithub.CheckRunOutput) error {
+func (this *GitHubMock) ConcludeCheckRun(ctx context.Context, owner, repoName, checkName string, checkRunId int64, conclusion repository.CheckRunConclusion, details github.CheckRunOutput) error {
 	return nil
 }
 
-func (this *GitHubMock) CreateInstallationToken(ctx context.Context, installationId int64) (*gogithub.InstallationToken, *gogithub.Response, error) {
-	return &gogithub.InstallationToken{}, nil, nil
+func (this *GitHubMock) CreateInstallationToken(ctx context.Context, installationId int64) (*github.InstallationToken, *github.Response, error) {
+	return &github.InstallationToken{}, nil, nil
 }
