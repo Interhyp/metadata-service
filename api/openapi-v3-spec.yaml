@@ -2102,6 +2102,9 @@ components:
                 refMatcher: main
           additionalProperties:
             $ref: '#/components/schemas/ConditionReferenceDto'
+        requireSignature:
+          description: Configure signature commit validation.
+          $ref: '#/components/schemas/ConditionReferenceDto'
         actionsAccess:
           description: Control how the repository is used by GitHub Actions workflows in other repositories
           type: string
@@ -2198,6 +2201,9 @@ components:
                 refMatcher: main
           additionalProperties:
             $ref: '#/components/schemas/ConditionReferenceDto'
+        requireSignature:
+          description: Configure signature commit validation.
+          $ref: '#/components/schemas/ConditionReferenceDto'
         actionsAccess:
           description: Control how the repository is used by GitHub Actions workflows in other repositories
           type: string
@@ -2266,6 +2272,15 @@ components:
         source:
           type: string
           description: The expected source for the required conditional build.
+        enforcement:
+          examples:
+            - active
+          enum:
+            - active
+            - evaluate
+            - disabled
+          default: active
+          description: The enforcement level of the ruleset. If not set it is active.
       required:
         - refMatcher
     ExcludeMergeCheckUserDto:
