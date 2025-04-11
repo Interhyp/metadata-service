@@ -19,4 +19,6 @@ type ConditionReferenceDto struct {
 	Exemptions []string `yaml:"exemptions,omitempty" json:"exemptions,omitempty"`
 	// The expected source for the required conditional build.
 	Source *string `yaml:"source,omitempty" json:"source,omitempty"`
+	// The enforcement level of the ruleset. If not set it is active.
+	Enforcement *string `yaml:"enforcement,omitempty" json:"enforcement,omitempty"`
 }

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	internalutil "github.com/Interhyp/metadata-service/internal/util"
 	"net/url"
+	"slices"
 	"strings"
 
 	librepo "github.com/Interhyp/go-backend-service-common/acorns/repository"
@@ -476,6 +477,7 @@ func patchConfiguration(patch *openapi.RepositoryConfigurationPatchDto, original
 			RequireConditions:       patchRequireConditions(patch.RequireConditions, original.RequireConditions),
 			ActionsAccess:           patchStringPtr(patch.ActionsAccess, original.ActionsAccess),
 			PullRequests:            patchPullRequests(patch.PullRequests, original.PullRequests),
+			RequireSignature:        patchRequireSignature(patch.RequireSignature, original.RequireSignature),
 		}
 	} else {
 		return original
@@ -513,6 +515,14 @@ func patchRefProtections(patch *openapi.RefProtections, original *openapi.RefPro
 }
 
 func patchPullRequests(patch *openapi.PullRequests, original *openapi.PullRequests) *openapi.PullRequests {
+	if patch != nil {
+		return patch
+	} else {
+		return original
+	}
+}
+
+func patchRequireSignature(patch *openapi.ConditionReferenceDto, original *openapi.ConditionReferenceDto) *openapi.ConditionReferenceDto {
 	if patch != nil {
 		return patch
 	} else {
@@ -745,6 +755,28 @@ func validateConfiguration(messages []string, config *openapi.RepositoryConfigur
 		return messages
 	}
 	validatePullRequests(messages, config.PullRequests)
+	validateRequireConditionsEnforcement(messages, config.RequireConditions)
+	validateConditionEnforcement(messages, config.RequireSignature)
+	return messages
+}
+
+func validateRequireConditionsEnforcement(messages []string, conditions map[string]openapi.ConditionReferenceDto) []string {
+	if len(conditions) < 1 {
+		return messages
+	}
+	for _, condition := range conditions {
+		messages = validateConditionEnforcement(messages, &condition)
+	}
+	return messages
+}
+
+func validateConditionEnforcement(messages []string, condition *openapi.ConditionReferenceDto) []string {
+	if condition != nil && condition.Enforcement != nil {
+		allowedEnforcements := []string{"active", "evaluate", "disabled"}
+		if !slices.Contains(allowedEnforcements, *condition.Enforcement) {
+			messages = append(messages, fmt.Sprintf("enforcement must be one of %v", allowedEnforcements))
+		}
+	}
 	return messages
 }
 

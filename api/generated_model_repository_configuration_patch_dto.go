@@ -45,6 +45,8 @@ type RepositoryConfigurationPatchDto struct {
 	RequireIssue *bool `yaml:"requireIssue,omitempty" json:"requireIssue,omitempty"`
 	// Configuration of conditional builds as map of structs (key name e.g. some-key) of target references.
 	RequireConditions map[string]ConditionReferenceDto `yaml:"requireConditions,omitempty" json:"requireConditions,omitempty"`
+	// Configure signature commit validation.
+	RequireSignature *ConditionReferenceDto `yaml:"requireSignature,omitempty" json:"requireSignature,omitempty"`
 	// Control how the repository is used by GitHub Actions workflows in other repositories
 	ActionsAccess *string       `yaml:"actionsAccess,omitempty" json:"actionsAccess,omitempty"`
 	PullRequests  *PullRequests `yaml:"pullRequests,omitempty" json:"pullRequests,omitempty"`
