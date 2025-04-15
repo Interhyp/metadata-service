@@ -15,7 +15,7 @@ import (
 )
 
 func (v *MetadataWalker) ValidateMetadata() error {
-	return util.Walk(v.fs, v.rootDir, v.validateWalkFunc)
+	return util.Walk(v.fs, v.config.rootDir, v.validateWalkFunc)
 }
 
 func (v *MetadataWalker) validateWalkFunc(path string, info fs.FileInfo, err error) error {
@@ -124,6 +124,12 @@ func (v *MetadataWalker) validateRepositoryFile(path string, contents string) []
 		if annotation := v.checkUrlDuplication(path, contents); annotation != nil {
 			parseAnnotations = append(parseAnnotations, annotation)
 		}
+		if annotation := v.checkMainlineProtection(path, repositoryDto); annotation != nil {
+			parseAnnotations = append(parseAnnotations, annotation)
+		}
+		if annotations := v.checkRequiredConditions(path, repositoryDto); len(annotations) > 0 {
+			parseAnnotations = append(parseAnnotations, annotations...)
+		}
 	}
 
 	return parseAnnotations
@@ -163,6 +169,58 @@ func (v *MetadataWalker) checkUrlDuplication(path string, contents string) *gith
 		}
 	}
 	return nil
+}
+
+func (v *MetadataWalker) checkMainlineProtection(path string, dto *openapi.RepositoryDto) *github.CheckRunAnnotation {
+	if !v.config.requireMainlinePrProtection {
+		return nil
+	}
+	if dto == nil ||
+		dto.Configuration == nil ||
+		dto.Configuration.RefProtections == nil ||
+		dto.Configuration.RefProtections.Branches == nil {
+		return nil
+	}
+	hasMainlineProtection := false
+	for _, r := range dto.Configuration.RefProtections.Branches.RequirePR {
+		hasMainlineProtection = hasMainlineProtection || r.Pattern == ":MAINLINE:"
+	}
+	if !hasMainlineProtection {
+		return &github.CheckRunAnnotation{
+			Path:            github.Ptr(path),
+			StartLine:       github.Ptr(1),
+			EndLine:         github.Ptr(1),
+			AnnotationLevel: github.Ptr("warning"),
+			Message:         github.Ptr("This file does not contain the requirePR mainline protection."),
+			Title:           github.Ptr("mainline unprotected"),
+		}
+	}
+	return nil
+}
+
+func (v *MetadataWalker) checkRequiredConditions(path string, dto *openapi.RepositoryDto) []*github.CheckRunAnnotation {
+	if len(v.config.expectedRequiredConditions) == 0 {
+		return nil
+	}
+	if dto == nil || dto.Configuration == nil || dto.Configuration.RequireConditions == nil {
+		return nil
+	}
+	annotations := make([]*github.CheckRunAnnotation, 0)
+	for _, expected := range v.config.expectedRequiredConditions {
+		c, ok := dto.Configuration.RequireConditions[expected.Name]
+		if !ok || c.RefMatcher != expected.RefMatcher {
+			annotations = append(annotations, &github.CheckRunAnnotation{
+				Path:            github.Ptr(path),
+				StartLine:       github.Ptr(1),
+				EndLine:         github.Ptr(1),
+				AnnotationLevel: github.Ptr(expected.AnnotationLevel),
+				Message:         github.Ptr(fmt.Sprintf("This file does not contain the required condition %s with the refMatcher %s.", expected.Name, expected.RefMatcher)),
+				Title:           github.Ptr("missing expected required condition"),
+			})
+		}
+	}
+
+	return annotations
 }
 
 func (v *MetadataWalker) checkFormatting(path string, content string) *github.CheckRunAnnotation {

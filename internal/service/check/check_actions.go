@@ -49,7 +49,9 @@ func (h *Impl) commitFormatFixes(ctx context.Context, branchName string, user st
 	}
 
 	aulogging.Logger.Ctx(ctx).Debug().Printf("formatting files on branch %s", branchName)
-	err = MetadataYamlFileWalker(worktree.Filesystem, h.CustomConfiguration.YamlIndentation()).FormatMetadata()
+	err = MetadataYamlFileWalker(worktree.Filesystem,
+		WithIndentation(h.CustomConfiguration.YamlIndentation()),
+	).FormatMetadata()
 	if err != nil {
 		return err
 	}

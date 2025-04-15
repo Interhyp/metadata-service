@@ -7,7 +7,7 @@ import (
 )
 
 func (v *MetadataWalker) FormatMetadata() error {
-	return util.Walk(v.fs, v.rootDir, v.formatWalkFunc)
+	return util.Walk(v.fs, v.config.rootDir, v.formatWalkFunc)
 }
 
 func (v *MetadataWalker) formatWalkFunc(path string, info fs.FileInfo, err error) error {

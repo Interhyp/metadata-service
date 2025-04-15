@@ -283,6 +283,24 @@ var CustomConfigItems = []auconfigapi.ConfigItem{
 		Default:     "",
 		Validate:    auconfigapi.ConfigNeedsNoValidation,
 	},
+	{
+		Key:         config.KeyCheckWarnMissingMainlineProtection,
+		EnvName:     config.KeyCheckWarnMissingMainlineProtection,
+		Description: "If true the GitHub check creates a warning annotation in a repository.yaml file if it is missing the 'requirePR' branch protection for ':MAINLINE:'",
+		Default:     "false",
+		Validate:    auconfigenv.ObtainIsBooleanValidator(),
+	},
+	{
+		Key:         config.KeyCheckExpectedRequiredConditions,
+		EnvName:     config.KeyCheckExpectedRequiredConditions,
+		Description: "A JSON list defining all requiredConditions which will be checked for by the GitHub check for all repository.yaml files. Each entry contains the 'name' of the requiredCondition, the expected 'refMatcher' and the 'annotationLevel' (notice, warning or failure).",
+		Default:     "[]",
+		Validate: func(key string) error {
+			value := auconfigenv.Get(key)
+			_, err := parseCheckExpectedRequiredConditions(value)
+			return err
+		},
+	},
 }
 
 func ObtainPositiveInt64Validator() func(key string) error {

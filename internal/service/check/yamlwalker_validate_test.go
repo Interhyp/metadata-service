@@ -351,7 +351,7 @@ configuration:
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			v := MetadataYamlFileWalker(nil, 2)
+			v := MetadataYamlFileWalker(nil)
 			if hasMock(tt.mock) {
 				v.walkedRepos = tt.mock.walkedRepos
 			}

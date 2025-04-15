@@ -45,6 +45,12 @@ type Impl struct {
 	timestamp           Timestamp
 }
 
+type CheckResult struct {
+	conclusion repository.CheckRunConclusion
+	output     github.CheckRunOutput
+	actions    []*github.CheckRunAction
+}
+
 func New(
 	configuration librepo.Configuration,
 	repositories service.Repositories,
@@ -110,64 +116,74 @@ func (h *Impl) PerformValidationCheckRun(ctx context.Context, owner, repo, sha s
 	}
 
 	aulogging.Logger.Ctx(ctx).Debug().Printf("starting validation of %s/%s @ %s", owner, repo, sha)
-	conclusion, output, actions := h.validate(independentCtx, sha)
+	result := h.validate(independentCtx, sha)
 	aulogging.Logger.Ctx(ctx).Debug().Printf("finished validation of %s/%s @ %s", owner, repo, sha)
 
-	h.concludeCheckRunSafely(independentCtx, checkId, conclusion, output, actions)
+	h.concludeCheckRunSafely(independentCtx, checkId, result.conclusion, result.output, result.actions)
 
 	aulogging.Logger.Ctx(independentCtx).Info().Printf("successfully processed webhook for %s/%s @ %s", owner, repo, sha)
 	return nil
 }
 
-func (h *Impl) validate(ctx context.Context, sha string) (repository.CheckRunConclusion, github.CheckRunOutput, []*github.CheckRunAction) {
+func (h *Impl) validate(ctx context.Context, sha string) CheckResult {
 	fileSys, err := h.CheckoutFunction(ctx, h.AuthProvider, h.CustomConfiguration.MetadataRepoUrl(), sha)
 	if err != nil {
 		return checkRunErrorResult(ctx, "Failed to checkout service-metadata repository.", err)
 	}
-	result, actions, err := h.validateFiles(ctx, fileSys)
+
+	result, err := h.validateFiles(ctx, fileSys)
 	if err != nil {
 		return checkRunErrorResult(ctx, "Failed to validate files.", err)
 	}
 
-	conclusion := repository.CheckRunSuccess
-	if len(result.Annotations) > 0 {
-		conclusion = repository.CheckRunFailure
-	}
-	return conclusion, result, actions
+	return result
 }
 
-func checkRunErrorResult(ctx context.Context, summary string, err error) (repository.CheckRunConclusion, github.CheckRunOutput, []*github.CheckRunAction) {
+func checkRunErrorResult(ctx context.Context, summary string, err error) CheckResult {
 	aulogging.Logger.Ctx(ctx).Warn().WithErr(err).Printf(summary)
-	return repository.CheckRunFailure, github.CheckRunOutput{
-		Title:   github.Ptr(FailedValidationTitle),
-		Summary: github.Ptr(summary),
-		Text:    github.Ptr("The following error occurred:\n\n" + err.Error()),
-	}, nil
+	return CheckResult{
+		conclusion: repository.CheckRunFailure,
+		output: github.CheckRunOutput{
+			Title:   github.Ptr(FailedValidationTitle),
+			Summary: github.Ptr(summary),
+			Text:    github.Ptr("The following error occurred:\n\n" + err.Error()),
+		},
+		actions: nil,
+	}
 }
 
-func (h *Impl) validateFiles(ctx context.Context, fs billy.Filesystem) (github.CheckRunOutput, []*github.CheckRunAction, error) {
-	johnnie := MetadataYamlFileWalker(fs, h.CustomConfiguration.YamlIndentation())
+func (h *Impl) validateFiles(ctx context.Context, fs billy.Filesystem) (CheckResult, error) {
+	johnnie := MetadataYamlFileWalker(fs,
+		WithIndentation(h.CustomConfiguration.YamlIndentation()),
+		WithExpectedRequiredConditions(h.CustomConfiguration.CheckExpectedRequiredConditions()),
+		WithMainlinePrProtection(h.CustomConfiguration.CheckWarnMissingMainlineProtection()),
+	)
 	err := johnnie.ValidateMetadata()
 	if err != nil {
-		return github.CheckRunOutput{}, nil, err
+		return CheckResult{}, err
 	}
 	for ignored, reason := range johnnie.IgnoredWithReason {
 		aulogging.Logger.Ctx(ctx).Debug().Printf("ignored file %s during validation: %s", ignored, reason)
 	}
 
-	output, actions := walkerToCheckRunOutput(johnnie)
-	return output, actions, nil
+	return walkerToCheckRunOutput(johnnie), nil
 }
 
-func walkerToCheckRunOutput(johnnie *MetadataWalker) (github.CheckRunOutput, []*github.CheckRunAction) {
+func walkerToCheckRunOutput(johnnie *MetadataWalker) CheckResult {
+	result := CheckResult{
+		conclusion: repository.CheckRunSuccess,
+	}
+
 	title := SuccessValidationTitle
 	summary := "All changed files are valid."
 	var details *string
-	if len(johnnie.Annotations) > 0 {
-		title = FailedValidationTitle
+	if hasFailureAnnotations(johnnie) {
+		result.conclusion = repository.CheckRunFailure
 		summary = "There were files failing the validation. See Annotations."
+		title = FailedValidationTitle
 	}
 	if len(johnnie.Errors) > 0 {
+		result.conclusion = repository.CheckRunFailure
 		errorSummary := "There were files causing errors. See Details."
 		if title == SuccessValidationTitle {
 			title = FailedValidationTitle
@@ -178,16 +194,15 @@ func walkerToCheckRunOutput(johnnie *MetadataWalker) (github.CheckRunOutput, []*
 		details = github.Ptr(fmt.Sprintf("The following validation errors occurred:\n%s", errorsToMarkdownList(johnnie.Errors)))
 	}
 
-	output := github.CheckRunOutput{
+	result.output = github.CheckRunOutput{
 		Title:       github.Ptr(title),
 		Summary:     github.Ptr(summary),
 		Annotations: johnnie.Annotations,
 		Text:        details,
 	}
 
-	var actions []*github.CheckRunAction
 	if johnnie.hasFormatErrors {
-		actions = []*github.CheckRunAction{
+		result.actions = []*github.CheckRunAction{
 			{
 				Label:       "Fix formatting",
 				Description: "Adds a new commit with fixed formatting.",
@@ -195,7 +210,16 @@ func walkerToCheckRunOutput(johnnie *MetadataWalker) (github.CheckRunOutput, []*
 			},
 		}
 	}
-	return output, actions
+	return result
+}
+
+func hasFailureAnnotations(johnnie *MetadataWalker) bool {
+	for _, annotation := range johnnie.Annotations {
+		if annotation.AnnotationLevel != nil && *annotation.AnnotationLevel == "failure" {
+			return true
+		}
+	}
+	return false
 }
 
 func errorsToMarkdownList(errors map[string]error) string {
@@ -218,7 +242,12 @@ func (h *Impl) concludeCheckRunSafely(
 	details github.CheckRunOutput,
 	actions []*github.CheckRunAction,
 ) {
-	err := h.Github.ConcludeCheckRun(ctx, h.CustomConfiguration.MetadataRepoProject(), h.CustomConfiguration.MetadataRepoName(), CheckRunName, checkRunId, conclusion, details, actions...)
+	err := h.Github.ConcludeCheckRun(ctx,
+		h.CustomConfiguration.MetadataRepoProject(),
+		h.CustomConfiguration.MetadataRepoName(),
+		CheckRunName, checkRunId,
+		conclusion, details, actions...,
+	)
 	if err != nil {
 		aulogging.Logger.Ctx(ctx).Warn().WithErr(err).Printf("failed to conclude check run '%s' with id %d, will try to conclude again with fresh context.", CheckRunName, checkRunId)
 		failedConclusion := repository.CheckRunFailure
@@ -227,10 +256,15 @@ func (h *Impl) concludeCheckRunSafely(
 		} else if errors.Is(err, context.Canceled) {
 			failedConclusion = repository.CheckRunCancelled
 		}
-		_ = h.Github.ConcludeCheckRun(context.Background(), h.CustomConfiguration.MetadataRepoProject(), h.CustomConfiguration.MetadataRepoName(), CheckRunName, checkRunId, failedConclusion, github.CheckRunOutput{
-			Title:   github.Ptr(FailedValidationTitle),
-			Summary: github.Ptr("Failed to finish YAML file validation."),
-			Text:    github.Ptr(fmt.Sprintf("This was caused by error: %s", err.Error())),
-		})
+		_ = h.Github.ConcludeCheckRun(context.Background(),
+			h.CustomConfiguration.MetadataRepoProject(),
+			h.CustomConfiguration.MetadataRepoName(),
+			CheckRunName, checkRunId,
+			failedConclusion, github.CheckRunOutput{
+				Title:   github.Ptr(FailedValidationTitle),
+				Summary: github.Ptr("Failed to finish YAML file validation."),
+				Text:    github.Ptr(fmt.Sprintf("This was caused by error: %s", err.Error())),
+			},
+		)
 	}
 }

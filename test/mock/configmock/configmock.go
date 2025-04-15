@@ -299,3 +299,10 @@ func (c *MockConfig) GithubAppWebhookSecret() []byte {
 func (c *MockConfig) FormattingActionCommitMsgPrefix() string {
 	return ""
 }
+
+func (c *MockConfig) CheckWarnMissingMainlineProtection() bool {
+	return false
+}
+func (c *MockConfig) CheckExpectedRequiredConditions() []config.CheckedRequiredConditions {
+	return make([]config.CheckedRequiredConditions, 0)
+}
