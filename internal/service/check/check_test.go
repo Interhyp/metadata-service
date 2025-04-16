@@ -107,8 +107,8 @@ func Test_walkerToCheckRunOutput(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got, _ := walkerToCheckRunOutput(tt.args.johnnie); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("walkerToCheckRunOutput() = %+v, want %+v", printOutput(got), printOutput(tt.want))
+			if got := walkerToCheckRunOutput(tt.args.johnnie); !reflect.DeepEqual(got.output, tt.want) {
+				t.Errorf("walkerToCheckRunOutput() = %+v, want %+v", printOutput(got.output), printOutput(tt.want))
 			}
 		})
 	}

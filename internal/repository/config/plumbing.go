@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"regexp"
+	"slices"
 	"strconv"
 	"strings"
 
@@ -18,45 +19,47 @@ import (
 )
 
 type CustomConfigImpl struct {
-	VBasicAuthUsername               string
-	VBasicAuthPassword               string
-	VReviewerFallback                string
-	VGitCommitterName                string
-	VGitCommitterEmail               string
-	VAuthOidcKeySetUrl               string
-	VAuthOidcTokenAudience           string
-	VAuthGroupWrite                  string
-	VKafkaGroupIdOverride            string
-	VMetadataRepoUrl                 string
-	VMetadataRepoMainline            string
-	VUpdateJobIntervalCronPart       string
-	VUpdateJobTimeoutSeconds         uint16
-	VAlertTargetRegex                *regexp.Regexp
-	VElasticApmDisabled              bool
-	VOwnerAliasPermittedRegex        *regexp.Regexp
-	VOwnerAliasProhibitedRegex       *regexp.Regexp
-	VOwnerAliasMaxLength             uint16
-	VOwnerAliasFilterRegex           *regexp.Regexp
-	VServiceNamePermittedRegex       *regexp.Regexp
-	VServiceNameProhibitedRegex      *regexp.Regexp
-	VServiceNameMaxLength            uint16
-	VRepositoryNamePermittedRegex    *regexp.Regexp
-	VRepositoryNameProhibitedRegex   *regexp.Regexp
-	VRepositoryNameMaxLength         uint16
-	VRepositoryTypes                 string
-	VRepositoryKeySeparator          string
-	VNotificationConsumerConfigs     map[string]config.NotificationConsumerConfig
-	VRedisUrl                        string
-	VRedisPassword                   string
-	VPullRequestBuildUrl             string
-	VPullRequestBuildKey             string
-	VWebhooksProcessAsync            bool
-	VGithubAppId                     int64
-	VGithubAppInstallationId         int64
-	VGithubAppJwtSigningKeyPEM       []byte
-	VGithubAppWebhookSecret          []byte
-	VYamlIndentation                 int
-	VFormattingActionCommitMsgPrefix string
+	VBasicAuthUsername                  string
+	VBasicAuthPassword                  string
+	VReviewerFallback                   string
+	VGitCommitterName                   string
+	VGitCommitterEmail                  string
+	VAuthOidcKeySetUrl                  string
+	VAuthOidcTokenAudience              string
+	VAuthGroupWrite                     string
+	VKafkaGroupIdOverride               string
+	VMetadataRepoUrl                    string
+	VMetadataRepoMainline               string
+	VUpdateJobIntervalCronPart          string
+	VUpdateJobTimeoutSeconds            uint16
+	VAlertTargetRegex                   *regexp.Regexp
+	VElasticApmDisabled                 bool
+	VOwnerAliasPermittedRegex           *regexp.Regexp
+	VOwnerAliasProhibitedRegex          *regexp.Regexp
+	VOwnerAliasMaxLength                uint16
+	VOwnerAliasFilterRegex              *regexp.Regexp
+	VServiceNamePermittedRegex          *regexp.Regexp
+	VServiceNameProhibitedRegex         *regexp.Regexp
+	VServiceNameMaxLength               uint16
+	VRepositoryNamePermittedRegex       *regexp.Regexp
+	VRepositoryNameProhibitedRegex      *regexp.Regexp
+	VRepositoryNameMaxLength            uint16
+	VRepositoryTypes                    string
+	VRepositoryKeySeparator             string
+	VNotificationConsumerConfigs        map[string]config.NotificationConsumerConfig
+	VRedisUrl                           string
+	VRedisPassword                      string
+	VPullRequestBuildUrl                string
+	VPullRequestBuildKey                string
+	VWebhooksProcessAsync               bool
+	VGithubAppId                        int64
+	VGithubAppInstallationId            int64
+	VGithubAppJwtSigningKeyPEM          []byte
+	VGithubAppWebhookSecret             []byte
+	VYamlIndentation                    int
+	VFormattingActionCommitMsgPrefix    string
+	VCheckWarnMissingMainlineProtection bool
+	VCheckExpectedRequiredConditions    []config.CheckedRequiredConditions
 
 	VKafkaConfig  *kafka.Config
 	GitUrlMatcher *regexp.Regexp
@@ -119,6 +122,8 @@ func (c *CustomConfigImpl) Obtain(getter func(key string) string) {
 	c.VKafkaConfig.Obtain(getter)
 	c.VYamlIndentation = toInt(getter(config.KeyYamlIndentation))
 	c.VFormattingActionCommitMsgPrefix = getter(config.KeyFormattingActionCommitMsgPrefix)
+	c.VCheckExpectedRequiredConditions, _ = parseCheckExpectedRequiredConditions(getter(config.KeyCheckExpectedRequiredConditions))
+	c.VCheckWarnMissingMainlineProtection, _ = strconv.ParseBool(getter(config.KeyCheckWarnMissingMainlineProtection))
 }
 
 // used after validation, so known safe
@@ -213,6 +218,33 @@ func parseNotificationConsumerConfigs(rawJson string) (map[string]config.Notific
 		result[configIdentifier] = config.NotificationConsumerConfig{
 			ConsumerURL: consumerUrl,
 			Subscribed:  types,
+		}
+	}
+	if len(errors) > 0 {
+		return nil, fmt.Errorf(strings.Join(errors, " "))
+	}
+	return result, nil
+}
+
+func parseCheckExpectedRequiredConditions(rawJson string) ([]config.CheckedRequiredConditions, error) {
+	var parsed []*config.CheckedRequiredConditions
+	result := make([]config.CheckedRequiredConditions, 0)
+	if rawJson == "" {
+		return make([]config.CheckedRequiredConditions, 0), nil
+	}
+
+	if err := json.Unmarshal([]byte(rawJson), &parsed); err != nil {
+		return nil, err
+	}
+
+	errors := make([]string, 0)
+	supportedAnnotationLevels := []string{"notice", "warning", "failure"}
+	for _, expected := range parsed {
+		if !slices.Contains(supportedAnnotationLevels, expected.AnnotationLevel) {
+			errors = append(errors, fmt.Sprintf("Annotation level %s not supported for reqConditions check (%s)", expected.AnnotationLevel, expected.Name))
+		}
+		if expected != nil {
+			result = append(result, *expected)
 		}
 	}
 	if len(errors) > 0 {

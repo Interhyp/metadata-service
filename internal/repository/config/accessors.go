@@ -193,3 +193,11 @@ func (c *CustomConfigImpl) YamlIndentation() int {
 func (c *CustomConfigImpl) FormattingActionCommitMsgPrefix() string {
 	return c.VFormattingActionCommitMsgPrefix
 }
+
+func (c *CustomConfigImpl) CheckWarnMissingMainlineProtection() bool {
+	return c.VCheckWarnMissingMainlineProtection
+}
+
+func (c *CustomConfigImpl) CheckExpectedRequiredConditions() []config.CheckedRequiredConditions {
+	return c.VCheckExpectedRequiredConditions
+}

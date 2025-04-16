@@ -1,6 +1,7 @@
 package check
 
 import (
+	"github.com/Interhyp/metadata-service/internal/acorn/config"
 	"github.com/go-git/go-billy/v5"
 	"github.com/go-git/go-billy/v5/util"
 	"github.com/google/go-github/v70/github"
@@ -24,28 +25,70 @@ type MetadataWalker struct {
 	walkedRepos       walkedRepos
 	fmtEngine         yamlfmt.Engine
 	hasFormatErrors   bool
-	rootDir           string
+	config            Config
+}
+
+type Config struct {
+	rootDir                     string
+	indentation                 int
+	requireMainlinePrProtection bool
+	expectedRequiredConditions  []config.CheckedRequiredConditions
+}
+
+type Option = func(config *Config)
+
+func WithRootDir(rootDir string) Option {
+	return func(config *Config) {
+		config.rootDir = rootDir
+	}
+}
+
+func WithIndentation(indentation int) Option {
+	return func(config *Config) {
+		config.indentation = indentation
+	}
+}
+
+func WithMainlinePrProtection(requireMainlinePrProtection bool) Option {
+	return func(config *Config) {
+		config.requireMainlinePrProtection = requireMainlinePrProtection
+	}
+}
+
+func WithExpectedRequiredConditions(expectedReqConditions []config.CheckedRequiredConditions) Option {
+	return func(config *Config) {
+		config.expectedRequiredConditions = expectedReqConditions
+	}
 }
 
 const lineBreakStyle = yamlfmt.LineBreakStyleLF
 const lineSeparatorCharacter = "\n"
 
-func MetadataYamlFileWalker(filesys billy.Filesystem, indentation int) *MetadataWalker {
-	c := &basic.Config{ //https://github.com/google/yamlfmt/blob/main/docs/config-file.md
-		Indent:                 indentation,
+func MetadataYamlFileWalker(filesys billy.Filesystem, options ...Option) *MetadataWalker {
+	walkerConf := Config{
+		rootDir:                     "/",
+		indentation:                 2,
+		requireMainlinePrProtection: false,
+		expectedRequiredConditions:  nil,
+	}
+	for _, option := range options {
+		option(&walkerConf)
+	}
+	fmtConf := &basic.Config{ //https://github.com/google/yamlfmt/blob/main/docs/config-file.md
+		Indent:                 walkerConf.indentation,
 		LineEnding:             lineBreakStyle,
 		PadLineComments:        1,
 		RetainLineBreaksSingle: true,
 		ScanFoldedAsLiteral:    true,
 	}
-	b := &basic.BasicFormatter{
-		Config:       c,
-		Features:     basic.ConfigureFeaturesFromConfig(c),
-		YAMLFeatures: basic.ConfigureYAMLFeaturesFromConfig(c),
+	formatter := &basic.BasicFormatter{
+		Config:       fmtConf,
+		Features:     basic.ConfigureFeaturesFromConfig(fmtConf),
+		YAMLFeatures: basic.ConfigureYAMLFeaturesFromConfig(fmtConf),
 	}
-	eng := &engine.ConsecutiveEngine{
+	fmtEngine := &engine.ConsecutiveEngine{
 		LineSepCharacter: lineSeparatorCharacter,
-		Formatter:        b,
+		Formatter:        formatter,
 		Quiet:            false,
 		ContinueOnError:  true,
 		OutputFormat:     engine.EngineOutputDefault,
@@ -59,14 +102,10 @@ func MetadataYamlFileWalker(filesys billy.Filesystem, indentation int) *Metadata
 			urlToPath: make(map[string]string),
 			keyToPath: make(map[string]string),
 		},
-		fmtEngine: eng,
-		rootDir:   "/",
+		fmtEngine: fmtEngine,
+		config:    walkerConf,
 	}
 	return &validator
-}
-func (v *MetadataWalker) WithRootDir(newRoot string) *MetadataWalker {
-	v.rootDir = newRoot
-	return v
 }
 
 func (v *MetadataWalker) walkFunc(perFileFunc func(fileContents []byte) error) filepath.WalkFunc {
