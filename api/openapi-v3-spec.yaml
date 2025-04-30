@@ -2087,6 +2087,9 @@ components:
         unmanaged:
           description: 'Repository will not be configured, also not archived.'
           type: boolean
+        deleteBranchOnMerge:
+          description: 'Delete branch on merge'
+          type: boolean
         refProtections:
           $ref: '#/components/schemas/RefProtections'
         pullRequests:
@@ -2187,6 +2190,9 @@ components:
           type: boolean
         unmanaged:
           description: 'Repository will not be configured, also not archived.'
+          type: boolean
+        deleteBranchOnMerge:
+          description: 'Delete branch on merge'
           type: boolean
         refProtections:
           $ref: '#/components/schemas/RefProtections'

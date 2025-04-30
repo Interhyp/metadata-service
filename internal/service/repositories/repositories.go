@@ -472,6 +472,7 @@ func patchConfiguration(patch *openapi.RepositoryConfigurationPatchDto, original
 			Watchers:                patchSlice(patch.Watchers, original.Watchers),
 			Archived:                patchPtr[bool](patch.Archived, original.Archived),
 			Unmanaged:               patchPtr[bool](patch.Unmanaged, original.Unmanaged),
+			DeleteBranchOnMerge:     patchPtr[bool](patch.DeleteBranchOnMerge, original.DeleteBranchOnMerge),
 			RefProtections:          patchRefProtections(patch.RefProtections, original.RefProtections),
 			RequireIssue:            patchPtr[bool](patch.RequireIssue, original.RequireIssue),
 			RequireConditions:       patchRequireConditions(patch.RequireConditions, original.RequireConditions),

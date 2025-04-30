@@ -39,8 +39,10 @@ type RepositoryConfigurationPatchDto struct {
 	// Moves the repository into the archive.
 	Archived *bool `yaml:"archived,omitempty" json:"archived,omitempty"`
 	// Repository will not be configured, also not archived.
-	Unmanaged      *bool           `yaml:"unmanaged,omitempty" json:"unmanaged,omitempty"`
-	RefProtections *RefProtections `yaml:"refProtections,omitempty" json:"refProtections,omitempty"`
+	Unmanaged *bool `yaml:"unmanaged,omitempty" json:"unmanaged,omitempty"`
+	// Delete branch on merge
+	DeleteBranchOnMerge *bool           `yaml:"deleteBranchOnMerge,omitempty" json:"deleteBranchOnMerge,omitempty"`
+	RefProtections      *RefProtections `yaml:"refProtections,omitempty" json:"refProtections,omitempty"`
 	// Configures JQL matcher with query: issuetype in (Story, Bug) AND 'Risk Level' is not EMPTY
 	RequireIssue *bool `yaml:"requireIssue,omitempty" json:"requireIssue,omitempty"`
 	// Configuration of conditional builds as map of structs (key name e.g. some-key) of target references.
