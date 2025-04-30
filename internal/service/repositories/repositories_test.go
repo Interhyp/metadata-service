@@ -58,8 +58,10 @@ func createRepositoryConfigurationDto() *openapi.RepositoryConfigurationDto {
 				},
 			},
 		},
-		Approvers: map[string][]string{"group": {"approver1"}},
-		Archived:  ptr(false),
+		Approvers:           map[string][]string{"group": {"approver1"}},
+		Archived:            ptr(false),
+		Unmanaged:           ptr(false),
+		DeleteBranchOnMerge: ptr(true),
 	}
 }
 func createRepositoryConfigurationPatchDtoFromConfigurationDto(input *openapi.RepositoryConfigurationDto) *openapi.RepositoryConfigurationPatchDto {
@@ -71,6 +73,8 @@ func createRepositoryConfigurationPatchDtoFromConfigurationDto(input *openapi.Re
 		Webhooks:                input.Webhooks,
 		Approvers:               input.Approvers,
 		Archived:                input.Archived,
+		Unmanaged:               input.Unmanaged,
+		DeleteBranchOnMerge:     input.DeleteBranchOnMerge,
 	}
 }
 
@@ -182,8 +186,10 @@ func TestPatchRepository_ReplaceAll(t *testing.T) {
 					},
 				},
 			},
-			Approvers: map[string][]string{"group": {"newapprover1"}},
-			Archived:  ptr(true),
+			Approvers:           map[string][]string{"group": {"newapprover1"}},
+			Archived:            ptr(true),
+			Unmanaged:           ptr(false),
+			DeleteBranchOnMerge: ptr(true),
 		},
 		Labels:     map[string]string{"label": "patchedValue"},
 		TimeStamp:  "newts",
@@ -224,8 +230,10 @@ func TestPatchRepository_ClearFields(t *testing.T) {
 			Webhooks: &openapi.RepositoryConfigurationWebhooksDto{
 				Additional: nil,
 			},
-			Approvers: nil,
-			Archived:  ptr(false),
+			Approvers:           nil,
+			Archived:            ptr(false),
+			Unmanaged:           ptr(false),
+			DeleteBranchOnMerge: ptr(true),
 		},
 		Labels:     nil,
 		TimeStamp:  "",

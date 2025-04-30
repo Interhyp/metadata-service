@@ -2,8 +2,6 @@ module github.com/Interhyp/metadata-service
 
 go 1.23.0
 
-toolchain go1.23.5
-
 require (
 	github.com/IBM/sarama v1.45.0
 	github.com/Interhyp/go-backend-service-common v0.12.1
