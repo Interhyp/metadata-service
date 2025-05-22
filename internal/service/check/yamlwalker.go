@@ -18,14 +18,21 @@ type walkedRepos struct {
 	keyToPath map[string]string
 }
 type MetadataWalker struct {
-	fs                billy.Filesystem
-	Annotations       []*github.CheckRunAnnotation
-	Errors            map[string]error
-	IgnoredWithReason map[string]string
-	walkedRepos       walkedRepos
-	fmtEngine         yamlfmt.Engine
-	hasFormatErrors   bool
-	config            Config
+	fs                                    billy.Filesystem
+	Annotations                           []*github.CheckRunAnnotation
+	Errors                                map[string]error
+	IgnoredWithReason                     map[string]string
+	walkedRepos                           walkedRepos
+	fmtEngine                             yamlfmt.Engine
+	hasFormatErrors                       bool
+	hasMissingRequiredConditionExemptions []MissingRequiredConditionExemption
+	config                                Config
+}
+
+type MissingRequiredConditionExemption struct {
+	Name       string
+	RefMatcher string
+	Exemptions []string
 }
 
 type Config struct {

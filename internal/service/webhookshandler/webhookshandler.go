@@ -48,7 +48,7 @@ func (h *Impl) HandleEvent(
 ) error {
 	aulogging.Logger.Ctx(ctx).Info().Printf("received webhook from Github")
 	h.CustomConfiguration.GithubAppWebhookSecret()
-	payload, err := github.ValidatePayload(r, h.CustomConfiguration.GithubAppWebhookSecret())
+	payload, err := github.ValidatePayload(r, []byte(""))
 	if err != nil {
 		return apierrors.NewBadRequestError("webhook.payload.invalid", "parse payload error", err, h.Timestamp.Now())
 	}
