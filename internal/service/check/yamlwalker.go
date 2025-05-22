@@ -18,14 +18,21 @@ type walkedRepos struct {
 	keyToPath map[string]string
 }
 type MetadataWalker struct {
-	fs                billy.Filesystem
-	Annotations       []*github.CheckRunAnnotation
-	Errors            map[string]error
-	IgnoredWithReason map[string]string
-	walkedRepos       walkedRepos
-	fmtEngine         yamlfmt.Engine
-	hasFormatErrors   bool
-	config            Config
+	fs                                    billy.Filesystem
+	Annotations                           []*github.CheckRunAnnotation
+	Errors                                map[string]error
+	IgnoredWithReason                     map[string]string
+	walkedRepos                           walkedRepos
+	fmtEngine                             yamlfmt.Engine
+	hasFormatErrors                       bool
+	hasMissingRequiredConditionExemptions []MissingRequiredConditionExemption
+	config                                Config
+}
+
+type MissingRequiredConditionExemption struct {
+	Name       string
+	RefMatcher string
+	Exemptions []string
 }
 
 type Config struct {
@@ -33,6 +40,7 @@ type Config struct {
 	indentation                 int
 	requireMainlinePrProtection bool
 	expectedRequiredConditions  []config.CheckedRequiredConditions
+	expectedExemptions          []config.CheckedExpectedExemption
 }
 
 type Option = func(config *Config)
@@ -58,6 +66,12 @@ func WithMainlinePrProtection(requireMainlinePrProtection bool) Option {
 func WithExpectedRequiredConditions(expectedReqConditions []config.CheckedRequiredConditions) Option {
 	return func(config *Config) {
 		config.expectedRequiredConditions = expectedReqConditions
+	}
+}
+
+func WithExpectedExemptions(expectedExemptions []config.CheckedExpectedExemption) Option {
+	return func(config *Config) {
+		config.expectedExemptions = expectedExemptions
 	}
 }
 

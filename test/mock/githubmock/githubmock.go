@@ -12,8 +12,15 @@ func (this *GitHubMock) StartCheckRun(ctx context.Context, owner, repoName, chec
 	return 0, nil
 }
 
-func (this *GitHubMock) ConcludeCheckRun(ctx context.Context, owner, repoName, checkName string, checkRunId int64, conclusion repository.CheckRunConclusion, details github.CheckRunOutput) error {
+func (this *GitHubMock) ConcludeCheckRun(ctx context.Context, owner, repoName, checkName string, checkRunId int64, conclusion repository.CheckRunConclusion, details github.CheckRunOutput, actions ...*github.CheckRunAction) error {
 	return nil
+}
+
+func (this *GitHubMock) GetUser(ctx context.Context, username string) (*github.User, error) {
+	return &github.User{
+		Email: github.Ptr("some-email"),
+		Name:  github.Ptr("some-name"),
+	}, nil
 }
 
 func (this *GitHubMock) CreateInstallationToken(ctx context.Context, installationId int64) (*github.InstallationToken, *github.Response, error) {

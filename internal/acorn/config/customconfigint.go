@@ -71,12 +71,18 @@ type CustomConfiguration interface {
 
 	CheckWarnMissingMainlineProtection() bool
 	CheckExpectedRequiredConditions() []CheckedRequiredConditions
+	CheckedExpectedExemptions() []CheckedExpectedExemption
 }
-
 type CheckedRequiredConditions struct {
 	Name            string `yaml:"name" json:"name"`
 	AnnotationLevel string `yaml:"annotationLevel" json:"annotationLevel"`
 	RefMatcher      string `yaml:"refMatcher" json:"refMatcher"`
+}
+
+type CheckedExpectedExemption struct {
+	Name       string   `yaml:"name" json:"name"`
+	RefMatcher string   `yaml:"refMatcher" json:"refMatcher"`
+	Exemptions []string `yaml:"exemptions" json:"exemptions"`
 }
 
 type NotificationConsumerConfig struct {
@@ -131,4 +137,5 @@ const (
 	KeyFormattingActionCommitMsgPrefix    = "FORMATTING_ACTION_COMMIT_MSG_PREFIX"
 	KeyCheckWarnMissingMainlineProtection = "CHECK_WARN_MISSING_MAINLINE_PROTECTION"
 	KeyCheckExpectedRequiredConditions    = "CHECK_EXPECTED_REQUIRED_CONDITIONS"
+	KeyCheckExpectedExemptions            = "CHECK_EXPECTED_EXEMPTIONS"
 )

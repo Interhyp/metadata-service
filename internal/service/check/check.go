@@ -156,6 +156,7 @@ func (h *Impl) validateFiles(ctx context.Context, fs billy.Filesystem) (CheckRes
 	johnnie := MetadataYamlFileWalker(fs,
 		WithIndentation(h.CustomConfiguration.YamlIndentation()),
 		WithExpectedRequiredConditions(h.CustomConfiguration.CheckExpectedRequiredConditions()),
+		WithExpectedExemptions(h.CustomConfiguration.CheckedExpectedExemptions()),
 		WithMainlinePrProtection(h.CustomConfiguration.CheckWarnMissingMainlineProtection()),
 	)
 	err := johnnie.ValidateMetadata()
@@ -172,6 +173,7 @@ func (h *Impl) validateFiles(ctx context.Context, fs billy.Filesystem) (CheckRes
 func walkerToCheckRunOutput(johnnie *MetadataWalker) CheckResult {
 	result := CheckResult{
 		conclusion: repository.CheckRunSuccess,
+		actions:    make([]*github.CheckRunAction, 0),
 	}
 
 	title := SuccessValidationTitle
@@ -201,12 +203,18 @@ func walkerToCheckRunOutput(johnnie *MetadataWalker) CheckResult {
 		Text:        details,
 	}
 
-	if johnnie.hasFormatErrors {
+	if johnnie.hasFormatErrors || len(johnnie.hasMissingRequiredConditionExemptions) > 0 {
+		actionLabel := "Fix formatting"
+		description := "Adds a new commit with fixed formatting."
+		if len(johnnie.hasMissingRequiredConditionExemptions) > 0 {
+			actionLabel = "Fix missing exemptions"
+			description = "Adds a new commit with missing exemptions."
+		}
 		result.actions = []*github.CheckRunAction{
 			{
-				Label:       "Fix formatting",
-				Description: "Adds a new commit with fixed formatting.",
-				Identifier:  FixFormattingAction,
+				Label:       actionLabel,
+				Description: description,
+				Identifier:  FixAction,
 			},
 		}
 	}

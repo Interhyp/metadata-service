@@ -60,6 +60,7 @@ type CustomConfigImpl struct {
 	VFormattingActionCommitMsgPrefix    string
 	VCheckWarnMissingMainlineProtection bool
 	VCheckExpectedRequiredConditions    []config.CheckedRequiredConditions
+	VCheckExpectedExemptions            []config.CheckedExpectedExemption
 
 	VKafkaConfig  *kafka.Config
 	GitUrlMatcher *regexp.Regexp
@@ -123,6 +124,7 @@ func (c *CustomConfigImpl) Obtain(getter func(key string) string) {
 	c.VYamlIndentation = toInt(getter(config.KeyYamlIndentation))
 	c.VFormattingActionCommitMsgPrefix = getter(config.KeyFormattingActionCommitMsgPrefix)
 	c.VCheckExpectedRequiredConditions, _ = parseCheckExpectedRequiredConditions(getter(config.KeyCheckExpectedRequiredConditions))
+	c.VCheckExpectedExemptions, _ = parseCheckExpectedExemptions(getter(config.KeyCheckExpectedExemptions))
 	c.VCheckWarnMissingMainlineProtection, _ = strconv.ParseBool(getter(config.KeyCheckWarnMissingMainlineProtection))
 }
 
@@ -251,4 +253,15 @@ func parseCheckExpectedRequiredConditions(rawJson string) ([]config.CheckedRequi
 		return nil, fmt.Errorf(strings.Join(errors, " "))
 	}
 	return result, nil
+}
+
+func parseCheckExpectedExemptions(rawJson string) ([]config.CheckedExpectedExemption, error) {
+	var parsed []config.CheckedExpectedExemption
+	if rawJson == "[]" {
+		return make([]config.CheckedExpectedExemption, 0), nil
+	}
+	if err := json.Unmarshal([]byte(rawJson), &parsed); err != nil {
+		return make([]config.CheckedExpectedExemption, 0), err
+	}
+	return parsed, nil
 }
