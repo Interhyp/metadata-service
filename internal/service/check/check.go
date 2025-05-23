@@ -172,6 +172,7 @@ func (h *Impl) validateFiles(ctx context.Context, fs billy.Filesystem) (CheckRes
 func walkerToCheckRunOutput(johnnie *MetadataWalker) CheckResult {
 	result := CheckResult{
 		conclusion: repository.CheckRunSuccess,
+		actions:    make([]*github.CheckRunAction, 0),
 	}
 
 	title := SuccessValidationTitle
@@ -202,13 +203,18 @@ func walkerToCheckRunOutput(johnnie *MetadataWalker) CheckResult {
 	}
 
 	if johnnie.hasFormatErrors {
-		result.actions = []*github.CheckRunAction{
-			{
-				Label:       "Fix formatting",
-				Description: "Adds a new commit with fixed formatting.",
-				Identifier:  FixFormattingAction,
-			},
-		}
+		result.actions = append(result.actions, &github.CheckRunAction{
+			Label:       "Fix formatting",
+			Description: "Adds a new commit with fixed formatting.",
+			Identifier:  FixFormattingAction,
+		})
+	}
+	if len(johnnie.hasMissingRequiredConditionExemptions) > 0 {
+		result.actions = append(result.actions, &github.CheckRunAction{
+			Label:       "Fix missing exemptions",
+			Description: "Adds a new commit with the missing exemptions.",
+			Identifier:  FixMissingExemptions,
+		})
 	}
 	return result
 }

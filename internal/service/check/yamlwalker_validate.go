@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/Interhyp/metadata-service/api"
+	"github.com/Interhyp/metadata-service/internal/acorn/config"
 	"github.com/go-git/go-billy/v5/util"
 	"github.com/google/go-github/v70/github"
 	"github.com/google/yamlfmt"
@@ -202,25 +203,152 @@ func (v *MetadataWalker) checkRequiredConditions(path string, dto *openapi.Repos
 	if len(v.config.expectedRequiredConditions) == 0 {
 		return nil
 	}
-	if dto == nil || dto.Configuration == nil || dto.Configuration.RequireConditions == nil {
+	if dto == nil || dto.Configuration == nil && (dto.Configuration.RequireConditions == nil && dto.Configuration.RefProtections == nil) {
 		return nil
 	}
 	annotations := make([]*github.CheckRunAnnotation, 0)
 	for _, expected := range v.config.expectedRequiredConditions {
-		c, ok := dto.Configuration.RequireConditions[expected.Name]
-		if !ok || c.RefMatcher != expected.RefMatcher {
+		if !strings.Contains(path, expected.RepositoryType) {
+			continue
+		}
+		conditionExists, missingConditionExemptions := v.checkExpectedConditionOnRequiredConditions(expected, dto)
+		refProtectionExists, missingRefProtectionExemptions := v.checkExpectedConditionOnRefProtections(expected, dto)
+		if !conditionExists && !refProtectionExists {
 			annotations = append(annotations, &github.CheckRunAnnotation{
 				Path:            github.Ptr(path),
 				StartLine:       github.Ptr(1),
 				EndLine:         github.Ptr(1),
 				AnnotationLevel: github.Ptr(expected.AnnotationLevel),
-				Message:         github.Ptr(fmt.Sprintf("This file does not contain the required condition %s with the refMatcher %s.", expected.Name, expected.RefMatcher)),
-				Title:           github.Ptr("missing expected required condition"),
+				Message:         github.Ptr(fmt.Sprintf("This file does not contain the required condition/refProtection %s with the refMatcher %s.", expected.Name, expected.RefMatcher)),
+				Title:           github.Ptr("missing expected condition/refProtection"),
+			})
+		}
+		if len(missingConditionExemptions) > 0 || len(missingRefProtectionExemptions) > 0 {
+			missing := append(missingConditionExemptions, missingRefProtectionExemptions...)
+			v.hasMissingRequiredConditionExemptions = missing
+			annotations = append(annotations, &github.CheckRunAnnotation{
+				Path:            github.Ptr(path),
+				StartLine:       github.Ptr(1),
+				EndLine:         github.Ptr(1),
+				AnnotationLevel: github.Ptr(expected.AnnotationLevel),
+				Message:         github.Ptr(fmt.Sprintf("This file does not contain all required exemptions %s for condition %s with the refMatcher %s.", strings.Join(expected.Exemptions, ", "), expected.Name, expected.RefMatcher)),
+				Title:           github.Ptr("missing expected required exemptions"),
 			})
 		}
 	}
 
 	return annotations
+}
+
+func (v *MetadataWalker) checkExpectedConditionOnRequiredConditions(expected config.CheckedRequiredConditions, dto *openapi.RepositoryDto) (bool, []MissingRequiredConditionExemption) {
+	missingExemptions := make([]MissingRequiredConditionExemption, 0)
+	// requiredCondition missing false, exists true
+	okResult := false
+	if dto.Configuration.RequireConditions == nil && isExpectedRequiredCondition(expected) {
+		return okResult, missingExemptions
+	}
+	if condition, ok := dto.Configuration.RequireConditions[expected.Name]; ok && condition.RefMatcher == expected.RefMatcher {
+		okResult = ok
+		if missing := allEntriesExist(expected.Exemptions, condition.Exemptions); len(missing) > 0 {
+			missingExemptions = append(missingExemptions, MissingRequiredConditionExemption{
+				Name:       expected.Name,
+				RefMatcher: expected.RefMatcher,
+				Exemptions: missing,
+			})
+		}
+	}
+
+	return okResult, missingExemptions
+}
+
+func (v *MetadataWalker) checkExpectedConditionOnRefProtections(expected config.CheckedRequiredConditions, dto *openapi.RepositoryDto) (bool, []MissingRequiredConditionExemption) {
+	missingExemptions := make([]MissingRequiredConditionExemption, 0)
+	// requiredCondition missing false, exists true
+	okResult := false
+	if dto.Configuration.RefProtections == nil && !isExpectedRequiredCondition(expected) {
+		return okResult, missingExemptions
+	}
+	var protectedRefs []openapi.ProtectedRef
+	switch expected.Name {
+	case "branches.requirePR":
+		if dto.Configuration.RefProtections.Branches != nil && dto.Configuration.RefProtections.Branches.RequirePR != nil {
+			protectedRefs = dto.Configuration.RefProtections.Branches.RequirePR
+		}
+	case "branches.preventAllChanges":
+		if dto.Configuration.RefProtections.Branches != nil && dto.Configuration.RefProtections.Branches.PreventAllChanges != nil {
+
+			protectedRefs = dto.Configuration.RefProtections.Branches.PreventAllChanges
+		}
+	case "branches.preventCreation":
+		if dto.Configuration.RefProtections.Branches != nil && dto.Configuration.RefProtections.Branches.PreventCreation != nil {
+			protectedRefs = dto.Configuration.RefProtections.Branches.PreventCreation
+		}
+	case "branches.preventDeletion":
+		if dto.Configuration.RefProtections.Branches != nil && dto.Configuration.RefProtections.Branches.PreventDeletion != nil {
+			protectedRefs = dto.Configuration.RefProtections.Branches.PreventDeletion
+		}
+	case "branches.preventPush":
+		if dto.Configuration.RefProtections.Branches != nil && dto.Configuration.RefProtections.Branches.PreventPush != nil {
+			protectedRefs = dto.Configuration.RefProtections.Branches.PreventPush
+		}
+	case "branches.preventForcePush":
+		if dto.Configuration.RefProtections.Branches != nil && dto.Configuration.RefProtections.Branches.PreventForcePush != nil {
+			protectedRefs = dto.Configuration.RefProtections.Branches.PreventForcePush
+		}
+	case "tags.preventAllChanges":
+		if dto.Configuration.RefProtections.Tags != nil && dto.Configuration.RefProtections.Tags.PreventAllChanges != nil {
+			protectedRefs = dto.Configuration.RefProtections.Tags.PreventAllChanges
+		}
+	case "tags.preventCreation":
+		if dto.Configuration.RefProtections.Tags != nil && dto.Configuration.RefProtections.Tags.PreventCreation != nil {
+			protectedRefs = dto.Configuration.RefProtections.Tags.PreventCreation
+		}
+	case "tags.preventDeletion":
+		if dto.Configuration.RefProtections.Tags != nil && dto.Configuration.RefProtections.Tags.PreventDeletion != nil {
+			protectedRefs = dto.Configuration.RefProtections.Tags.PreventDeletion
+		}
+	case "tags.preventForcePush":
+		if dto.Configuration.RefProtections.Tags != nil && dto.Configuration.RefProtections.Tags.PreventForcePush != nil {
+			protectedRefs = dto.Configuration.RefProtections.Tags.PreventForcePush
+		}
+	}
+
+	for _, protectedRef := range protectedRefs {
+		if protectedRef.Pattern == expected.RefMatcher {
+			okResult = true
+			if missing := allEntriesExist(expected.Exemptions, protectedRef.Exemptions); len(missing) > 0 {
+				okResult = true
+				missingExemptions = append(missingExemptions, MissingRequiredConditionExemption{
+					Name:       expected.Name,
+					RefMatcher: expected.RefMatcher,
+					Exemptions: missing,
+				})
+			}
+		}
+	}
+
+	return okResult, missingExemptions
+}
+
+func isExpectedRequiredCondition(expected config.CheckedRequiredConditions) bool {
+	return !strings.Contains(expected.Name, "branches") || !strings.Contains(expected.Name, "tags")
+}
+
+func allEntriesExist(arr1, arr2 []string) []string {
+	var missing []string
+	for _, str1 := range arr1 {
+		found := false
+		for _, str2 := range arr2 {
+			if str1 == str2 {
+				found = true
+				break
+			}
+		}
+		if !found {
+			missing = append(missing, str1)
+		}
+	}
+	return missing
 }
 
 func (v *MetadataWalker) checkFormatting(path string, content string) *github.CheckRunAnnotation {

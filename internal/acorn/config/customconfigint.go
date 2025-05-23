@@ -74,9 +74,11 @@ type CustomConfiguration interface {
 }
 
 type CheckedRequiredConditions struct {
-	Name            string `yaml:"name" json:"name"`
-	AnnotationLevel string `yaml:"annotationLevel" json:"annotationLevel"`
-	RefMatcher      string `yaml:"refMatcher" json:"refMatcher"`
+	Name            string   `yaml:"name" json:"name"`
+	AnnotationLevel string   `yaml:"annotationLevel" json:"annotationLevel"`
+	RefMatcher      string   `yaml:"refMatcher" json:"refMatcher"`
+	RepositoryType  string   `yaml:"repositoryType" json:"repositoryType"`
+	Exemptions      []string `yaml:"exemptions" json:"exemptions"`
 }
 
 type NotificationConsumerConfig struct {
