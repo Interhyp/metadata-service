@@ -56,4 +56,6 @@ type RepositoryConfigurationDto struct {
 	RequireSignature *ConditionReferenceDto `yaml:"requireSignature,omitempty" json:"requireSignature,omitempty"`
 	// Control how the repository is used by GitHub Actions workflows in other repositories
 	ActionsAccess *string `yaml:"actionsAccess,omitempty" json:"actionsAccess,omitempty"`
+	// Custom properties for this repository
+	CustomProperties map[string]interface{} `yaml:"customProperties,omitempty" json:"customProperties,omitempty"`
 }

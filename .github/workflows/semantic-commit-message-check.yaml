@@ -12,7 +12,7 @@ jobs:
       - name: Check valid types
         uses: gsactions/commit-message-checker@v1
         with:
-          pattern: '^(((fix|feat|docs|style|perf|refactor|test|build|chore|ci|revert)\([\w_-]+\)))!{0,1}: .*'
+          pattern: '^(((fix|feat|docs|style|perf|refactor|test|build|chore|ci|revert)\([\w_-]+\)))?!?: .*'
           error: 'Your commit message should match one of these types (build|chore|ci|docs|feat|fix|perf|refactor|revert|style|test) in header.'
           excludeDescription: 'true'
           excludeTitle: 'true'

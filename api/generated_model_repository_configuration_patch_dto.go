@@ -52,4 +52,6 @@ type RepositoryConfigurationPatchDto struct {
 	// Control how the repository is used by GitHub Actions workflows in other repositories
 	ActionsAccess *string       `yaml:"actionsAccess,omitempty" json:"actionsAccess,omitempty"`
 	PullRequests  *PullRequests `yaml:"pullRequests,omitempty" json:"pullRequests,omitempty"`
+	// Custom properties for this repository
+	CustomProperties map[string]interface{} `yaml:"customProperties,omitempty" json:"customProperties,omitempty"`
 }

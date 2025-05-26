@@ -479,6 +479,20 @@ func patchConfiguration(patch *openapi.RepositoryConfigurationPatchDto, original
 			ActionsAccess:           patchStringPtr(patch.ActionsAccess, original.ActionsAccess),
 			PullRequests:            patchPullRequests(patch.PullRequests, original.PullRequests),
 			RequireSignature:        patchRequireSignature(patch.RequireSignature, original.RequireSignature),
+			CustomProperties:        patchCustomProperties(patch.CustomProperties, original.CustomProperties),
+		}
+	} else {
+		return original
+	}
+}
+
+func patchCustomProperties(patch map[string]interface{}, original map[string]interface{}) map[string]interface{} {
+	if patch != nil {
+		if len(patch) == 0 {
+			// remove
+			return nil
+		} else {
+			return patch
 		}
 	} else {
 		return original
