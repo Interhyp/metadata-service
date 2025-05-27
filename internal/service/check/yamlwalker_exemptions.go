@@ -101,6 +101,7 @@ func (v *MetadataWalker) fixExemptionsInFile(fileContents []byte, path string) e
 			if err != nil {
 				return err
 			}
+			v.hasMissingRequiredConditionExemptions = nil
 			return v.formatSingleYamlFile(fixed, path)
 		}
 	}

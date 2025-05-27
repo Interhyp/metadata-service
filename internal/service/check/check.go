@@ -207,8 +207,8 @@ func walkerToCheckRunOutput(johnnie *MetadataWalker) CheckResult {
 		actionLabel := "Fix formatting"
 		description := "Adds a new commit with fixed formatting."
 		if len(johnnie.hasMissingRequiredConditionExemptions) > 0 {
-			actionLabel = "Fix missing exemptions"
-			description = "Adds a new commit with missing exemptions."
+			actionLabel = "Fix exemptions"
+			description = "Adds a new commit with exemptions."
 		}
 		result.actions = []*github.CheckRunAction{
 			{
