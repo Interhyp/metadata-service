@@ -14,8 +14,8 @@ import (
 )
 
 const (
-	FixFormattingAction = "fix-formatting"
-	ActionTimeout       = 1 * time.Minute
+	FixAction     = "fix-all"
+	ActionTimeout = 1 * time.Minute
 )
 
 func (h *Impl) PerformRequestedAction(ctx context.Context, requestedAction string, checkRun *github.CheckRun, requestingUser *github.User) error {
@@ -24,19 +24,33 @@ func (h *Impl) PerformRequestedAction(ctx context.Context, requestedAction strin
 	defer cancel()
 
 	switch requestedAction {
-	case FixFormattingAction:
-		return h.commitFormatFixes(independentCtx, checkRun.GetCheckSuite().GetHeadBranch(), requestingUser.GetLogin())
+	case FixAction:
+		msg := "formatting files/adding missing exemptions"
+		fixFunc := func(branchName string, worktree *git.Worktree) error {
+			aulogging.Logger.Ctx(ctx).Debug().Printf("%s on branch %s", msg, branchName)
+			err := MetadataYamlFileWalker(worktree.Filesystem,
+				WithIndentation(h.CustomConfiguration.YamlIndentation()),
+			).FormatMetadata()
+			if err != nil {
+				return err
+			}
+			err = MetadataYamlFileWalker(worktree.Filesystem,
+				WithExpectedExemptions(h.CustomConfiguration.CheckedExpectedExemptions()),
+			).FixExemptions()
+			return err
+		}
+		return h.commitFixes(independentCtx, fixFunc, checkRun.GetCheckSuite().GetHeadBranch(), requestingUser.GetLogin(), msg)
 	}
 
 	aulogging.Logger.Ctx(independentCtx).Info().Printf("successfully processed webhook for requested_action %s (suite: %d|run: %d)", requestedAction, checkRun.CheckSuite.GetID(), checkRun.GetID())
 	return nil
 }
 
-func (h *Impl) commitFormatFixes(ctx context.Context, branchName string, user string) error {
+func (h *Impl) commitFixes(ctx context.Context, fixFunc func(branchName string, worktree *git.Worktree) error, branchName string, user string, msg string) error {
 	if branchName == "" {
-		return fmt.Errorf("missing branch name for formatting files")
+		return fmt.Errorf("missing branch name for fixing %s", msg)
 	}
-	aulogging.Logger.Ctx(ctx).Info().Printf("start fixing file format on branch %s", branchName)
+	aulogging.Logger.Ctx(ctx).Info().Printf("start fixing '%s' on branch %s", msg, branchName)
 	author, err := h.Github.GetUser(ctx, user)
 	if err != nil {
 		return err
@@ -48,21 +62,18 @@ func (h *Impl) commitFormatFixes(ctx context.Context, branchName string, user st
 		return err
 	}
 
-	aulogging.Logger.Ctx(ctx).Debug().Printf("formatting files on branch %s", branchName)
-	err = MetadataYamlFileWalker(worktree.Filesystem,
-		WithIndentation(h.CustomConfiguration.YamlIndentation()),
-	).FormatMetadata()
+	err = fixFunc(branchName, worktree)
 	if err != nil {
 		return err
 	}
 
-	aulogging.Logger.Ctx(ctx).Debug().Printf("committing formatted files onto branch %s", branchName)
-	err = h.commit(worktree, author)
+	aulogging.Logger.Ctx(ctx).Debug().Printf("committing %s onto branch %s", msg, branchName)
+	err = h.commit(worktree, author, msg)
 	if err != nil {
 		return err
 	}
 
-	aulogging.Logger.Ctx(ctx).Debug().Printf("pushing formatted files onto branch %s", branchName)
+	aulogging.Logger.Ctx(ctx).Debug().Printf("pushing %s onto branch %s", msg, branchName)
 	err = repo.PushContext(ctx, &git.PushOptions{
 		Auth:       h.AuthProvider.ProvideAuth(ctx),
 		RemoteName: "origin",
@@ -70,7 +81,7 @@ func (h *Impl) commitFormatFixes(ctx context.Context, branchName string, user st
 	if err != nil {
 		return err
 	}
-	aulogging.Logger.Ctx(ctx).Info().Printf("finished fixing file format on branch %s", branchName)
+	aulogging.Logger.Ctx(ctx).Info().Printf("finished fixing '%s' on branch %s", msg, branchName)
 	return nil
 }
 
@@ -92,9 +103,9 @@ func (h *Impl) clone(ctx context.Context, branchName string) (*git.Repository, *
 	return repo, worktree, nil
 }
 
-func (h *Impl) commit(worktree *git.Worktree, author *github.User) error {
+func (h *Impl) commit(worktree *git.Worktree, author *github.User, msg string) error {
 	commitTimestamp := h.timestamp.Now()
-	commitMsg := fmt.Sprintf("%sFormat files", h.CustomConfiguration.FormattingActionCommitMsgPrefix())
+	commitMsg := fmt.Sprintf("%s%s", h.CustomConfiguration.FormattingActionCommitMsgPrefix(), msg)
 	_, err := worktree.Commit(commitMsg, &git.CommitOptions{
 		All: true,
 		Author: &object.Signature{

@@ -303,6 +303,11 @@ func (c *MockConfig) FormattingActionCommitMsgPrefix() string {
 func (c *MockConfig) CheckWarnMissingMainlineProtection() bool {
 	return false
 }
+
 func (c *MockConfig) CheckExpectedRequiredConditions() []config.CheckedRequiredConditions {
 	return make([]config.CheckedRequiredConditions, 0)
+}
+
+func (c *MockConfig) CheckedExpectedExemptions() []config.CheckedExpectedExemption {
+	return make([]config.CheckedExpectedExemption, 0)
 }

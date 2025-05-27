@@ -301,6 +301,17 @@ var CustomConfigItems = []auconfigapi.ConfigItem{
 			return err
 		},
 	},
+	{
+		Key:         config.KeyCheckExpectedExemptions,
+		EnvName:     config.KeyCheckExpectedExemptions,
+		Description: "A JSON list defining all expected exemptions which will be checked for by the GitHub check for all defined repository.yaml files. Each entry contains the 'name' of the exemption, the expected 'refMatcher' and the 'exemptions'.",
+		Default:     "[]",
+		Validate: func(key string) error {
+			value := auconfigenv.Get(key)
+			_, err := parseCheckExpectedExemptions(value)
+			return err
+		},
+	},
 }
 
 func ObtainPositiveInt64Validator() func(key string) error {

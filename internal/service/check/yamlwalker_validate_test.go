@@ -2,6 +2,7 @@ package check
 
 import (
 	"fmt"
+	"github.com/Interhyp/metadata-service/internal/acorn/config"
 	"github.com/google/go-github/v70/github"
 	"github.com/stretchr/testify/require"
 	"reflect"
@@ -21,6 +22,7 @@ func TestMetadataYamlFileWalker_validateSingleYamlFile(t *testing.T) {
 	}
 	type mock struct {
 		walkedRepos walkedRepos
+		config      *Config
 	}
 	hasMock := func(m mock) bool {
 		return !reflect.DeepEqual(m, mock{walkedRepos: walkedRepos{}})
@@ -348,12 +350,387 @@ configuration:
 				errors:  make(map[string]error),
 			},
 		},
+		{
+			name: "invalid repo - missing condition in requireConditions",
+			mock: mock{
+				walkedRepos: walkedRepos{
+					urlToPath: make(map[string]string),
+					keyToPath: map[string]string{},
+				},
+				config: &Config{
+					expectedExemptions: []config.CheckedExpectedExemption{
+						{
+							Name:       "some-condition",
+							RefMatcher: "some-ref-matcher",
+							Exemptions: []string{"missing-exemption-one", "missing-exemption-two"},
+						},
+					},
+				},
+			},
+			args: args{
+				path: "owners/some-owner/repositories/repository.helm-deployment.yaml",
+				contents: `url: existing-repo-url
+mainline: master
+configuration:
+  requireConditions:
+    other-condition:
+      exemptions:
+        - some-exemption
+`,
+			},
+			want: want{
+				result: []*github.CheckRunAnnotation{
+					{
+						Path:            github.Ptr("owners/some-owner/repositories/repository.helm-deployment.yaml"),
+						StartLine:       github.Ptr(1),
+						EndLine:         github.Ptr(1),
+						AnnotationLevel: github.Ptr("warning"),
+						Message:         github.Ptr("This file does not contain the required condition/refProtection some-condition with the refMatcher some-ref-matcher."),
+						Title:           github.Ptr("missing expected condition/refProtection"),
+					},
+				},
+				ignored: make(map[string]string),
+				errors:  make(map[string]error),
+			},
+		},
+		{
+			name: "invalid repo - ref not matching in requireConditions",
+			mock: mock{
+				walkedRepos: walkedRepos{
+					urlToPath: make(map[string]string),
+					keyToPath: map[string]string{},
+				},
+				config: &Config{
+					expectedExemptions: []config.CheckedExpectedExemption{
+						{
+							Name:       "some-condition",
+							RefMatcher: "some-ref-matcher",
+							Exemptions: []string{"missing-exemption-one", "missing-exemption-two"},
+						},
+					},
+				},
+			},
+			args: args{
+				path: "owners/some-owner/repositories/repository.helm-deployment.yaml",
+				contents: `url: existing-repo-url
+mainline: master
+configuration:
+  requireConditions:
+    some-condition:
+      refMatcher: "other-ref-matcher"
+      exemptions:
+        - some-exemption
+`,
+			},
+			want: want{
+				result: []*github.CheckRunAnnotation{
+					{
+						Path:            github.Ptr("owners/some-owner/repositories/repository.helm-deployment.yaml"),
+						StartLine:       github.Ptr(1),
+						EndLine:         github.Ptr(1),
+						AnnotationLevel: github.Ptr("warning"),
+						Message:         github.Ptr("This file does not contain the required condition/refProtection some-condition with the refMatcher some-ref-matcher."),
+						Title:           github.Ptr("missing expected condition/refProtection"),
+					},
+				},
+				ignored: make(map[string]string),
+				errors:  make(map[string]error),
+			},
+		},
+		{
+			name: "invalid repo - missing exemption in requireConditions",
+			mock: mock{
+				walkedRepos: walkedRepos{
+					urlToPath: make(map[string]string),
+					keyToPath: map[string]string{},
+				},
+				config: &Config{
+					expectedExemptions: []config.CheckedExpectedExemption{
+						{
+							Name:       "some-condition",
+							RefMatcher: "some-ref-matcher",
+							Exemptions: []string{"missing-exemption-one", "some-exemption"},
+						},
+					},
+				},
+			},
+			args: args{
+				path: "owners/some-owner/repositories/repository.helm-deployment.yaml",
+				contents: `url: existing-repo-url
+mainline: master
+configuration:
+  requireConditions:
+    some-condition:
+      refMatcher: "some-ref-matcher"
+      exemptions:
+        - some-exemption
+`,
+			},
+			want: want{
+				result: []*github.CheckRunAnnotation{
+					{
+						Path:            github.Ptr("owners/some-owner/repositories/repository.helm-deployment.yaml"),
+						StartLine:       github.Ptr(1),
+						EndLine:         github.Ptr(1),
+						AnnotationLevel: github.Ptr("warning"),
+						Message:         github.Ptr("This file does not contain all required exemptions missing-exemption-one, some-exemption for condition some-condition with the refMatcher some-ref-matcher."),
+						Title:           github.Ptr("missing expected required exemptions"),
+					},
+				},
+				ignored: make(map[string]string),
+				errors:  make(map[string]error),
+			},
+		},
+		{
+			name: "invalid repo - missing condition in refProtections",
+			mock: mock{
+				walkedRepos: walkedRepos{
+					urlToPath: make(map[string]string),
+					keyToPath: map[string]string{},
+				},
+				config: &Config{
+					expectedExemptions: []config.CheckedExpectedExemption{
+						{
+							Name:       "branches.preventDeletion",
+							RefMatcher: "some-ref-matcher",
+							Exemptions: []string{"missing-exemption-one", "some-exemption"},
+						},
+					},
+				},
+			},
+			args: args{
+				path: "owners/some-owner/repositories/repository.helm-deployment.yaml",
+				contents: `url: existing-repo-url
+mainline: master
+configuration:
+  refProtections:
+    branches:
+      requirePR:
+        - exemptions:
+            - some-exemption
+`,
+			},
+			want: want{
+				result: []*github.CheckRunAnnotation{
+					{
+						Path:            github.Ptr("owners/some-owner/repositories/repository.helm-deployment.yaml"),
+						StartLine:       github.Ptr(1),
+						EndLine:         github.Ptr(1),
+						AnnotationLevel: github.Ptr("warning"),
+						Message:         github.Ptr("This file does not contain the required condition/refProtection branches.preventDeletion with the refMatcher some-ref-matcher."),
+						Title:           github.Ptr("missing expected condition/refProtection"),
+					},
+				},
+				ignored: make(map[string]string),
+				errors:  make(map[string]error),
+			},
+		},
+		{
+			name: "invalid repo - ref not matching in refProtections",
+			mock: mock{
+				walkedRepos: walkedRepos{
+					urlToPath: make(map[string]string),
+					keyToPath: map[string]string{},
+				},
+				config: &Config{
+					expectedExemptions: []config.CheckedExpectedExemption{
+						{
+							Name:       "branches.preventDeletion",
+							RefMatcher: "some-ref-matcher",
+							Exemptions: []string{"missing-exemption-one", "some-exemption"},
+						},
+					},
+				},
+			},
+			args: args{
+				path: "owners/some-owner/repositories/repository.helm-deployment.yaml",
+				contents: `url: existing-repo-url
+mainline: master
+configuration:
+  refProtections:
+    branches:
+      preventDeletion:
+        - pattern: "other-ref-matcher"
+          exemptions:
+            - some-exemption
+`,
+			},
+			want: want{
+				result: []*github.CheckRunAnnotation{
+					{
+						Path:            github.Ptr("owners/some-owner/repositories/repository.helm-deployment.yaml"),
+						StartLine:       github.Ptr(1),
+						EndLine:         github.Ptr(1),
+						AnnotationLevel: github.Ptr("warning"),
+						Message:         github.Ptr("This file does not contain the required condition/refProtection branches.preventDeletion with the refMatcher some-ref-matcher."),
+						Title:           github.Ptr("missing expected condition/refProtection"),
+					},
+				},
+				ignored: make(map[string]string),
+				errors:  make(map[string]error),
+			},
+		},
+		{
+			name: "invalid repo - missing exemption in refProtections",
+			mock: mock{
+				walkedRepos: walkedRepos{
+					urlToPath: make(map[string]string),
+					keyToPath: map[string]string{},
+				},
+				config: &Config{
+					expectedExemptions: []config.CheckedExpectedExemption{
+						{
+							Name:       "branches.preventDeletion",
+							RefMatcher: "some-ref-matcher",
+							Exemptions: []string{"missing-exemption-one", "some-exemption"},
+						},
+					},
+				},
+			},
+			args: args{
+				path: "owners/some-owner/repositories/repository.helm-deployment.yaml",
+				contents: `url: existing-repo-url
+mainline: master
+configuration:
+  refProtections:
+    branches:
+      preventDeletion:
+        - pattern: "some-ref-matcher"
+          exemptions:
+            - some-exemption
+`,
+			},
+			want: want{
+				result: []*github.CheckRunAnnotation{
+					{
+						Path:            github.Ptr("owners/some-owner/repositories/repository.helm-deployment.yaml"),
+						StartLine:       github.Ptr(1),
+						EndLine:         github.Ptr(1),
+						AnnotationLevel: github.Ptr("warning"),
+						Message:         github.Ptr("This file does not contain all required exemptions missing-exemption-one, some-exemption for condition branches.preventDeletion with the refMatcher some-ref-matcher."),
+						Title:           github.Ptr("missing expected required exemptions"),
+					},
+				},
+				ignored: make(map[string]string),
+				errors:  make(map[string]error),
+			},
+		},
+		{
+			name: "invalid repo - missing exemption in requiredConditions and refProtections",
+			mock: mock{
+				walkedRepos: walkedRepos{
+					urlToPath: make(map[string]string),
+					keyToPath: map[string]string{},
+				},
+				config: &Config{
+					expectedExemptions: []config.CheckedExpectedExemption{
+						{
+							Name:       "branches.preventDeletion",
+							RefMatcher: "some-ref-matcher",
+							Exemptions: []string{"missing-exemption-one", "some-exemption"},
+						},
+						{
+							Name:       "some-name",
+							RefMatcher: "some-ref-matcher",
+							Exemptions: []string{"missing-exemption-one", "some-exemption"},
+						},
+					},
+				},
+			},
+			args: args{
+				path: "owners/some-owner/repositories/repository.helm-deployment.yaml",
+				contents: `url: existing-repo-url
+mainline: master
+configuration:
+  requireConditions:
+    other-condition:
+      exemptions:
+        - some-exemption
+  refProtections:
+    branches:
+      requirePR:
+        - pattern: "some-ref-matcher"
+          exemptions:
+            - some-exemption
+`,
+			},
+			want: want{
+				result: []*github.CheckRunAnnotation{
+					{
+						Path:            github.Ptr("owners/some-owner/repositories/repository.helm-deployment.yaml"),
+						StartLine:       github.Ptr(1),
+						EndLine:         github.Ptr(1),
+						AnnotationLevel: github.Ptr("warning"),
+						Message:         github.Ptr("This file does not contain the required condition/refProtection branches.preventDeletion with the refMatcher some-ref-matcher."),
+						Title:           github.Ptr("missing expected condition/refProtection"),
+					}, {
+						Path:            github.Ptr("owners/some-owner/repositories/repository.helm-deployment.yaml"),
+						StartLine:       github.Ptr(1),
+						EndLine:         github.Ptr(1),
+						AnnotationLevel: github.Ptr("warning"),
+						Message:         github.Ptr("This file does not contain the required condition/refProtection some-name with the refMatcher some-ref-matcher."),
+						Title:           github.Ptr("missing expected condition/refProtection"),
+					},
+				},
+				ignored: make(map[string]string),
+				errors:  make(map[string]error),
+			},
+		},
+		{
+			name: "valid repo checkRequiredConditions",
+			mock: mock{
+				walkedRepos: walkedRepos{
+					urlToPath: make(map[string]string),
+					keyToPath: map[string]string{},
+				},
+				config: &Config{
+					expectedExemptions: []config.CheckedExpectedExemption{
+						{
+							Name:       "branches.preventDeletion",
+							RefMatcher: "some-ref-matcher",
+							Exemptions: []string{"some-exemption"},
+						},
+						{
+							Name:       "some-name",
+							RefMatcher: "some-ref-matcher",
+							Exemptions: []string{"some-exemption"},
+						},
+					},
+				},
+			},
+			args: args{
+				path: "owners/some-owner/repositories/repository.helm-deployment.yaml",
+				contents: `url: existing-repo-url
+mainline: master
+configuration:
+  requireConditions:
+    some-name:
+      refMatcher: "some-ref-matcher"
+      exemptions:
+        - some-exemption
+  refProtections:
+    branches:
+      preventDeletion:
+        - pattern: "some-ref-matcher"
+          exemptions:
+            - some-exemption
+`,
+			},
+			want: want{
+				result:  nil,
+				ignored: make(map[string]string),
+				errors:  make(map[string]error),
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			v := MetadataYamlFileWalker(nil)
 			if hasMock(tt.mock) {
 				v.walkedRepos = tt.mock.walkedRepos
+				if tt.mock.config != nil {
+					v.config = *tt.mock.config
+				}
 			}
 			if got := v.validateSingleYamlFile(tt.args.path, tt.args.contents); !reflect.DeepEqual(got, tt.want.result) {
 				t.Errorf("validateSingleYamlFile() = %v, want %v", printAnnotations(got), printAnnotations(tt.want.result))

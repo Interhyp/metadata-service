@@ -201,3 +201,7 @@ func (c *CustomConfigImpl) CheckWarnMissingMainlineProtection() bool {
 func (c *CustomConfigImpl) CheckExpectedRequiredConditions() []config.CheckedRequiredConditions {
 	return c.VCheckExpectedRequiredConditions
 }
+
+func (c *CustomConfigImpl) CheckedExpectedExemptions() []config.CheckedExpectedExemption {
+	return c.VCheckExpectedExemptions
+}
