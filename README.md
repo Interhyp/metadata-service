@@ -1,3 +1,23 @@
+# ⚠️ DEPRECATED - this repository is no longer maintained
+
+**This repository has been deprecated and is no longer actively maintained.**
+
+## What This Means
+
+- **No new features** will be added
+- **Bug fixes** will not be provided
+- **Security updates** will not be implemented
+- **Issues and pull requests** will not be reviewed or merged
+- **Support** is no longer available
+
+## Recommendations
+
+- **For existing users**: Consider migrating to an actively maintained alternative
+- **For new users**: We strongly recommend using a different solution
+- **For contributors**: Thank you for your past contributions, but we are no longer accepting new ones
+
+---
+
 [![Build Status](https://github.com/interhyp/metadata-service/actions/workflows/go.yaml/badge.svg)](../../actions/workflows/go.yaml)
 [![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/interhyp/metadata-service)][release]
 [![GitHub Latest Stable Release](https://img.shields.io/github/v/release/interhyp/metadata-service?TODO?label=Stable)][release]
